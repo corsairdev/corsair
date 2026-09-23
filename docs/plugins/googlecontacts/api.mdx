@@ -1,0 +1,2475 @@
+---
+title: API
+description: "API reference for Google Contacts: every `googlecontacts.api.*` operation with input and output types."
+---
+
+Every `googlecontacts.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contact Groups
+
+### create
+
+`contactGroups.create`
+
+Create a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contactGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `groupType` | `string` | No | — |
+| `name` | `string` | No | — |
+| `formattedName` | `string` | No | — |
+| `memberResourceNames` | `string[]` | No | — |
+| `memberCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  updateTime?: string,
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contactGroups.delete`
+
+Delete a contact group, optionally with its contacts [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlecontacts.api.contactGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `deleteContacts` | `boolean` | No | Also delete the contacts in the group, not just the group |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`contactGroups.get`
+
+Get a single contact group
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.contactGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | e.g. "contactGroups/myContacts" |
+| `maxMembers` | `number` | No | — |
+| `groupFields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `groupType` | `string` | No | — |
+| `name` | `string` | No | — |
+| `formattedName` | `string` | No | — |
+| `memberResourceNames` | `string[]` | No | — |
+| `memberCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  updateTime?: string,
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contactGroups.list`
+
+List contact groups
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.contactGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `syncToken` | `string` | No | — |
+| `groupFields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactGroups` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `nextSyncToken` | `string` | No | — |
+| `totalItems` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="contactGroups full type">
+
+```ts
+{
+  resourceName: string,
+  etag?: string,
+  metadata?: {
+    updateTime?: string,
+    deleted?: boolean
+  },
+  groupType?: string,
+  name?: string,
+  formattedName?: string,
+  memberResourceNames?: string[],
+  memberCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### modifyMembers
+
+`contactGroups.modifyMembers`
+
+Add or remove contacts from a group
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contactGroups.modifyMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `resourceNamesToAdd` | `string[]` | No | — |
+| `resourceNamesToRemove` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notFoundResourceNames` | `string[]` | No | — |
+| `canNotRemoveLastContactGroupResourceNames` | `string[]` | No | — |
+
+
+
+---
+
+### update
+
+`contactGroups.update`
+
+Rename a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contactGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `groupType` | `string` | No | — |
+| `name` | `string` | No | — |
+| `formattedName` | `string` | No | — |
+| `memberResourceNames` | `string[]` | No | — |
+| `memberCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  updateTime?: string,
+  deleted?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person` | `object` | Yes | — |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  names?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    displayName?: string,
+    familyName?: string,
+    givenName?: string,
+    middleName?: string,
+    honorificPrefix?: string,
+    honorificSuffix?: string
+  }[],
+  emailAddresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    type?: string,
+    displayName?: string
+  }[],
+  phoneNumbers?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    canonicalForm?: string,
+    type?: string
+  }[],
+  organizations?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    name?: string,
+    title?: string,
+    department?: string
+  }[],
+  addresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    formattedValue?: string,
+    streetAddress?: string,
+    city?: string,
+    region?: string,
+    postalCode?: string,
+    country?: string,
+    countryCode?: string,
+    type?: string
+  }[],
+  biographies?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    contentType?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlecontacts.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### deletePhoto
+
+`contacts.deletePhoto`
+
+Remove a contact's photo [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlecontacts.api.contacts.deletePhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a single contact
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | e.g. "people/c123456789" or "people/me" for the signed-in user |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List the user's contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `sortOrder` | `LAST_MODIFIED_ASCENDING \| LAST_MODIFIED_DESCENDING \| FIRST_NAME_ASCENDING \| LAST_NAME_ASCENDING` | No | — |
+| `requestSyncToken` | `boolean` | No | Return a nextSyncToken for incremental reads. Expires after 7 days. |
+| `syncToken` | `string` | No | Return only changes since this token. Expired tokens 400; re-list in full. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connections` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `nextSyncToken` | `string` | No | — |
+| `totalPeople` | `number` | No | — |
+| `totalItems` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  resourceName: string,
+  etag?: string,
+  metadata?: {
+    sources?: {
+      type?: string,
+      id?: string,
+      etag?: string
+    }[],
+    deleted?: boolean,
+    objectType?: string
+  },
+  names?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    displayName?: string,
+    familyName?: string,
+    givenName?: string,
+    middleName?: string,
+    honorificPrefix?: string,
+    honorificSuffix?: string
+  }[],
+  emailAddresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    type?: string,
+    displayName?: string
+  }[],
+  phoneNumbers?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    canonicalForm?: string,
+    type?: string
+  }[],
+  organizations?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    name?: string,
+    title?: string,
+    department?: string
+  }[],
+  addresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    formattedValue?: string,
+    streetAddress?: string,
+    city?: string,
+    region?: string,
+    postalCode?: string,
+    country?: string,
+    countryCode?: string,
+    type?: string
+  }[],
+  photos?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    url?: string,
+    default?: boolean
+  }[],
+  biographies?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    contentType?: string
+  }[],
+  memberships?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    contactGroupMembership?: {
+      contactGroupId?: string,
+      contactGroupResourceName?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`contacts.search`
+
+Search contacts by name, email or phone
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.contacts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Prefix-matched against names, nicknames, emails and phones |
+| `readMask` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  person?: {
+    resourceName: string,
+    etag?: string,
+    metadata?: {
+      sources?: {
+        type?: string,
+        id?: string,
+        etag?: string
+      }[],
+      deleted?: boolean,
+      objectType?: string
+    },
+    names?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      displayName?: string,
+      familyName?: string,
+      givenName?: string,
+      middleName?: string,
+      honorificPrefix?: string,
+      honorificSuffix?: string
+    }[],
+    emailAddresses?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      type?: string,
+      displayName?: string
+    }[],
+    phoneNumbers?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      canonicalForm?: string,
+      type?: string
+    }[],
+    organizations?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      name?: string,
+      title?: string,
+      department?: string
+    }[],
+    addresses?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      formattedValue?: string,
+      streetAddress?: string,
+      city?: string,
+      region?: string,
+      postalCode?: string,
+      country?: string,
+      countryCode?: string,
+      type?: string
+    }[],
+    photos?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      url?: string,
+      default?: boolean
+    }[],
+    biographies?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      contentType?: string
+    }[],
+    memberships?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      contactGroupMembership?: {
+        contactGroupId?: string,
+        contactGroupResourceName?: string
+      }
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing contact
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | Yes | etag from a prior read; the API rejects updates without it |
+| `person` | `object` | Yes | — |
+| `updatePersonFields` | `string[]` | Yes | Fields to overwrite, e.g. ["emailAddresses"]. Omitted fields are left untouched. |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+<AccordionGroup>
+<Accordion title="person full type">
+
+```ts
+{
+  names?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    displayName?: string,
+    familyName?: string,
+    givenName?: string,
+    middleName?: string,
+    honorificPrefix?: string,
+    honorificSuffix?: string
+  }[],
+  emailAddresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    type?: string,
+    displayName?: string
+  }[],
+  phoneNumbers?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    canonicalForm?: string,
+    type?: string
+  }[],
+  organizations?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    name?: string,
+    title?: string,
+    department?: string
+  }[],
+  addresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    formattedValue?: string,
+    streetAddress?: string,
+    city?: string,
+    region?: string,
+    postalCode?: string,
+    country?: string,
+    countryCode?: string,
+    type?: string
+  }[],
+  biographies?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    contentType?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePhoto
+
+`contacts.updatePhoto`
+
+Set or replace a contact's photo
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.contacts.updatePhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `photoBytes` | `string` | Yes | Base64-encoded image |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Other Contacts
+
+### copyToContacts
+
+`otherContacts.copyToContacts`
+
+Copy an auto-saved contact into the saved contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.googlecontacts.api.otherContacts.copyToContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | e.g. "otherContacts/c123456789" |
+| `copyMask` | `emailAddresses \| names \| phoneNumbers[]` | No | Fields to carry over. Google permits only these three. |
+| `personFields` | `string[]` | No | Person fields to return, e.g. ["names","emailAddresses","phoneNumbers"]. Defaults to names, emailAddresses and phoneNumbers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceName` | `string` | Yes | — |
+| `etag` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `names` | `object[]` | No | — |
+| `emailAddresses` | `object[]` | No | — |
+| `phoneNumbers` | `object[]` | No | — |
+| `organizations` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `photos` | `object[]` | No | — |
+| `biographies` | `object[]` | No | — |
+| `memberships` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  sources?: {
+    type?: string,
+    id?: string,
+    etag?: string
+  }[],
+  deleted?: boolean,
+  objectType?: string
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  displayName?: string,
+  familyName?: string,
+  givenName?: string,
+  middleName?: string,
+  honorificPrefix?: string,
+  honorificSuffix?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="emailAddresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  type?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phoneNumbers full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  canonicalForm?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  name?: string,
+  title?: string,
+  department?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  formattedValue?: string,
+  streetAddress?: string,
+  city?: string,
+  region?: string,
+  postalCode?: string,
+  country?: string,
+  countryCode?: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  url?: string,
+  default?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="biographies full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  value?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  metadata?: {
+    primary?: boolean,
+    verified?: boolean,
+    source?: {
+      type?: string,
+      id?: string
+    }
+  },
+  contactGroupMembership?: {
+    contactGroupId?: string,
+    contactGroupResourceName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`otherContacts.list`
+
+List auto-saved contacts the user never filed
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.otherContacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `readMask` | `emailAddresses \| metadata \| names \| phoneNumbers[]` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `otherContacts` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `totalSize` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="otherContacts full type">
+
+```ts
+{
+  resourceName: string,
+  etag?: string,
+  metadata?: {
+    sources?: {
+      type?: string,
+      id?: string,
+      etag?: string
+    }[],
+    deleted?: boolean,
+    objectType?: string
+  },
+  names?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    displayName?: string,
+    familyName?: string,
+    givenName?: string,
+    middleName?: string,
+    honorificPrefix?: string,
+    honorificSuffix?: string
+  }[],
+  emailAddresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    type?: string,
+    displayName?: string
+  }[],
+  phoneNumbers?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    canonicalForm?: string,
+    type?: string
+  }[],
+  organizations?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    name?: string,
+    title?: string,
+    department?: string
+  }[],
+  addresses?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    formattedValue?: string,
+    streetAddress?: string,
+    city?: string,
+    region?: string,
+    postalCode?: string,
+    country?: string,
+    countryCode?: string,
+    type?: string
+  }[],
+  photos?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    url?: string,
+    default?: boolean
+  }[],
+  biographies?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    value?: string,
+    contentType?: string
+  }[],
+  memberships?: {
+    metadata?: {
+      primary?: boolean,
+      verified?: boolean,
+      source?: {
+        type?: string,
+        id?: string
+      }
+    },
+    contactGroupMembership?: {
+      contactGroupId?: string,
+      contactGroupResourceName?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`otherContacts.search`
+
+Search auto-saved contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.googlecontacts.api.otherContacts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `readMask` | `emailAddresses \| metadata \| names \| phoneNumbers[]` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  person?: {
+    resourceName: string,
+    etag?: string,
+    metadata?: {
+      sources?: {
+        type?: string,
+        id?: string,
+        etag?: string
+      }[],
+      deleted?: boolean,
+      objectType?: string
+    },
+    names?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      displayName?: string,
+      familyName?: string,
+      givenName?: string,
+      middleName?: string,
+      honorificPrefix?: string,
+      honorificSuffix?: string
+    }[],
+    emailAddresses?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      type?: string,
+      displayName?: string
+    }[],
+    phoneNumbers?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      canonicalForm?: string,
+      type?: string
+    }[],
+    organizations?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      name?: string,
+      title?: string,
+      department?: string
+    }[],
+    addresses?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      formattedValue?: string,
+      streetAddress?: string,
+      city?: string,
+      region?: string,
+      postalCode?: string,
+      country?: string,
+      countryCode?: string,
+      type?: string
+    }[],
+    photos?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      url?: string,
+      default?: boolean
+    }[],
+    biographies?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      value?: string,
+      contentType?: string
+    }[],
+    memberships?: {
+      metadata?: {
+        primary?: boolean,
+        verified?: boolean,
+        source?: {
+          type?: string,
+          id?: string
+        }
+      },
+      contactGroupMembership?: {
+        contactGroupId?: string,
+        contactGroupResourceName?: string
+      }
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
