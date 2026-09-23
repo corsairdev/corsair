@@ -119,6 +119,7 @@ export const BaseProviders = [
 	'castingwords',
 	'cdrplatform',
 	'certifier',
+	'chaser',
 	'chatbotkit',
 	'chatfai',
 	'chmeetings',
@@ -416,6 +417,7 @@ export const ProviderDisplayNames = {
 	castingwords: 'CastingWords',
 	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
+	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	chmeetings: 'ChMeetings',
@@ -720,6 +722,7 @@ export type AllProviders =
 	| 'castingwords'
 	| 'cdrplatform'
 	| 'certifier'
+	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'chmeetings'
