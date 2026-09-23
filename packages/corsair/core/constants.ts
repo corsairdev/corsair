@@ -177,6 +177,7 @@ export const BaseProviders = [
 	'firecrawl',
 	'fireflies',
 	'flexisign',
+	'flutterwave',
 	'formbricks',
 	'gemini',
 	'giphy',
@@ -489,6 +490,7 @@ export const ProviderDisplayNames = {
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
 	flexisign: 'Flexisign',
+	flutterwave: 'Flutterwave',
 	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	giphy: 'Giphy',
@@ -808,6 +810,7 @@ export type AllProviders =
 	| 'firecrawl'
 	| 'fireflies'
 	| 'flexisign'
+	| 'flutterwave'
 	| 'formbricks'
 	| 'gemini'
 	| 'giphy'
