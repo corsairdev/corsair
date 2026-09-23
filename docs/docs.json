@@ -1001,6 +1001,14 @@
                 ]
               },
               {
+                "group": "Carbone",
+                "pages": [
+                  "plugins/carbone/overview",
+                  "plugins/carbone/api",
+                  "plugins/carbone/database"
+                ]
+              },
+              {
                 "group": "Castingwords",
                 "pages": [
                   "plugins/castingwords/overview",
