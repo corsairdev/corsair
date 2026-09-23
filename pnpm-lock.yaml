@@ -1935,30 +1935,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/beamer:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/beeminder:
     devDependencies:
       '@types/jest':
@@ -2168,30 +2144,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/bigpictureio:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -2429,30 +2381,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/booqable:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -2922,30 +2850,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/byteforms:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/cal:
     devDependencies:
       '@types/jest':
@@ -3008,30 +2912,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/canny:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -3831,33 +3711,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/customerio:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      dotenv:
-        specifier: ^16.6.1
-        version: 16.6.1
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/customgpt:
     devDependencies:
       '@types/jest':
@@ -4386,30 +4239,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/extractaai:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/facebook:
     devDependencies:
       '@types/jest':
@@ -4584,30 +4413,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/flutterwave:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/formbricks:
     devDependencies:
       '@types/jest':
@@ -4661,33 +4466,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/giphy:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      dotenv:
-        specifier: ^17.2.3
-        version: 17.4.2
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -5259,30 +5037,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/hookdeck:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/htmltoimage:
     devDependencies:
       '@types/jest':
@@ -5565,30 +5319,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/leexi:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/linear:
     devDependencies:
       '@types/jest':
@@ -5681,30 +5411,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/mailcheck:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -5950,30 +5656,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/northflank:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -6296,30 +5978,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/pdfco:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/pdfmonkey:
     devDependencies:
       '@types/jest':
@@ -6368,30 +6026,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/phantombuster:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/pinecone:
     devDependencies:
       '@types/jest':
@@ -6406,30 +6040,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/plain:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -6506,30 +6116,6 @@ importers:
       ts-jest:
         specifier: ^29.4.6
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/replicate:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -6872,30 +6458,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/slackbot:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -7476,30 +7038,6 @@ importers:
       ts-jest:
         specifier: ^29.4.9
         version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
-  packages/tpscheck:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@8.0.1)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@8.0.1))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
@@ -8120,30 +7658,6 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/writer:
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      corsair:
-        specifier: workspace:*
-        version: link:../corsair
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
-      ts-jest:
-        specifier: ^29.4.9
-        version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
-      tsup:
-        specifier: ^8.0.1
-        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      zod:
-        specifier: 4.4.3
-        version: 4.4.3
-
   packages/xquik:
     devDependencies:
       '@types/jest':
@@ -8220,6 +7734,30 @@ importers:
         version: 4.4.3
 
   packages/zendesk:
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      corsair:
+        specifier: workspace:*
+        version: link:../corsair
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
+      ts-jest:
+        specifier: ^29.4.9
+        version: 29.4.9(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.7))(jest-util@30.4.1)(jest@29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3)))(typescript@5.9.3)
+      tsup:
+        specifier: ^8.0.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(tsx@4.22.4)(typescript@5.9.3)(yaml@2.9.0)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+
+  packages/zohobigin:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -20882,7 +20420,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
+      eventsource-parser: 3.1.1
       zod: 4.4.3
 
   '@ai-sdk/provider-utils@4.0.40(zod@4.4.3)':
