@@ -134,6 +134,7 @@ export const BaseProviders = [
 	'clickhouse',
 	'clientary',
 	'clockify',
+	'cloudcart',
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
@@ -459,6 +460,7 @@ export const ProviderDisplayNames = {
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
@@ -791,6 +793,7 @@ export type AllProviders =
 	| 'clickhouse'
 	| 'clientary'
 	| 'clockify'
+	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
