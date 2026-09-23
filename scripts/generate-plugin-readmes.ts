@@ -311,23 +311,45 @@ const FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 };
 
 /**
+ * Extracts the missing package name from a loadPlugin import failure, e.g.
+ * "import failed: Cannot find package 'zod' ..." -> "zod".
+ */
+export function missingPackageName(error: string): string | undefined {
+	const match = error.match(/^import failed: Cannot find package '([^']+)'/);
+	return match?.[1];
+}
+
+/**
  * True when a plugin failed to load only because workspace dependencies are
  * not installed — the signature of a lane-scoped CI install (the plugin lane
  * installs just the PR's plugin), not a broken plugin.
  *
  * Every plugin depends on `corsair` (workspace:*) and `zod`. Either missing
- * means not-installed. Both are needed because import order differs per
+ * can mean not-installed. Both are needed because import order differs per
  * plugin: e.g. zohobigin has only `import type ... from 'corsair/core'`
  * (erased at runtime) followed by runtime `import { z } from 'zod'`, so its
  * first runtime failure is `zod`, while plugins with a runtime
- * `from 'corsair/core'` value import fail on `corsair` first. In a full
- * install neither should be missing, so real breakage still fails.
+ * `from 'corsair/core'` value import fail on `corsair` first.
+ *
+ * When `dir` and `root` are given, this is lane aware: it only skips when
+ * the missing dep is truly absent from `packages/<dir>/node_modules`. If the
+ * plugin is installed (dep present on disk) but the import still fails, it
+ * is genuine breakage and returns false so full lane checks cannot pass
+ * silently.
  */
-export function isWorkspaceNotInstalledError(error: string): boolean {
-	return (
-		error.startsWith("import failed: Cannot find package 'corsair'") ||
-		error.startsWith("import failed: Cannot find package 'zod'")
-	);
+export function isWorkspaceNotInstalledError(
+	error: string,
+	dir?: string,
+	root?: string,
+): boolean {
+	const pkg = missingPackageName(error);
+	if (pkg !== 'corsair' && pkg !== 'zod') return false;
+	if (dir === undefined || root === undefined) return true;
+	try {
+		return !existsSync(join(root, 'packages', dir, 'node_modules', pkg));
+	} catch {
+		return true;
+	}
 }
 
 export type CheckResultSummary = {
@@ -340,16 +362,22 @@ export type CheckResultSummary = {
 /**
  * Decide a `--check` run: gaps and real load errors fail, uninstalled
  * plugins are skipped, and a run that introspected nothing fails so a
- * broken install can never pass vacuously.
+ * broken install can never pass vacuously. Pass `root` (repo root) so the
+ * skip decision is lane aware via `packages/<dir>/node_modules`.
  */
 export function summarizeCheckResults(
 	results: { dir: string; gaps: string[]; error?: string }[],
+	root: string = repoRoot(),
 ): CheckResultSummary {
 	const skipped = results
-		.filter((r) => r.error && isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const errored = results
-		.filter((r) => r.error && !isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && !isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const offenders = results
 		.filter((r) => !r.error && r.gaps.length > 0)

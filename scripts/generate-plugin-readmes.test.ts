@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import type { PluginDocsIntrospection } from '../packages/corsair/core/inspect/index.ts';
 import {
@@ -7,6 +10,7 @@ import {
 	isWorkspaceNotInstalledError,
 	MISSING_METADATA_FIELDS,
 	missingMetadataFields,
+	missingPackageName,
 	renderPluginReadme,
 	summarizeCheckResults,
 } from './generate-plugin-readmes.ts';
@@ -167,6 +171,37 @@ test('isWorkspaceNotInstalledError detects lane-scoped missing installs', () => 
 	assert.equal(isWorkspaceNotInstalledError('no factory export "acme"'), false);
 });
 
+test('missingPackageName extracts the package from import failures', () => {
+	assert.equal(
+		missingPackageName(
+			"import failed: Cannot find package 'zod' imported from '/repo/packages/zohobigin/index.ts'",
+		),
+		'zod',
+	);
+	assert.equal(
+		missingPackageName(
+			"import failed: Cannot find package 'corsair' imported from '/repo/packages/acme/index.ts'",
+		),
+		'corsair',
+	);
+	assert.equal(missingPackageName('factory() threw: boom'), undefined);
+});
+
+test('isWorkspaceNotInstalledError is lane aware via node_modules', () => {
+	const root = mkdtempSync(join(tmpdir(), 'readmes-lane-'));
+	try {
+		const zodError =
+			"import failed: Cannot find package 'zod' imported from '/repo/packages/acme/index.ts'";
+		assert.equal(isWorkspaceNotInstalledError(zodError, 'acme', root), true);
+		mkdirSync(join(root, 'packages', 'acme', 'node_modules', 'zod'), {
+			recursive: true,
+		});
+		assert.equal(isWorkspaceNotInstalledError(zodError, 'acme', root), false);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
 test('summarizeCheckResults skips uninstalled plugins but fails on gaps', () => {
 	const results = [
 		{ dir: 'acme', gaps: [], error: undefined },
@@ -206,11 +241,40 @@ test('summarizeCheckResults skips both corsair and zod missing, but not other pa
 				"import failed: Cannot find package 'lodash' imported from '/repo/packages/broken/index.ts'",
 		},
 	];
-	const summary = summarizeCheckResults(results);
-	assert.equal(summary.ok, false);
-	assert.deepEqual(summary.skipped, ['zohobigin', 'beta']);
-	assert.deepEqual(summary.errored, ['broken']);
-	assert.deepEqual(summary.offenders, []);
+	const root = mkdtempSync(join(tmpdir(), 'readmes-summary-'));
+	try {
+		const summary = summarizeCheckResults(results, root);
+		assert.equal(summary.ok, false);
+		assert.deepEqual(summary.skipped, ['zohobigin', 'beta']);
+		assert.deepEqual(summary.errored, ['broken']);
+		assert.deepEqual(summary.offenders, []);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+});
+
+test('summarizeCheckResults treats installed plugin zod failure as genuine error', () => {
+	const root = mkdtempSync(join(tmpdir(), 'readmes-installed-'));
+	try {
+		mkdirSync(join(root, 'packages', 'installed', 'node_modules', 'zod'), {
+			recursive: true,
+		});
+		const results = [
+			{ dir: 'finerworks', gaps: [], error: undefined },
+			{
+				dir: 'installed',
+				gaps: [],
+				error:
+					"import failed: Cannot find package 'zod' imported from '/repo/packages/installed/index.ts'",
+			},
+		];
+		const summary = summarizeCheckResults(results, root);
+		assert.equal(summary.ok, false);
+		assert.deepEqual(summary.skipped, []);
+		assert.deepEqual(summary.errored, ['installed']);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
 });
 
 test('summarizeCheckResults still fails on real gaps and other errors', () => {
