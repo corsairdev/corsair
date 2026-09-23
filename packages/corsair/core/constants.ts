@@ -119,10 +119,12 @@ export const BaseProviders = [
 	'castingwords',
 	'cdrplatform',
 	'certifier',
+	'chaser',
 	'chatbotkit',
 	'chatfai',
 	'chmeetings',
 	'circleci',
+	'classmarker',
 	'clickhouse',
 	'clientary',
 	'clockify',
@@ -151,6 +153,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'dodopayments',
 	'doppler',
+	'dovetail',
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
@@ -158,11 +161,13 @@ export const BaseProviders = [
 	'dynapictures',
 	'emelia',
 	'epicgames',
+	'everhour',
 	'exa',
 	'exist',
 	'facebook',
 	'faraday',
 	'figma',
+	'filevine',
 	'filloutforms',
 	'firecrawl',
 	'fireflies',
@@ -195,6 +200,7 @@ export const BaseProviders = [
 	'htmltoimage',
 	'hubspot',
 	'huggingface',
+	'imejisio',
 	'imgbb',
 	'insightoai',
 	'instagram',
@@ -231,11 +237,13 @@ export const BaseProviders = [
 	'perplexityai',
 	'pinecone',
 	'posthog',
+	'pushbullet',
 	'razorpay',
 	'reddit',
 	'removebg',
 	'resend',
 	'retailed',
+	'rootly',
 	'runpod',
 	'salesforce',
 	'sapsuccessfactors',
@@ -269,6 +277,7 @@ export const BaseProviders = [
 	'todoist',
 	'toggl',
 	'trello',
+	'tripadvisor',
 	'twentyonerisk',
 	'twilio',
 	'twitter',
@@ -282,6 +291,7 @@ export const BaseProviders = [
 	'vercel',
 	'veriphone',
 	'vestaboard',
+	'waboxapp',
 	'wakatime',
 	'webflow',
 	'webvizio',
@@ -410,10 +420,12 @@ export const ProviderDisplayNames = {
 	castingwords: 'CastingWords',
 	cdrplatform: 'CDR Platform',
 	certifier: 'Certifier',
+	chaser: 'Chaser',
 	chatbotkit: 'ChatBotKit',
 	chatfai: 'ChatFAI',
 	chmeetings: 'ChMeetings',
 	circleci: 'CircleCI',
+	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
@@ -442,6 +454,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
+	dovetail: 'Dovetail',
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
@@ -449,11 +462,13 @@ export const ProviderDisplayNames = {
 	dynapictures: 'Dynapictures',
 	emelia: 'Emelia',
 	epicgames: 'Epic Games',
+	everhour: 'Everhour',
 	exa: 'Exa',
 	exist: 'Exist',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
+	filevine: 'Filevine',
 	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -486,6 +501,7 @@ export const ProviderDisplayNames = {
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -522,11 +538,13 @@ export const ProviderDisplayNames = {
 	perplexityai: 'Perplexity AI',
 	pinecone: 'Pinecone',
 	posthog: 'PostHog',
+	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	rootly: 'Rootly',
 	runpod: 'RunPod',
 	salesforce: 'Salesforce',
 	sapsuccessfactors: 'SAP SuccessFactors',
@@ -560,6 +578,7 @@ export const ProviderDisplayNames = {
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
+	tripadvisor: 'Tripadvisor',
 	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -573,6 +592,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
+	waboxapp: 'Waboxapp',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
 	webvizio: 'Webvizio',
@@ -708,10 +728,12 @@ export type AllProviders =
 	| 'castingwords'
 	| 'cdrplatform'
 	| 'certifier'
+	| 'chaser'
 	| 'chatbotkit'
 	| 'chatfai'
 	| 'chmeetings'
 	| 'circleci'
+	| 'classmarker'
 	| 'clickhouse'
 	| 'clientary'
 	| 'clockify'
@@ -740,6 +762,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'dodopayments'
 	| 'doppler'
+	| 'dovetail'
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
@@ -747,11 +770,13 @@ export type AllProviders =
 	| 'dynapictures'
 	| 'emelia'
 	| 'epicgames'
+	| 'everhour'
 	| 'exa'
 	| 'exist'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
+	| 'filevine'
 	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
@@ -784,6 +809,7 @@ export type AllProviders =
 	| 'htmltoimage'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imejisio'
 	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
@@ -820,11 +846,13 @@ export type AllProviders =
 	| 'perplexityai'
 	| 'pinecone'
 	| 'posthog'
+	| 'pushbullet'
 	| 'razorpay'
 	| 'reddit'
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
+	| 'rootly'
 	| 'runpod'
 	| 'salesforce'
 	| 'sapsuccessfactors'
@@ -858,6 +886,7 @@ export type AllProviders =
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
+	| 'tripadvisor'
 	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
@@ -871,6 +900,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'veriphone'
 	| 'vestaboard'
+	| 'waboxapp'
 	| 'wakatime'
 	| 'webflow'
 	| 'webvizio'
