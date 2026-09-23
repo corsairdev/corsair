@@ -109,6 +109,15 @@ type PluginDocsFile = {
 		data?: Record<string, unknown>;
 		limit?: number;
 	};
+	/**
+	 * Per-endpoint call snippets on the API reference page.
+	 * Keys are shortPaths (e.g. `contacts.list`). Values are arg objects (shorthand)
+	 * or `{ args?, call? }` where `call` is the raw TS inside `(...)`.
+	 */
+	apiExamples?: Record<
+		string,
+		Record<string, unknown> | { args?: Record<string, unknown>; call?: string }
+	>;
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -474,6 +483,31 @@ function normalizeExampleCall(
 	return { path, args, title };
 }
 
+function normalizeApiExampleEntry(raw: unknown): {
+	args?: Record<string, unknown>;
+	call?: string;
+} {
+	if (raw === null || raw === undefined) return {};
+	if (typeof raw !== 'object' || Array.isArray(raw)) return {};
+	const o = raw as Record<string, unknown>;
+	if (typeof o.call === 'string' && o.call.trim()) {
+		return { call: o.call.trim() };
+	}
+	if (o.args && typeof o.args === 'object' && !Array.isArray(o.args)) {
+		return { args: o.args as Record<string, unknown> };
+	}
+	if ('call' in o || 'args' in o) {
+		return { args: {} };
+	}
+	return { args: o };
+}
+
+function formatApiEndpointCallArgs(raw: unknown): string {
+	const { args, call } = normalizeApiExampleEntry(raw);
+	if (call) return call;
+	return formatExampleArgs(args);
+}
+
 function findEndpointByShortPath(
 	api: DocsApiEndpoint[],
 	shortPath: string,
@@ -644,6 +678,29 @@ function validatePluginDocsConfig(
 
 	validateApiExample(docsConfig.examples?.read, 'examples.read');
 	validateApiExample(docsConfig.examples?.write, 'examples.write');
+
+	if (docsConfig.apiExamples) {
+		for (const [shortPath, raw] of Object.entries(docsConfig.apiExamples)) {
+			const ep = findEndpointByShortPath(data.api, shortPath);
+			if (!ep) {
+				errors.push(
+					`${prefix}: apiExamples."${shortPath}" not found on ${pluginId}.api`,
+				);
+				continue;
+			}
+			const { args, call } = normalizeApiExampleEntry(raw);
+			if (call) continue;
+			if (args && Object.keys(args).length > 0) {
+				errors.push(
+					...validateExampleArgsAgainstInput(
+						args,
+						ep.input,
+						`${prefix}: apiExamples.${shortPath}`,
+					),
+				);
+			}
+		}
+	}
 
 	const dbEx = docsConfig.dbExample;
 	if (dbEx) {
@@ -1444,6 +1501,7 @@ function buildApiMdx(
 	pluginId: string,
 	title: string,
 	data: PluginDocsIntrospection,
+	apiExamples: PluginDocsFile['apiExamples'],
 ): string {
 	const byGroup = new Map<string, typeof data.api>();
 	for (const ep of data.api) {
@@ -1472,8 +1530,9 @@ function buildApiMdx(
 			sections.push('');
 			const [, ...pathParts] = ep.path.split('.');
 			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
+			const callArgs = formatApiEndpointCallArgs(apiExamples?.[ep.shortPath]);
 			sections.push('```ts');
-			sections.push(`await ${callExpr}({});`);
+			sections.push(`await ${callExpr}(${callArgs});`);
 			sections.push('```');
 			sections.push('');
 			sections.push(formatSchemaShape(ep.input, 'Input'));
@@ -1969,7 +2028,7 @@ async function generatePluginDocsForEntry(
 
 	writeFileSync(
 		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData),
+		buildApiMdx(pluginId, title, docData, docsConfig.apiExamples),
 		'utf8',
 	);
 	writeFileSync(
