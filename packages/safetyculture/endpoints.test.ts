@@ -7,7 +7,8 @@ import {
 	TemplatesListResponseSchema,
 	UsersListResponseSchema,
 } from './endpoints/types';
-import { safetyculture } from './index';
+import { safetyculture, safetycultureEndpointSchemas } from './index';
+import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/core', () => {
 	const original = jest.requireActual('corsair/core');
@@ -216,3 +217,139 @@ describe('SafetyCulture plugin endpoints', () => {
 		});
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Error handlers: rate-limit, auth, and default
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('SafetyCulture error handlers', () => {
+	describe('RATE_LIMIT_ERROR', () => {
+		it('matches ApiError with status 429', () => {
+			const { ApiError } = jest.requireActual('corsair/http');
+			const err = new ApiError('Too Many Requests', { statusCode: 429 });
+			err.status = 429;
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+		});
+
+		it('matches error messages containing "rate_limited"', () => {
+			const err = new Error('rate_limited');
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+		});
+
+		it('matches error messages containing "429"', () => {
+			const err = new Error('Request failed with status 429');
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+		});
+
+		it('does not match unrelated errors', () => {
+			const err = new Error('Network timeout');
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(false);
+		});
+
+		it('returns maxRetries: 5 with retryAfter from ApiError', async () => {
+			const { ApiError } = jest.requireActual('corsair/http');
+			const err = new ApiError('Too Many Requests', { statusCode: 429 });
+			err.status = 429;
+			err.retryAfter = 5000;
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+			expect(result.maxRetries).toBe(5);
+			expect(result.headersRetryAfterMs).toBe(5000);
+		});
+	});
+
+	describe('AUTH_ERROR', () => {
+		it('matches ApiError with status 401', () => {
+			const { ApiError } = jest.requireActual('corsair/http');
+			const err = new ApiError('Unauthorized', { statusCode: 401 });
+			err.status = 401;
+			expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
+		});
+
+		it('matches error messages containing "unauthorized"', () => {
+			const err = new Error('unauthorized access');
+			expect(errorHandlers.AUTH_ERROR.match(err)).toBe(true);
+		});
+
+		it('returns maxRetries: 0 (no retry on auth failure)', async () => {
+			const err = new Error('unauthorized');
+			const result = await errorHandlers.AUTH_ERROR.handler(err);
+			expect(result.maxRetries).toBe(0);
+		});
+	});
+
+	describe('DEFAULT', () => {
+		it('matches any error', () => {
+			expect(errorHandlers.DEFAULT.match(new Error('anything'))).toBe(true);
+		});
+
+		it('returns maxRetries: 0', async () => {
+			const result = await errorHandlers.DEFAULT.handler(new Error('anything'));
+			expect(result.maxRetries).toBe(0);
+		});
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugin factory: safetyculture()
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('safetyculture() plugin factory', () => {
+	it('returns a plugin with id "safetyculture"', () => {
+		const plugin = safetyculture();
+		expect(plugin.id).toBe('safetyculture');
+	});
+
+	it('registers all five endpoints', () => {
+		const plugin = safetyculture();
+		expect(plugin.endpoints.inspections.list).toBeDefined();
+		expect(plugin.endpoints.inspections.get).toBeDefined();
+		expect(plugin.endpoints.templates.list).toBeDefined();
+		expect(plugin.endpoints.actions.list).toBeDefined();
+		expect(plugin.endpoints.users.list).toBeDefined();
+	});
+
+	it('exports endpointSchemas with input + output for each', () => {
+		for (const key of [
+			'inspections.list',
+			'inspections.get',
+			'templates.list',
+			'actions.list',
+			'users.list',
+		] as const) {
+			expect(safetycultureEndpointSchemas[key].input).toBeDefined();
+			expect(safetycultureEndpointSchemas[key].output).toBeDefined();
+		}
+	});
+
+	it('defaults authType to api_key', () => {
+		const plugin = safetyculture();
+		expect(plugin.options.authType).toBe('api_key');
+	});
+
+	it('sets all endpoint riskLevels to read', () => {
+		const plugin = safetyculture();
+		for (const value of Object.values(plugin.endpointMeta)) {
+			expect(
+				(value as { riskLevel: string }).riskLevel,
+			).toBe('read');
+		}
+	});
+
+	it('includes rate-limit, auth, and default error handlers', () => {
+		const plugin = safetyculture();
+		expect(plugin.errorHandlers.RATE_LIMIT_ERROR).toBeDefined();
+		expect(plugin.errorHandlers.AUTH_ERROR).toBeDefined();
+		expect(plugin.errorHandlers.DEFAULT).toBeDefined();
+	});
+
+	it('pluginWebhookMatcher returns false (webhooks not supported)', () => {
+		const plugin = safetyculture();
+		expect(plugin.pluginWebhookMatcher({} as never)).toBe(false);
+	});
+
+	it('accepts custom key option for static auth', () => {
+		const plugin = safetyculture({ key: 'my_static_key' });
+		expect(plugin.options.key).toBe('my_static_key');
+	});
+});
+
