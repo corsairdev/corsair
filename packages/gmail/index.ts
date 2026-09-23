@@ -432,10 +432,10 @@ export function gmail<const T extends GmailPluginOptions>(
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
-				'https://www.googleapis.com/auth/gmail.modify',
-				'https://www.googleapis.com/auth/gmail.labels',
-				'https://www.googleapis.com/auth/gmail.send',
-				'https://www.googleapis.com/auth/gmail.compose',
+				// Supersedes gmail.modify/labels/send/compose. Required by
+				// messages.delete and threads.delete, which permanently purge;
+				// gmail.modify can only trash.
+				'https://mail.google.com/',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},

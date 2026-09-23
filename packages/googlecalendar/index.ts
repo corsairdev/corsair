@@ -223,7 +223,10 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/calendar'],
+			scopes: [
+				'https://www.googleapis.com/auth/calendar',
+				'https://www.googleapis.com/auth/calendar.events',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,
