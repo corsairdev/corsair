@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T03:38:50.249Z",
+  "generatedAt": "2026-09-23T22:10:51.049Z",
   "corsairVersion": "0.1.137",
   "catalogVersion": 2,
   "plugins": [
@@ -2865,6 +2865,21 @@
         "api": 29,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "googlecontacts",
+      "displayName": "Google Contacts",
+      "description": "Read and manage a user's Google contacts, contact groups, and auto-saved \"other contacts\" through the People API.",
+      "npmPackageName": "@corsair-dev/googlecontacts",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 17,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -49247,6 +49262,108 @@
       "kind": "api",
       "shortPath": "referenceImages.list",
       "haystack": "referenceimages.list googlecloudvision.api.referenceimages.list list reference images read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.create",
+      "haystack": "contactgroups.create googlecontacts.api.contactgroups.create create a contact group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.delete",
+      "haystack": "contactgroups.delete googlecontacts.api.contactgroups.delete delete a contact group, optionally with its contacts [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.get",
+      "haystack": "contactgroups.get googlecontacts.api.contactgroups.get get a single contact group read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.list",
+      "haystack": "contactgroups.list googlecontacts.api.contactgroups.list list contact groups read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.modifyMembers",
+      "haystack": "contactgroups.modifymembers googlecontacts.api.contactgroups.modifymembers add or remove contacts from a group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contactGroups.update",
+      "haystack": "contactgroups.update googlecontacts.api.contactgroups.update rename a contact group write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create googlecontacts.api.contacts.create create a new contact write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete googlecontacts.api.contacts.delete permanently delete a contact [destructive · irreversible] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.deletePhoto",
+      "haystack": "contacts.deletephoto googlecontacts.api.contacts.deletephoto remove a contact's photo [destructive] destructive"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get googlecontacts.api.contacts.get get a single contact read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list googlecontacts.api.contacts.list list the user's contacts read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.search",
+      "haystack": "contacts.search googlecontacts.api.contacts.search search contacts by name, email or phone. google warms this index per account, so the first call after authorizing can return nothing; retry. read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update googlecontacts.api.contacts.update update an existing contact write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "contacts.updatePhoto",
+      "haystack": "contacts.updatephoto googlecontacts.api.contacts.updatephoto set or replace a contact's photo write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.copyToContacts",
+      "haystack": "othercontacts.copytocontacts googlecontacts.api.othercontacts.copytocontacts copy an auto-saved contact into the saved contacts write"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.list",
+      "haystack": "othercontacts.list googlecontacts.api.othercontacts.list list auto-saved contacts the user never filed read"
+    },
+    {
+      "pluginId": "googlecontacts",
+      "kind": "api",
+      "shortPath": "otherContacts.search",
+      "haystack": "othercontacts.search googlecontacts.api.othercontacts.search search auto-saved contacts read"
     },
     {
       "pluginId": "googledocs",

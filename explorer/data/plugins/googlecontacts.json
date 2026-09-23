@@ -1,0 +1,1210 @@
+{
+  "id": "googlecontacts",
+  "displayName": "Google Contacts",
+  "description": "Read and manage a user's Google contacts, contact groups, and auto-saved \"other contacts\" through the People API.",
+  "npmPackageName": "@corsair-dev/googlecontacts",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "resource_name"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlecontacts.api.contactGroups.create",
+      "shortPath": "contactGroups.create",
+      "description": "Create a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ updateTime?: string, deleted?: boolean }"
+          },
+          {
+            "key": "groupType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formattedName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberResourceNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contactGroups.delete",
+      "shortPath": "contactGroups.delete",
+      "description": "Delete a contact group, optionally with its contacts [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteContacts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete the contacts in the group, not just the group"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlecontacts.api.contactGroups.get",
+      "shortPath": "contactGroups.get",
+      "description": "Get a single contact group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. \"contactGroups/myContacts\""
+          },
+          {
+            "key": "maxMembers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "groupFields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ updateTime?: string, deleted?: boolean }"
+          },
+          {
+            "key": "groupType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formattedName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberResourceNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contactGroups.list",
+      "shortPath": "contactGroups.list",
+      "description": "List contact groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupFields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactGroups",
+            "optional": true,
+            "type": "{ resourceName: string, etag?: string, metadata?: { updateTime?: string, deleted?: boolean }, groupType?: string, name?: string, formattedName?: string, memberResourceNames?: string[], memberCount?: number }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextSyncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contactGroups.modifyMembers",
+      "shortPath": "contactGroups.modifyMembers",
+      "description": "Add or remove contacts from a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceNamesToAdd",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resourceNamesToRemove",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notFoundResourceNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "canNotRemoveLastContactGroupResourceNames",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contactGroups.update",
+      "shortPath": "contactGroups.update",
+      "description": "Rename a contact group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ updateTime?: string, deleted?: boolean }"
+          },
+          {
+            "key": "groupType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "formattedName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberResourceNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person",
+            "optional": false,
+            "type": "{ names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[] }"
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.deletePhoto",
+      "shortPath": "contacts.deletePhoto",
+      "description": "Remove a contact's photo [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a single contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. \"people/c123456789\" or \"people/me\" for the signed-in user"
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List the user's contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "LAST_MODIFIED_ASCENDING | LAST_MODIFIED_DESCENDING | FIRST_NAME_ASCENDING | LAST_NAME_ASCENDING"
+          },
+          {
+            "key": "requestSyncToken",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a nextSyncToken for incremental reads. Expires after 7 days."
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string",
+            "description": "Return only changes since this token. Expired tokens 400; re-list in full."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "connections",
+            "optional": true,
+            "type": "{ resourceName: string, etag?: string, metadata?: { sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }, names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], photos?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[], memberships?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextSyncToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalPeople",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search contacts by name, email or phone. Google warms this index per account, so the first call after authorizing can return nothing; retry.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Prefix-matched against names, nicknames, emails and phones"
+          },
+          {
+            "key": "readMask",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ person?: { resourceName: string, etag?: string, metadata?: { sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }, names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], photos?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[], memberships?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": false,
+            "type": "string",
+            "description": "etag from a prior read; the API rejects updates without it"
+          },
+          {
+            "key": "person",
+            "optional": false,
+            "type": "{ names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[] }"
+          },
+          {
+            "key": "updatePersonFields",
+            "optional": false,
+            "type": "string[]",
+            "description": "Fields to overwrite, e.g. [\"emailAddresses\"]. Omitted fields are left untouched."
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.contacts.updatePhoto",
+      "shortPath": "contacts.updatePhoto",
+      "description": "Set or replace a contact's photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "photoBytes",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded image"
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.otherContacts.copyToContacts",
+      "shortPath": "otherContacts.copyToContacts",
+      "description": "Copy an auto-saved contact into the saved contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. \"otherContacts/c123456789\""
+          },
+          {
+            "key": "copyMask",
+            "optional": true,
+            "type": "emailAddresses | names | phoneNumbers[]",
+            "description": "Fields to carry over. Google permits only these three."
+          },
+          {
+            "key": "personFields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Person fields to return, e.g. [\"names\",\"emailAddresses\",\"phoneNumbers\"]. Defaults to names, emailAddresses and phoneNumbers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }"
+          },
+          {
+            "key": "names",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[]"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[]"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[]"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[]"
+          },
+          {
+            "key": "photos",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[]"
+          },
+          {
+            "key": "biographies",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[]"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "{ metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.otherContacts.list",
+      "shortPath": "otherContacts.list",
+      "description": "List auto-saved contacts the user never filed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "readMask",
+            "optional": true,
+            "type": "emailAddresses | metadata | names | phoneNumbers[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "otherContacts",
+            "optional": true,
+            "type": "{ resourceName: string, etag?: string, metadata?: { sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }, names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], photos?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[], memberships?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[] }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlecontacts.api.otherContacts.search",
+      "shortPath": "otherContacts.search",
+      "description": "Search auto-saved contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "readMask",
+            "optional": true,
+            "type": "emailAddresses | metadata | names | phoneNumbers[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ person?: { resourceName: string, etag?: string, metadata?: { sources?: { type?: string, id?: string, etag?: string }[], deleted?: boolean, objectType?: string }, names?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, displayName?: string, familyName?: string, givenName?: string, middleName?: string, honorificPrefix?: string, honorificSuffix?: string }[], emailAddresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, type?: string, displayName?: string }[], phoneNumbers?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, canonicalForm?: string, type?: string }[], organizations?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, name?: string, title?: string, department?: string }[], addresses?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, formattedValue?: string, streetAddress?: string, city?: string, region?: string, postalCode?: string, country?: string, countryCode?: string, type?: string }[], photos?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, url?: string, default?: boolean }[], biographies?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, value?: string, contentType?: string }[], memberships?: { metadata?: { primary?: boolean, verified?: boolean, source?: { type?: string, id?: string } }, contactGroupMembership?: { contactGroupId?: string, contactGroupResourceName?: string } }[] } }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "googlecontacts.db.contactGroups.search",
+      "entityName": "contactGroups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resourceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "formattedName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "groupType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "googlecontacts.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resourceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "givenName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "familyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "photoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
