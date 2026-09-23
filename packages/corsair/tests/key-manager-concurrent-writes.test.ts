@@ -136,8 +136,9 @@ describe('account key manager concurrent field writes', () => {
 				.selectFrom('corsair_integrations')
 				.selectAll()
 				.where('name', '=', 'outlook')
+				.where('dek', 'is not', null)
 				.executeTakeFirstOrThrow();
-			const dek = await decryptDEK(row.dek as string, KEK);
+			const dek = await decryptDEK(row.dek, KEK);
 			await database.db
 				.updateTable('corsair_integrations')
 				.set({
