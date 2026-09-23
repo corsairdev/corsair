@@ -148,27 +148,51 @@ test('missingMetadataFields detects gaps for --check', () => {
 	}
 });
 
+/** Temp repo root where each listed plugin dir has a populated node_modules. */
+function withRepoRoot(installed: string[], fn: (root: string) => void) {
+	const root = mkdtempSync(join(tmpdir(), 'readmes-root-'));
+	try {
+		for (const dir of installed) {
+			mkdirSync(join(root, 'packages', dir, 'node_modules', 'jest'), {
+				recursive: true,
+			});
+		}
+		fn(root);
+	} finally {
+		rmSync(root, { recursive: true, force: true });
+	}
+}
+
+const missing = (pkg: string, dir: string) =>
+	`import failed: Cannot find package '${pkg}' imported from '/repo/packages/${dir}/index.ts'`;
+
 test('isWorkspaceNotInstalledError detects lane-scoped missing installs', () => {
-	assert.equal(
-		isWorkspaceNotInstalledError(
-			"import failed: Cannot find package 'corsair' imported from '/repo/packages/acme/index.ts'",
-		),
-		true,
-	);
-	assert.equal(
-		isWorkspaceNotInstalledError(
-			"import failed: Cannot find package 'zod' imported from '/repo/packages/zohobigin/index.ts'",
-		),
-		true,
-	);
-	assert.equal(
-		isWorkspaceNotInstalledError(
-			"import failed: Cannot find package 'lodash' imported from '/repo/packages/acme/index.ts'",
-		),
-		false,
-	);
-	assert.equal(isWorkspaceNotInstalledError('factory() threw: boom'), false);
-	assert.equal(isWorkspaceNotInstalledError('no factory export "acme"'), false);
+	withRepoRoot([], (root) => {
+		assert.equal(
+			isWorkspaceNotInstalledError(missing('corsair', 'acme'), 'acme', root),
+			true,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError(
+				missing('zod', 'zohobigin'),
+				'zohobigin',
+				root,
+			),
+			true,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError(missing('lodash', 'acme'), 'acme', root),
+			false,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError('factory() threw: boom', 'acme', root),
+			false,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError('no factory export "acme"', 'acme', root),
+			false,
+		);
+	});
 });
 
 test('missingPackageName extracts the package from import failures', () => {
@@ -187,126 +211,95 @@ test('missingPackageName extracts the package from import failures', () => {
 	assert.equal(missingPackageName('factory() threw: boom'), undefined);
 });
 
-test('isWorkspaceNotInstalledError is lane aware via node_modules', () => {
-	const root = mkdtempSync(join(tmpdir(), 'readmes-lane-'));
-	try {
-		const zodError =
-			"import failed: Cannot find package 'zod' imported from '/repo/packages/acme/index.ts'";
-		assert.equal(isWorkspaceNotInstalledError(zodError, 'acme', root), true);
-		mkdirSync(join(root, 'packages', 'acme', 'node_modules', 'zod'), {
-			recursive: true,
-		});
-		assert.equal(isWorkspaceNotInstalledError(zodError, 'acme', root), false);
-	} finally {
-		rmSync(root, { recursive: true, force: true });
-	}
+test('isWorkspaceNotInstalledError is lane aware via the plugin node_modules', () => {
+	withRepoRoot(['acme'], (root) => {
+		assert.equal(
+			isWorkspaceNotInstalledError(missing('zod', 'acme'), 'acme', root),
+			false,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError(missing('corsair', 'acme'), 'acme', root),
+			false,
+		);
+		assert.equal(
+			isWorkspaceNotInstalledError(missing('zod', 'other'), 'other', root),
+			true,
+		);
+	});
 });
 
 test('summarizeCheckResults skips uninstalled plugins but fails on gaps', () => {
 	const results = [
 		{ dir: 'acme', gaps: [], error: undefined },
-		{
-			dir: 'beta',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
-		},
+		{ dir: 'beta', gaps: [], error: missing('corsair', 'beta') },
 	];
-	const summary = summarizeCheckResults(results);
-	assert.equal(summary.ok, true);
-	assert.deepEqual(summary.skipped, ['beta']);
-	assert.deepEqual(summary.offenders, []);
-	assert.deepEqual(summary.errored, []);
+	withRepoRoot(['acme'], (root) => {
+		const summary = summarizeCheckResults(results, root);
+		assert.equal(summary.ok, true);
+		assert.deepEqual(summary.skipped, ['beta']);
+		assert.deepEqual(summary.offenders, []);
+		assert.deepEqual(summary.errored, []);
+	});
 });
 
 test('summarizeCheckResults skips both corsair and zod missing, but not other packages', () => {
 	const results = [
 		{ dir: 'finerworks', gaps: [], error: undefined },
-		{
-			dir: 'zohobigin',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'zod' imported from '/repo/packages/zohobigin/index.ts'",
-		},
-		{
-			dir: 'beta',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
-		},
-		{
-			dir: 'broken',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'lodash' imported from '/repo/packages/broken/index.ts'",
-		},
+		{ dir: 'zohobigin', gaps: [], error: missing('zod', 'zohobigin') },
+		{ dir: 'beta', gaps: [], error: missing('corsair', 'beta') },
+		{ dir: 'broken', gaps: [], error: missing('lodash', 'broken') },
 	];
-	const root = mkdtempSync(join(tmpdir(), 'readmes-summary-'));
-	try {
+	withRepoRoot(['finerworks'], (root) => {
 		const summary = summarizeCheckResults(results, root);
 		assert.equal(summary.ok, false);
 		assert.deepEqual(summary.skipped, ['zohobigin', 'beta']);
 		assert.deepEqual(summary.errored, ['broken']);
 		assert.deepEqual(summary.offenders, []);
-	} finally {
-		rmSync(root, { recursive: true, force: true });
-	}
+	});
 });
 
-test('summarizeCheckResults treats installed plugin zod failure as genuine error', () => {
-	const root = mkdtempSync(join(tmpdir(), 'readmes-installed-'));
-	try {
-		mkdirSync(join(root, 'packages', 'installed', 'node_modules', 'zod'), {
-			recursive: true,
-		});
-		const results = [
-			{ dir: 'finerworks', gaps: [], error: undefined },
-			{
-				dir: 'installed',
-				gaps: [],
-				error:
-					"import failed: Cannot find package 'zod' imported from '/repo/packages/installed/index.ts'",
-			},
-		];
+test('summarizeCheckResults errors on installed plugins missing corsair or zod', () => {
+	const results = [
+		{ dir: 'finerworks', gaps: [], error: undefined },
+		{ dir: 'forgotzod', gaps: [], error: missing('zod', 'forgotzod') },
+		{
+			dir: 'forgotcorsair',
+			gaps: [],
+			error: missing('corsair', 'forgotcorsair'),
+		},
+	];
+	withRepoRoot(['finerworks', 'forgotzod', 'forgotcorsair'], (root) => {
 		const summary = summarizeCheckResults(results, root);
 		assert.equal(summary.ok, false);
 		assert.deepEqual(summary.skipped, []);
-		assert.deepEqual(summary.errored, ['installed']);
-	} finally {
-		rmSync(root, { recursive: true, force: true });
-	}
+		assert.deepEqual(summary.errored, ['forgotzod', 'forgotcorsair']);
+	});
 });
 
 test('summarizeCheckResults still fails on real gaps and other errors', () => {
 	const results = [
 		{ dir: 'acme', gaps: ['README.md'], error: undefined },
 		{ dir: 'beta', gaps: [], error: 'factory() threw: boom' },
-		{
-			dir: 'gamma',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'corsair' imported from '/repo/packages/gamma/index.ts'",
-		},
+		{ dir: 'gamma', gaps: [], error: missing('corsair', 'gamma') },
 	];
-	const summary = summarizeCheckResults(results);
-	assert.equal(summary.ok, false);
-	assert.deepEqual(summary.offenders, ['acme']);
-	assert.deepEqual(summary.errored, ['beta']);
-	assert.deepEqual(summary.skipped, ['gamma']);
+	withRepoRoot(['acme', 'beta'], (root) => {
+		const summary = summarizeCheckResults(results, root);
+		assert.equal(summary.ok, false);
+		assert.deepEqual(summary.offenders, ['acme']);
+		assert.deepEqual(summary.errored, ['beta']);
+		assert.deepEqual(summary.skipped, ['gamma']);
+	});
 });
 
 test('summarizeCheckResults fails when nothing introspected at all', () => {
 	const results = [
-		{
-			dir: 'beta',
-			gaps: [],
-			error:
-				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
-		},
+		{ dir: 'beta', gaps: [], error: missing('corsair', 'beta') },
 	];
-	const summary = summarizeCheckResults(results);
-	assert.equal(summary.ok, false);
-	assert.deepEqual(summary.skipped, ['beta']);
+	withRepoRoot([], (root) => {
+		const summary = summarizeCheckResults(results, root);
+		assert.equal(summary.ok, false);
+		assert.deepEqual(summary.skipped, ['beta']);
+	});
 });
 
 test('buildChangesetContent lists exactly the touched packages at patch', () => {

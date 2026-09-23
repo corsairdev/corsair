@@ -331,25 +331,19 @@ export function missingPackageName(error: string): string | undefined {
  * first runtime failure is `zod`, while plugins with a runtime
  * `from 'corsair/core'` value import fail on `corsair` first.
  *
- * When `dir` and `root` are given, this is lane aware: it only skips when
- * the missing dep is truly absent from `packages/<dir>/node_modules`. If the
- * plugin is installed (dep present on disk) but the import still fails, it
- * is genuine breakage and returns false so full lane checks cannot pass
- * silently.
+ * Only a plugin with no `packages/<dir>/node_modules` at all counts as not
+ * installed. An installed plugin that still cannot resolve `corsair` or
+ * `zod` (e.g. it never declared the dependency) is genuine breakage, so the
+ * full lane cannot pass silently.
  */
 export function isWorkspaceNotInstalledError(
 	error: string,
-	dir?: string,
-	root?: string,
+	dir: string,
+	root: string,
 ): boolean {
 	const pkg = missingPackageName(error);
 	if (pkg !== 'corsair' && pkg !== 'zod') return false;
-	if (dir === undefined || root === undefined) return true;
-	try {
-		return !existsSync(join(root, 'packages', dir, 'node_modules', pkg));
-	} catch {
-		return true;
-	}
+	return !existsSync(join(root, 'packages', dir, 'node_modules'));
 }
 
 export type CheckResultSummary = {
@@ -362,12 +356,12 @@ export type CheckResultSummary = {
 /**
  * Decide a `--check` run: gaps and real load errors fail, uninstalled
  * plugins are skipped, and a run that introspected nothing fails so a
- * broken install can never pass vacuously. Pass `root` (repo root) so the
- * skip decision is lane aware via `packages/<dir>/node_modules`.
+ * broken install can never pass vacuously. `root` is the repo root, used to
+ * tell uninstalled plugins apart via `packages/<dir>/node_modules`.
  */
 export function summarizeCheckResults(
 	results: { dir: string; gaps: string[]; error?: string }[],
-	root: string = repoRoot(),
+	root: string,
 ): CheckResultSummary {
 	const skipped = results
 		.filter(
@@ -578,7 +572,7 @@ async function main() {
 	const errored = results.filter((r) => r.error);
 
 	if (check) {
-		const summary = summarizeCheckResults(results);
+		const summary = summarizeCheckResults(results, root);
 		for (const dir of summary.skipped) {
 			console.warn(`[${dir}] skipped: workspace dependency not installed`);
 		}
