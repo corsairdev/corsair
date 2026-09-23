@@ -113,6 +113,7 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'campayn',
+	'canny',
 	'canva',
 	'canvas',
 	'capsulecrm',
@@ -414,6 +415,7 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	campayn: 'Campayn',
+	canny: 'Canny',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	capsulecrm: 'Capsule CRM',
@@ -722,6 +724,7 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'campayn'
+	| 'canny'
 	| 'canva'
 	| 'canvas'
 	| 'capsulecrm'
