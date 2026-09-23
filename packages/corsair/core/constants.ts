@@ -223,6 +223,7 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'nextdns',
+	'northflank',
 	'notion',
 	'ocrspace',
 	'ocrwebservice',
@@ -528,6 +529,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
+	northflank: 'Northflank',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ocrwebservice: 'OcrWebService',
@@ -840,6 +842,7 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
+	| 'northflank'
 	| 'notion'
 	| 'ocrspace'
 	| 'ocrwebservice'
