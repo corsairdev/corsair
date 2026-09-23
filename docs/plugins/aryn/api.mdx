@@ -1,0 +1,505 @@
+---
+title: API
+description: "API reference for Aryn: every `aryn.api.*` operation with input and output types."
+---
+
+Every `aryn.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Async Tasks
+
+### list
+
+`asyncTasks.list`
+
+List async partitioning tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.aryn.api.asyncTasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path_filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Docset
+
+### create
+
+`docset.create`
+
+Create a new DocSet
+
+**Risk:** `write`
+
+```ts
+await corsair.aryn.api.docset.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `schema` | `any` | No | — |
+| `properties` | `object` | No | — |
+| `prompts` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="prompts full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `readonly` | `boolean` | Yes | — |
+| `properties` | `object` | No | — |
+| `schema` | `any` | No | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`docset.delete`
+
+Delete a DocSet
+
+**Risk:** `destructive`
+
+```ts
+await corsair.aryn.api.docset.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `readonly` | `boolean` | Yes | — |
+| `properties` | `object` | No | — |
+| `schema` | `any` | No | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`docset.get`
+
+Get DocSet metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.aryn.api.docset.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `readonly` | `boolean` | Yes | — |
+| `properties` | `object` | No | — |
+| `schema` | `any` | No | — |
+| `size` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Document
+
+### get
+
+`document.get`
+
+Get a document by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.aryn.api.document.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `include_elements` | `boolean` | No | — |
+| `include_binary` | `boolean` | No | — |
+| `include_original_elements` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `elements` | `object[]` | No | — |
+| `properties` | `object` | No | — |
+| `binary_data` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type?: string,
+  bbox?: number[],
+  properties?: {
+    score?: number,
+    page_number?: number
+  } | null,
+  text_representation?: string | null,
+  binary_representation?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBinary
+
+`document.getBinary`
+
+Download document binary content
+
+**Risk:** `read`
+
+```ts
+await corsair.aryn.api.document.getBinary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `doc_id` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+---
+
+### partition
+
+`document.partition`
+
+Partition document using Aryn DocParse
+
+**Risk:** `write`
+
+```ts
+await corsair.aryn.api.document.partition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | No | — |
+| `file_url` | `string` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  threshold?: number | auto,
+  text_mode?: string,
+  table_mode?: string,
+  extract_images?: boolean,
+  extract_image_format?: string,
+  selected_pages?: (
+    number | number[]
+  )[],
+  strategy?: string,
+  max_tokens?: number,
+  tokenizer?: string,
+  merge_across_pages?: boolean,
+  promote_title?: boolean,
+  title_candidate_elements?: string[],
+  orientation_correction?: boolean,
+  include_pagenum?: boolean,
+  include_headers?: boolean,
+  include_footers?: boolean,
+  pipeline?: string,
+  add_to_docset_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string[]` | Yes | — |
+| `status_code` | `number` | No | — |
+| `error` | `string` | No | — |
+| `elements` | `object[]` | No | — |
+| `markdown` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type?: string,
+  bbox?: number[],
+  properties?: {
+    score?: number,
+    page_number?: number
+  } | null,
+  text_representation?: string | null,
+  binary_representation?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submitAsyncAdd
+
+`document.submitAsyncAdd`
+
+Submit document asynchronously to a DocSet
+
+**Risk:** `write`
+
+```ts
+await corsair.aryn.api.document.submitAsyncAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docset_id` | `string` | Yes | — |
+| `file` | `custom` | No | — |
+| `file_url` | `string` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  threshold?: number | auto,
+  text_mode?: string,
+  table_mode?: string,
+  extract_images?: boolean,
+  extract_image_format?: string,
+  selected_pages?: (
+    number | number[]
+  )[],
+  strategy?: string,
+  max_tokens?: number,
+  tokenizer?: string,
+  merge_across_pages?: boolean,
+  promote_title?: boolean,
+  title_candidate_elements?: string[],
+  orientation_correction?: boolean,
+  include_pagenum?: boolean,
+  include_headers?: boolean,
+  include_footers?: boolean,
+  pipeline?: string,
+  add_to_docset_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+---
+
+## Query
+
+### generatePlan
+
+`query.generatePlan`
+
+Generate query plan
+
+**Risk:** `read`
+
+```ts
+await corsair.aryn.api.query.generatePlan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `docset_id` | `string` | No | — |
+| `summarize_result` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `nodes` | `object` | Yes | — |
+| `result_node` | `number` | Yes | — |
+| `llm_prompt` | `any` | No | — |
+| `llm_plan` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,265 @@
+---
+title: API
+description: "API reference for Cincopa: every `cincopa.api.*` operation with input and output types."
+---
+
+Every `cincopa.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Asset
+
+### abortUploadFromUrl
+
+`asset.abortUploadFromUrl`
+
+Abort an ongoing asset upload-in-progress
+
+**Risk:** `write`
+
+```ts
+await corsair.cincopa.api.asset.abortUploadFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusId` | `string` | Yes | Status tracking identifier of the upload to abort |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `runtime` | `number` | No | — |
+| `status_id` | `string` | No | — |
+
+
+
+---
+
+### getUploadFromUrlStatus
+
+`asset.getUploadFromUrlStatus`
+
+Check the status of an asset upload initiated via URL
+
+**Risk:** `read`
+
+```ts
+await corsair.cincopa.api.asset.getUploadFromUrlStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusId` | `string` | Yes | Status tracking identifier from uploadFromUrl |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `runtime` | `number` | No | — |
+| `status` | `string` | No | — |
+| `progress` | `string \| number` | No | — |
+| `progress_bytes` | `string \| number` | No | — |
+| `file_size_bytes` | `string \| number` | No | — |
+| `resid` | `string` | No | — |
+| `more` | `string` | No | — |
+| `debug` | `string` | No | — |
+
+
+
+---
+
+### uploadFromUrl
+
+`asset.uploadFromUrl`
+
+Upload a new asset directly from a provided external URL
+
+**Risk:** `write`
+
+```ts
+await corsair.cincopa.api.asset.uploadFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | External URL of the media asset to upload |
+| `fid` | `string` | No | Optional gallery folder identifier (FID) target |
+| `rid` | `string` | No | Optional existing resource identifier (RID) to replace |
+| `type` | `string` | No | Optional media asset type specification |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `runtime` | `number` | No | — |
+| `status_id` | `string` | Yes | — |
+
+
+
+---
+
+## Gallery
+
+### list
+
+`gallery.list`
+
+List galleries with pagination, search, and tag filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.cincopa.api.gallery.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | Search term to filter galleries |
+| `page` | `number` | No | Page number for pagination (starts at 1) |
+| `itemsPerPage` | `number` | No | Number of items per page (1-100) |
+| `filterTags` | `string` | No | Filter galleries by tag |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `runtime` | `number` | Yes | — |
+| `workspace` | `string` | No | — |
+| `galleries` | `object[]` | Yes | — |
+| `tag_cloud` | `object` | Yes | — |
+| `items_data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="galleries full type">
+
+```ts
+{
+  fid: string,
+  name: string,
+  description: string,
+  upload_url: string,
+  tags: string,
+  modified: string,
+  syncstatus: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tag_cloud full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="items_data full type">
+
+```ts
+{
+  page: number,
+  items_per_page: number,
+  items_count: number,
+  pages_count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## General
+
+### getUploadIframe
+
+`general.getUploadIframe`
+
+Get an embeddable upload iframe URL for a gallery
+
+**Risk:** `read`
+
+```ts
+await corsair.cincopa.api.general.getUploadIframe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fid` | `string` | No | Optional gallery folder identifier (FID) target |
+| `rrid` | `string` | No | Optional replace resource identifier (RRID) target |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public upload iframe URL stripped of credentials |
+| `html` | `string` | Yes | Safe iframe HTML markup with credentials redacted |
+
+
+
+---
+
+### ping
+
+`general.ping`
+
+Validate API connection
+
+**Risk:** `read`
+
+```ts
+await corsair.cincopa.api.general.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `ping` | `string` | No | — |
+| `runtime` | `number` | No | — |
+| `accemail` | `string` | No | — |
+| `accid` | `string` | No | — |
+| `accid_num` | `number \| string` | No | — |
+| `permissions` | `string` | No | — |
+| `useremail` | `string` | No | — |
+| `userid` | `string` | No | — |
+| `userid_num` | `number \| string` | No | — |
+| `ip` | `string` | No | — |
+| `revertid` | `boolean` | No | — |
+
+
+
+---
+

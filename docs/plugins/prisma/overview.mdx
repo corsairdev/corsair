@@ -1,0 +1,153 @@
+---
+title: Overview
+description: "Prisma plugin for Corsair"
+---
+
+Use **Prisma** through Corsair: one client, typed API calls, local DB sync.
+
+Prisma is the company behind Prisma ORM and the Prisma Data Platform: Prisma
+Postgres (managed PostgreSQL), Accelerate (global database cache), and the
+Console for managing workspaces, projects, databases, API keys, backups, and
+integrations. This plugin drives all of that through the Prisma Management
+API (https://api.prisma.io/v1) plus direct Postgres wire-protocol access for
+read-only queries, write commands, and schema inspection. Use Corsair
+permissions for destructive actions such as deleting projects, deleting
+databases, restoring backups, and revoking connections.
+
+**What you get:**
+
+- 23 typed API operations
+- 7 synced entities (`backups`, `connections`, `databases`, `integrations`, `projects`, `regions`, and 1 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/prisma
+```
+```bash yarn
+yarn add corsair @corsair-dev/prisma
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/prisma
+```
+```bash bun
+bun add corsair @corsair-dev/prisma
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { prisma } from '@corsair-dev/prisma';
+
+export const corsair = createCorsair({
+	plugins: [
+		prisma(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+prisma()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Prisma OAuth app.
+
+```ts
+prisma({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'prisma',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`backups.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prisma.api.backups.list({});
+```
+
+
+**`backups.restore`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.prisma.api.backups.restore({});
+```
+
+
+See the full list on the [API](/plugins/prisma/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.prisma.db.<entity>.search()` and `.list()`: `backups`, `connections`, `databases`, `integrations`, `projects`, `regions`, `workspaces`.
+
+See [Database](/plugins/prisma/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/prisma/api">
+    Every `prisma.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/prisma/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

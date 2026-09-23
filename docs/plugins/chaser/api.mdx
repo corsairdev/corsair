@@ -1,0 +1,223 @@
+---
+title: API
+description: "API reference for Chaser: every `chaser.api.*` operation with input and output types."
+---
+
+Every `chaser.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credit Notes
+
+### list
+
+`creditNotes.list`
+
+List all credit notes
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.creditNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  amount: number,
+  currency: string,
+  status: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### list
+
+`customers.list`
+
+List all customers
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Get an invoice by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List all invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `customer_external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  amount: number,
+  currency: string,
+  status: string,
+  due_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Get organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.organization.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+
+
+
+---
+

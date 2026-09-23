@@ -1,0 +1,1405 @@
+---
+title: API
+description: "API reference for Coinbase: every `coinbase.api.*` operation with input and output types."
+---
+
+Every `coinbase.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Get a Coinbase account by id or currency code
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `primary` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `currency` | `object` | No | — |
+| `balance` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `resource_path` | `string` | No | — |
+| `ready` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="currency full type">
+
+```ts
+string | {
+  code: string,
+  name?: string,
+  type?: string,
+  asset_id?: string,
+  slug?: string,
+  color?: string,
+  exponent?: number,
+  sort_index?: number,
+  address_regex?: string
+}
+```
+</Accordion>
+
+<Accordion title="balance full type">
+
+```ts
+{
+  amount: string,
+  currency: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List Coinbase accounts and balances
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  ending_before?: string | null,
+  starting_after?: string | null,
+  limit?: number,
+  order?: string,
+  previous_uri?: string | null,
+  next_uri?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  primary?: boolean,
+  type?: string,
+  currency?: string | {
+    code: string,
+    name?: string,
+    type?: string,
+    asset_id?: string,
+    slug?: string,
+    color?: string,
+    exponent?: number,
+    sort_index?: number,
+    address_regex?: string
+  },
+  balance?: {
+    amount: string,
+    currency: string
+  },
+  created_at?: string | null,
+  updated_at?: string | null,
+  resource?: string,
+  resource_path?: string,
+  ready?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Data
+
+### getExchangeRates
+
+`data.getExchangeRates`
+
+Get exchange rates for a base currency
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.data.getExchangeRates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string` | Yes | — |
+| `rates` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rates full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTime
+
+`data.getTime`
+
+Get Coinbase API server time
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.data.getTime({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iso` | `string` | Yes | — |
+| `epoch` | `number` | Yes | — |
+
+
+
+---
+
+### listCurrencies
+
+`data.listCurrencies`
+
+List currencies supported by Coinbase
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.data.listCurrencies({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  min_size?: string,
+  status?: string,
+  message?: string | null,
+  convertible_to?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Markets
+
+### getCurrency
+
+`markets.getCurrency`
+
+Get a Coinbase App currency by id
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getCurrency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  min_size?: string,
+  status?: string,
+  message?: string | null,
+  convertible_to?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMarketProductBook
+
+`markets.getMarketProductBook`
+
+Get the Advanced Trade public product book
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getMarketProductBook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pricebook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pricebook full type">
+
+```ts
+{
+  product_id?: string,
+  bids?: {
+    price?: string,
+    size?: string
+  }[],
+  asks?: {
+    price?: string,
+    size?: string
+  }[],
+  time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProduct
+
+`markets.getProduct`
+
+Get an Advanced Trade product by id
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | No | — |
+| `price` | `string` | No | — |
+| `base_currency_id` | `string` | No | — |
+| `quote_currency_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `volume_24h` | `string` | No | — |
+
+
+
+---
+
+### getProductBook
+
+`markets.getProductBook`
+
+Get the Advanced Trade product order book
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getProductBook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pricebook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pricebook full type">
+
+```ts
+{
+  product_id?: string,
+  bids?: {
+    price?: string,
+    size?: string
+  }[],
+  asks?: {
+    price?: string,
+    size?: string
+  }[],
+  time?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPublicTrades
+
+`markets.getPublicTrades`
+
+Get public Advanced Trade market trades
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getPublicTrades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trades` | `object[]` | No | — |
+| `best_bid` | `string` | No | — |
+| `best_ask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="trades full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getServerTime
+
+`markets.getServerTime`
+
+Get Coinbase Advanced Trade server time
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getServerTime({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iso` | `string` | No | — |
+| `epochSeconds` | `string \| number` | No | — |
+| `epochMillis` | `string \| number` | No | — |
+
+
+
+---
+
+### getTicker
+
+`markets.getTicker`
+
+Get the Advanced Trade public product ticker and trades
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getTicker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trades` | `object[]` | No | — |
+| `best_bid` | `string` | No | — |
+| `best_ask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="trades full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVolumeSummary
+
+`markets.getVolumeSummary`
+
+List Advanced Trade products including 24h volume
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.getVolumeSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `product_type` | `string` | No | — |
+| `product_ids` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `num_products` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  product_id?: string,
+  price?: string,
+  base_currency_id?: string,
+  quote_currency_id?: string,
+  status?: string,
+  volume_24h?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listExchangeProducts
+
+`markets.listExchangeProducts`
+
+List Advanced Trade trading products
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listExchangeProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `product_type` | `string` | No | — |
+| `product_ids` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `num_products` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  product_id?: string,
+  price?: string,
+  base_currency_id?: string,
+  quote_currency_id?: string,
+  status?: string,
+  volume_24h?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProductCandles
+
+`markets.listProductCandles`
+
+List Advanced Trade product candles
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listProductCandles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `granularity` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="candles full type">
+
+```ts
+{
+  start?: string,
+  low?: string,
+  high?: string,
+  open?: string,
+  close?: string,
+  volume?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProducts
+
+`markets.listProducts`
+
+List Advanced Trade market products
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `product_type` | `string` | No | — |
+| `product_ids` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | No | — |
+| `num_products` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  product_id?: string,
+  price?: string,
+  base_currency_id?: string,
+  quote_currency_id?: string,
+  status?: string,
+  volume_24h?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProductsCandles
+
+`markets.listProductsCandles`
+
+List Advanced Trade candlestick history
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listProductsCandles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `granularity` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candles` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="candles full type">
+
+```ts
+{
+  start?: string,
+  low?: string,
+  high?: string,
+  open?: string,
+  close?: string,
+  volume?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listStats
+
+`markets.listStats`
+
+Get Advanced Trade product details and 24h stats
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | No | — |
+| `price` | `string` | No | — |
+| `base_currency_id` | `string` | No | — |
+| `quote_currency_id` | `string` | No | — |
+| `status` | `string` | No | — |
+| `volume_24h` | `string` | No | — |
+
+
+
+---
+
+### listTrades
+
+`markets.listTrades`
+
+List recent Advanced Trade market trades
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listTrades({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Currency pair such as BTC-USD |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trades` | `object[]` | No | — |
+| `best_bid` | `string` | No | — |
+| `best_ask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="trades full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listWallets
+
+`markets.listWallets`
+
+List Coinbase App wallets (accounts)
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.markets.listWallets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  ending_before?: string | null,
+  starting_after?: string | null,
+  limit?: number,
+  order?: string,
+  previous_uri?: string | null,
+  next_uri?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  primary?: boolean,
+  type?: string,
+  currency?: string | {
+    code: string,
+    name?: string,
+    type?: string,
+    asset_id?: string,
+    slug?: string,
+    color?: string,
+    exponent?: number,
+    sort_index?: number,
+    address_regex?: string
+  },
+  balance?: {
+    amount: string,
+    currency: string
+  },
+  created_at?: string | null,
+  updated_at?: string | null,
+  resource?: string,
+  resource_path?: string,
+  ready?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payment Methods
+
+### list
+
+`paymentMethods.list`
+
+List payment methods on the authenticated Coinbase account
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.paymentMethods.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  ending_before?: string | null,
+  starting_after?: string | null,
+  limit?: number,
+  order?: string,
+  previous_uri?: string | null,
+  next_uri?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  currency?: string,
+  primary_buy?: boolean,
+  primary_sell?: boolean,
+  allow_buy?: boolean,
+  allow_sell?: boolean,
+  allow_deposit?: boolean,
+  allow_withdraw?: boolean,
+  instant_buy?: boolean,
+  instant_sell?: boolean,
+  created_at?: string | null,
+  updated_at?: string | null,
+  resource?: string,
+  resource_path?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prices
+
+### getBuy
+
+`prices.getBuy`
+
+Get the Coinbase buy price for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.prices.getBuy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `base` | `string` | No | — |
+
+
+
+---
+
+### getSell
+
+`prices.getSell`
+
+Get the Coinbase sell price for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.prices.getSell({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `base` | `string` | No | — |
+
+
+
+---
+
+### getSpot
+
+`prices.getSpot`
+
+Get the current or historic spot price for a currency pair
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.prices.getSpot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency_pair` | `string` | Yes | Currency pair such as BTC-USD |
+| `date` | `string` | No | Historic spot price date (YYYY-MM-DD, UTC) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `base` | `string` | No | — |
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+Get a transaction on a Coinbase account
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.transactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `transaction_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `amount` | `object` | No | — |
+| `native_amount` | `object` | No | — |
+| `description` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `resource_path` | `string` | No | — |
+| `instant_exchange` | `boolean` | No | — |
+| `network` | `object` | No | — |
+| `to` | `object` | No | — |
+| `from` | `object` | No | — |
+| `details` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="amount full type">
+
+```ts
+{
+  amount: string,
+  currency: string
+}
+```
+</Accordion>
+
+<Accordion title="native_amount full type">
+
+```ts
+{
+  amount: string,
+  currency: string
+}
+```
+</Accordion>
+
+<Accordion title="network full type">
+
+```ts
+{
+  status?: string,
+  hash?: string | null,
+  name?: string,
+  transaction_url?: string | null,
+  status_description?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions for a Coinbase account
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `starting_after` | `string` | No | — |
+| `ending_before` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `account_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  ending_before?: string | null,
+  starting_after?: string | null,
+  limit?: number,
+  order?: string,
+  previous_uri?: string | null,
+  next_uri?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  status?: string,
+  amount?: {
+    amount: string,
+    currency: string
+  },
+  native_amount?: {
+    amount: string,
+    currency: string
+  },
+  description?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  resource?: string,
+  resource_path?: string,
+  instant_exchange?: boolean,
+  network?: {
+    status?: string,
+    hash?: string | null,
+    name?: string,
+    transaction_url?: string | null,
+    status_description?: string | null
+  },
+  to?: {
+  },
+  from?: {
+  },
+  details?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Get the authenticated Coinbase user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.coinbase.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `username` | `string` | No | — |
+| `profile_location` | `string` | No | — |
+| `profile_bio` | `string` | No | — |
+| `profile_url` | `string` | No | — |
+| `avatar_url` | `string` | No | — |
+| `resource` | `string` | No | — |
+| `resource_path` | `string` | No | — |
+| `email` | `string` | No | — |
+| `time_zone` | `string` | No | — |
+| `native_currency` | `string` | No | — |
+| `bitcoin_unit` | `string` | No | — |
+| `country` | `object` | No | — |
+| `created_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="country full type">
+
+```ts
+{
+  code: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
