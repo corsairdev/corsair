@@ -238,6 +238,7 @@ export const BaseProviders = [
 	'parseur',
 	'pdfmonkey',
 	'perplexityai',
+	'phantombuster',
 	'pinecone',
 	'posthog',
 	'pushbullet',
@@ -542,6 +543,7 @@ export const ProviderDisplayNames = {
 	parseur: 'Parseur',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
+	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
 	posthog: 'PostHog',
 	pushbullet: 'Pushbullet',
@@ -853,6 +855,7 @@ export type AllProviders =
 	| 'parseur'
 	| 'pdfmonkey'
 	| 'perplexityai'
+	| 'phantombuster'
 	| 'pinecone'
 	| 'posthog'
 	| 'pushbullet'
