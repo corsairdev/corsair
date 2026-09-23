@@ -250,6 +250,7 @@ export const BaseProviders = [
 	'perplexityai',
 	'phantombuster',
 	'pinecone',
+	'plain',
 	'posthog',
 	'pushbullet',
 	'razorpay',
@@ -567,6 +568,7 @@ export const ProviderDisplayNames = {
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
+	plain: 'Plain',
 	posthog: 'PostHog',
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
@@ -891,6 +893,7 @@ export type AllProviders =
 	| 'perplexityai'
 	| 'phantombuster'
 	| 'pinecone'
+	| 'plain'
 	| 'posthog'
 	| 'pushbullet'
 	| 'razorpay'
