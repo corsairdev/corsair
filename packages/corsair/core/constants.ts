@@ -329,6 +329,7 @@ export const BaseProviders = [
 	'waboxapp',
 	'wakatime',
 	'webflow',
+	'webscrapingai',
 	'webvizio',
 	'whatsapp',
 	'whautomate',
@@ -668,6 +669,7 @@ export const ProviderDisplayNames = {
 	waboxapp: 'Waboxapp',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
+	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	whautomate: 'Whautomate',
@@ -1014,6 +1016,7 @@ export type AllProviders =
 	| 'waboxapp'
 	| 'wakatime'
 	| 'webflow'
+	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'
 	| 'whautomate'
