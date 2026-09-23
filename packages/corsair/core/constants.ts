@@ -251,6 +251,7 @@ export const BaseProviders = [
 	'pushbullet',
 	'razorpay',
 	'reddit',
+	'replicate',
 	'removebg',
 	'resend',
 	'retailed',
@@ -564,6 +565,7 @@ export const ProviderDisplayNames = {
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
+	replicate: 'Replicate',
 	removebg: 'remove.bg',
 	resend: 'Resend',
 	retailed: 'Retailed',
@@ -884,6 +886,7 @@ export type AllProviders =
 	| 'pushbullet'
 	| 'razorpay'
 	| 'reddit'
+	| 'replicate'
 	| 'removebg'
 	| 'resend'
 	| 'retailed'
