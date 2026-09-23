@@ -533,12 +533,16 @@ export function buildCorsairClient<
 				});
 			accountKeyManager = getSharedAccountKeyManager({
 				scope: internalConfig ?? database,
-				cacheKey: [
+				// JSON-encoded (not `:`-joined): plugin ids, tenant ids, and
+				// field names may legally contain `:` or `,`, which would
+				// collide two distinct (plugin, tenant) pairs onto one key
+				// and share one credential row's manager — and its flights.
+				cacheKey: JSON.stringify([
 					plugin.id,
 					effectiveTenantId,
 					authType,
-					extraAccountFields.join(','),
-				].join(':'),
+					extraAccountFields,
+				]),
 				database,
 				kek,
 				create: createManager,
