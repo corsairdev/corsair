@@ -1,0 +1,36 @@
+import type { CorsairEndpoint } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
+import { makeNorthflankRequest } from '../client';
+import type { NorthflankContext } from '../index';
+import type { RegionsListInput, RegionsListOutput } from './types';
+import { RegionsListInputSchema, RegionsListOutputSchema } from './types';
+
+export type NorthflankEndpoint<TInput, TOutput> = CorsairEndpoint<
+	NorthflankContext,
+	TInput,
+	TOutput
+>;
+
+// GET /v1/regions
+// Docs: "List regions" (apiClient.list.regions)
+export const list: NorthflankEndpoint<
+	RegionsListInput,
+	RegionsListOutput
+> = async (ctx, input = {}) => {
+	RegionsListInputSchema.parse(input);
+	const res = await makeNorthflankRequest<RegionsListOutput>(
+		'regions',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+
+	const parsedRegions = RegionsListOutputSchema.parse(res);
+	await logEventFromContext(ctx, 'northflank.regions.list', {}, 'completed');
+	return parsedRegions;
+};
+
+export const RegionsEndpoints = {
+	list,
+} as const;

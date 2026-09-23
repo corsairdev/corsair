@@ -1398,6 +1398,14 @@
                 ]
               },
               {
+                "group": "Filevine",
+                "pages": [
+                  "plugins/filevine/overview",
+                  "plugins/filevine/api",
+                  "plugins/filevine/database"
+                ]
+              },
+              {
                 "group": "Fillout",
                 "pages": [
                   "plugins/filloutforms/overview",
