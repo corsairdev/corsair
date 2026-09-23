@@ -311,12 +311,23 @@ const FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 };
 
 /**
- * True when a plugin failed to load only because the `corsair` workspace
- * dependency is not installed — the signature of a lane-scoped CI install
- * (the plugin lane installs just the PR's plugin), not a broken plugin.
+ * True when a plugin failed to load only because workspace dependencies are
+ * not installed — the signature of a lane-scoped CI install (the plugin lane
+ * installs just the PR's plugin), not a broken plugin.
+ *
+ * Every plugin depends on `corsair` (workspace:*) and `zod`. Either missing
+ * means not-installed. Both are needed because import order differs per
+ * plugin: e.g. zohobigin has only `import type ... from 'corsair/core'`
+ * (erased at runtime) followed by runtime `import { z } from 'zod'`, so its
+ * first runtime failure is `zod`, while plugins with a runtime
+ * `from 'corsair/core'` value import fail on `corsair` first. In a full
+ * install neither should be missing, so real breakage still fails.
  */
 export function isWorkspaceNotInstalledError(error: string): boolean {
-	return error.startsWith("import failed: Cannot find package 'corsair'");
+	return (
+		error.startsWith("import failed: Cannot find package 'corsair'") ||
+		error.startsWith("import failed: Cannot find package 'zod'")
+	);
 }
 
 export type CheckResultSummary = {
@@ -541,9 +552,7 @@ async function main() {
 	if (check) {
 		const summary = summarizeCheckResults(results);
 		for (const dir of summary.skipped) {
-			console.warn(
-				`[${dir}] skipped: 'corsair' workspace dependency not installed`,
-			);
+			console.warn(`[${dir}] skipped: workspace dependency not installed`);
 		}
 		for (const dir of summary.errored) {
 			console.error(`[${dir}] ${results.find((r) => r.dir === dir)?.error}`);

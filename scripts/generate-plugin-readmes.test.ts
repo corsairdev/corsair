@@ -153,7 +153,13 @@ test('isWorkspaceNotInstalledError detects lane-scoped missing installs', () => 
 	);
 	assert.equal(
 		isWorkspaceNotInstalledError(
-			"import failed: Cannot find package 'zod' imported from '/repo/packages/acme/index.ts'",
+			"import failed: Cannot find package 'zod' imported from '/repo/packages/zohobigin/index.ts'",
+		),
+		true,
+	);
+	assert.equal(
+		isWorkspaceNotInstalledError(
+			"import failed: Cannot find package 'lodash' imported from '/repo/packages/acme/index.ts'",
 		),
 		false,
 	);
@@ -176,6 +182,35 @@ test('summarizeCheckResults skips uninstalled plugins but fails on gaps', () => 
 	assert.deepEqual(summary.skipped, ['beta']);
 	assert.deepEqual(summary.offenders, []);
 	assert.deepEqual(summary.errored, []);
+});
+
+test('summarizeCheckResults skips both corsair and zod missing, but not other packages', () => {
+	const results = [
+		{ dir: 'finerworks', gaps: [], error: undefined },
+		{
+			dir: 'zohobigin',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'zod' imported from '/repo/packages/zohobigin/index.ts'",
+		},
+		{
+			dir: 'beta',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'corsair' imported from '/repo/packages/beta/index.ts'",
+		},
+		{
+			dir: 'broken',
+			gaps: [],
+			error:
+				"import failed: Cannot find package 'lodash' imported from '/repo/packages/broken/index.ts'",
+		},
+	];
+	const summary = summarizeCheckResults(results);
+	assert.equal(summary.ok, false);
+	assert.deepEqual(summary.skipped, ['zohobigin', 'beta']);
+	assert.deepEqual(summary.errored, ['broken']);
+	assert.deepEqual(summary.offenders, []);
 });
 
 test('summarizeCheckResults still fails on real gaps and other errors', () => {
