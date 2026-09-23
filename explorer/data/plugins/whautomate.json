@@ -1,0 +1,845 @@
+{
+  "id": "whautomate",
+  "displayName": "Whautomate",
+  "description": "Whautomate plugin for Corsair",
+  "npmPackageName": "@corsair-dev/whautomate",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_host", "api_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "whautomate.api.account.getAccountInfo",
+      "shortPath": "account.getAccountInfo",
+      "description": "Fetch account name and owner email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiHost",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.broadcasts.getBroadcastById",
+      "shortPath": "broadcasts.getBroadcastById",
+      "description": "Fetch a single broadcast by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageTemplate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduledAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ total?: number, sent?: number, delivered?: number, read?: number, failed?: number }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.broadcasts.getBroadcasts",
+      "shortPath": "broadcasts.getBroadcasts",
+      "description": "List broadcasts with status and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | scheduled | sending | sent | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, status: string, segmentId?: string | null, messageTemplate?: string, scheduledAt?: string | null, sentAt?: string | null, stats?: { total?: number, sent?: number, delivered?: number, read?: number, failed?: number }, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, status: string, segmentId?: string | null, messageTemplate?: string, scheduledAt?: string | null, sentAt?: string | null, stats?: { total?: number, sent?: number, delivered?: number, read?: number, failed?: number }, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.contacts.addContact",
+      "shortPath": "contacts.addContact",
+      "description": "Create a new contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ id: string, title?: string }"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id: string, title?: string }"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.contacts.getContacts",
+      "shortPath": "contacts.getContacts",
+      "description": "List contacts with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: {} | null, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, phoneNumber?: string | null, phone?: string | null, email?: string | null, avatar?: string | null, segmentId?: string | null, location?: { id: string, title?: string }, stage?: string | null, notes?: string | null, tags?: string[], customFields?: {} | null, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.contacts.getMessagesOfContact",
+      "shortPath": "contacts.getMessagesOfContact",
+      "description": "Get chat messages for a contact with pagination and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, contactId?: string, contact?: any, channel?: string, isIncoming?: boolean, direction?: string, text?: string, content?: string, type?: string, status?: string, mediaUrl?: string | null, timestamp?: string, createdAt?: string }[] | { data: { id: string, contactId?: string, contact?: any, channel?: string, isIncoming?: boolean, direction?: string, text?: string, content?: string, type?: string, status?: string, mediaUrl?: string | null, timestamp?: string, createdAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.segments.deleteSegment",
+      "shortPath": "segments.deleteSegment",
+      "description": "Delete a segment by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.segments.getSegments",
+      "shortPath": "segments.getSegments",
+      "description": "List segments with name filter and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, contactCount?: number, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, contactCount?: number, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.serviceCategories.deleteServiceCategory",
+      "shortPath": "serviceCategories.deleteServiceCategory",
+      "description": "Delete a service category by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.serviceCategories.getServiceCategories",
+      "shortPath": "serviceCategories.getServiceCategories",
+      "description": "List service categories with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, description?: string | null, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, description?: string | null, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.services.getServiceById",
+      "shortPath": "services.getServiceById",
+      "description": "Fetch a single service by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.services.getServices",
+      "shortPath": "services.getServices",
+      "description": "List services with filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, description?: string | null, price?: number, duration?: number, categoryId?: string | null, isActive?: boolean, createdAt?: string, updatedAt?: string }[] | { data: { id: string, name: string, description?: string | null, price?: number, duration?: number, categoryId?: string | null, isActive?: boolean, createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.services.updateService",
+      "shortPath": "services.updateService",
+      "description": "Update service name, pricing, duration, and active status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.staff.getStaffAvailabilityBlocks",
+      "shortPath": "staff.getStaffAvailabilityBlocks",
+      "description": "Get staff availability blocks by date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "staffId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ staff: { id: string, firstName: string, lastName: string }, date: string, slots: { start?: string, end?: string, startTime?: string, endTime?: string, startTimeUTC?: string, endTimeUTC?: string, available?: boolean }[], createdAt?: string, updatedAt?: string }[]"
+      }
+    },
+    {
+      "path": "whautomate.api.staff.getStaffById",
+      "shortPath": "staff.getStaffById",
+      "description": "Fetch a single staff member by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "whautomate.api.staff.getStaffs",
+      "shortPath": "staff.getStaffs",
+      "description": "List staff members with pagination and search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, firstName: string, lastName: string, email?: string | null, phone?: string | null, avatar?: string | null, role?: string | null, active?: boolean, locations?: string[], createdAt?: string, updatedAt?: string }[] | { data: { id: string, firstName: string, lastName: string, email?: string | null, phone?: string | null, avatar?: string | null, role?: string | null, active?: boolean, locations?: string[], createdAt?: string, updatedAt?: string }[], pagination?: { page?: number, limit?: number, total?: number, totalPages?: number } }"
+      }
+    },
+    {
+      "path": "whautomate.api.webhooks.getAllWebhooks",
+      "shortPath": "webhooks.getAllWebhooks",
+      "description": "Retrieve registered webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url: string, events: string[], isActive: boolean, createdAt?: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

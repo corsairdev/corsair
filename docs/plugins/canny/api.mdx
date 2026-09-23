@@ -1,0 +1,921 @@
+---
+title: API
+description: "API reference for Canny: every `canny.api.*` operation with input and output types."
+---
+
+Every `canny.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Boards
+
+### list
+
+`boards.list`
+
+List all boards for your company in Canny
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.boards.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boards` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="boards full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  isPrivate: boolean,
+  name: string,
+  postCount: number,
+  privateComments?: boolean,
+  token?: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`boards.retrieve`
+
+Retrieve details of an existing Canny board by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.boards.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `isPrivate` | `boolean` | Yes | — |
+| `name` | `string` | Yes | — |
+| `postCount` | `number` | Yes | — |
+| `privateComments` | `boolean` | No | — |
+| `token` | `string` | No | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a new comment on a Canny post
+
+**Risk:** `write`
+
+```ts
+await corsair.canny.api.comments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorID` | `string` | Yes | — |
+| `postID` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `imageURLs` | `string[]` | No | — |
+| `internal` | `boolean` | No | — |
+| `parentID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment in Canny [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.canny.api.comments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commentID` | `string` | Yes | — |
+
+
+
+**Output:** `success \| string`
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments in Canny with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorID` | `string` | No | — |
+| `boardID` | `string` | No | — |
+| `companyID` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `postID` | `string` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: string,
+  author: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  },
+  board?: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  created: string,
+  deleteStatus?: string | null,
+  imageURLs?: string[],
+  internal?: boolean,
+  likeCount?: number,
+  parentID?: string | null,
+  post?: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  },
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### changeStatus
+
+`posts.changeStatus`
+
+Change an existing Canny post's status
+
+**Risk:** `write`
+
+```ts
+await corsair.canny.api.posts.changeStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `changerID` | `string` | Yes | — |
+| `commentValue` | `string` | No | — |
+| `postID` | `string` | Yes | — |
+| `shouldNotifyVoters` | `boolean` | No | — |
+| `status` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `board` | `object` | Yes | — |
+| `category` | `object` | No | — |
+| `commentCount` | `number` | Yes | — |
+| `created` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `eta` | `string` | No | — |
+| `imageURLs` | `string[]` | No | — |
+| `score` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `tags` | `object[]` | No | — |
+| `title` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `owner` | `object` | No | — |
+| `customFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  email?: string | null,
+  name: string,
+  userID?: string | null,
+  url: string,
+  isAdmin: boolean,
+  avatarURL?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="board full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  isPrivate: boolean,
+  name: string,
+  postCount: number,
+  privateComments?: boolean,
+  token?: string,
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url?: string,
+  postCount?: number,
+  parentID?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url?: string,
+  postCount?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  email?: string | null,
+  name: string,
+  userID?: string | null,
+  url: string,
+  isAdmin: boolean,
+  avatarURL?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`posts.create`
+
+Create a new post in Canny
+
+**Risk:** `write`
+
+```ts
+await corsair.canny.api.posts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorID` | `string` | Yes | — |
+| `boardID` | `string` | Yes | — |
+| `byID` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `categoryID` | `string` | No | — |
+| `customFields` | `object` | No | — |
+| `eta` | `string` | No | — |
+| `etaPublic` | `boolean` | No | — |
+| `imageURLs` | `string[]` | No | — |
+| `ownerID` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post in Canny [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.canny.api.posts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postID` | `string` | Yes | — |
+
+
+
+**Output:** `success \| string`
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts in Canny with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.posts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authorID` | `string` | No | — |
+| `boardID` | `string` | No | — |
+| `categoryID` | `string` | No | — |
+| `companyID` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+| `skip` | `number` | No | — |
+| `sort` | `newest \| oldest \| relevance \| score \| statusChanged \| trending` | No | — |
+| `status` | `open \| under review \| planned \| in progress \| complete \| closed` | No | — |
+| `tagID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasMore` | `boolean` | Yes | — |
+| `posts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  id: string,
+  author: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  },
+  board: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  category?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number,
+    parentID?: string | null
+  } | null,
+  commentCount: number,
+  created: string,
+  details?: string,
+  eta?: string | null,
+  imageURLs?: string[],
+  score: number,
+  status: string,
+  tags?: {
+    id: string,
+    name: string,
+    url?: string,
+    postCount?: number
+  }[],
+  title: string,
+  url: string,
+  owner?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  } | null,
+  customFields?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`posts.retrieve`
+
+Retrieve details of an existing Canny post by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.posts.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `boardID` | `string` | No | — |
+| `urlName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `author` | `object` | Yes | — |
+| `board` | `object` | Yes | — |
+| `category` | `object` | No | — |
+| `commentCount` | `number` | Yes | — |
+| `created` | `string` | Yes | — |
+| `details` | `string` | No | — |
+| `eta` | `string` | No | — |
+| `imageURLs` | `string[]` | No | — |
+| `score` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `tags` | `object[]` | No | — |
+| `title` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `owner` | `object` | No | — |
+| `customFields` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  email?: string | null,
+  name: string,
+  userID?: string | null,
+  url: string,
+  isAdmin: boolean,
+  avatarURL?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="board full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  isPrivate: boolean,
+  name: string,
+  postCount: number,
+  privateComments?: boolean,
+  token?: string,
+  url: string
+}
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url?: string,
+  postCount?: number,
+  parentID?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url?: string,
+  postCount?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  id: string,
+  created: string,
+  email?: string | null,
+  name: string,
+  userID?: string | null,
+  url: string,
+  isAdmin: boolean,
+  avatarURL?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Votes
+
+### create
+
+`votes.create`
+
+Create a vote for a Canny post on behalf of a user
+
+**Risk:** `write`
+
+```ts
+await corsair.canny.api.votes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postID` | `string` | Yes | — |
+| `voterID` | `string` | Yes | — |
+| `votePriority` | `0 \| 10 \| 20` | No | — |
+
+
+
+**Output:** `success \| string`
+
+
+---
+
+### delete
+
+`votes.delete`
+
+Delete a vote on a Canny post [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.canny.api.votes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postID` | `string` | Yes | — |
+| `voterID` | `string` | Yes | — |
+
+
+
+**Output:** `success \| string`
+
+
+---
+
+### list
+
+`votes.list`
+
+List votes in Canny with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.canny.api.votes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `boardID` | `string` | No | — |
+| `companyID` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `postID` | `string` | No | — |
+| `skip` | `number` | No | — |
+| `userID` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasMore` | `boolean` | Yes | — |
+| `votes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="votes full type">
+
+```ts
+{
+  id: string,
+  board?: {
+    id: string,
+    created: string,
+    isPrivate: boolean,
+    name: string,
+    postCount: number,
+    privateComments?: boolean,
+    token?: string,
+    url: string
+  },
+  by?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  } | null,
+  created: string,
+  post?: {
+    id: string,
+    author: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    },
+    board: {
+      id: string,
+      created: string,
+      isPrivate: boolean,
+      name: string,
+      postCount: number,
+      privateComments?: boolean,
+      token?: string,
+      url: string
+    },
+    category?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number,
+      parentID?: string | null
+    } | null,
+    commentCount: number,
+    created: string,
+    details?: string,
+    eta?: string | null,
+    imageURLs?: string[],
+    score: number,
+    status: string,
+    tags?: {
+      id: string,
+      name: string,
+      url?: string,
+      postCount?: number
+    }[],
+    title: string,
+    url: string,
+    owner?: {
+      id: string,
+      created: string,
+      email?: string | null,
+      name: string,
+      userID?: string | null,
+      url: string,
+      isAdmin: boolean,
+      avatarURL?: string | null
+    } | null,
+    customFields?: {
+    }
+  },
+  voter?: {
+    id: string,
+    created: string,
+    email?: string | null,
+    name: string,
+    userID?: string | null,
+    url: string,
+    isAdmin: boolean,
+    avatarURL?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

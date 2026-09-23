@@ -1,0 +1,740 @@
+---
+title: API
+description: "API reference for Zenserp: every `zenserp.api.*` operation with input and output types."
+---
+
+Every `zenserp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getStatus
+
+`account.getStatus`
+
+Return the remaining request quota for the API key
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.account.getStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `remaining_requests` | `number` | Yes | — |
+
+
+
+---
+
+## Batches
+
+### list
+
+`batches.list`
+
+List submitted Zenserp batches
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.batches.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  data: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metadata
+
+### listCountries
+
+`metadata.listCountries`
+
+List supported Google country parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.metadata.listCountries({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  value?: string,
+  code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLanguages
+
+`metadata.listLanguages`
+
+List supported Google interface languages
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.metadata.listLanguages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  value?: string,
+  code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLocations
+
+`metadata.listLocations`
+
+List supported geolocation targets
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.metadata.listLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  canonical_name?: string,
+  country_code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSearchEngines
+
+`metadata.listSearchEngines`
+
+List supported search-engine domains
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.metadata.listSearchEngines({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Search
+
+### bing
+
+`search.bing`
+
+Search Bing and return structured SERP data
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.search.bing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `organic` | `object[]` | No | — |
+| `paid` | `object[]` | No | — |
+| `images` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `number_of_results` | `number` | No | — |
+| `knowledge_graph` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paid full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### google
+
+`search.google`
+
+Search Google and return structured SERP data
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.search.google({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `organic` | `object[]` | No | — |
+| `paid` | `object[]` | No | — |
+| `images` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `number_of_results` | `number` | No | — |
+| `knowledge_graph` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paid full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseImage
+
+`search.reverseImage`
+
+Run a Google reverse-image search for a public image URL
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.search.reverseImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageUrl` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `organic` | `object[]` | No | — |
+| `paid` | `object[]` | No | — |
+| `images` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `number_of_results` | `number` | No | — |
+| `knowledge_graph` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paid full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yandex
+
+`search.yandex`
+
+Search Yandex and return structured SERP data
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.search.yandex({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `organic` | `object[]` | No | — |
+| `paid` | `object[]` | No | — |
+| `images` | `object[]` | No | — |
+| `related_searches` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `number_of_results` | `number` | No | — |
+| `knowledge_graph` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="organic full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="paid full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="related_searches full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="knowledge_graph full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shopping
+
+### getProduct
+
+`shopping.getProduct`
+
+Retrieve Google Shopping product details
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.shopping.getProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `image` | `string` | No | — |
+| `reviews` | `object[]` | No | — |
+| `specifications` | `object[]` | No | — |
+| `sellers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="specifications full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="sellers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trends
+
+### get
+
+`trends.get`
+
+Retrieve Google Trends data for one or more keywords
+
+**Risk:** `read`
+
+```ts
+await corsair.zenserp.api.trends.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `string[]` | Yes | — |
+| `location` | `string` | No | — |
+| `timeframe` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `json` | `object` | Yes | — |
+| `html` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="json full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,3766 @@
+{
+  "id": "pdfco",
+  "displayName": "Pdfco",
+  "description": "Pdfco plugin for Corsair",
+  "npmPackageName": "@corsair-dev/pdfco",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pdfco.api.accountBalance",
+      "shortPath": "accountBalance",
+      "description": "Get remaining PDF.co credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.barcodeGenerate",
+      "shortPath": "barcodeGenerate",
+      "description": "Generate a barcode image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Barcode type, e.g. \"QRCode\" or \"Code128\""
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string",
+            "description": "Value to encode inside the barcode"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return image inline"
+          },
+          {
+            "key": "decorationImage",
+            "optional": true,
+            "type": "string",
+            "description": "Logo image URL embedded inside QR-Code barcodes"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.documentParser",
+      "shortPath": "documentParser",
+      "description": "Extract structured data with a parser template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Parser template id from PDF.co"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Inline YAML parser template"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return parsed data inline in body"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices; default all"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "JSON | CSV | XML",
+            "description": "Parsed output format"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ objects?: {}[], elapsed?: number, templateName?: string, templateVersion?: string, timestamp?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.excelToCsv",
+      "shortPath": "excelToCsv",
+      "description": "Convert Excel to CSV",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source xls/xlsx/csv file"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return converted content inline"
+          },
+          {
+            "key": "worksheetIndex",
+            "optional": true,
+            "type": "string",
+            "description": "Worksheet index, 1-based"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.excelToHtml",
+      "shortPath": "excelToHtml",
+      "description": "Convert Excel to HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source xls/xlsx/csv file"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return converted content inline"
+          },
+          {
+            "key": "worksheetIndex",
+            "optional": true,
+            "type": "string",
+            "description": "Worksheet index, 1-based"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.excelToJson",
+      "shortPath": "excelToJson",
+      "description": "Convert Excel to JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source xls/xlsx/csv file"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return converted content inline"
+          },
+          {
+            "key": "worksheetIndex",
+            "optional": true,
+            "type": "string",
+            "description": "Worksheet index, 1-based"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.excelToText",
+      "shortPath": "excelToText",
+      "description": "Convert Excel to plain text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source xls/xlsx/csv file"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return converted content inline"
+          },
+          {
+            "key": "worksheetIndex",
+            "optional": true,
+            "type": "string",
+            "description": "Worksheet index, 1-based"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.excelToXml",
+      "shortPath": "excelToXml",
+      "description": "Convert Excel to XML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source xls/xlsx/csv file"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return converted content inline"
+          },
+          {
+            "key": "worksheetIndex",
+            "optional": true,
+            "type": "string",
+            "description": "Worksheet index, 1-based"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.fileUpload",
+      "shortPath": "fileUpload",
+      "description": "Upload a file URL to PDF.co storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source file to store"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Destination file name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.fileUploadBase64",
+      "shortPath": "fileUploadBase64",
+      "description": "Upload base64 content to PDF.co storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded file content"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Destination file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.jobCheck",
+      "shortPath": "jobCheck",
+      "description": "Check an async job status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Background job id from an async call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "working | success | failed | aborted"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobDuration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfAdd",
+      "shortPath": "pdfAdd",
+      "description": "Overlay text, images, or form values on a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "annotations",
+            "optional": true,
+            "type": "{ text: string, x: number, y: number, type?: string, id?: string, pages?: string, size?: number, color?: string, link?: string, fontName?: string, width?: number, height?: number, alignment?: left | center | right }[]",
+            "description": "Text annotations to overlay"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url: string, x: number, y: number, pages?: string, width?: number, height?: number, link?: string }[]",
+            "description": "Images to overlay"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ fieldName: string, text: string, pages?: string }[]",
+            "description": "Fillable form field values to set"
+          },
+          {
+            "key": "annotationsString",
+            "optional": true,
+            "type": "string",
+            "description": "Compact \";\"-separated text object notation"
+          },
+          {
+            "key": "imagesString",
+            "optional": true,
+            "type": "string",
+            "description": "Compact \";\"-separated image object notation"
+          },
+          {
+            "key": "fieldsString",
+            "optional": true,
+            "type": "string",
+            "description": "Compact \";\"-separated fillable field notation"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfChangeTextSearchable",
+      "shortPath": "pdfChangeTextSearchable",
+      "description": "Make scanned PDF text searchable with OCR",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the scanned PDF or image"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "OCR language, e.g. \"eng\" or \"eng+deu\""
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfDeletePages",
+      "shortPath": "pdfDeletePages",
+      "description": "Delete pages from a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "string",
+            "description": "1-based pages to delete, e.g. '1-2'"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfExtractAttachments",
+      "shortPath": "pdfExtractAttachments",
+      "description": "Extract embedded PDF attachments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return attachments inline"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfFind",
+      "shortPath": "pdfFind",
+      "description": "Find text and coordinates in a PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "searchString",
+            "optional": false,
+            "type": "string",
+            "description": "Text or regex pattern to find"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "0-based pages to search; default all"
+          },
+          {
+            "key": "regexSearch",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat searchString as regex"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ text?: string, pageIndex?: number, left?: number, top?: number, width?: number, height?: number }[]"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfFormsInfoReader",
+      "shortPath": "pdfFormsInfoReader",
+      "description": "Read PDF form field info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ PageCount?: number, Author?: string, Title?: string, Subject?: string, Keywords?: string, Creator?: string, Producer?: string, CreationDate?: string, ModificationDate?: string, Encrypted?: boolean }"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ PageIndex?: number, Type?: string, FieldName?: string, Value?: string, Left?: number, Top?: number, Width?: number, Height?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfFromEmail",
+      "shortPath": "pdfFromEmail",
+      "description": "Convert an email file to PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the .msg or .eml file"
+          },
+          {
+            "key": "embedAttachments",
+            "optional": true,
+            "type": "boolean",
+            "description": "Embed email attachments into the PDF"
+          },
+          {
+            "key": "convertAttachments",
+            "optional": true,
+            "type": "boolean",
+            "description": "Convert convertible attachments to PDF pages"
+          },
+          {
+            "key": "margins",
+            "optional": true,
+            "type": "string",
+            "description": "Margins, e.g. \"10px 10px 10px 10px\""
+          },
+          {
+            "key": "paperSize",
+            "optional": true,
+            "type": "string",
+            "description": "Paper size, e.g. \"A4\" or \"Letter\""
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "Portrait | Landscape",
+            "description": "Page orientation"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfFromHtml",
+      "shortPath": "pdfFromHtml",
+      "description": "Generate PDF from HTML markup",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "Raw HTML markup to render as PDF"
+          },
+          {
+            "key": "margins",
+            "optional": true,
+            "type": "string",
+            "description": "Margins, e.g. \"10px 10px 10px 10px\""
+          },
+          {
+            "key": "paperSize",
+            "optional": true,
+            "type": "string",
+            "description": "Paper size, e.g. \"A4\" or \"Letter\""
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "Portrait | Landscape",
+            "description": "Page orientation"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean",
+            "description": "Print CSS backgrounds"
+          },
+          {
+            "key": "header",
+            "optional": true,
+            "type": "string",
+            "description": "HTML header template"
+          },
+          {
+            "key": "footer",
+            "optional": true,
+            "type": "string",
+            "description": "HTML footer template"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfFromText",
+      "shortPath": "pdfFromText",
+      "description": "Convert a text document to PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the TXT/DOC/DOCX/RTF/PPT source file"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0-\""
+          },
+          {
+            "key": "autosize",
+            "optional": true,
+            "type": "boolean",
+            "description": "Autosize pages to content"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfInfoReader",
+      "shortPath": "pdfInfoReader",
+      "description": "Read PDF metadata and properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ PageCount?: number, Author?: string, Title?: string, Subject?: string, Keywords?: string, Creator?: string, Producer?: string, CreationDate?: string, ModificationDate?: string, Encrypted?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfMerge",
+      "shortPath": "pdfMerge",
+      "description": "Merge multiple PDFs into one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated list of PDF URLs to merge"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfRotate",
+      "shortPath": "pdfRotate",
+      "description": "Rotate selected PDF pages",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "0-based pages to rotate, e.g. \"0-2,4\"; default all pages"
+          },
+          {
+            "key": "angle",
+            "optional": true,
+            "type": "0 | 90 | 180 | 270",
+            "description": "Clockwise rotation angle in degrees"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fileSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfSearchAndDeleteText",
+      "shortPath": "pdfSearchAndDeleteText",
+      "description": "Search and delete text in a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string",
+            "description": "Single text to delete"
+          },
+          {
+            "key": "searchStrings",
+            "optional": true,
+            "type": "string[]",
+            "description": "Multiple texts to delete"
+          },
+          {
+            "key": "caseSensitive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Case-sensitive match"
+          },
+          {
+            "key": "regex",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat search strings as regex"
+          },
+          {
+            "key": "replacementLimit",
+            "optional": true,
+            "type": "number",
+            "description": "Max deletions per string; 0 means all"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "0-based pages; default all"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfSearchAndReplaceText",
+      "shortPath": "pdfSearchAndReplaceText",
+      "description": "Search and replace text in a PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "searchString",
+            "optional": true,
+            "type": "string",
+            "description": "Single text to search for"
+          },
+          {
+            "key": "replaceString",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement text"
+          },
+          {
+            "key": "searchStrings",
+            "optional": true,
+            "type": "string[]",
+            "description": "Multiple texts to search for, in order"
+          },
+          {
+            "key": "replaceStrings",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replacements aligned with searchStrings"
+          },
+          {
+            "key": "caseSensitive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Case-sensitive match"
+          },
+          {
+            "key": "regex",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat search strings as regex"
+          },
+          {
+            "key": "replacementLimit",
+            "optional": true,
+            "type": "number",
+            "description": "Max replacements per string; 0 means all"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "0-based pages; default all"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfSplit",
+      "shortPath": "pdfSplit",
+      "description": "Split a PDF into multiple files",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "string",
+            "description": "1-based pages or ranges to keep, e.g. '1-2,3-'"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToCsv",
+      "shortPath": "pdfToCsv",
+      "description": "Convert PDF to CSV",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return CSV inline in body"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToHtml",
+      "shortPath": "pdfToHtml",
+      "description": "Convert PDF to HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return HTML inline in body"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToImage",
+      "shortPath": "pdfToImage",
+      "description": "Convert PDF pages to images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jpg | png | tiff",
+            "description": "Output image format; selects the /to/jpg, /to/png, or /to/tiff endpoint"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToJson",
+      "shortPath": "pdfToJson",
+      "description": "Convert PDF to JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return JSON inline in body"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToText",
+      "shortPath": "pdfToText",
+      "description": "Convert PDF to plain text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return text inline in body"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToXls",
+      "shortPath": "pdfToXls",
+      "description": "Convert PDF to XLS",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToXlsx",
+      "shortPath": "pdfToXlsx",
+      "description": "Convert PDF to XLSX",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdfco.api.pdfToXml",
+      "shortPath": "pdfToXml",
+      "description": "Convert PDF to XML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public URL of the source PDF"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Page indices, e.g. \"0,1,2-\""
+          },
+          {
+            "key": "inline",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return XML inline in body"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "PDF password if protected"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run in background and return a jobId for PDF_CO_JOB_CHECK"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Output file name"
+          },
+          {
+            "key": "expiration",
+            "optional": true,
+            "type": "number",
+            "description": "Output link lifetime in minutes"
+          },
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "string | {}",
+            "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "error",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remainingCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputLinkValidTill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

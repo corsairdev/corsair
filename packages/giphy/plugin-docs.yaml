@@ -1,0 +1,9 @@
+displayName: GIPHY
+description: The world's largest library of animated GIFs, stickers, and emojis for apps and agents.
+
+examples:
+  read:
+    path: gifs.search
+    title: Search GIFs
+    args:
+      q: cats
