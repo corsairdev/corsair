@@ -7,7 +7,7 @@ Use **ClickMeeting** through Corsair: one client, typed API calls, local DB sync
 
 **What you get:**
 
-- 42 typed API operations
+- 35 typed API operations
 - 2 synced entities (`conferences`, `contacts`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -23,7 +23,7 @@ npm install corsair @corsair-dev/clickmeeting
 yarn add corsair @corsair-dev/clickmeeting
 ```
 ```bash pnpm
-pnpm add corsair @corsair-dev/clickmeeting
+pnpm install corsair @corsair-dev/clickmeeting
 ```
 ```bash bun
 bun add corsair @corsair-dev/clickmeeting
@@ -93,7 +93,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickmeeting.api.chats.getChatDetails({ chatId: 1 });
+await tenant.clickmeeting.api.chats.getChatDetails({});
 ```
 
 
@@ -101,7 +101,7 @@ await tenant.clickmeeting.api.chats.getChatDetails({ chatId: 1 });
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickmeeting.api.conferences.createConference({ name: 'My Webinar' });
+await tenant.clickmeeting.api.conferences.createConference({});
 ```
 
 

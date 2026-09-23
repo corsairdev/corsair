@@ -1,0 +1,2040 @@
+{
+  "id": "replicate",
+  "displayName": "Replicate",
+  "description": "Replicate plugin for Corsair",
+  "npmPackageName": "@corsair-dev/replicate",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "replicate.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get authenticated account information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "user | organization"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "github_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.collections.get",
+      "shortPath": "collections.get",
+      "description": "Get model collection details by slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "models",
+            "optional": true,
+            "type": "{ owner: string, name: string, description?: string | null, visibility?: public | private, url?: string, github_url?: string | null, paper_url?: string | null, license_url?: string | null, cover_image_url?: string | null, run_count?: number, is_official?: boolean, default_example?: any | null, latest_version?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List model collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ name: string, slug: string, description: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.deployments.create",
+      "shortPath": "deployments.create",
+      "description": "Create a deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hardware",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "min_instances",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "max_instances",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_release",
+            "optional": true,
+            "type": "{ number?: number, model?: string, version?: string, created_at?: string | string, configuration?: { hardware?: string, min_instances?: number, max_instances?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.deployments.delete",
+      "shortPath": "deployments.delete",
+      "description": "Delete a deployment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.deployments.get",
+      "shortPath": "deployments.get",
+      "description": "Get deployment details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_release",
+            "optional": true,
+            "type": "{ number?: number, model?: string, version?: string, created_at?: string | string, configuration?: { hardware?: string, min_instances?: number, max_instances?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.deployments.list",
+      "shortPath": "deployments.list",
+      "description": "List deployments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ owner: string, name: string, current_release?: { number?: number, model?: string, version?: string, created_at?: string | string, configuration?: { hardware?: string, min_instances?: number, max_instances?: number } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.deployments.predictionsCreate",
+      "shortPath": "deployments.predictionsCreate",
+      "description": "Create a prediction from deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_events_filter",
+            "optional": true,
+            "type": "start | output | logs | completed[]"
+          },
+          {
+            "key": "prefer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelAfter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "data_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.files.create",
+      "shortPath": "files.create",
+      "description": "Upload a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "checksums",
+            "optional": false,
+            "type": "{ sha256?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "{ get: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get file details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "checksums",
+            "optional": false,
+            "type": "{ sha256?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "{ get: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.files.list",
+      "shortPath": "files.list",
+      "description": "List uploaded files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, content_type: string, size: number, checksums: { sha256?: string }, metadata: {}, created_at: string | string, expires_at: string | string, urls: { get: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.hardware.list",
+      "shortPath": "hardware.list",
+      "description": "List available hardware SKUs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ sku: string, name: string }[]"
+      }
+    },
+    {
+      "path": "replicate.api.models.examplesList",
+      "shortPath": "models.examplesList",
+      "description": "List model examples",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.get",
+      "shortPath": "models.get",
+      "description": "Get model details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "github_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paper_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "license_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "run_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_example",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "latest_version",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.list",
+      "shortPath": "models.list",
+      "description": "List public models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "model_created_at | latest_version_created_at"
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ owner: string, name: string, description?: string | null, visibility?: public | private, url?: string, github_url?: string | null, paper_url?: string | null, license_url?: string | null, cover_image_url?: string | null, run_count?: number, is_official?: boolean, default_example?: any | null, latest_version?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.predictionsCreate",
+      "shortPath": "models.predictionsCreate",
+      "description": "Create official model prediction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_events_filter",
+            "optional": true,
+            "type": "start | output | logs | completed[]"
+          },
+          {
+            "key": "prefer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelAfter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "data_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.readmeGet",
+      "shortPath": "models.readmeGet",
+      "description": "Get model README",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "replicate.api.models.update",
+      "shortPath": "models.update",
+      "description": "Update model metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readme",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "github_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paper_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weights_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "license_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | private"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "github_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paper_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "license_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover_image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "run_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_example",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "latest_version",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.versionsGet",
+      "shortPath": "models.versionsGet",
+      "description": "Get model version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "cog_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "openapi_schema",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.models.versionsList",
+      "shortPath": "models.versionsList",
+      "description": "List model versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, created_at: string | string, cog_version?: string | null, openapi_schema?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.predictions.cancel",
+      "shortPath": "predictions.cancel",
+      "description": "Cancel prediction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "predictionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "data_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.predictions.create",
+      "shortPath": "predictions.create",
+      "description": "Create prediction by version",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_events_filter",
+            "optional": true,
+            "type": "start | output | logs | completed[]"
+          },
+          {
+            "key": "prefer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "data_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.predictions.get",
+      "shortPath": "predictions.get",
+      "description": "Get prediction status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "predictionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deployment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "data_removed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "deadline",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.predictions.list",
+      "shortPath": "predictions.list",
+      "description": "List predictions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "web"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, deployment?: string, input?: {}, output?: any, error?: string | null, logs?: string, source?: api | web, data_removed?: boolean, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, deadline?: string | string, metrics?: {}, urls?: { get?: string, cancel?: string, web?: string, stream?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search models, collections, and docs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ model: { owner: string, name: string, description?: string | null, visibility?: public | private, url?: string, github_url?: string | null, paper_url?: string | null, license_url?: string | null, cover_image_url?: string | null, run_count?: number, is_official?: boolean, default_example?: any | null, latest_version?: any | null }, metadata: {} }[]"
+          },
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ slug: string, name: string }[]"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "{ title?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.trainings.cancel",
+      "shortPath": "trainings.cancel",
+      "description": "Cancel training job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trainingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ version?: string, weights?: string }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.trainings.create",
+      "shortPath": "trainings.create",
+      "description": "Create training job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_events_filter",
+            "optional": true,
+            "type": "start | output | logs | completed[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ version?: string, weights?: string }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.trainings.get",
+      "shortPath": "trainings.get",
+      "description": "Get training job details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trainingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | processing | succeeded | failed | canceled | aborted"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "{ version?: string, weights?: string }"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | web"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "{ get?: string, cancel?: string, web?: string, stream?: string }"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.trainings.list",
+      "shortPath": "trainings.list",
+      "description": "List training jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status: starting | processing | succeeded | failed | canceled | aborted, model?: string, version?: string, input?: {}, output?: { version?: string, weights?: string }, error?: string | null, logs?: string, source?: api | web, created_at?: string | string, started_at?: string | string | null, completed_at?: string | string | null, urls?: { get?: string, cancel?: string, web?: string, stream?: string }, metrics?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replicate.api.webhooks.defaultSecretGet",
+      "shortPath": "webhooks.defaultSecretGet",
+      "description": "Get default webhook signing secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

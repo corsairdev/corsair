@@ -1,0 +1,2326 @@
+---
+title: API
+description: "API reference for Spoki integration for Corsair: every `spoki.api.*` operation with input and output types."
+---
+
+Every `spoki.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### createOnboardingLink
+
+`accounts.createOnboardingLink`
+
+Create an account onboarding link
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.accounts.createOnboardingLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAccount
+
+`accounts.getAccount`
+
+Retrieve a Spoki account
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.accounts.getAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `current_credit` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `default_language` | `string` | Yes | — |
+| `phone` | `string` | No | — |
+| `has_official_verification` | `boolean` | Yes | — |
+| `daily_limit` | `number` | Yes | — |
+| `phone_status` | `string` | Yes | — |
+| `quality_score` | `number` | Yes | — |
+| `quality_reasons` | `any` | No | — |
+| `is_active` | `boolean` | Yes | — |
+| `country_code` | `string` | Yes | — |
+| `estimated_available_conversations` | `number` | Yes | — |
+| `account_type` | `number` | Yes | — |
+| `default_pricing_delta` | `number` | Yes | — |
+| `low_credit_threshold` | `number` | Yes | — |
+| `has_low_credit_alert` | `boolean` | Yes | — |
+| `default_prefix` | `string` | Yes | — |
+| `default_country_code` | `string` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `contacted_in_24h` | `number` | Yes | — |
+| `contacted_in_7d` | `number` | Yes | — |
+| `primary_channel_id` | `number` | No | — |
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  name: string,
+  identifier: string,
+  platform: string,
+  status: string,
+  phone_status: string,
+  quality_score: string,
+  is_primary: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAccountByPhone
+
+`accounts.getAccountByPhone`
+
+Retrieve a Spoki account by phone
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.accounts.getAccountByPhone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `current_credit` | `number` | Yes | — |
+| `status` | `string` | Yes | — |
+| `default_language` | `string` | Yes | — |
+| `phone` | `string` | No | — |
+| `has_official_verification` | `boolean` | Yes | — |
+| `daily_limit` | `number` | Yes | — |
+| `phone_status` | `string` | Yes | — |
+| `quality_score` | `number` | Yes | — |
+| `quality_reasons` | `any` | No | — |
+| `is_active` | `boolean` | Yes | — |
+| `country_code` | `string` | Yes | — |
+| `estimated_available_conversations` | `number` | Yes | — |
+| `account_type` | `number` | Yes | — |
+| `default_pricing_delta` | `number` | Yes | — |
+| `low_credit_threshold` | `number` | Yes | — |
+| `has_low_credit_alert` | `boolean` | Yes | — |
+| `default_prefix` | `string` | Yes | — |
+| `default_country_code` | `string` | Yes | — |
+| `timezone` | `string` | Yes | — |
+| `contacted_in_24h` | `number` | Yes | — |
+| `contacted_in_7d` | `number` | Yes | — |
+| `primary_channel_id` | `number` | No | — |
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  name: string,
+  identifier: string,
+  platform: string,
+  status: string,
+  phone_status: string,
+  quality_score: string,
+  is_primary: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrentReport
+
+`accounts.getCurrentReport`
+
+Get the current account report
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.accounts.getCurrentReport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccounts
+
+`accounts.listAccounts`
+
+List Spoki WhatsApp accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.accounts.listAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  current_credit: number,
+  status: string,
+  default_language: string,
+  phone?: string | null,
+  has_official_verification: boolean,
+  daily_limit: number,
+  phone_status: string,
+  quality_score: number,
+  quality_reasons?: any,
+  is_active: boolean,
+  country_code: string,
+  estimated_available_conversations: number,
+  account_type: number,
+  default_pricing_delta: number,
+  low_credit_threshold: number,
+  has_low_credit_alert: boolean,
+  default_prefix: string,
+  default_country_code: string,
+  timezone: string,
+  contacted_in_24h: number,
+  contacted_in_7d: number,
+  primary_channel_id?: number | null,
+  channels?: {
+    name: string,
+    identifier: string,
+    platform: string,
+    status: string,
+    phone_status: string,
+    quality_score: string,
+    is_primary: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Agencies
+
+### list
+
+`agencies.list`
+
+List agencies
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.agencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Automation
+
+### triggerAutomation
+
+`automation.triggerAutomation`
+
+Trigger a Spoki automation
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.automation.triggerAutomation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `secret` | `string` | Yes | — |
+| `phone` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `language` | `string` | No | — |
+| `custom_fields` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Automations
+
+### list
+
+`automations.list`
+
+List automations
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.automations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`automations.retrieve`
+
+Retrieve an automation
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.automations.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Campaigns
+
+### list
+
+`campaigns.list`
+
+List campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.campaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `scheduled_datetime` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### addOperator
+
+`contacts.addOperator`
+
+Assign an operator to a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.contacts.addOperator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `operator_id` | `number` | No | — |
+| `role_id` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createOrUpdate
+
+`contacts.createOrUpdate`
+
+Create or update a contact by phone
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.contacts.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeOperator
+
+`contacts.removeOperator`
+
+Remove an operator from a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.contacts.removeOperator({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`contacts.retrieve`
+
+Retrieve a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.contacts.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### syncBulk
+
+`contacts.syncBulk`
+
+Bulk sync contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.contacts.syncBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `any[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Create a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.customFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `code` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Delete a custom field
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.customFields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`customFields.list`
+
+List custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.customFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`customFields.retrieve`
+
+Retrieve a custom field
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.customFields.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`customFields.update`
+
+Update a custom field
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.customFields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Invitations
+
+### resend
+
+`invitations.resend`
+
+Resend an invitation
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.invitations.resend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateRole
+
+`invitations.updateRole`
+
+Update an invitation role
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.invitations.updateRole({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a contact list
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`lists.list`
+
+List contact lists
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeAllContacts
+
+`lists.removeAllContacts`
+
+Remove all contacts from a list
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.lists.removeAllContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeContacts
+
+`lists.removeContacts`
+
+Remove contacts from a list
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.lists.removeContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contacts` | `any[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`lists.retrieve`
+
+Retrieve a contact list
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.lists.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### syncContacts
+
+`lists.syncContacts`
+
+Sync contacts into a list
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.lists.syncContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `contacts` | `any[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Media
+
+### create
+
+`media.create`
+
+Create a media file
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.media.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`media.delete`
+
+Delete a media file
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.media.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`media.list`
+
+List media files
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.media.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`media.retrieve`
+
+Retrieve a media file
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.media.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`media.update`
+
+Update a media file
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.media.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messaging
+
+### sendMessage
+
+`messaging.sendMessage`
+
+Send a WhatsApp message
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.messaging.sendMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `channel_id` | `number` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Partners
+
+### list
+
+`partners.list`
+
+List partners
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.partners.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reports
+
+### list
+
+`reports.list`
+
+List usage reports
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.reports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Roles
+
+### addServiceUser
+
+`roles.addServiceUser`
+
+Add a service user
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.roles.addServiceUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### checkPrivateKey
+
+`roles.checkPrivateKey`
+
+Check whether a role has a private key
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.roles.checkPrivateKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`roles.delete`
+
+Delete a role
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.roles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### generatePrivateKey
+
+`roles.generatePrivateKey`
+
+Generate a role private key
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.roles.generatePrivateKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`roles.list`
+
+List roles
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.roles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`roles.retrieve`
+
+Retrieve a role
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.roles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`roles.update`
+
+Update a role
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.roles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List tags
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`tags.retrieve`
+
+Retrieve a tag
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.tags.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Templates
+
+### clone
+
+`templates.clone`
+
+Clone a template
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.templates.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a WhatsApp template
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `category` | `string` | Yes | — |
+| `templatelocalization_set` | `any[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a WhatsApp template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `force_delete` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`templates.list`
+
+List templates
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`templates.retrieve`
+
+Retrieve a template
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.templates.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### revertToDraft
+
+`templates.revertToDraft`
+
+Revert a template to draft
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.templates.revertToDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a WhatsApp template
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tickets
+
+### create
+
+`tickets.create`
+
+Create a ticket
+
+**Risk:** `write`
+
+```ts
+await corsair.spoki.api.tickets.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`tickets.delete`
+
+Delete a ticket
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.spoki.api.tickets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`tickets.list`
+
+List tickets
+
+**Risk:** `read`
+
+```ts
+await corsair.spoki.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number \| string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `offset` | `number \| string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

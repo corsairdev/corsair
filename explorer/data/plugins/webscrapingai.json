@@ -1,0 +1,579 @@
+{
+  "id": "webscrapingai",
+  "displayName": "WebScraping.AI",
+  "description": "WebScraping.AI plugin for Corsair",
+  "npmPackageName": "@corsair-dev/webscrapingai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "webscrapingai.api.account.getInfo",
+      "shortPath": "account.getInfo",
+      "description": "Return account quota and credit information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "remaining_api_calls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_monthly_credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_payg_credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remaining_total_credits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resets_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webscrapingai.api.ai.askQuestion",
+      "shortPath": "ai.askQuestion",
+      "description": "Answer a question using the content of a web page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "webscrapingai.api.ai.extractFields",
+      "shortPath": "ai.extractFields",
+      "description": "Extract requested fields from a web page as structured JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "webscrapingai.api.scraping.getHtml",
+      "shortPath": "scraping.getHtml",
+      "description": "Return the rendered HTML of a web page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "webscrapingai.api.scraping.getSelectedHtml",
+      "shortPath": "scraping.getSelectedHtml",
+      "description": "Return HTML matching one CSS selector",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "selector",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "webscrapingai.api.scraping.getSelectedMultiple",
+      "shortPath": "scraping.getSelectedMultiple",
+      "description": "Return HTML matching multiple CSS selectors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "selectors",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | string[] | {}"
+      }
+    },
+    {
+      "path": "webscrapingai.api.scraping.getText",
+      "shortPath": "scraping.getText",
+      "description": "Return clean text or Markdown extracted from a web page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "js",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "js_timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "wait_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "datacenter | residential | stealth"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "js_script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error_on_404",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "error_on_redirect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "text_format",
+            "optional": true,
+            "type": "plain | json | xml"
+          },
+          {
+            "key": "return_links",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | { title?: string, description?: string | null, content: string }"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -46,6 +46,8 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
 	filevine:
 		'https://media.licdn.com/dms/image/v2/D560BAQGBEC5giXvomQ/company-logo_200_200/B56ZlidRJjIsAM-/0/1758293463972/filevine_logo?e=2147483647&v=beta&t=oruRrK3tPc5_e8haya4o-oxpBMhFDjjgoa_1xePKBYI',
+	currentsapi:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://currentsapi.services&size=128',
 };
 
 type FetchResult =

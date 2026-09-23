@@ -1,0 +1,181 @@
+{
+  "id": "tpscheck",
+  "displayName": "TPSCheck",
+  "description": "UK phone number validation and TPS/CTPS register checking for marketing compliance.",
+  "npmPackageName": "@corsair-dev/tpscheck",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "tpscheck.api.batch.post",
+      "shortPath": "batch.post",
+      "description": "Check multiple UK phone numbers against TPS and CTPS registers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phones",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ input: string, e164?: string, valid: boolean, line?: { type?: string, original_carrier?: string, location?: string, country?: string, prefix?: string }, reachability?: { status?: string, confidence?: string }, tps?: boolean, ctps?: boolean, risk?: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tpscheck.api.check.post",
+      "shortPath": "check.post",
+      "description": "Check a UK phone number against TPS and CTPS registers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "e164",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "line",
+            "optional": true,
+            "type": "{ type?: string, original_carrier?: string, location?: string, country?: string, prefix?: string }"
+          },
+          {
+            "key": "reachability",
+            "optional": true,
+            "type": "{ status?: string, confidence?: string }"
+          },
+          {
+            "key": "tps",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ctps",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "risk",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tpscheck.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Get TPSCheck API usage and remaining credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requests_used",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "requests_remaining",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "monthly_limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reset_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "tpscheck.api.status.get",
+      "shortPath": "status.get",
+      "description": "Check TPSCheck API health and version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

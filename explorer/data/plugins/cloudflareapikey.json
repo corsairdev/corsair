@@ -1,0 +1,2024 @@
+{
+  "id": "cloudflareapikey",
+  "displayName": "Cloudflare API token",
+  "description": "Cloudflare API token plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cloudflareapikey",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cloudflareapikey.api.cache.getRegionalTieredCache",
+      "shortPath": "cache.getRegionalTieredCache",
+      "description": "Get the regional tiered cache setting for a zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "tc_regional | string"
+          },
+          {
+            "key": "editable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "on | off"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dns.create",
+      "shortPath": "dns.create",
+      "description": "Create a DNS record in a zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zone_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zone_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxiable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dns.delete",
+      "shortPath": "dns.delete",
+      "description": "Delete a DNS record [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dns_record_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dns.list",
+      "shortPath": "dns.list",
+      "description": "List, search, sort, and filter DNS records for a zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proxied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "any | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, zone_id?: string, zone_name?: string, type: string, name: string, content: string, proxiable?: boolean, proxied?: boolean, ttl?: number, priority?: number, locked?: boolean, created_on?: string, modified_on?: string }[]"
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dns.overwrite",
+      "shortPath": "dns.overwrite",
+      "description": "Completely overwrite a DNS record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dns_record_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zone_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zone_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "proxiable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "proxied",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dnssec.delete",
+      "shortPath": "dnssec.delete",
+      "description": "Delete DNSSEC configuration for a zone [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.dnssec.update",
+      "shortPath": "dnssec.update",
+      "description": "Enable or disable DNSSEC for a zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | disabled"
+          },
+          {
+            "key": "dnssec_multi_signer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnssec_presigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnssec_use_nsec3",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "digest",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "digest_algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "digest_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "key_tag",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "key_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dnssec_multi_signer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnssec_presigned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dnssec_use_nsec3",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.ips.get",
+      "shortPath": "ips.get",
+      "description": "Retrieve Cloudflare or JD Cloud IP CIDR blocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "networks",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ipv4_cidrs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ipv6_cidrs",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "jdcloud_cidrs",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.lockdowns.create",
+      "shortPath": "lockdowns.create",
+      "description": "Create a Zone Lockdown rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "configurations",
+            "optional": false,
+            "type": "{ target?: ip | ip_range, value?: string }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "configurations",
+            "optional": false,
+            "type": "{ target?: ip | ip_range, value?: string }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.lockdowns.get",
+      "shortPath": "lockdowns.get",
+      "description": "Get a Zone Lockdown rule by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lockdown_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "configurations",
+            "optional": false,
+            "type": "{ target?: ip | ip_range, value?: string }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.lockdowns.update",
+      "shortPath": "lockdowns.update",
+      "description": "Update a Zone Lockdown rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lockdown_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "configurations",
+            "optional": true,
+            "type": "{ target?: ip | ip_range, value?: string }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "configurations",
+            "optional": false,
+            "type": "{ target?: ip | ip_range, value?: string }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.create",
+      "shortPath": "rulesets.create",
+      "description": "Create a ruleset at account or zone scope",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { name: string, kind: string, phase: string, description?: string, rules?: {}[] }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.createRule",
+      "shortPath": "rulesets.createRule",
+      "description": "Add a rule to an existing ruleset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, action: string, expression: string, description?: string, enabled?: boolean, action_parameters?: {}, position?: { index?: number, before?: string, after?: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.delete",
+      "shortPath": "rulesets.delete",
+      "description": "Delete all versions of a ruleset [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string }"
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.deleteRule",
+      "shortPath": "rulesets.deleteRule",
+      "description": "Delete a rule from a ruleset [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, rule_id: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.get",
+      "shortPath": "rulesets.get",
+      "description": "Fetch the latest version of a ruleset by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.getEntrypointVersion",
+      "shortPath": "rulesets.getEntrypointVersion",
+      "description": "Get a historical entrypoint ruleset version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_phase: string, ruleset_version: string }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.update",
+      "shortPath": "rulesets.update",
+      "description": "Update a ruleset (include every rule you want to keep)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, name?: string, description?: string, rules: {}[] }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.rulesets.updateRule",
+      "shortPath": "rulesets.updateRule",
+      "description": "Update a specific rule in a ruleset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_id?: string, zone_id?: string } & { ruleset_id: string, rule_id: string, action?: string, expression?: string, description?: string, enabled?: boolean, action_parameters?: {}, position?: { index?: number, before?: string, after?: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phase",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.s3.upload",
+      "shortPath": "s3.upload",
+      "description": "Upload file content to an R2 bucket (S3-compatible object storage)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bucket_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "storage_class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uploaded",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.zones.delete",
+      "shortPath": "zones.delete",
+      "description": "Delete an existing zone [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.zones.get",
+      "shortPath": "zones.get",
+      "description": "Get details for a specific zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "original_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "vanity_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activated_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.zones.list",
+      "shortPath": "zones.list",
+      "description": "List, search, sort, and filter Cloudflare zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "any | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, status?: string, paused?: boolean, type?: string, account?: { id: string }, name_servers?: string[], original_name_servers?: string[], vanity_name_servers?: string[], created_on?: string, modified_on?: string, activated_on?: string }[]"
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.zones.rerunActivationCheck",
+      "shortPath": "zones.rerunActivationCheck",
+      "description": "Trigger a new activation check for a pending zone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "original_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "vanity_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activated_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cloudflareapikey.api.zones.update",
+      "shortPath": "zones.update",
+      "description": "Edit a Cloudflare zone (one of paused, type, or vanity_name_servers)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zone_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vanity_name_servers",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id: string }"
+          },
+          {
+            "key": "name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "original_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "vanity_name_servers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activated_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cloudflareapikey.db.dnsRecords.search",
+      "entityName": "dnsRecords",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zone_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zone_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proxiable",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "proxied",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "ttl",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modified_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "cloudflareapikey.db.dnssec.search",
+      "entityName": "dnssec",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zone_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "algorithm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "digest",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "digest_algorithm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "digest_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ds",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dnssec_multi_signer",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dnssec_presigned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dnssec_use_nsec3",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "flags",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "key_tag",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "key_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "cloudflareapikey.db.lockdowns.search",
+      "entityName": "lockdowns",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zone_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paused",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modified_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "cloudflareapikey.db.r2Objects.search",
+      "entityName": "r2Objects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bucket_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "storage_class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uploaded",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "cloudflareapikey.db.rulesets.search",
+      "entityName": "rulesets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zone_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "version",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_updated",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "phase",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cloudflareapikey.db.zones.search",
+      "entityName": "zones",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paused",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "modified_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "activated_on",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
