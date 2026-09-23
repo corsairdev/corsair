@@ -7,17 +7,17 @@ info:
   version: 0.1.0
   description: >
     The REST surface a hosted Corsair project serves (the SDK management
-    handler). Language clients (Swift/Python/Go/TS) are GENERATED from this
-    file; the Hub control plane provisions the runtime but does not proxy these
-    calls. Authoritative prose: docs/corsair-cloud/rest-management-contract.md.
+    handler). The hand-written language clients (Swift/Python/Go/TS) mirror this
+    contract; the Hub control plane provisions the runtime but does not proxy
+    these calls. Guide: https://docs.corsair.dev/cloud/overview.
 
 servers:
   - url: "{baseUrl}"
-    description: A hosted project's base URL.
+    description: A project's base URL, derived from the API key's slug.
     variables:
       baseUrl:
-        default: https://VM.corsair.cloud/PROJECT/api/corsair
-        description: https://<vm-slug>.corsair.cloud/<project-slug>/api/corsair
+        default: https://api.corsair.cloud/PROJECT/api/corsair
+        description: https://api.corsair.cloud/<slug>/api/corsair — the client derives this from the ck_cloud_<slug>.<secret> key.
 
 security:
   - projectKey: []          # default: every operation needs the project key…

@@ -1,0 +1,257 @@
+---
+title: API
+description: "API reference for CurrentsApi: every `currentsapi.api.*` operation with input and output types."
+---
+
+Every `currentsapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### get
+
+`categories.get`
+
+List valid category codes
+
+**Risk:** `read`
+
+```ts
+await corsair.currentsapi.api.categories.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `string[]` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Languages
+
+### get
+
+`languages.get`
+
+List valid language codes
+
+**Risk:** `read`
+
+```ts
+await corsair.currentsapi.api.languages.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Latest
+
+### get
+
+`latest.get`
+
+Get latest news headlines
+
+**Risk:** `read`
+
+```ts
+await corsair.currentsapi.api.latest.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string` | Yes | — |
+| `category` | `string` | No | — |
+| `country` | `string` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `type` | `1 \| 2 \| 3` | No | — |
+| `domain` | `string` | No | — |
+| `domain_not` | `string` | No | — |
+| `author` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| error` | Yes | — |
+| `news` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `query_matched` | `boolean` | No | — |
+| `query_scope` | `string` | No | — |
+| `reason` | `string` | No | — |
+| `page_has_results` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  url?: string,
+  author?: string,
+  image?: string,
+  language?: string,
+  category?: string[],
+  source_category?: string[],
+  published?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### get
+
+`regions.get`
+
+List valid country region codes
+
+**Risk:** `read`
+
+```ts
+await corsair.currentsapi.api.regions.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regions` | `object` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="regions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### get
+
+`search.get`
+
+Search news articles by keywords with filters
+
+**Risk:** `read`
+
+```ts
+await corsair.currentsapi.api.search.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `string` | No | — |
+| `query` | `string` | No | — |
+| `language` | `string` | Yes | — |
+| `category` | `string` | No | — |
+| `country` | `string` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `page_number` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `type` | `1 \| 2 \| 3` | No | — |
+| `domain` | `string` | No | — |
+| `domain_not` | `string` | No | — |
+| `author` | `string` | No | — |
+| `has_image` | `boolean` | No | — |
+| `has_description` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok \| error` | Yes | — |
+| `news` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `query_matched` | `boolean` | No | — |
+| `query_scope` | `string` | No | — |
+| `reason` | `string` | No | — |
+| `page_has_results` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  url?: string,
+  author?: string,
+  image?: string,
+  language?: string,
+  category?: string[],
+  source_category?: string[],
+  published?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

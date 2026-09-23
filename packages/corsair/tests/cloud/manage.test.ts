@@ -109,4 +109,23 @@ describe('buildCloudManagement', () => {
 			plugin: 'slack',
 		});
 	});
+
+	it('permissions.get by id hits /permissions/:id encoded', async () => {
+		const t = transportWith(ok({ id: 'perm/1', status: 'approved' }));
+		const m = buildCloudManagement(t);
+		await m.permissions.get({ id: 'perm/1' });
+		const [url, init] = t.fetch.mock.calls[0];
+		expect(url).toBe('https://vm/p/api/corsair/permissions/perm%2F1');
+		expect(init.method).toBe('GET');
+	});
+
+	it('permissions.get by token posts to /permissions/lookup-by-token', async () => {
+		const t = transportWith(ok({ id: 'perm1', status: 'pending' }));
+		const m = buildCloudManagement(t);
+		await m.permissions.get({ token: 'tok_abc' });
+		const [url, init] = t.fetch.mock.calls[0];
+		expect(url).toBe('https://vm/p/api/corsair/permissions/lookup-by-token');
+		expect(init.method).toBe('POST');
+		expect(JSON.parse(init.body)).toEqual({ token: 'tok_abc' });
+	});
 });

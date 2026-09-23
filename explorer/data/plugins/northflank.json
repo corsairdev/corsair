@@ -1,0 +1,1003 @@
+{
+  "id": "northflank",
+  "displayName": "Northflank",
+  "description": "Connect Northflank to manage projects, services, preview environments, secrets, plans, and regions.",
+  "npmPackageName": "@corsair-dev/northflank",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "northflank.api.addonTypes.list",
+      "shortPath": "addonTypes.list",
+      "description": "List available Northflank addon types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ addonTypes: { type: string, name: string, description?: string, features?: {}, resources?: {}, versions?: string[], majors?: string[] }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.cloudProviders.listNodeTypes",
+      "shortPath": "cloudProviders.listNodeTypes",
+      "description": "List supported cloud provider node types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxGenerationAge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hasGpu",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ nodeTypes: { id: string, name: string, family?: string | null, processorFamily?: string | null, workloadType?: string | null, generationAge?: number | null, provider?: string | null, resources?: { vcpu?: number | null, memory?: number | null } }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.cloudProviders.listRegions",
+      "shortPath": "cloudProviders.listRegions",
+      "description": "List supported cloud provider regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ regions: { id: string, name: string, regionName?: string, provider?: string, availabilityZones?: { id: string, name: string }[] }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.misc.getDnsId",
+      "shortPath": "misc.getDnsId",
+      "description": "Get the DNS identifier for the authenticated account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ dns: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List pipelines in a Northflank project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ pipelines: { id: string, name?: string, description?: string, createdAt?: string, updatedAt?: string }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.plans.list",
+      "shortPath": "plans.list",
+      "description": "List available Northflank resource plans",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ plans: { id: string, name: string, currency?: string, amountPerMonth?: number, amountPerHour?: number }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clusterId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, color?: string, region?: string, clusterId?: string, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.createOrUpdate",
+      "shortPath": "projects.createOrUpdate",
+      "description": "Create or update a Northflank project (upsert)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clusterId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, color?: string, region?: string, clusterId?: string, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delete_child_objects",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get details of a Northflank project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, color?: string, region?: string, clusterId?: string, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List Northflank projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ projects: { id: string, name: string, description?: string, color?: string, region?: string, clusterId?: string, createdAt?: string, updatedAt?: string }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update an existing Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, color?: string, region?: string, clusterId?: string, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.regions.list",
+      "shortPath": "regions.list",
+      "description": "List available Northflank regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ regions: { id: string, name: string, regionName?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create a new secret group in a Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "secret | config"
+          },
+          {
+            "key": "secretType",
+            "optional": false,
+            "type": "environment-arguments | environment | arguments"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }"
+          },
+          {
+            "key": "addonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "externalAddonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.createOrUpdate",
+      "shortPath": "secrets.createOrUpdate",
+      "description": "Create or update a secret group in a Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "secret | config"
+          },
+          {
+            "key": "secretType",
+            "optional": false,
+            "type": "environment-arguments | environment | arguments"
+          },
+          {
+            "key": "priority",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }"
+          },
+          {
+            "key": "addonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "externalAddonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Get details of a Northflank secret group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "this | inherited | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.getDetails",
+      "shortPath": "secrets.getDetails",
+      "description": "Get a secret group with linked addon details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string, addonSecrets?: { id: string, name: string, addonType: string, version: string, variables?: {} }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List secret groups in a Northflank project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ secrets: { id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.patch",
+      "shortPath": "secrets.patch",
+      "description": "Partially update a secret group in a Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "secret | config"
+          },
+          {
+            "key": "secretType",
+            "optional": true,
+            "type": "environment-arguments | environment | arguments"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }"
+          },
+          {
+            "key": "addonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "externalAddonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, projectId?: string, name: string, description?: string, tags?: string[], type?: secret | config, secretType?: environment-arguments | environment | arguments, priority?: number, restrictions?: { restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }, secrets?: { variables?: {}, files?: {}, dockerSecretMounts?: {} }, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Update a secret group in a Northflank project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "{ restricted?: boolean, nfObjects?: { id: string, type: service | job }[], tags?: string[], tagMatchCondition?: and | or, stageIds?: string[] }"
+          },
+          {
+            "key": "addonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "externalAddonDependencies",
+            "optional": true,
+            "type": "{ addonId: string, keys?: { keyName: string, aliases?: string[] }[] }[]"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "secret | config"
+          },
+          {
+            "key": "secretType",
+            "optional": true,
+            "type": "environment-arguments | environment | arguments"
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{ variables?: {}, files?: {}, dockerSecretMounts?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "northflank.api.services.list",
+      "shortPath": "services.list",
+      "description": "List services in a Northflank project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ services: { id: string, appId?: string, projectId?: string, stageId?: string, name?: string, description?: string, serviceType?: combined | build | deployment, disabledCI?: boolean, disabledCD?: boolean }[] }"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ hasNextPage: boolean, cursor?: string, count: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

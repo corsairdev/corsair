@@ -1,0 +1,2255 @@
+{
+  "id": "filevine",
+  "displayName": "Filevine",
+  "description": "Legal case management platform for projects, contacts, documents, tasks, and deadlines.",
+  "npmPackageName": "@corsair-dev/filevine",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "filevine.api.contacts.attach",
+      "shortPath": "contacts.attach",
+      "description": "Attach a contact to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string",
+            "description": "e.g. Client, Opposing Party, Witness"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filevine.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search query"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ contactId: number, firstName?: string, lastName?: string, fullName?: string, organization?: string, emails?: string[], phones?: string[], createdDate?: string, modifiedDate?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.deadlines.create",
+      "shortPath": "deadlines.create",
+      "description": "Create a deadline on a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 8601 date-time"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ triggerOffsetMinutes: number, notifyUserIds?: number[] }[]"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deadlineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | completed | missed"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ triggerOffsetMinutes?: number, notifyUserIds?: number[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.deadlines.list",
+      "shortPath": "deadlines.list",
+      "description": "List deadlines for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | completed | missed"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Filter from date (YYYY-MM-DD)"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Filter to date (YYYY-MM-DD)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, max 1000"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ deadlineId: number, projectId?: number, name?: string, dueDate?: string, status?: open | completed | missed, assigneeId?: number, reminders?: { triggerOffsetMinutes?: number, notifyUserIds?: number[] }[] }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Get document metadata by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sharedToPortal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uploadedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "List documents in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, max 1000"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ documentId: number, projectId?: number, folderId?: number, filename?: string, size?: number, contentType?: string, tags?: string[], sharedToPortal?: boolean, version?: number, uploadedBy?: number, createdDate?: string, modifiedDate?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.documents.upload",
+      "shortPath": "documents.upload",
+      "description": "Upload a document to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Filename override, else derived from file"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sharedToPortal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | custom | custom | custom",
+            "description": "File content: string | Uint8Array (incl. Buffer) | ArrayBuffer | Blob (see fileEncoding)"
+          },
+          {
+            "key": "fileEncoding",
+            "optional": true,
+            "type": "base64 | text",
+            "description": "How to interpret string file content — 'base64' decodes to bytes, 'text' (default) uploads literally"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sharedToPortal",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uploadedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.identity.getAccessToken",
+      "shortPath": "identity.getAccessToken",
+      "description": "Exchange PAT for bearer token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string",
+            "description": "Filevine Personal Access Token (PAT)"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string",
+            "description": "OAuth scope — defaults to fv.api.gateway.access tenant filevine.v2.api.* openid email fv.auth.tenant.read"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_in",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.identity.getUserOrgsWithToken",
+      "shortPath": "identity.getUserOrgsWithToken",
+      "description": "Get user and orgs for token (POST /fv-app/v2/utils/GetUserOrgsWithToken)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "UserId",
+            "optional": true,
+            "type": "{ Native?: number, Partner?: string }"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Orgs",
+            "optional": true,
+            "type": "{ OrgId?: number, Name?: string }[]"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orgs",
+            "optional": true,
+            "type": "{ orgId?: number, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a note on a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "Note body, supports @mentions and markdown"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "note | task | portalMessage | phoneCall | text"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "attachedDocuments",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "note | task | portalMessage | phoneCall | text"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authorId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "attachedDocuments",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601, filter notes modified after this"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ noteId: number, projectId?: number, body?: string, kind?: note | task | portalMessage | phoneCall | text, pinned?: boolean, authorId?: number, mentions?: number[], attachedDocuments?: number[], createdDate?: string, modifiedDate?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update a note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "note | task | portalMessage | phoneCall | text"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authorId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mentions",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "attachedDocuments",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectTypeId",
+            "optional": false,
+            "type": "number",
+            "description": "Project type ID"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string",
+            "description": "Display name for the new project"
+          },
+          {
+            "key": "clientId",
+            "optional": false,
+            "type": "number",
+            "description": "Primary client contact ID"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number",
+            "description": "Filevine project ID"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset, default 0"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, max 1000, default 50"
+          },
+          {
+            "key": "projectTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedSince",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date-time filter"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ projectId: number, projectName?: string, number?: string, projectTypeId?: number, clientId?: number, phaseName?: string, isArchived?: boolean, createdDate?: string, modifiedDate?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projectTypeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "phaseName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task on a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "low | normal | high | urgent"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | inProgress | completed | cancelled"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "low | normal | high | urgent"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | inProgress | completed | cancelled"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, max 1000"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ taskId: number, projectId?: number, title?: string, body?: string, status?: open | inProgress | completed | cancelled, priority?: low | normal | high | urgent, dueDate?: string, assigneeId?: number, completedDate?: string }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | inProgress | completed | cancelled"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "low | normal | high | urgent"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | inProgress | completed | cancelled"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "low | normal | high | urgent"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "string[]",
+            "description": "Dotted events e.g. project.created"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "filevine.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription [DESTRUCTIVE]",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "filevine.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine org ID — must belong to the authenticated user"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Explicit Filevine user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ subscriptionId: string, name?: string, description?: string, endpoint?: string, signingKey?: string, events?: string[], createdDate?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "filevine.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "contactId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.deadlines.search",
+      "entityName": "deadlines",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "deadlineId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "documentId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "folderId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "contentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sharedToPortal",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "version",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uploadedBy",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.notes.search",
+      "entityName": "notes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "noteId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "authorId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projectTypeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "clientId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "phaseName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isArchived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.subscriptions.search",
+      "entityName": "subscriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscriptionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endpoint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signingKey",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "filevine.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "taskId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "projectId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assigneeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "completedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

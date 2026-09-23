@@ -5,9 +5,20 @@
  * Run after adding plugins or when icons look stale:
  *   pnpm fetch:plugin-icons
  *   pnpm fetch:plugin-icons -- --force
- *   pnpm fetch:plugin-icons -- --only slack,github
+ *   pnpm fetch:plugin-icons -- --only=slack,github
+ *
+ * `--only` limits which PNGs are fetched; the manifest always lists the full catalog.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,7 +38,17 @@ const CONCURRENCY = 12;
 
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-type IconSource = 'twenty-icons' | 'google-favicon';
+type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
+
+/** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
+const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
+	googledocs:
+		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
+	filevine:
+		'https://media.licdn.com/dms/image/v2/D560BAQGBEC5giXvomQ/company-logo_200_200/B56ZlidRJjIsAM-/0/1758293463972/filevine_logo?e=2147483647&v=beta&t=oruRrK3tPc5_e8haya4o-oxpBMhFDjjgoa_1xePKBYI',
+	currentsapi:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://currentsapi.services&size=128',
+};
 
 type FetchResult =
 	| { ok: true; bytes: Buffer; source: IconSource }
@@ -69,6 +90,82 @@ function isPng(bytes: Buffer): boolean {
 	return (
 		bytes.length >= PNG_MAGIC.length && bytes.subarray(0, 8).equals(PNG_MAGIC)
 	);
+}
+
+function isJpeg(bytes: Buffer): boolean {
+	return (
+		bytes.length >= 3 &&
+		bytes[0] === 0xff &&
+		bytes[1] === 0xd8 &&
+		bytes[2] === 0xff
+	);
+}
+
+/** Normalize url-override bytes to PNG (some CDNs serve JPEG). */
+function normalizeOverrideToPng(bytes: Buffer): Buffer | null {
+	if (isPng(bytes)) return bytes;
+	if (!isJpeg(bytes)) return null;
+
+	const id = randomBytes(8).toString('hex');
+	const inPath = join(tmpdir(), `corsair-icon-${id}.jpg`);
+	const outPath = join(tmpdir(), `corsair-icon-${id}.png`);
+	writeFileSync(inPath, bytes);
+
+	const attempts: Array<[string, string[]]> = [
+		['sips', ['-s', 'format', 'png', inPath, '--out', outPath]],
+		['magick', [inPath, outPath]],
+		['convert', [inPath, outPath]],
+	];
+
+	try {
+		for (const [cmd, args] of attempts) {
+			const result = spawnSync(cmd, args, { stdio: 'ignore' });
+			if (result.status === 0 && existsSync(outPath)) {
+				return readFileSync(outPath);
+			}
+		}
+		return null;
+	} finally {
+		rmSync(inPath, { force: true });
+		rmSync(outPath, { force: true });
+	}
+}
+
+async function fetchDirectIcon(url: string): Promise<FetchResult> {
+	try {
+		const response = await fetch(url, {
+			headers: { 'User-Agent': 'corsair-plugin-icon-fetch/1.0' },
+		});
+		if (!response.ok) {
+			return {
+				ok: false,
+				error: `url-override HTTP ${response.status}`,
+			};
+		}
+		const raw = Buffer.from(await response.arrayBuffer());
+		if (raw.length === 0) {
+			return { ok: false, error: 'url-override returned empty body' };
+		}
+		const bytes = normalizeOverrideToPng(raw);
+		if (!bytes) {
+			return { ok: false, error: 'url-override returned no PNG' };
+		}
+		return { ok: true, bytes, source: 'url-override' };
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error);
+		return { ok: false, error: `url-override failed: ${message}` };
+	}
+}
+
+async function fetchPluginIcon(
+	pluginId: string,
+	domain: string,
+): Promise<FetchResult> {
+	const overrideUrl = PLUGIN_ICON_URL_OVERRIDES[pluginId];
+	if (overrideUrl) {
+		return fetchDirectIcon(overrideUrl);
+	}
+	return fetchIcon(domain);
 }
 
 async function fetchIcon(domain: string): Promise<FetchResult> {
@@ -164,20 +261,20 @@ async function main(): Promise<void> {
 	const catalog = JSON.parse(
 		readFileSync(catalogPath, 'utf8'),
 	) as PluginCatalogIndex;
-	let pluginIds = catalog.plugins.map((plugin) => plugin.id).sort();
+	const allPluginIds = catalog.plugins.map((plugin) => plugin.id).sort();
 
-	if (only.length > 0) {
-		const allowed = new Set(only);
-		pluginIds = pluginIds.filter((id) => allowed.has(id));
-	}
+	const fetchPluginIds =
+		only.length > 0
+			? allPluginIds.filter((id) => only.includes(id))
+			: allPluginIds;
 
 	mkdirSync(iconsDir, { recursive: true });
 
-	const domains = buildPluginDomainMap(pluginIds);
+	const domains = buildPluginDomainMap(allPluginIds);
 	const sources: Record<string, IconSource> = {};
 	const failures: Manifest['failures'] = [];
 
-	const targets = pluginIds.filter((id) => {
+	const targets = fetchPluginIds.filter((id) => {
 		if (force) return true;
 		return !existsSync(join(iconsDir, `${id}.png`));
 	});
@@ -191,7 +288,7 @@ async function main(): Promise<void> {
 
 		await mapWithConcurrency(targets, CONCURRENCY, async (pluginId) => {
 			const domain = domains[pluginId] ?? resolvePluginDomain(pluginId);
-			const result = await fetchIcon(domain);
+			const result = await fetchPluginIcon(pluginId, domain);
 
 			if (!result.ok) {
 				failures.push({ id: pluginId, domain, error: result.error });
@@ -211,7 +308,7 @@ async function main(): Promise<void> {
 		existingSources = existing.sources ?? {};
 	}
 
-	for (const pluginId of pluginIds) {
+	for (const pluginId of allPluginIds) {
 		if (sources[pluginId]) continue;
 		if (existsSync(join(iconsDir, `${pluginId}.png`))) {
 			sources[pluginId] = existingSources[pluginId] ?? 'twenty-icons';
@@ -224,9 +321,10 @@ async function main(): Promise<void> {
 		fallbackSource: FALLBACK_SOURCE,
 		size: ICON_SIZE,
 		format: ICON_FORMAT,
-		total: pluginIds.length,
-		succeeded: pluginIds.filter((id) => existsSync(join(iconsDir, `${id}.png`)))
-			.length,
+		total: allPluginIds.length,
+		succeeded: allPluginIds.filter((id) =>
+			existsSync(join(iconsDir, `${id}.png`)),
+		).length,
 		failed: failures.length,
 		domains,
 		sources,
