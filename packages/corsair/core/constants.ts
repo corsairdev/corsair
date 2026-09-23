@@ -337,6 +337,7 @@ export const BaseProviders = [
 	'webscrapingai',
 	'webvizio',
 	'whatsapp',
+	'whoisfreaks',
 	'whautomate',
 	'winstonai',
 	'witai',
@@ -683,6 +684,7 @@ export const ProviderDisplayNames = {
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
+	whoisfreaks: 'Whoisfreaks',
 	whautomate: 'Whautomate',
 	winstonai: 'Winston AI',
 	witai: 'WitAi',
@@ -1036,6 +1038,7 @@ export type AllProviders =
 	| 'webscrapingai'
 	| 'webvizio'
 	| 'whatsapp'
+	| 'whoisfreaks'
 	| 'whautomate'
 	| 'winstonai'
 	| 'witai'
