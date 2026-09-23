@@ -279,6 +279,7 @@ export const BaseProviders = [
 	'snapchat',
 	'slackbot',
 	'sourcegraph',
+	'spoki',
 	'spotify',
 	'strava',
 	'streamtime',
@@ -606,6 +607,7 @@ export const ProviderDisplayNames = {
 	snapchat: 'Snapchat',
 	slackbot: 'Slackbot',
 	sourcegraph: 'Sourcegraph',
+	spoki: 'Spoki',
 	spotify: 'Spotify',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -940,6 +942,7 @@ export type AllProviders =
 	| 'snapchat'
 	| 'slackbot'
 	| 'sourcegraph'
+	| 'spoki'
 	| 'spotify'
 	| 'strava'
 	| 'streamtime'
