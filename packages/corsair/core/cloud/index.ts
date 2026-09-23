@@ -7,6 +7,7 @@ import type { CorsairManageNamespace } from '../management';
 import type { CorsairIntegration, CorsairPlugin } from '../plugins';
 import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
+import { cloudRequest } from './http';
 import { buildCloudManagement } from './manage';
 import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
 
@@ -155,9 +156,7 @@ export type CorsairCloudConfig = {
 	url?: string;
 	/** Reserved for future connect/callback signing; unused by the HTTP client. */
 	signingSecret?: string;
-	/** Named sibling instances (e.g. another cloud VM for the same project) that
-	 * `withInstance` can reselect the whole surface to, each with its own key. */
-	instances?: Record<string, { apiKey: string; url?: string }>;
+	fetch?: typeof fetch;
 };
 
 // Empty by design: the declaration-merge target the generated types fill.
@@ -172,9 +171,40 @@ type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 	? any
 	: { [K in keyof Registry]: { api: Registry[K] } };
 
+// `<projectBase>/api/corsair` (the per-op transport root) and
+// `<projectBase>/instances` (the resolve endpoint) are siblings under the same
+// project host — strip the former's suffix to get the shared root.
+function projectRootFromBaseUrl(baseUrl: string): string {
+	const suffix = '/api/corsair';
+	return baseUrl.endsWith(suffix) ? baseUrl.slice(0, -suffix.length) : baseUrl;
+}
+
+type ResolvedInstance = { instanceKey: string; url: string };
+
+async function fetchInstanceMap(
+	transport: CloudTransport,
+): Promise<Map<string, string>> {
+	const res = await cloudRequest<{ instances: ResolvedInstance[] }>(
+		{ ...transport, baseUrl: projectRootFromBaseUrl(transport.baseUrl) },
+		'GET',
+		'instances',
+	);
+	const map = new Map<string, string>();
+	for (const instance of res.instances) {
+		assertCloudUrlSecure(
+			instance.url,
+			`Instance "${instance.instanceKey}" URL`,
+		);
+		map.set(instance.instanceKey, instance.url);
+	}
+	return map;
+}
+
 export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
 	withTenant(tenantId: string): CloudTenantClient<Registry>;
-	withInstance(key: string): CorsairCloudInstance<Registry>;
+	withInstance(name: string): {
+		withTenant(tenantId: string): CloudTenantClient<Registry>;
+	};
 	manage: CorsairManageNamespace;
 };
 
@@ -187,33 +217,66 @@ export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
 export function corsairCloud<Registry = CorsairCloudRegistry>(
 	config: CorsairCloudConfig,
 ): CorsairCloudInstance<Registry> {
-	function build(apiKey: string, url?: string): CorsairCloudInstance<Registry> {
-		const trimmedKey = apiKey?.trim();
-		if (!trimmedKey) {
-			throw new Error('corsairCloud: apiKey is required');
+	const trimmedKey = config.apiKey?.trim();
+	if (!trimmedKey) {
+		throw new Error('corsairCloud: apiKey is required');
+	}
+	const baseUrl = config.url?.trim() || cloudUrlFromKey(trimmedKey);
+	if (!baseUrl) {
+		throw new Error(
+			'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
+		);
+	}
+	assertCloudUrlSecure(baseUrl);
+	const transport: CloudTransport = {
+		baseUrl,
+		apiKey: trimmedKey,
+		fetch: config.fetch,
+	};
+	const surface = buildCloudSurface(transport, {
+		multiTenancy: true,
+	}) as unknown as CorsairCloudInstance<Registry>;
+
+	// One resolve call per corsairCloud() instance, shared across every
+	// withInstance() and cached for its lifetime — concurrent callers await the
+	// same in-flight promise instead of firing duplicate requests.
+	let instancesPromise: Promise<Map<string, string>> | null = null;
+	function resolveInstances(): Promise<Map<string, string>> {
+		if (!instancesPromise) {
+			instancesPromise = fetchInstanceMap(transport).catch((err) => {
+				instancesPromise = null;
+				throw err;
+			});
 		}
-		const baseUrl = url?.trim() || cloudUrlFromKey(trimmedKey);
-		if (!baseUrl) {
-			throw new Error(
-				'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
-			);
-		}
-		assertCloudUrlSecure(baseUrl);
-		const surface = buildCloudSurface(
-			{ baseUrl, apiKey: trimmedKey },
-			{ multiTenancy: true },
-		) as unknown as CorsairCloudInstance<Registry>;
-		return Object.assign(surface, {
-			withInstance: (key: string) => {
-				const instance = config.instances?.[key];
-				if (!instance) {
+		return instancesPromise;
+	}
+
+	return Object.assign(surface, {
+		withInstance: (name: string) => {
+			const getTransport = async (): Promise<CloudTransport> => {
+				const instances = await resolveInstances();
+				const url = instances.get(name);
+				if (!url) {
+					const available = [...instances.keys()].join(', ') || '(none)';
 					throw new Error(
-						`corsairCloud.withInstance("${key}"): no such instance configured`,
+						`corsairCloud.withInstance("${name}"): no such instance — available: ${available}`,
 					);
 				}
-				return build(instance.apiKey, instance.url);
-			},
-		});
-	}
-	return build(config.apiKey, config.url);
+				return { ...transport, baseUrl: url };
+			};
+			return {
+				withTenant(tenantId: string) {
+					if (!tenantId) {
+						throw new Error(
+							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
+						);
+					}
+					return buildCloudClient(undefined, {
+						transport: getTransport,
+						tenantId,
+					}) as CloudTenantClient<Registry>;
+				},
+			};
+		},
+	});
 }

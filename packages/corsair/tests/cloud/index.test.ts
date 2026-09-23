@@ -297,38 +297,107 @@ describe('corsairCloud', () => {
 		).toThrow(/https/);
 	});
 
-	it('withInstance reselects the transport to a named instance', async () => {
-		jest
+	it('withInstance resolves the instance URL from the project key, then routes the op', async () => {
+		const fetchMock = jest
 			.spyOn(globalThis, 'fetch')
-			.mockImplementation(
-				async () => new Response(JSON.stringify({ data: {} }), { status: 200 }),
-			);
+			.mockImplementation(async (url) => {
+				if (String(url) === 'https://vm/p/instances') {
+					return new Response(
+						JSON.stringify({
+							instances: [{ instanceKey: 'users', url: 'https://vm/users' }],
+						}),
+						{ status: 200 },
+					);
+				}
+				return new Response(JSON.stringify({ data: { ok: true } }), {
+					status: 200,
+				});
+			});
 
 		const corsair = corsairCloud({
-			apiKey: 'ck_cloud_users.aaaa',
-			instances: {
-				dashboard: { apiKey: 'ck_cloud_dash.bbbb' },
-			},
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
 		});
 
-		await corsair.withTenant('acme').notion.api.pages.searchPage({});
-		const [primaryUrl] = (globalThis.fetch as jest.Mock).mock.calls[0];
-		expect(primaryUrl).toContain('/users/');
-
-		await corsair
-			.withInstance('dashboard')
+		const out = await corsair
+			.withInstance('users')
 			.withTenant('acme')
 			.notion.api.pages.searchPage({});
-		const [dashboardUrl] = (globalThis.fetch as jest.Mock).mock.calls[1];
-		expect(dashboardUrl).toContain('/dash/');
+
+		expect(out).toEqual({ ok: true });
+		const calls = (fetchMock as unknown as jest.Mock).mock.calls;
+		const [resolveUrl, resolveInit] = calls[0];
+		expect(resolveUrl).toBe('https://vm/p/instances');
+		expect((resolveInit as RequestInit).headers).toMatchObject({
+			authorization: 'Bearer ck_cloud_x',
+		});
+		const [invokeUrl] = calls[1];
+		expect(invokeUrl).toBe(
+			'https://vm/users/acme/notion/call/pages.searchPage',
+		);
 	});
 
-	it('withInstance throws for an unconfigured instance key', () => {
+	it('withInstance rejects for a name absent from the resolved instance map', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					instances: [{ instanceKey: 'users', url: 'https://vm/users' }],
+				}),
+				{ status: 200 },
+			),
+		);
+
 		const corsair = corsairCloud({
-			apiKey: 'ck_cloud_users.aaaa',
-			instances: { dashboard: { apiKey: 'ck_cloud_dash.bbbb' } },
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
 		});
-		expect(() => corsair.withInstance('nope')).toThrow(/no such instance/);
+
+		await expect(
+			corsair
+				.withInstance('nope')
+				.withTenant('acme')
+				.notion.api.pages.searchPage({}),
+		).rejects.toThrow(/no such instance/);
+	});
+
+	it('caches the instance resolve across multiple withInstance calls', async () => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) => {
+				if (String(url) === 'https://vm/p/instances') {
+					return new Response(
+						JSON.stringify({
+							instances: [
+								{ instanceKey: 'users', url: 'https://vm/users' },
+								{ instanceKey: 'feed', url: 'https://vm/feed' },
+							],
+						}),
+						{ status: 200 },
+					);
+				}
+				return new Response(JSON.stringify({ data: {} }), { status: 200 });
+			});
+
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+
+		await Promise.all([
+			corsair
+				.withInstance('users')
+				.withTenant('a')
+				.notion.api.pages.searchPage({}),
+			corsair
+				.withInstance('feed')
+				.withTenant('a')
+				.notion.api.pages.searchPage({}),
+		]);
+
+		const resolveCalls = fetchMock.mock.calls.filter(
+			([url]) => String(url) === 'https://vm/p/instances',
+		);
+		expect(resolveCalls).toHaveLength(1);
 	});
 
 	it('exposes manage.connectionStatus scoped to a tenant', async () => {
