@@ -1,0 +1,36 @@
+import { logEventFromContext } from 'corsair/core';
+import type { WinstonaiEndpoints } from '..';
+import { makeWinstonaiRequest } from '../client';
+import {
+	toDetectEventPayload,
+	WinstonaiEndpointInputSchemas,
+	WinstonaiEndpointOutputSchemas,
+} from './types';
+
+export const detectPlagiarism: WinstonaiEndpoints['detectPlagiarism'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = WinstonaiEndpointInputSchemas.detectPlagiarism.parse(input);
+
+	const response = await makeWinstonaiRequest('/plagiarism', ctx.key, {
+		schema: WinstonaiEndpointOutputSchemas.detectPlagiarism,
+		body: {
+			text: parsed.text,
+			file: parsed.file,
+			website: parsed.website,
+			excluded_sources: parsed.excluded_sources,
+			language: parsed.language,
+			country: parsed.country,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'winstonai.detect.plagiarism',
+		toDetectEventPayload(parsed),
+		'completed',
+	);
+
+	return response;
+};
