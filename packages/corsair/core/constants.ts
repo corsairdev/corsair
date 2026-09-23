@@ -148,6 +148,7 @@ export const BaseProviders = [
 	'cosmic',
 	'countdownapi',
 	'crowterminal',
+	'currentsapi',
 	'cursor',
 	'customerio',
 	'customgpt',
@@ -478,6 +479,7 @@ export const ProviderDisplayNames = {
 	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
 	crowterminal: 'CrowTerminal',
+	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
@@ -815,6 +817,7 @@ export type AllProviders =
 	| 'cosmic'
 	| 'countdownapi'
 	| 'crowterminal'
+	| 'currentsapi'
 	| 'cursor'
 	| 'customerio'
 	| 'customgpt'
