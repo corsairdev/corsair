@@ -297,6 +297,40 @@ describe('corsairCloud', () => {
 		).toThrow(/https/);
 	});
 
+	it('withInstance reselects the transport to a named instance', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(
+				async () => new Response(JSON.stringify({ data: {} }), { status: 200 }),
+			);
+
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_users.aaaa',
+			instances: {
+				dashboard: { apiKey: 'ck_cloud_dash.bbbb' },
+			},
+		});
+
+		await corsair.withTenant('acme').notion.api.pages.searchPage({});
+		const [primaryUrl] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(primaryUrl).toContain('/users/');
+
+		await corsair
+			.withInstance('dashboard')
+			.withTenant('acme')
+			.notion.api.pages.searchPage({});
+		const [dashboardUrl] = (globalThis.fetch as jest.Mock).mock.calls[1];
+		expect(dashboardUrl).toContain('/dash/');
+	});
+
+	it('withInstance throws for an unconfigured instance key', () => {
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_users.aaaa',
+			instances: { dashboard: { apiKey: 'ck_cloud_dash.bbbb' } },
+		});
+		expect(() => corsair.withInstance('nope')).toThrow(/no such instance/);
+	});
+
 	it('exposes manage.connectionStatus scoped to a tenant', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')

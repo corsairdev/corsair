@@ -155,6 +155,9 @@ export type CorsairCloudConfig = {
 	url?: string;
 	/** Reserved for future connect/callback signing; unused by the HTTP client. */
 	signingSecret?: string;
+	/** Named sibling instances (e.g. another cloud VM for the same project) that
+	 * `withInstance` can reselect the whole surface to, each with its own key. */
+	instances?: Record<string, { apiKey: string; url?: string }>;
 };
 
 // Empty by design: the declaration-merge target the generated types fill.
@@ -171,6 +174,7 @@ type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 
 export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
 	withTenant(tenantId: string): CloudTenantClient<Registry>;
+	withInstance(key: string): CorsairCloudInstance<Registry>;
 	manage: CorsairManageNamespace;
 };
 
@@ -183,19 +187,33 @@ export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
 export function corsairCloud<Registry = CorsairCloudRegistry>(
 	config: CorsairCloudConfig,
 ): CorsairCloudInstance<Registry> {
-	const apiKey = config.apiKey?.trim();
-	if (!apiKey) {
-		throw new Error('corsairCloud: apiKey is required');
+	function build(apiKey: string, url?: string): CorsairCloudInstance<Registry> {
+		const trimmedKey = apiKey?.trim();
+		if (!trimmedKey) {
+			throw new Error('corsairCloud: apiKey is required');
+		}
+		const baseUrl = url?.trim() || cloudUrlFromKey(trimmedKey);
+		if (!baseUrl) {
+			throw new Error(
+				'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
+			);
+		}
+		assertCloudUrlSecure(baseUrl);
+		const surface = buildCloudSurface(
+			{ baseUrl, apiKey: trimmedKey },
+			{ multiTenancy: true },
+		) as unknown as CorsairCloudInstance<Registry>;
+		return Object.assign(surface, {
+			withInstance: (key: string) => {
+				const instance = config.instances?.[key];
+				if (!instance) {
+					throw new Error(
+						`corsairCloud.withInstance("${key}"): no such instance configured`,
+					);
+				}
+				return build(instance.apiKey, instance.url);
+			},
+		});
 	}
-	const baseUrl = config.url?.trim() || cloudUrlFromKey(apiKey);
-	if (!baseUrl) {
-		throw new Error(
-			'corsairCloud: could not resolve a URL from apiKey — pass a ck_cloud_<slug>.<secret> key, or set `url` explicitly.',
-		);
-	}
-	assertCloudUrlSecure(baseUrl);
-	return buildCloudSurface(
-		{ baseUrl, apiKey },
-		{ multiTenancy: true },
-	) as unknown as CorsairCloudInstance<Registry>;
+	return build(config.apiKey, config.url);
 }
