@@ -167,6 +167,7 @@ export const BaseProviders = [
 	'everhour',
 	'exa',
 	'exist',
+	'extractaai',
 	'facebook',
 	'faraday',
 	'figma',
@@ -477,6 +478,7 @@ export const ProviderDisplayNames = {
 	everhour: 'Everhour',
 	exa: 'Exa',
 	exist: 'Exist',
+	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
 	faraday: 'Faraday',
 	figma: 'Figma',
@@ -794,6 +796,7 @@ export type AllProviders =
 	| 'everhour'
 	| 'exa'
 	| 'exist'
+	| 'extractaai'
 	| 'facebook'
 	| 'faraday'
 	| 'figma'
