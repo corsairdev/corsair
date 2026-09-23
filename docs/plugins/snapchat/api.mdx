@@ -1,0 +1,3774 @@
+---
+title: API
+description: "API reference for Snapchat: every `snapchat.api.*` operation with input and output types."
+---
+
+Every `snapchat.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actions
+
+### addSegmentUsers
+
+`actions.addSegmentUsers`
+
+Add Segment Users
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.addSegmentUsers({
+	users: ["user_hash_123"],
+	segment_id: "segment_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `any` | Yes | Required users parameter |
+| `segment_id` | `any` | Yes | Required segment_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### copyMedia
+
+`actions.copyMedia`
+
+Copy Media
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.copyMedia({
+	media_copy: "media_copy_example",
+	destination_ad_account_id: "destination_ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_copy` | `any` | Yes | Required media_copy parameter |
+| `destination_ad_account_id` | `any` | Yes | Required destination_ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAccountRole
+
+`actions.createAccountRole`
+
+Create Account Role
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAccountRole({
+	roles: "roles_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `any` | Yes | Required roles parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdAccount
+
+`actions.createAdAccount`
+
+Create Ad Account
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdAccount({
+	adaccounts: "adaccounts_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adaccounts` | `any` | Yes | Required adaccounts parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsAudienceSizeV2
+
+`actions.createAdaccountsAudienceSizeV2`
+
+Create Adaccounts Audience Size V2
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsAudienceSizeV2({
+	targeting: {},
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targeting` | `any` | Yes | Required targeting parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsCreativeElements
+
+`actions.createAdaccountsCreativeElements`
+
+Create Adaccounts Creative Elements
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsCreativeElements({
+	id: "id_example",
+	creative_elements: "creative_elements_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+| `creative_elements` | `any` | Yes | Required creative_elements parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsDynamicTemplates
+
+`actions.createAdaccountsDynamicTemplates`
+
+Create Adaccounts Dynamic Templates
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsDynamicTemplates({
+	adaccount_id: "adaccount_id_example",
+	dynamic_templates: "dynamic_templates_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adaccount_id` | `any` | Yes | Required adaccount_id parameter |
+| `dynamic_templates` | `any` | Yes | Required dynamic_templates parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsEventDetails
+
+`actions.createAdaccountsEventDetails`
+
+Create Adaccounts Event Details
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsEventDetails({
+	ad_account_id: "ad_account_id_example",
+	event_details: "event_details_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+| `event_details` | `any` | Yes | Required event_details parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsInteractionZones
+
+`actions.createAdaccountsInteractionZones`
+
+Create Adaccounts Interaction Zones
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsInteractionZones({
+	ad_account_id: "ad_account_id_example",
+	interaction_zones: "interaction_zones_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+| `interaction_zones` | `any` | Yes | Required interaction_zones parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsOfferDisclaimers
+
+`actions.createAdaccountsOfferDisclaimers`
+
+Create Adaccounts Offer Disclaimers
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsOfferDisclaimers({
+	id: "id_example",
+	offer_disclaimers: "offer_disclaimers_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+| `offer_disclaimers` | `any` | Yes | Required offer_disclaimers parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsReservedForecasting
+
+`actions.createAdaccountsReservedForecasting`
+
+Create Adaccounts Reserved Forecasting
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsReservedForecasting({
+	id: "id_example",
+	end_time: "end_time_example",
+	targeting: {},
+	start_time: "start_time_example",
+	placement_v2: {},
+	optimization_goal: "optimization_goal_example",
+	delivery_constraint: "delivery_constraint_example",
+	cap_and_exclusion_config: {}
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+| `end_time` | `any` | Yes | Required end_time parameter |
+| `targeting` | `any` | Yes | Required targeting parameter |
+| `start_time` | `any` | Yes | Required start_time parameter |
+| `placement_v2` | `any` | Yes | Required placement_v2 parameter |
+| `optimization_goal` | `any` | Yes | Required optimization_goal parameter |
+| `delivery_constraint` | `any` | Yes | Required delivery_constraint parameter |
+| `cap_and_exclusion_config` | `any` | Yes | Required cap_and_exclusion_config parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdaccountsTargetingInsights
+
+`actions.createAdaccountsTargetingInsights`
+
+Create Adaccounts Targeting Insights
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdaccountsTargetingInsights({
+	id: "id_example",
+	base_spec: {},
+	targeting_spec: {}
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+| `base_spec` | `any` | Yes | Required base_spec parameter |
+| `targeting_spec` | `any` | Yes | Required targeting_spec parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createAdSquad
+
+`actions.createAdSquad`
+
+Create Ad Squad
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createAdSquad({
+	adsquads: "adsquads_example",
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adsquads` | `any` | Yes | Required adsquads parameter |
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createBillingCenter
+
+`actions.createBillingCenter`
+
+Create Billing Center
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createBillingCenter({
+	billingcenters: "billingcenters_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billingcenters` | `any` | Yes | Required billingcenters parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCampaign
+
+`actions.createCampaign`
+
+Create Campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCampaign({
+	name: "name_example",
+	start_time: "start_time_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `any` | Yes | Required name parameter |
+| `start_time` | `any` | Yes | Required start_time parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCatalogRole
+
+`actions.createCatalogRole`
+
+Create Catalog Role
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCatalogRole({
+	roles: "roles_example",
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `any` | Yes | Required roles parameter |
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCatalogsFacets
+
+`actions.createCatalogsFacets`
+
+Create Catalogs Facets
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCatalogsFacets({
+	facets: "facets_example",
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facets` | `any` | Yes | Required facets parameter |
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCatalogsFlightsSearch
+
+`actions.createCatalogsFlightsSearch`
+
+Create Catalogs Flights Search
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCatalogsFlightsSearch({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCatalogsProductFeeds
+
+`actions.createCatalogsProductFeeds`
+
+Create Catalogs Product Feeds
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCatalogsProductFeeds({
+	name: "name_example",
+	catalog_id: "catalog_id_example",
+	default_currency: "default_currency_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `any` | Yes | Required name parameter |
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+| `default_currency` | `any` | Yes | Required default_currency parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createCatalogsProductSets
+
+`actions.createCatalogsProductSets`
+
+Create Catalogs Product Sets
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createCatalogsProductSets({
+	name: "name_example",
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `any` | Yes | Required name parameter |
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createMedia
+
+`actions.createMedia`
+
+Create Media
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createMedia({
+	media: "media_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media` | `any` | Yes | Required media parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createOrganizationsCatalogs
+
+`actions.createOrganizationsCatalogs`
+
+Create Organizations Catalogs
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createOrganizationsCatalogs({
+	catalogs: "catalogs_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalogs` | `any` | Yes | Required catalogs parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createOrgRole
+
+`actions.createOrgRole`
+
+Create Org Role
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createOrgRole({
+	roles: "roles_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `roles` | `any` | Yes | Required roles parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createSegment
+
+`actions.createSegment`
+
+Create Segment
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.createSegment({
+	segments: "segments_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `any` | Yes | Required segments parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteAdaccountsOfferDisclaimers
+
+`actions.deleteAdaccountsOfferDisclaimers`
+
+Delete Adaccounts Offer Disclaimers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteAdaccountsOfferDisclaimers({
+	ad_account_id: "ad_account_id_example",
+	offer_disclaimer_id: "offer_disclaimer_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+| `offer_disclaimer_id` | `any` | Yes | Required offer_disclaimer_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteAdsquads
+
+`actions.deleteAdsquads`
+
+Delete Adsquads
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteAdsquads({
+	id: "id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteAllSegmentUsers
+
+`actions.deleteAllSegmentUsers`
+
+Delete All Segment Users
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteAllSegmentUsers({
+	segment_id: "segment_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment_id` | `any` | Yes | Required segment_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteCampaign
+
+`actions.deleteCampaign`
+
+Delete Campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteCampaign({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteCatalogs
+
+`actions.deleteCatalogs`
+
+Delete Catalogs
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteCatalogs({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteEventDetails
+
+`actions.deleteEventDetails`
+
+Delete Event Details
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteEventDetails({
+	event_details_id: "event_details_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_details_id` | `any` | Yes | Required event_details_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteMember
+
+`actions.deleteMember`
+
+Delete Member
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteMember({
+	member_id: "member_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `any` | Yes | Required member_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteProductFeeds
+
+`actions.deleteProductFeeds`
+
+Delete Product Feeds
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteProductFeeds({
+	product_feed_id: "product_feed_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_feed_id` | `any` | Yes | Required product_feed_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteRole
+
+`actions.deleteRole`
+
+Delete Role
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteRole({
+	role_id: "role_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `role_id` | `any` | Yes | Required role_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSegment
+
+`actions.deleteSegment`
+
+Delete Segment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteSegment({
+	segment_id: "segment_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment_id` | `any` | Yes | Required segment_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteSegmentUsers
+
+`actions.deleteSegmentUsers`
+
+Delete Segment Users
+
+**Risk:** `destructive`
+
+```ts
+await corsair.snapchat.api.actions.deleteSegmentUsers({
+	users: ["user_hash_123"],
+	segment_id: "segment_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `any` | Yes | Required users parameter |
+| `segment_id` | `any` | Yes | Required segment_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdAccount
+
+`actions.getAdAccount`
+
+Get Ad Account
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdAccount({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsAdsquads
+
+`actions.getAdaccountsAdsquads`
+
+Get Adaccounts Adsquads
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsAdsquads({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsAdSquadUiRenderData
+
+`actions.getAdaccountsAdSquadUiRenderData`
+
+Get Adaccounts Ad Squad Ui Render Data
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsAdSquadUiRenderData({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsDynamicTemplates
+
+`actions.getAdaccountsDynamicTemplates`
+
+Get Adaccounts Dynamic Templates
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsDynamicTemplates({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsEventDetails
+
+`actions.getAdaccountsEventDetails`
+
+Get Adaccounts Event Details
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsEventDetails({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsInteractionZones
+
+`actions.getAdaccountsInteractionZones`
+
+Get Adaccounts Interaction Zones
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsInteractionZones({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdAccountsLeadGenerationForms
+
+`actions.getAdAccountsLeadGenerationForms`
+
+Get Ad Accounts Lead Generation Forms
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdAccountsLeadGenerationForms({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsLeadsReport
+
+`actions.getAdaccountsLeadsReport`
+
+Get Adaccounts Leads Report
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsLeadsReport({
+	id: "id_example",
+	report_run_id: "report_run_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+| `report_run_id` | `any` | Yes | Required report_run_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsMobileApps
+
+`actions.getAdaccountsMobileApps`
+
+Get Adaccounts Mobile Apps
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsMobileApps({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsOfferDisclaimers
+
+`actions.getAdaccountsOfferDisclaimers`
+
+Get Adaccounts Offer Disclaimers
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsOfferDisclaimers({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsSpendGuidance
+
+`actions.getAdaccountsSpendGuidance`
+
+Get Adaccounts Spend Guidance
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsSpendGuidance({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdAccountsStats
+
+`actions.getAdAccountsStats`
+
+Get Ad Accounts Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdAccountsStats({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdaccountsStatsReport
+
+`actions.getAdaccountsStatsReport`
+
+Get Adaccounts Stats Report
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdaccountsStatsReport({
+	ad_account_id: "ad_account_id_example",
+	report_run_id: "report_run_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+| `report_run_id` | `any` | Yes | Required report_run_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdSquad
+
+`actions.getAdSquad`
+
+Get Ad Squad
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdSquad({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdSquadRestrictions
+
+`actions.getAdSquadRestrictions`
+
+Get Ad Squad Restrictions
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdSquadRestrictions({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdsquadsAudienceSizeV2
+
+`actions.getAdsquadsAudienceSizeV2`
+
+Get Adsquads Audience Size V2
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdsquadsAudienceSizeV2({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdsquadsStatsReport
+
+`actions.getAdsquadsStatsReport`
+
+Get Adsquads Stats Report
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdsquadsStatsReport({
+	ad_squad_id: "ad_squad_id_example",
+	report_run_id: "report_run_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+| `report_run_id` | `any` | Yes | Required report_run_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdSquadStats
+
+`actions.getAdSquadStats`
+
+Get Ad Squad Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdSquadStats({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdSquadTargeting
+
+`actions.getAdSquadTargeting`
+
+Get Ad Squad Targeting
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdSquadTargeting({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAdStats
+
+`actions.getAdStats`
+
+Get Ad Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAdStats({
+	ad_id: "ad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_id` | `any` | Yes | Required ad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getAuthenticatedUser
+
+`actions.getAuthenticatedUser`
+
+Get Authenticated User
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getAuthenticatedUser({
+	billing_center_id: "billing_center_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billing_center_id` | `any` | Yes | Required billing_center_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getBillingCenter
+
+`actions.getBillingCenter`
+
+Get Billing Center
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getBillingCenter({
+	billing_center_id: "billing_center_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billing_center_id` | `any` | Yes | Required billing_center_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCampaign
+
+`actions.getCampaign`
+
+Get Campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCampaign({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCampaignChangelog
+
+`actions.getCampaignChangelog`
+
+Get Campaign Changelog
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCampaignChangelog({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCampaignsByIds
+
+`actions.getCampaignsByIds`
+
+Get Campaigns By Ids
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCampaignsByIds({
+	entity_ids: "entity_ids_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_ids` | `any` | Yes | Required entity_ids parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCampaignStats
+
+`actions.getCampaignStats`
+
+Get Campaign Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCampaignStats({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCatalogs
+
+`actions.getCatalogs`
+
+Get Catalogs
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCatalogs({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getCatalogsProductSets
+
+`actions.getCatalogsProductSets`
+
+Get Catalogs Product Sets
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getCatalogsProductSets({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getDynamicTemplate
+
+`actions.getDynamicTemplate`
+
+Get Dynamic Template
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getDynamicTemplate({
+	id: "id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getDynamicTemplatesExternalChangelogs
+
+`actions.getDynamicTemplatesExternalChangelogs`
+
+Get Dynamic Templates External Changelogs
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getDynamicTemplatesExternalChangelogs({
+	dynamic_template_id: "dynamic_template_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dynamic_template_id` | `any` | Yes | Required dynamic_template_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getEventDetails
+
+`actions.getEventDetails`
+
+Get Event Details
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getEventDetails({
+	event_details_id: "event_details_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_details_id` | `any` | Yes | Required event_details_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getFundingSource
+
+`actions.getFundingSource`
+
+Get Funding Source
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getFundingSource({
+	funding_source_id: "funding_source_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `funding_source_id` | `any` | Yes | Required funding_source_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getInteractionZone
+
+`actions.getInteractionZone`
+
+Get Interaction Zone
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getInteractionZone({
+	interaction_zone_id: "interaction_zone_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interaction_zone_id` | `any` | Yes | Required interaction_zone_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getInvoice
+
+`actions.getInvoice`
+
+Get Invoice
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getInvoice({
+	invoice_id: "invoice_id_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice_id` | `any` | Yes | Required invoice_id parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMedia
+
+`actions.getMedia`
+
+Get Media
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getMedia({
+	media_id: "media_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `any` | Yes | Required media_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMediaByIds
+
+`actions.getMediaByIds`
+
+Get Media By Ids
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getMediaByIds({
+	entity_ids: "entity_ids_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_ids` | `any` | Yes | Required entity_ids parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMediaStats
+
+`actions.getMediaStats`
+
+Get Media Stats
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getMediaStats({
+	media_id: "media_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `any` | Yes | Required media_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getMember
+
+`actions.getMember`
+
+Get Member
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getMember({
+	member_id: "member_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `any` | Yes | Required member_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getOrganization
+
+`actions.getOrganization`
+
+Get Organization
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getOrganization({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getOrganizationsCatalogs
+
+`actions.getOrganizationsCatalogs`
+
+Get Organizations Catalogs
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getOrganizationsCatalogs({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getOrganizationsMobileApps
+
+`actions.getOrganizationsMobileApps`
+
+Get Organizations Mobile Apps
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getOrganizationsMobileApps({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getOrganizationsPublicProfiles
+
+`actions.getOrganizationsPublicProfiles`
+
+Get Organizations Public Profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getOrganizationsPublicProfiles({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getPixels
+
+`actions.getPixels`
+
+Get Pixels
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getPixels({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getProductFeeds
+
+`actions.getProductFeeds`
+
+Get Product Feeds
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getProductFeeds({
+	product_feed_id: "product_feed_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_feed_id` | `any` | Yes | Required product_feed_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getProductFeedsFeedUploads
+
+`actions.getProductFeedsFeedUploads`
+
+Get Product Feeds Feed Uploads
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getProductFeedsFeedUploads({
+	product_feed_id: "product_feed_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_feed_id` | `any` | Yes | Required product_feed_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getProductSets
+
+`actions.getProductSets`
+
+Get Product Sets
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getProductSets({
+	id: "id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `any` | Yes | Required id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getSegment
+
+`actions.getSegment`
+
+Get Segment
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getSegment({
+	segment_id: "segment_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment_id` | `any` | Yes | Required segment_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingCarriers
+
+`actions.getTargetingCarriers`
+
+Get Targeting Carriers
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingCarriers({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingConnectionTypes
+
+`actions.getTargetingConnectionTypes`
+
+Get Targeting Connection Types
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingConnectionTypes({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDemographicsAdvancedDemographics
+
+`actions.getTargetingDemographicsAdvancedDemographics`
+
+Get Targeting Demographics Advanced Demographics
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDemographicsAdvancedDemographics({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDemographicsAgeGroup
+
+`actions.getTargetingDemographicsAgeGroup`
+
+Get Targeting Demographics Age Group
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDemographicsAgeGroup({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDemographicsGender
+
+`actions.getTargetingDemographicsGender`
+
+Get Targeting Demographics Gender
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDemographicsGender({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDemographicsLanguages
+
+`actions.getTargetingDemographicsLanguages`
+
+Get Targeting Demographics Languages
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDemographicsLanguages({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDeviceIosOsVersion
+
+`actions.getTargetingDeviceIosOsVersion`
+
+Get Targeting Device Ios Os Version
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDeviceIosOsVersion({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingDeviceMarketingNames
+
+`actions.getTargetingDeviceMarketingNames`
+
+Get Targeting Device Marketing Names
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingDeviceMarketingNames({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingGeoPostalCode
+
+`actions.getTargetingGeoPostalCode`
+
+Get Targeting Geo Postal Code
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingGeoPostalCode({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingGeoRegion
+
+`actions.getTargetingGeoRegion`
+
+Get Targeting Geo Region
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingGeoRegion({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingGeoUsPostalCode
+
+`actions.getTargetingGeoUsPostalCode`
+
+Get Targeting Geo Us Postal Code
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingGeoUsPostalCode({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingGeoUsRegion
+
+`actions.getTargetingGeoUsRegion`
+
+Get Targeting Geo Us Region
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingGeoUsRegion({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingInterestsDlxc
+
+`actions.getTargetingInterestsDlxc`
+
+Get Targeting Interests Dlxc
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingInterestsDlxc({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingInterestsDlxp
+
+`actions.getTargetingInterestsDlxp`
+
+Get Targeting Interests Dlxp
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingInterestsDlxp({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingInterestsDlxs
+
+`actions.getTargetingInterestsDlxs`
+
+Get Targeting Interests Dlxs
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingInterestsDlxs({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingInterestsNln
+
+`actions.getTargetingInterestsNln`
+
+Get Targeting Interests Nln
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingInterestsNln({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingInterestsPlc
+
+`actions.getTargetingInterestsPlc`
+
+Get Targeting Interests Plc
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingInterestsPlc({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingLocationCategoriesLoi
+
+`actions.getTargetingLocationCategoriesLoi`
+
+Get Targeting Location Categories Loi
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingLocationCategoriesLoi({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingMetros
+
+`actions.getTargetingMetros`
+
+Get Targeting Metros
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingMetros({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingOsTypes
+
+`actions.getTargetingOsTypes`
+
+Get Targeting Os Types
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingOsTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingOsVersions
+
+`actions.getTargetingOsVersions`
+
+Get Targeting Os Versions
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingOsVersions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingV1InterestsScLs
+
+`actions.getTargetingV1InterestsScLs`
+
+Get Targeting V1 Interests Sc Ls
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingV1InterestsScLs({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingV1InterestsShp
+
+`actions.getTargetingV1InterestsShp`
+
+Get Targeting V1 Interests Shp
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingV1InterestsShp({
+	country_code: "country_code_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `any` | Yes | Required country_code parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingV1InterestsVac
+
+`actions.getTargetingV1InterestsVac`
+
+Get Targeting V1 Interests Vac
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingV1InterestsVac({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### getTargetingV1Options
+
+`actions.getTargetingV1Options`
+
+Get Targeting V1 Options
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.getTargetingV1Options({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAccountRoles
+
+`actions.listAccountRoles`
+
+List Account Roles
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAccountRoles({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAdAccounts
+
+`actions.listAdAccounts`
+
+List Ad Accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAdAccounts({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAdsByAccount
+
+`actions.listAdsByAccount`
+
+List Ads By Account
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAdsByAccount({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAdsByAdSquad
+
+`actions.listAdsByAdSquad`
+
+List Ads By Ad Squad
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAdsByAdSquad({
+	ad_squad_id: "ad_squad_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_squad_id` | `any` | Yes | Required ad_squad_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAdsByCampaign
+
+`actions.listAdsByCampaign`
+
+List Ads By Campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAdsByCampaign({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listAdSquads
+
+`actions.listAdSquads`
+
+List Ad Squads
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listAdSquads({
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listBillingCenters
+
+`actions.listBillingCenters`
+
+List Billing Centers
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listBillingCenters({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCampaigns
+
+`actions.listCampaigns`
+
+List Campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listCampaigns({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCatalogRoles
+
+`actions.listCatalogRoles`
+
+List Catalog Roles
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listCatalogRoles({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listCreatives
+
+`actions.listCreatives`
+
+List Creatives
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listCreatives({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listFundingSources
+
+`actions.listFundingSources`
+
+List Funding Sources
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listFundingSources({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listInvoices
+
+`actions.listInvoices`
+
+List Invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listInvoices({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listMedia
+
+`actions.listMedia`
+
+List Media
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listMedia({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listMemberRoles
+
+`actions.listMemberRoles`
+
+List Member Roles
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listMemberRoles({
+	member_id: "member_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member_id` | `any` | Yes | Required member_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listMembers
+
+`actions.listMembers`
+
+List Members
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listMembers({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listOrganizations
+
+`actions.listOrganizations`
+
+List Organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listOrganizations({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### listOrgPixels
+
+`actions.listOrgPixels`
+
+List Org Pixels
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listOrgPixels({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listOrgRoles
+
+`actions.listOrgRoles`
+
+List Org Roles
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listOrgRoles({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listPhoneNumbers
+
+`actions.listPhoneNumbers`
+
+List Phone Numbers
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listPhoneNumbers({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listSegments
+
+`actions.listSegments`
+
+List Segments
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listSegments({
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listSponsoredContent
+
+`actions.listSponsoredContent`
+
+List Sponsored Content
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listSponsoredContent({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### listTransactions
+
+`actions.listTransactions`
+
+List Transactions
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.listTransactions({
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### searchAdsLibrarySponsoredContent
+
+`actions.searchAdsLibrarySponsoredContent`
+
+Search Ads Library Sponsored Content
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.searchAdsLibrarySponsoredContent({
+	creator_name: "creator_name_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creator_name` | `any` | Yes | Required creator_name parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### searchCatalogProducts
+
+`actions.searchCatalogProducts`
+
+Search Catalog Products
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.searchCatalogProducts({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### searchCatalogsHotels
+
+`actions.searchCatalogsHotels`
+
+Search Catalogs Hotels
+
+**Risk:** `read`
+
+```ts
+await corsair.snapchat.api.actions.searchCatalogsHotels({
+	catalog_id: "catalog_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalog_id` | `any` | Yes | Required catalog_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAdAccount
+
+`actions.updateAdAccount`
+
+Update Ad Account
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.updateAdAccount({
+	adaccounts: "adaccounts_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adaccounts` | `any` | Yes | Required adaccounts parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAdSquad
+
+`actions.updateAdSquad`
+
+Update Ad Squad
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.updateAdSquad({
+	adsquads: "adsquads_example",
+	campaign_id: "campaign_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adsquads` | `any` | Yes | Required adsquads parameter |
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateBillingCenter
+
+`actions.updateBillingCenter`
+
+Update Billing Center
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.updateBillingCenter({
+	billingcenters: "billingcenters_example",
+	organization_id: "organization_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billingcenters` | `any` | Yes | Required billingcenters parameter |
+| `organization_id` | `any` | Yes | Required organization_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateCampaign
+
+`actions.updateCampaign`
+
+Update Campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.updateCampaign({
+	campaign_id: "campaign_id_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `any` | Yes | Required campaign_id parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateSegment
+
+`actions.updateSegment`
+
+Update Segment
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.updateSegment({
+	segments: "segments_example",
+	ad_account_id: "ad_account_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `any` | Yes | Required segments parameter |
+| `ad_account_id` | `any` | Yes | Required ad_account_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### uploadMediaMultipart
+
+`actions.uploadMediaMultipart`
+
+Upload Media Multipart
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.uploadMediaMultipart({
+	media_id: "media_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_id` | `any` | Yes | Required media_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### validateConversionEvent
+
+`actions.validateConversionEvent`
+
+Validate Conversion Event
+
+**Risk:** `write`
+
+```ts
+await corsair.snapchat.api.actions.validateConversionEvent({
+	events: [{ event_type: "PURCHASE" }],
+	pixel_id: "pixel_id_example"
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `any` | Yes | Required events parameter |
+| `pixel_id` | `any` | Yes | Required pixel_id parameter |
+
+
+
+**Output:** _empty object_
+
+
+---
+
