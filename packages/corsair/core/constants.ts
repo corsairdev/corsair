@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'reddit',
 	'replicate',
 	'removebg',
+	'replyio',
 	'resend',
 	'retailed',
 	'rootly',
@@ -592,6 +593,7 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	replicate: 'Replicate',
 	removebg: 'remove.bg',
+	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
 	rootly: 'Rootly',
@@ -928,6 +930,7 @@ export type AllProviders =
 	| 'reddit'
 	| 'replicate'
 	| 'removebg'
+	| 'replyio'
 	| 'resend'
 	| 'retailed'
 	| 'rootly'
