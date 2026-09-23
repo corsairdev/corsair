@@ -6,6 +6,7 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import { getOAuthAccessToken } from '../core/auth/oauth-access';
+import { singleFlight } from '../core/auth/single-flight';
 import { createTestDatabase } from './setup-db';
 
 const KEK = 'test-kek-with-at-least-32-characters!!';
@@ -225,6 +226,41 @@ describe('multi-tenant singleFlight', () => {
 			expect(corsair.withTenant('tenant-0').linear.keys).not.toBe(first);
 			// A tenant still within the cap keeps its shared manager.
 			expect(corsair.withTenant('tenant-599').linear.keys).toBe(recent);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('never evicts a manager with an unsettled refresh flight', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const corsair = createCorsair({
+				kek: KEK,
+				plugins: [linearPlugin],
+				database: database.db,
+				multiTenancy: true,
+			});
+
+			// The busy tenant is inserted first, so it is the oldest entry
+			// and the first eviction candidate once the flood passes the cap.
+			const busy = corsair.withTenant('busy').linear.keys;
+			let release: (v: string) => void = () => {};
+			const gate = new Promise<string>((resolve) => {
+				release = resolve;
+			});
+			const flight = singleFlight(busy, 'refresh', () => gate);
+
+			for (let i = 0; i < 600; i += 1) {
+				corsair.withTenant(`tenant-${i}`);
+			}
+
+			// Still the same manager: eviction skipped it while its flight
+			// was open, so a late joiner shares the flight instead of
+			// starting a second refresh on a rebuilt manager.
+			expect(corsair.withTenant('busy').linear.keys).toBe(busy);
+
+			release('done');
+			await expect(flight).resolves.toBe('done');
 		} finally {
 			cleanup();
 		}
