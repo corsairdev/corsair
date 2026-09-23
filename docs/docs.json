@@ -1065,6 +1065,14 @@
                 ]
               },
               {
+                "group": "ClickMeeting",
+                "pages": [
+                  "plugins/clickmeeting/overview",
+                  "plugins/clickmeeting/api",
+                  "plugins/clickmeeting/database"
+                ]
+              },
+              {
                 "group": "Clientary",
                 "pages": [
                   "plugins/clientary/overview",
