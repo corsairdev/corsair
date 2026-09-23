@@ -51,6 +51,7 @@ const DOMAIN_OVERRIDES: Record<string, string> = {
 	firecrawl: 'firecrawl.dev',
 	fireflies: 'fireflies.ai',
 	googlecalendar: 'calendar.google.com',
+	googlecontacts: 'contacts.google.com',
 	googledocs: 'docs.google.com',
 	googledrive: 'drive.google.com',
 	googlemeet: 'meet.google.com',
