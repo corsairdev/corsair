@@ -1001,6 +1001,14 @@
                 ]
               },
               {
+                "group": "Carbone",
+                "pages": [
+                  "plugins/carbone/overview",
+                  "plugins/carbone/api",
+                  "plugins/carbone/database"
+                ]
+              },
+              {
                 "group": "Castingwords",
                 "pages": [
                   "plugins/castingwords/overview",
@@ -1062,6 +1070,14 @@
                   "plugins/clickhouse/overview",
                   "plugins/clickhouse/api",
                   "plugins/clickhouse/database"
+                ]
+              },
+              {
+                "group": "ClickMeeting",
+                "pages": [
+                  "plugins/clickmeeting/overview",
+                  "plugins/clickmeeting/api",
+                  "plugins/clickmeeting/database"
                 ]
               },
               {
@@ -1398,6 +1414,14 @@
                 ]
               },
               {
+                "group": "Filevine",
+                "pages": [
+                  "plugins/filevine/overview",
+                  "plugins/filevine/api",
+                  "plugins/filevine/database"
+                ]
+              },
+              {
                 "group": "Fillout",
                 "pages": [
                   "plugins/filloutforms/overview",
@@ -1677,6 +1701,14 @@
                   "plugins/huggingface/overview",
                   "plugins/huggingface/api",
                   "plugins/huggingface/database"
+                ]
+              },
+              {
+                "group": "Imagior",
+                "pages": [
+                  "plugins/imagior/overview",
+                  "plugins/imagior/api",
+                  "plugins/imagior/database"
                 ]
               },
               {
@@ -2127,6 +2159,14 @@
                   "plugins/slack/api",
                   "plugins/slack/database",
                   "plugins/slack/webhooks"
+                ]
+              },
+              {
+                "group": "Snapchat",
+                "pages": [
+                  "plugins/snapchat/overview",
+                  "plugins/snapchat/api",
+                  "plugins/snapchat/database"
                 ]
               },
               {
