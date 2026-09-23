@@ -1398,6 +1398,14 @@
                 ]
               },
               {
+                "group": "Filevine",
+                "pages": [
+                  "plugins/filevine/overview",
+                  "plugins/filevine/api",
+                  "plugins/filevine/database"
+                ]
+              },
+              {
                 "group": "Fillout",
                 "pages": [
                   "plugins/filloutforms/overview",
@@ -2119,6 +2127,14 @@
                   "plugins/slack/api",
                   "plugins/slack/database",
                   "plugins/slack/webhooks"
+                ]
+              },
+              {
+                "group": "Snapchat",
+                "pages": [
+                  "plugins/snapchat/overview",
+                  "plugins/snapchat/api",
+                  "plugins/snapchat/database"
                 ]
               },
               {
