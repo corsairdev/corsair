@@ -7,40 +7,51 @@ export const DEFAULT_PERSON_FIELDS = [
 	'phoneNumbers',
 ];
 
+/** Row keys derived from each People API person field. */
+const ROW_KEYS_BY_PERSON_FIELD: Record<string, string[]> = {
+	names: ['displayName', 'givenName', 'familyName'],
+	emailAddresses: ['primaryEmail', 'emails'],
+	phoneNumbers: ['primaryPhone', 'phones'],
+	organizations: ['organization', 'jobTitle'],
+	photos: ['photoUrl'],
+};
+
 function primaryOf<T extends { metadata?: { primary?: boolean } }>(
 	values: T[] | undefined,
 ): T | undefined {
 	return values?.find((v) => v.metadata?.primary) ?? values?.[0];
 }
 
-function definedOnly<T extends Record<string, unknown>>(row: T): Partial<T> {
-	return Object.fromEntries(
-		Object.entries(row).filter(([, v]) => v !== undefined),
-	) as Partial<T>;
+async function evict(
+	store: { deleteByEntityId: (id: string) => Promise<boolean> },
+	entityId: string,
+	label: string,
+): Promise<void> {
+	try {
+		await store.deleteByEntityId(entityId);
+	} catch (error) {
+		console.warn(`Failed to delete ${label} from database:`, error);
+	}
 }
 
 export async function persistContact(
 	ctx: GoogleContactsContext,
 	person: Person,
+	requestedFields: string[] = DEFAULT_PERSON_FIELDS,
 ): Promise<void> {
 	if (!ctx.db.contacts) return;
 
 	// Sync reads return deleted people as bare tombstones; storing one would
 	// leave a blank row that nothing ever cleans up.
 	if (person.metadata?.deleted) {
-		try {
-			await ctx.db.contacts.deleteByEntityId(person.resourceName);
-		} catch (error) {
-			console.warn('Failed to delete contact from database:', error);
-		}
+		await evict(ctx.db.contacts, person.resourceName, 'contact');
 		return;
 	}
 
 	const name = primaryOf(person.names);
 	const organization = primaryOf(person.organizations);
 
-	const incoming = definedOnly({
-		etag: person.etag,
+	const derived: Record<string, unknown> = {
 		displayName: name?.displayName,
 		givenName: name?.givenName,
 		familyName: name?.familyName,
@@ -55,11 +66,22 @@ export async function persistContact(
 		organization: organization?.name,
 		jobTitle: organization?.title,
 		photoUrl: primaryOf(person.photos)?.url,
-	});
+	};
+
+	// A field the caller asked for but Google returned empty has been cleared
+	// upstream, so it must overwrite. A field never asked for says nothing
+	// about the stored value and must be left alone.
+	const incoming: Record<string, unknown> = {};
+	for (const field of requestedFields) {
+		for (const key of ROW_KEYS_BY_PERSON_FIELD[field] ?? []) {
+			incoming[key] = derived[key];
+		}
+	}
+	if (person.etag !== undefined) incoming.etag = person.etag;
 
 	try {
-		// upsertByEntityId replaces the whole row, so a narrow readMask would
-		// wipe fields an earlier wider read stored.
+		// upsertByEntityId replaces the whole row, so unrequested fields have to
+		// be carried over from what is already stored.
 		const existing = await ctx.db.contacts.findByEntityId(person.resourceName);
 		await ctx.db.contacts.upsertByEntityId(person.resourceName, {
 			...existing?.data,
@@ -75,10 +97,11 @@ export async function persistContact(
 export async function persistContacts(
 	ctx: GoogleContactsContext,
 	people: Person[] | undefined,
+	requestedFields?: string[],
 ): Promise<void> {
 	if (!people?.length) return;
 	for (const person of people) {
-		await persistContact(ctx, person);
+		await persistContact(ctx, person, requestedFields);
 	}
 }
 
@@ -88,13 +111,18 @@ export async function persistContactGroup(
 ): Promise<void> {
 	if (!ctx.db.contactGroups) return;
 
-	const incoming = definedOnly({
-		etag: group.etag,
+	if (group.metadata?.deleted) {
+		await evict(ctx.db.contactGroups, group.resourceName, 'contact group');
+		return;
+	}
+
+	const incoming: Record<string, unknown> = {
 		name: group.name,
 		formattedName: group.formattedName,
 		groupType: group.groupType,
 		memberCount: group.memberCount,
-	});
+	};
+	if (group.etag !== undefined) incoming.etag = group.etag;
 
 	try {
 		const existing = await ctx.db.contactGroups.findByEntityId(

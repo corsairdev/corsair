@@ -116,7 +116,14 @@ describe('Google Contacts plugin', () => {
 		it('stores the primary email and phone, not merely the first', async () => {
 			mockRequest.mockResolvedValueOnce({ connections: [PERSON] });
 
-			await plugin.endpoints.contacts.list(ctx, {});
+			await plugin.endpoints.contacts.list(ctx, {
+				personFields: [
+					'names',
+					'emailAddresses',
+					'phoneNumbers',
+					'organizations',
+				],
+			});
 
 			expect(upsertContact).toHaveBeenCalledWith(
 				'people/c1',
@@ -128,6 +135,17 @@ describe('Google Contacts plugin', () => {
 					jobTitle: 'Mathematician',
 				}),
 			);
+		});
+
+		it('leaves fields the caller never asked for out of the written row', async () => {
+			mockRequest.mockResolvedValueOnce({ connections: [PERSON] });
+
+			await plugin.endpoints.contacts.list(ctx, { personFields: ['names'] });
+
+			const row = upsertContact.mock.calls[0][1];
+			expect(row.displayName).toBe('Ada Lovelace');
+			expect(row).not.toHaveProperty('primaryEmail');
+			expect(row).not.toHaveProperty('organization');
 		});
 	});
 
@@ -254,6 +272,25 @@ describe('Google Contacts plugin', () => {
 			);
 		});
 
+		it('passes sync tokens through, so tombstones can be evicted', async () => {
+			mockRequest.mockResolvedValueOnce({
+				otherContacts: [
+					{ resourceName: 'otherContacts/gone', metadata: { deleted: true } },
+				],
+				nextSyncToken: 'st',
+			});
+
+			const result = await plugin.endpoints.otherContacts.list(ctx, {
+				requestSyncToken: true,
+				syncToken: 'previous',
+			});
+
+			expect(lastCall().query.requestSyncToken).toBe(true);
+			expect(lastCall().query.syncToken).toBe('previous');
+			expect(result.nextSyncToken).toBe('st');
+			expect(deleteContact).toHaveBeenCalledWith('otherContacts/gone');
+		});
+
 		it('GETs otherContacts:search', async () => {
 			mockRequest.mockResolvedValueOnce({ results: [{ person: PERSON }] });
 
@@ -361,7 +398,7 @@ describe('Google Contacts plugin', () => {
 	});
 
 	describe('sync persistence', () => {
-		it('merges a narrow read over the wider row already stored', async () => {
+		it('keeps unrequested fields from the row already stored', async () => {
 			findContact.mockResolvedValue({
 				data: {
 					resourceName: 'people/c1',
@@ -382,13 +419,56 @@ describe('Google Contacts plugin', () => {
 				],
 			});
 
-			await plugin.endpoints.contacts.search(ctx, { query: 'ada' });
+			await plugin.endpoints.contacts.search(ctx, {
+				query: 'ada',
+				readMask: ['names'],
+			});
 
 			const row = upsertContact.mock.calls[0][1];
 			expect(row.displayName).toBe('Ada L.');
-			expect(row.primaryEmail).toBe('ada@example.com');
 			expect(row.organization).toBe('Analytical Engines');
 			expect(row.createdAt).toEqual(new Date('2020-01-01'));
+		});
+
+		it('clears a field the caller asked for and Google returned empty', async () => {
+			findContact.mockResolvedValue({
+				data: {
+					resourceName: 'people/c1',
+					displayName: 'Ada Lovelace',
+					primaryEmail: 'ada@example.com',
+					organization: 'Analytical Engines',
+					createdAt: new Date('2020-01-01'),
+				},
+			});
+			mockRequest.mockResolvedValueOnce({
+				connections: [
+					{
+						resourceName: 'people/c1',
+						names: [{ displayName: 'Ada Lovelace' }],
+					},
+				],
+			});
+
+			await plugin.endpoints.contacts.list(ctx, {
+				personFields: ['names', 'emailAddresses'],
+			});
+
+			const row = upsertContact.mock.calls[0][1];
+			expect(row.primaryEmail).toBeUndefined();
+			expect(row.organization).toBe('Analytical Engines');
+		});
+
+		it('removes tombstoned contact groups', async () => {
+			mockRequest.mockResolvedValueOnce({
+				contactGroups: [
+					{ resourceName: 'contactGroups/gone', metadata: { deleted: true } },
+				],
+			});
+
+			await plugin.endpoints.contactGroups.list(ctx, { syncToken: 'prev' });
+
+			expect(deleteGroup).toHaveBeenCalledWith('contactGroups/gone');
+			expect(upsertGroup).not.toHaveBeenCalled();
 		});
 
 		it('removes tombstoned people instead of storing blank rows', async () => {

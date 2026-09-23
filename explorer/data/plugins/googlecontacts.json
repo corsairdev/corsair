@@ -1031,6 +1031,18 @@
             "key": "pageToken",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "requestSyncToken",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a nextSyncToken for incremental reads. Expires after 7 days."
+          },
+          {
+            "key": "syncToken",
+            "optional": true,
+            "type": "string",
+            "description": "Return only changes since this token. Deleted contacts come back with metadata.deleted set."
           }
         ]
       },
@@ -1044,6 +1056,11 @@
           },
           {
             "key": "nextPageToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextSyncToken",
             "optional": true,
             "type": "string"
           },

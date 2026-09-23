@@ -237,6 +237,18 @@ const OtherContactsListInputSchema = z.object({
 	readMask: OtherContactsReadMaskSchema,
 	pageSize: z.number().min(1).max(1000).optional(),
 	pageToken: z.string().optional(),
+	requestSyncToken: z
+		.boolean()
+		.optional()
+		.describe(
+			'Return a nextSyncToken for incremental reads. Expires after 7 days.',
+		),
+	syncToken: z
+		.string()
+		.optional()
+		.describe(
+			'Return only changes since this token. Deleted contacts come back with metadata.deleted set.',
+		),
 });
 
 const OtherContactsSearchInputSchema = z.object({
@@ -306,6 +318,7 @@ const ListConnectionsResponseSchema = z.object({
 const ListOtherContactsResponseSchema = z.object({
 	otherContacts: z.array(PersonSchema).optional(),
 	nextPageToken: z.string().optional(),
+	nextSyncToken: z.string().optional(),
 	totalSize: z.number().optional(),
 });
 

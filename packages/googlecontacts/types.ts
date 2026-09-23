@@ -98,6 +98,7 @@ export type ListConnectionsResponse = {
 export type ListOtherContactsResponse = {
 	otherContacts?: Person[];
 	nextPageToken?: string;
+	nextSyncToken?: string;
 	totalSize?: number;
 };
 

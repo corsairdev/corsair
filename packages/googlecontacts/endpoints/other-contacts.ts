@@ -15,18 +15,21 @@ export const list: GoogleContactsEndpoints['otherContactsList'] = async (
 	ctx,
 	input,
 ) => {
+	const readMask = input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['otherContactsList']
 	>('/otherContacts', ctx, {
 		method: 'GET',
 		query: {
-			readMask: joinFieldMask(input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS),
+			readMask: joinFieldMask(readMask),
 			pageSize: input.pageSize,
 			pageToken: input.pageToken,
+			requestSyncToken: input.requestSyncToken,
+			syncToken: input.syncToken,
 		},
 	});
 
-	await persistContacts(ctx, result.otherContacts);
+	await persistContacts(ctx, result.otherContacts, readMask);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.otherContacts.list',
@@ -40,13 +43,14 @@ export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 	ctx,
 	input,
 ) => {
+	const readMask = input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['otherContactsSearch']
 	>('/otherContacts:search', ctx, {
 		method: 'GET',
 		query: {
 			query: input.query,
-			readMask: joinFieldMask(input.readMask ?? DEFAULT_OTHER_CONTACT_FIELDS),
+			readMask: joinFieldMask(readMask),
 			pageSize: input.pageSize,
 		},
 	});
@@ -56,6 +60,7 @@ export const search: GoogleContactsEndpoints['otherContactsSearch'] = async (
 		result.results
 			?.map((r) => r.person)
 			.filter((p): p is NonNullable<typeof p> => !!p),
+		readMask,
 	);
 	await logEventFromContext(
 		ctx,

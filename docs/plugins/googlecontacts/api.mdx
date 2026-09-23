@@ -1226,7 +1226,7 @@ await corsair.googlecontacts.api.contacts.list({});
 
 `contacts.search`
 
-Search contacts by name, email or phone
+Search contacts by name, email or phone. Google warms this index per account, so the first call after authorizing can return nothing; retry.
 
 **Risk:** `read`
 
@@ -2160,6 +2160,8 @@ await corsair.googlecontacts.api.otherContacts.list({});
 | `readMask` | `emailAddresses \| metadata \| names \| phoneNumbers[]` | No | — |
 | `pageSize` | `number` | No | — |
 | `pageToken` | `string` | No | — |
+| `requestSyncToken` | `boolean` | No | Return a nextSyncToken for incremental reads. Expires after 7 days. |
+| `syncToken` | `string` | No | Return only changes since this token. Deleted contacts come back with metadata.deleted set. |
 
 
 
@@ -2169,6 +2171,7 @@ await corsair.googlecontacts.api.otherContacts.list({});
 |------|------|----------|-------------|
 | `otherContacts` | `object[]` | No | — |
 | `nextPageToken` | `string` | No | — |
+| `nextSyncToken` | `string` | No | — |
 | `totalSize` | `number` | No | — |
 
 <AccordionGroup>

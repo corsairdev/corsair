@@ -12,12 +12,13 @@ export const list: GoogleContactsEndpoints['contactsList'] = async (
 	ctx,
 	input,
 ) => {
+	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsList']
 	>('/people/me/connections', ctx, {
 		method: 'GET',
 		query: {
-			personFields: joinFieldMask(input.personFields ?? DEFAULT_PERSON_FIELDS),
+			personFields: joinFieldMask(personFields),
 			pageSize: input.pageSize,
 			pageToken: input.pageToken,
 			sortOrder: input.sortOrder,
@@ -26,7 +27,7 @@ export const list: GoogleContactsEndpoints['contactsList'] = async (
 		},
 	});
 
-	await persistContacts(ctx, result.connections);
+	await persistContacts(ctx, result.connections, personFields);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.list',
@@ -40,16 +41,15 @@ export const get: GoogleContactsEndpoints['contactsGet'] = async (
 	ctx,
 	input,
 ) => {
+	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsGet']
 	>(`/${input.resourceName}`, ctx, {
 		method: 'GET',
-		query: {
-			personFields: joinFieldMask(input.personFields ?? DEFAULT_PERSON_FIELDS),
-		},
+		query: { personFields: joinFieldMask(personFields) },
 	});
 
-	await persistContact(ctx, result);
+	await persistContact(ctx, result, personFields);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.get',
@@ -63,13 +63,14 @@ export const search: GoogleContactsEndpoints['contactsSearch'] = async (
 	ctx,
 	input,
 ) => {
+	const readMask = input.readMask ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsSearch']
 	>('/people:searchContacts', ctx, {
 		method: 'GET',
 		query: {
 			query: input.query,
-			readMask: joinFieldMask(input.readMask ?? DEFAULT_PERSON_FIELDS),
+			readMask: joinFieldMask(readMask),
 			pageSize: input.pageSize,
 		},
 	});
@@ -79,6 +80,7 @@ export const search: GoogleContactsEndpoints['contactsSearch'] = async (
 		result.results
 			?.map((r) => r.person)
 			.filter((p): p is NonNullable<typeof p> => !!p),
+		readMask,
 	);
 	await logEventFromContext(
 		ctx,
@@ -93,17 +95,16 @@ export const create: GoogleContactsEndpoints['contactsCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsCreate']
 	>('/people:createContact', ctx, {
 		method: 'POST',
 		body: { ...input.person },
-		query: {
-			personFields: joinFieldMask(input.personFields ?? DEFAULT_PERSON_FIELDS),
-		},
+		query: { personFields: joinFieldMask(personFields) },
 	});
 
-	await persistContact(ctx, result);
+	await persistContact(ctx, result, personFields);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.create',
@@ -117,6 +118,7 @@ export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
 	const result = await makeAuthenticatedPeopleRequest<
 		GoogleContactsEndpointOutputs['contactsUpdate']
 	>(`/${input.resourceName}:updateContact`, ctx, {
@@ -124,11 +126,11 @@ export const update: GoogleContactsEndpoints['contactsUpdate'] = async (
 		body: { etag: input.etag, ...input.person },
 		query: {
 			updatePersonFields: joinFieldMask(input.updatePersonFields),
-			personFields: joinFieldMask(input.personFields ?? DEFAULT_PERSON_FIELDS),
+			personFields: joinFieldMask(personFields),
 		},
 	});
 
-	await persistContact(ctx, result);
+	await persistContact(ctx, result, personFields);
 	await logEventFromContext(
 		ctx,
 		'googlecontacts.contacts.update',
@@ -164,19 +166,26 @@ export const deleteContact: GoogleContactsEndpoints['contactsDelete'] = async (
 	);
 };
 
+type PhotoMutateResponse = {
+	person?: GoogleContactsEndpointOutputs['contactsGet'];
+};
+
 export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 	async (ctx, input) => {
-		const response = await makeAuthenticatedPeopleRequest<{
-			person: GoogleContactsEndpointOutputs['contactsUpdatePhoto'];
-		}>(`/${input.resourceName}:updateContactPhoto`, ctx, {
-			method: 'PATCH',
-			body: {
-				photoBytes: input.photoBytes,
-				personFields: joinFieldMask(
-					input.personFields ?? DEFAULT_PERSON_FIELDS,
-				),
+		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
+		// updateContactPhoto takes the mask in the body; deleteContactPhoto
+		// takes it in the query.
+		const response = await makeAuthenticatedPeopleRequest<PhotoMutateResponse>(
+			`/${input.resourceName}:updateContactPhoto`,
+			ctx,
+			{
+				method: 'PATCH',
+				body: {
+					photoBytes: input.photoBytes,
+					personFields: joinFieldMask(personFields),
+				},
 			},
-		});
+		);
 
 		if (!response.person) {
 			throw new Error(
@@ -184,7 +193,7 @@ export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 			);
 		}
 
-		await persistContact(ctx, response.person);
+		await persistContact(ctx, response.person, personFields);
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contacts.updatePhoto',
@@ -196,16 +205,15 @@ export const updatePhoto: GoogleContactsEndpoints['contactsUpdatePhoto'] =
 
 export const deletePhoto: GoogleContactsEndpoints['contactsDeletePhoto'] =
 	async (ctx, input) => {
-		const response = await makeAuthenticatedPeopleRequest<{
-			person: GoogleContactsEndpointOutputs['contactsDeletePhoto'];
-		}>(`/${input.resourceName}:deleteContactPhoto`, ctx, {
-			method: 'DELETE',
-			query: {
-				personFields: joinFieldMask(
-					input.personFields ?? DEFAULT_PERSON_FIELDS,
-				),
+		const personFields = input.personFields ?? DEFAULT_PERSON_FIELDS;
+		const response = await makeAuthenticatedPeopleRequest<PhotoMutateResponse>(
+			`/${input.resourceName}:deleteContactPhoto`,
+			ctx,
+			{
+				method: 'DELETE',
+				query: { personFields: joinFieldMask(personFields) },
 			},
-		});
+		);
 
 		if (!response.person) {
 			throw new Error(
@@ -213,7 +221,7 @@ export const deletePhoto: GoogleContactsEndpoints['contactsDeletePhoto'] =
 			);
 		}
 
-		await persistContact(ctx, response.person);
+		await persistContact(ctx, response.person, personFields);
 		await logEventFromContext(
 			ctx,
 			'googlecontacts.contacts.deletePhoto',
