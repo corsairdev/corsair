@@ -263,6 +263,7 @@ export const BaseProviders = [
 	'pinecone',
 	'plain',
 	'posthog',
+	'postman',
 	'prisma',
 	'pushbullet',
 	'razorpay',
@@ -603,6 +604,7 @@ export const ProviderDisplayNames = {
 	pinecone: 'Pinecone',
 	plain: 'Plain',
 	posthog: 'PostHog',
+	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
@@ -950,6 +952,7 @@ export type AllProviders =
 	| 'pinecone'
 	| 'plain'
 	| 'posthog'
+	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
 	| 'razorpay'
