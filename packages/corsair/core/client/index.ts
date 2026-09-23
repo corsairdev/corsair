@@ -288,7 +288,13 @@ export type CorsairSingleTenantClient<
  * `createCorsair()` wrapper) falling back to the database object, so separate
  * stores never share managers or flights. Managers hold no row state (account
  * rows are re-read per call), only an integration-config cache that long-lived
- * single-tenant managers already share today.
+ * single-tenant managers already share today — and the management `/call`
+ * route already keeps one client (hence one manager) per (instance, tenant)
+ * alive under an LRU in `core/management/call.ts`, so shared-manager lifetime
+ * is the established norm, not a new one. Entries are tiny (closures plus
+ * small caches) and the outer WeakMap dies with the wrapper; unlike `/call`
+ * we deliberately do no LRU eviction here, because dropping a manager while
+ * its refresh flight is still open would split the single-flight.
  */
 type CachedAccountKeyManager = {
 	database: object;
