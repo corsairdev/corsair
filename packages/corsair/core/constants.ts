@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'baselinker',
 	'basin',
 	'beaconstac',
+	'beamer',
 	'beeminder',
 	'benchmarkemail',
 	'bestbuy',
@@ -387,6 +388,7 @@ export const ProviderDisplayNames = {
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
 	beaconstac: 'Beaconstac',
+	beamer: 'Beamer',
 	beeminder: 'Beeminder',
 	benchmarkemail: 'BenchmarkEmail',
 	bestbuy: 'Best Buy',
@@ -709,6 +711,7 @@ export type AllProviders =
 	| 'baselinker'
 	| 'basin'
 	| 'beaconstac'
+	| 'beamer'
 	| 'beeminder'
 	| 'benchmarkemail'
 	| 'bestbuy'
