@@ -8,7 +8,7 @@ import type { ConnectLink } from '../management/types';
 import type { CorsairIntegration, CorsairPlugin } from '../plugins';
 import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
-import { cloudRequest } from './http';
+import { cloudRequest, stripTrailingSlashes } from './http';
 import type { CreateCloudConnectLinkInput } from './manage';
 import { buildCloudManagement } from './manage';
 import { CLOUD_ROUTES } from './routes';
@@ -180,7 +180,7 @@ type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 function projectRootFromBaseUrl(baseUrl: string): string {
 	// Trim trailing slashes first: a custom url ending "/api/corsair/" must still
 	// strip the suffix, else the resolve hits /api/corsair/instances not /instances.
-	const trimmed = baseUrl.replace(/\/+$/, '');
+	const trimmed = stripTrailingSlashes(baseUrl);
 	const suffix = '/api/corsair';
 	return trimmed.endsWith(suffix) ? trimmed.slice(0, -suffix.length) : trimmed;
 }
