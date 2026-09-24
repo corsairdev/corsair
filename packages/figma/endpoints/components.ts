@@ -7,7 +7,7 @@ export const get: FigmaEndpoints['componentsGet'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['componentsGet']>(
 		`v1/components/${input.key}`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', authType: ctx.options.authType },
 	);
 
 	if (result.meta?.component?.key && ctx.db.components) {
@@ -37,7 +37,10 @@ export const getComponentSet: FigmaEndpoints['componentSetsGet'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['componentSetsGet']
-	>(`v1/component_sets/${input.key}`, ctx.key, { method: 'GET' });
+	>(`v1/component_sets/${input.key}`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	if (result.meta?.component_set?.key && ctx.db.components) {
 		try {
@@ -64,7 +67,10 @@ export const getForFile: FigmaEndpoints['componentsGetForFile'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['componentsGetForFile']
-	>(`v1/files/${input.file_key}/components`, ctx.key, { method: 'GET' });
+	>(`v1/files/${input.file_key}/components`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	if (result.meta?.components && ctx.db.components) {
 		try {
@@ -94,7 +100,10 @@ export const getComponentSetsForFile: FigmaEndpoints['componentSetsGetForFile'] 
 	async (ctx, input) => {
 		const result = await makeFigmaRequest<
 			FigmaEndpointOutputs['componentSetsGetForFile']
-		>(`v1/files/${input.file_key}/component_sets`, ctx.key, { method: 'GET' });
+		>(`v1/files/${input.file_key}/component_sets`, ctx.key, {
+			method: 'GET',
+			authType: ctx.options.authType,
+		});
 
 		if (result.meta?.component_sets && ctx.db.components) {
 			try {
@@ -129,6 +138,7 @@ export const getForTeam: FigmaEndpoints['componentsGetForTeam'] = async (
 	>(`v1/teams/${team_id}/components`, ctx.key, {
 		method: 'GET',
 		query: { ...queryParams },
+		authType: ctx.options.authType,
 	});
 
 	if (result.meta?.components && ctx.db.components) {
@@ -163,6 +173,7 @@ export const getComponentSetsForTeam: FigmaEndpoints['componentSetsGetForTeam'] 
 		>(`v1/teams/${team_id}/component_sets`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		if (result.meta?.component_sets && ctx.db.components) {

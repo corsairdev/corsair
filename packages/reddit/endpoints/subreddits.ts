@@ -12,7 +12,7 @@ export const getHot: RedditEndpoints['subredditsGetHot'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/hot.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const posts = extractPosts(raw);
@@ -40,7 +40,7 @@ export const getNew: RedditEndpoints['subredditsGetNew'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/new.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const posts = extractPosts(raw);
@@ -68,7 +68,7 @@ export const getTop: RedditEndpoints['subredditsGetTop'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/top.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const posts = extractPosts(raw);
@@ -96,7 +96,7 @@ export const getRising: RedditEndpoints['subredditsGetRising'] = async (
 	const { subreddit, ...query } = input;
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/rising.json`,
-		{ query },
+		{ token: ctx.key, authType: ctx.options.authType, query },
 	);
 
 	const posts = extractPosts(raw);
@@ -123,6 +123,8 @@ export const getControversial: RedditEndpoints['subredditsGetControversial'] =
 		const raw = await makeRedditRequest<RedditListingRaw>(
 			`/r/${subreddit}/controversial.json`,
 			{
+				token: ctx.key,
+				authType: ctx.options.authType,
 				query,
 			},
 		);
@@ -151,6 +153,7 @@ export const getAbout: RedditEndpoints['subredditsGetAbout'] = async (
 ) => {
 	const raw = await makeRedditRequest<RedditEntityEnvelopeRaw>(
 		`/r/${input.subreddit}/about.json`,
+		{ token: ctx.key, authType: ctx.options.authType },
 	);
 
 	const subreddit = SubredditDataSchema.parse(raw.data);
