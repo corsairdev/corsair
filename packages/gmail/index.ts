@@ -79,7 +79,6 @@ export type GmailEndpoints = {
 	messagesList: GmailEndpoint<'messagesList'>;
 	messagesGet: GmailEndpoint<'messagesGet'>;
 	messagesSend: GmailEndpoint<'messagesSend'>;
-	messagesDelete: GmailEndpoint<'messagesDelete'>;
 	messagesModify: GmailEndpoint<'messagesModify'>;
 	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
 	messagesTrash: GmailEndpoint<'messagesTrash'>;
@@ -98,7 +97,6 @@ export type GmailEndpoints = {
 	threadsList: GmailEndpoint<'threadsList'>;
 	threadsGet: GmailEndpoint<'threadsGet'>;
 	threadsModify: GmailEndpoint<'threadsModify'>;
-	threadsDelete: GmailEndpoint<'threadsDelete'>;
 	threadsTrash: GmailEndpoint<'threadsTrash'>;
 	threadsUntrash: GmailEndpoint<'threadsUntrash'>;
 	usersGetProfile: GmailEndpoint<'usersGetProfile'>;
@@ -126,7 +124,6 @@ export const gmailEndpointsNested = {
 		list: MessagesEndpoints.list,
 		get: MessagesEndpoints.get,
 		send: MessagesEndpoints.send,
-		delete: MessagesEndpoints.delete,
 		modify: MessagesEndpoints.modify,
 		batchModify: MessagesEndpoints.batchModify,
 		trash: MessagesEndpoints.trash,
@@ -151,7 +148,6 @@ export const gmailEndpointsNested = {
 		list: ThreadsEndpoints.list,
 		get: ThreadsEndpoints.get,
 		modify: ThreadsEndpoints.modify,
-		delete: ThreadsEndpoints.delete,
 		trash: ThreadsEndpoints.trash,
 		untrash: ThreadsEndpoints.untrash,
 	},
@@ -169,10 +165,6 @@ export const gmailEndpointSchemas = {
 	'messages.send': {
 		input: GmailEndpointInputSchemas.messagesSend,
 		output: GmailEndpointOutputSchemas.messagesSend,
-	},
-	'messages.delete': {
-		input: GmailEndpointInputSchemas.messagesDelete,
-		output: GmailEndpointOutputSchemas.messagesDelete,
 	},
 	'messages.modify': {
 		input: GmailEndpointInputSchemas.messagesModify,
@@ -246,10 +238,6 @@ export const gmailEndpointSchemas = {
 		input: GmailEndpointInputSchemas.threadsModify,
 		output: GmailEndpointOutputSchemas.threadsModify,
 	},
-	'threads.delete': {
-		input: GmailEndpointInputSchemas.threadsDelete,
-		output: GmailEndpointOutputSchemas.threadsDelete,
-	},
 	'threads.trash': {
 		input: GmailEndpointInputSchemas.threadsTrash,
 		output: GmailEndpointOutputSchemas.threadsTrash,
@@ -318,11 +306,6 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
 	},
-	'messages.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE]',
-	},
 	'messages.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a message',
@@ -380,11 +363,6 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a thread',
 	},
-	'threads.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE]',
-	},
 	'threads.trash': {
 		riskLevel: 'write',
 		description: 'Move a thread to the trash',
@@ -432,10 +410,9 @@ export function gmail<const T extends GmailPluginOptions>(
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
+				// Supersedes gmail.labels/send/compose. Covers every operation
+				// except permanent purge, which this plugin does not expose.
 				'https://www.googleapis.com/auth/gmail.modify',
-				'https://www.googleapis.com/auth/gmail.labels',
-				'https://www.googleapis.com/auth/gmail.send',
-				'https://www.googleapis.com/auth/gmail.compose',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
