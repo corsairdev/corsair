@@ -178,8 +178,11 @@ type CloudTenantClient<Registry> = [keyof Registry] extends [never]
 // `<projectBase>/instances` (the resolve endpoint) are siblings under the same
 // project host — strip the former's suffix to get the shared root.
 function projectRootFromBaseUrl(baseUrl: string): string {
+	// Trim trailing slashes first: a custom url ending "/api/corsair/" must still
+	// strip the suffix, else the resolve hits /api/corsair/instances not /instances.
+	const trimmed = baseUrl.replace(/\/+$/, '');
 	const suffix = '/api/corsair';
-	return baseUrl.endsWith(suffix) ? baseUrl.slice(0, -suffix.length) : baseUrl;
+	return trimmed.endsWith(suffix) ? trimmed.slice(0, -suffix.length) : trimmed;
 }
 
 type ResolvedInstance = { instanceKey: string; url: string };
