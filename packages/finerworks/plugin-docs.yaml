@@ -1,0 +1,6 @@
+displayName: FinerWorks
+description: Print-on-demand fulfilment - manage images, virtual inventory products, framing options, pricing, shipping rates and orders.
+overviewExampleCalls:
+  - path: products.listProductTypes
+  - path: images.list
+  - path: orders.fetchStatus
