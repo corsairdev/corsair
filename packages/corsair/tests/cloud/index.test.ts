@@ -418,18 +418,36 @@ describe('corsairCloud', () => {
 		expect(resolveCalls).toHaveLength(1);
 	});
 
-	it('exposes manage.connectionStatus scoped to a tenant', async () => {
+	it('scopes connectionStatus to the instance (routed to the instance URL)', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+			if (String(url) === 'https://vm/p/instances') {
+				return instanceResolve('users', 'https://vm/users');
+			}
+			return new Response(JSON.stringify({ data: {} }), { status: 200 });
+		});
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await corsair
+			.withInstance('users')
+			.connectionStatus.get({ tenantId: 'acme' });
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[1];
+		expect(url).toBe('https://vm/users/connection-status?tenantId=acme');
+	});
+
+	it('exposes project-scoped tenants on manage', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(
-				new Response(JSON.stringify({ data: {} }), { status: 200 }),
+				new Response(JSON.stringify([{ id: 'acme' }]), { status: 200 }),
 			);
 		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
-		await corsair.manage.connectionStatus.get({ tenantId: 'acme' });
+		await corsair.manage.tenants.list();
 		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
-		expect(url).toContain('tenantId=acme');
+		expect(url).toBe('https://vm/p/api/corsair/tenants');
 	});
 });

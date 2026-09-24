@@ -8,7 +8,11 @@ import type { CorsairIntegration, CorsairPlugin } from '../plugins';
 import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
-import { buildCloudManagement } from './manage';
+import type { ConnectLink } from '../management/types';
+import {
+	type CreateCloudConnectLinkInput,
+	buildCloudManagement,
+} from './manage';
 import { CLOUD_ROUTES } from './routes';
 import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
 
@@ -201,11 +205,29 @@ async function fetchInstanceMap(
 	return map;
 }
 
-export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
-	withInstance(name: string): {
-		withTenant(tenantId: string): CloudTenantClient<Registry>;
+// Project-scoped management: tenant is a project concept (one identity per
+// project), so it stays at the project level. Credential-touching management
+// (connect/status/disconnect) is per-instance — it lives on the instance handle.
+export type CorsairCloudManage = Pick<
+	CorsairManageNamespace,
+	'tenants' | 'permissions'
+>;
+
+// One instance, chosen by name. Per-op calls go through withTenant; the
+// credential-touching management ops act on this instance's own credential
+// store (each instance is cred-isolated), so they're scoped here, not on manage.
+export type CorsairCloudInstanceHandle<Registry = CorsairCloudRegistry> = {
+	withTenant(tenantId: string): CloudTenantClient<Registry>;
+	connectionStatus: { get(input: { tenantId: string }): Promise<unknown> };
+	connect: {
+		createLink(input: CreateCloudConnectLinkInput): Promise<ConnectLink>;
 	};
-	manage: CorsairManageNamespace;
+	disconnect(input: { tenantId: string; plugin: string }): Promise<unknown>;
+};
+
+export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
+	withInstance(name: string): CorsairCloudInstanceHandle<Registry>;
+	manage: CorsairCloudManage;
 };
 
 /**
@@ -250,9 +272,16 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		return instancesPromise;
 	}
 
+	// Project-level management (tenants + permission lookups) over the project
+	// base. Credential-touching ops are omitted here and exposed per-instance.
+	const projectManage = buildCloudManagement(transport);
+
 	return {
-		manage: buildCloudManageNamespace(transport, true),
-		withInstance: (name: string) => {
+		manage: {
+			tenants: projectManage.tenants,
+			permissions: projectManage.permissions,
+		} as unknown as CorsairCloudManage,
+		withInstance: (name: string): CorsairCloudInstanceHandle<Registry> => {
 			const getTransport = async (): Promise<CloudTransport> => {
 				const instances = await resolveInstances();
 				const url = instances.get(name);
@@ -264,6 +293,8 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 				}
 				return { ...transport, baseUrl: url };
 			};
+			// Management scoped to this instance's own credential store.
+			const instanceManage = buildCloudManagement(getTransport);
 			return {
 				withTenant(tenantId: string) {
 					if (!tenantId) {
@@ -276,6 +307,9 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 						tenantId,
 					}) as CloudTenantClient<Registry>;
 				},
+				connectionStatus: instanceManage.connectionStatus,
+				connect: instanceManage.connect,
+				disconnect: instanceManage.disconnect,
 			};
 		},
 	};

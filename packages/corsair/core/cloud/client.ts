@@ -13,7 +13,9 @@ const THENABLE_KEYS = new Set(['then', 'catch', 'finally']);
 // until a resolve request completes, so it hands in a thunk instead.
 export type TransportSource = CloudTransport | (() => Promise<CloudTransport>);
 
-function resolveTransport(source: TransportSource): Promise<CloudTransport> {
+export function resolveTransport(
+	source: TransportSource,
+): Promise<CloudTransport> {
 	return typeof source === 'function' ? source() : Promise.resolve(source);
 }
 
