@@ -27,9 +27,6 @@ if (!projectId || !token) {
 	process.exit(1);
 }
 
-console.log(`Migrating to project ${projectId} (dataset: ${dataset})`);
-console.log(`Token loaded (${token.length} chars)`);
-
 const client = createClient({
 	projectId,
 	dataset,
@@ -182,7 +179,6 @@ async function migrateMarkdownFile(filename: string) {
 		);
 	}
 
-	console.log(`Migrated post: ${slug}`);
 }
 
 async function main() {
@@ -191,7 +187,6 @@ async function main() {
 		.filter((filename) => filename.endsWith('.md'));
 
 	if (markdownFiles.length === 0) {
-		console.log('No markdown files found in scripts/seed-data');
 		return;
 	}
 
@@ -199,7 +194,6 @@ async function main() {
 		await migrateMarkdownFile(filename);
 	}
 
-	console.log('Migration complete.');
 }
 
 main().catch((error) => {
