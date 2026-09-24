@@ -2,8 +2,34 @@ import Link from 'next/link';
 
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
 import type { ComboData } from '@/lib/combo-types';
+import {
+	integrationDocsUrl,
+	integrationPageUrl,
+} from '@/lib/integrations-catalog';
+import { getCatalogIntegrationById } from '@/server/catalog-integration-cache';
 
-export function AppDetails({ combo }: { combo: ComboData }) {
+export async function AppDetails({ combo }: { combo: ComboData }) {
+	const [integrationA, integrationB] = await Promise.all([
+		getCatalogIntegrationById(combo.slugA),
+		getCatalogIntegrationById(combo.slugB),
+	]);
+
+	const cards = [
+		{ slug: combo.slugA, integration: integrationA },
+		{ slug: combo.slugB, integration: integrationB },
+	].filter(
+		(
+			entry,
+		): entry is {
+			slug: string;
+			integration: NonNullable<typeof integrationA>;
+		} => entry.integration != null,
+	);
+
+	if (cards.length === 0) {
+		return null;
+	}
+
 	return (
 		<section className="py-10 md:py-12">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
@@ -11,37 +37,37 @@ export function AppDetails({ combo }: { combo: ComboData }) {
 					{combo.displayA} and {combo.displayB} details
 				</h2>
 				<div className="mt-7 grid gap-3 md:grid-cols-2">
-					{combo.appDetails.map((app) => (
+					{cards.map(({ slug, integration }) => (
 						<article
-							key={app.id}
+							key={slug}
 							className="rounded-md border border-[#1c1c1c]/10 bg-white px-4 py-5 transition-colors hover:border-[#1c1c1c]/22 sm:px-5"
 						>
 							<div className="flex items-center gap-3">
 								<IntegrationLogo
-									id={app.id}
-									displayName={app.displayName}
+									id={integration.id}
+									displayName={integration.displayName}
 									size={40}
 									className="rounded-md"
 								/>
 								<h3 className="text-[17px] font-semibold text-[#1c1c1c]">
-									{app.displayName}
+									{integration.displayName}
 								</h3>
 							</div>
 							<p className="mt-3 text-[14px] leading-relaxed text-[#1c1c1c66]">
-								{app.description}
+								{integration.blurb}
 							</p>
 							<div className="mt-4 flex flex-wrap gap-3 text-[13px] font-medium">
 								<Link
-									href={app.pageHref}
+									href={integrationPageUrl(slug)}
 									className="text-[#4a38f5] no-underline hover:underline"
 								>
-									See {app.displayName} integration
+									See {integration.displayName} integration
 								</Link>
 								<a
-									href={app.docsHref}
+									href={integrationDocsUrl(slug)}
 									className="text-[#4a38f5] no-underline hover:underline"
 								>
-									{app.displayName} docs
+									{integration.displayName} docs
 								</a>
 							</div>
 						</article>

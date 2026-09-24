@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly' as const,
 			priority: 0.8,
 		})),
-		...getComboCanonicalUrls().map((combo) => ({
+		...(await getComboCanonicalUrls()).map((combo) => ({
 			url: `https://corsair.dev${combo}`,
 			changeFrequency: 'weekly' as const,
 			priority: 0.8,

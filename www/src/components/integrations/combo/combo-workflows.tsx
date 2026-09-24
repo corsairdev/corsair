@@ -11,7 +11,7 @@ export function ComboWorkflows({ combo }: { combo: ComboData }) {
 				</h2>
 				<p className="mx-auto mt-2 max-w-2xl text-center text-[15px] leading-relaxed text-[#1c1c1c99]">
 					When this happens in one app, do this in the other. Open a card in the
-					builder to copy the operation IDs.
+					builder to try the pair.
 				</p>
 				<div className="mt-7 grid gap-3 md:grid-cols-2 md:items-stretch">
 					{combo.workflows.map((w, i) => (
@@ -44,13 +44,13 @@ export function ComboWorkflows({ combo }: { combo: ComboData }) {
 									action={w.action}
 								/>
 							</div>
-							<div className="flex items-center justify-between px-4 py-3 sm:px-5">
-								<span className="text-[13px] font-medium text-[#1c1c1c66]">
+							<div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+								<span className="min-w-0 text-[13px] font-medium text-[#1c1c1c66]">
 									{w.trigger.appLabel} + {w.action.appLabel}
 								</span>
 								<a
 									href={`#builder?pair=${w.trigger.app}.${w.trigger.id}+${w.action.app}.${w.action.id}`}
-									className="text-[13px] font-medium text-[#4a38f5] no-underline hover:underline"
+									className="-my-1 shrink-0 touch-manipulation py-2 text-[13px] font-medium text-[#4a38f5] no-underline hover:underline"
 								>
 									Try it →
 								</a>

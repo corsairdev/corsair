@@ -4,7 +4,6 @@ import type { ComboData } from '@/lib/combo-types';
 import { ComboHero } from './combo-hero';
 import { AppDetails } from './combo-sections';
 import { ComboWorkflows } from './combo-workflows';
-import { HowToConnect } from './how-to-connect';
 import { KbDemo } from './kb-demo';
 import { WorkflowBuilder } from './workflow-builder';
 
@@ -20,7 +19,7 @@ function plainText(value: string) {
 }
 
 function ComboJsonLd({ combo }: { combo: ComboData }) {
-	const canonical = getComboCanonical(combo.slugA, combo.slugB);
+	const canonical = getComboCanonical(combo);
 	const json = {
 		'@context': 'https://schema.org',
 		'@graph': [
@@ -55,15 +54,6 @@ function ComboJsonLd({ combo }: { combo: ComboData }) {
 					},
 				],
 			},
-			{
-				'@type': 'HowTo',
-				name: `How to connect ${combo.displayA} and ${combo.displayB}`,
-				step: combo.connectSteps.map((step) => ({
-					'@type': 'HowToStep',
-					name: step.title,
-					text: step.description,
-				})),
-			},
 		],
 	};
 	return (
@@ -82,7 +72,6 @@ export function ComboPage({ combo }: { combo: ComboData }) {
 			<ComboHero combo={combo} />
 			<WorkflowBuilder key={`builder-${key}`} combo={combo} />
 			<ComboWorkflows combo={combo} />
-			<HowToConnect combo={combo} />
 			<KbDemo key={`kb-${key}`} combo={combo} />
 			<AppDetails combo={combo} />
 			<IntegrationFaqAccordion

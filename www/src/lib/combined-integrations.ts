@@ -1,13 +1,16 @@
 import 'server-only';
 
-import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { readComboFile, resolveCombosDir } from '@/lib/combo-paths';
-import type { ComboData, ComboWorksWithItem } from '@/lib/combo-types';
-import { comboDataSchema, worksWithFor } from '@/lib/combo-types';
+import type { ComboData } from '@/lib/combo-types';
+import {
+	getCatalogComboByMemberIds,
+	getCatalogComboRouteKeys,
+	getCatalogCombosList,
+	getWorksWith as getWorksWithFromDb,
+} from '@/server/catalog-combo-cache';
+
+export { getCatalogComboRouteKeys };
 
 export type {
-	AppDetail,
 	ComboAction,
 	ComboData,
 	ComboFaq,
@@ -20,62 +23,26 @@ export type {
 } from '@/lib/combo-types';
 export { comboCountsFor, worksWithFor } from '@/lib/combo-types';
 
-const COMBOS_DIR = resolveCombosDir();
-
-function loadCombos(): ComboData[] {
-	const names = readdirSync(COMBOS_DIR).filter((name) =>
-		name.endsWith('.json'),
-	);
-	const combos: ComboData[] = [];
-	const keys = new Set<string>();
-
-	for (const name of names) {
-		let combo: ComboData;
-		try {
-			combo = comboDataSchema.parse(readComboFile(join(COMBOS_DIR, name)));
-		} catch (err) {
-			const detail = err instanceof Error ? err.message : String(err);
-			throw new Error(`invalid combo file ${name}: ${detail}`);
-		}
-		const key = `${combo.slugA}/and/${combo.slugB}`;
-		if (keys.has(key)) {
-			throw new Error(`duplicate combo ${key} in ${name}`);
-		}
-		keys.add(key);
-		combos.push(combo);
-	}
-
-	return combos;
+export async function getComboData(
+	slug: string,
+	other: string,
+): Promise<ComboData | null> {
+	return getCatalogComboByMemberIds(slug, other);
 }
 
-export const COMBO_INDEX: Record<string, ComboData> = Object.fromEntries(
-	loadCombos().map((combo) => [`${combo.slugA}/and/${combo.slugB}`, combo]),
-);
-
-export function getComboData(slug: string, other: string): ComboData | null {
-	const a = slug.toLowerCase().trim();
-	const b = other.toLowerCase().trim();
-	if (!a || !b || a === b) return null;
-	return COMBO_INDEX[`${a}/and/${b}`] ?? COMBO_INDEX[`${b}/and/${a}`] ?? null;
-}
-
-export function getComboCanonical(slug: string, other: string): string {
-	const combo = getComboData(slug, other);
-	if (!combo) {
-		const a = slug.toLowerCase().trim();
-		const b = other.toLowerCase().trim();
-		return `/integrations/${a}/and/${b}`;
-	}
+export function getComboCanonical(combo: ComboData): string {
 	return `/integrations/${combo.slugA}/and/${combo.slugB}`;
 }
 
-export function getComboCanonicalUrls(): string[] {
-	return Object.keys(COMBO_INDEX).map((key) => `/integrations/${key}`);
+export async function getComboCanonicalUrls(): Promise<string[]> {
+	const keys = await getCatalogComboRouteKeys();
+	return keys.map(({ slugA, slugB }) => `/integrations/${slugA}/and/${slugB}`);
 }
 
-export function getWorksWith(integrationId: string): ComboWorksWithItem[] {
-	return worksWithFor({
-		combos: Object.values(COMBO_INDEX),
-		integrationId,
-	});
+export async function getWorksWith(integrationId: string) {
+	return getWorksWithFromDb(integrationId);
+}
+
+export async function getAllCombos(): Promise<ComboData[]> {
+	return getCatalogCombosList();
 }

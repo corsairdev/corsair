@@ -2,6 +2,7 @@ import { WorksWithSection } from '@/components/integrations/combo/works-with-sec
 import { IntegrationCapabilitiesSection } from '@/components/integrations/detail/integration-capabilities-section';
 import { IntegrationDetailHero } from '@/components/integrations/detail/integration-detail-hero';
 import { IntegrationFaqSection } from '@/components/integrations/detail/integration-faq-section';
+import { IntegrationHubCta } from '@/components/integrations/detail/integration-hub-cta';
 import type { IntegrationDetailData } from '@/lib/integration-page.types';
 
 export function IntegrationDetailPage({
@@ -12,6 +13,10 @@ export function IntegrationDetailPage({
 	return (
 		<main className="pb-16">
 			<IntegrationDetailHero integration={integration} />
+			<IntegrationHubCta
+				pluginId={integration.id}
+				displayName={integration.displayName}
+			/>
 			<IntegrationCapabilitiesSection
 				operations={integration.operations}
 				triggers={integration.triggers}

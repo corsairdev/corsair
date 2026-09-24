@@ -3,19 +3,19 @@ import Link from 'next/link';
 import { IntegrationLogo } from '@/components/integrations/integration-logo';
 import { getWorksWith } from '@/lib/combined-integrations';
 
-export function WorksWithSection({
+export async function WorksWithSection({
 	integrationId,
 	displayName,
 }: {
 	integrationId: string;
 	displayName: string;
 }) {
-	const items = getWorksWith(integrationId);
+	const items = await getWorksWith(integrationId);
 
 	if (items.length === 0) return null;
 
 	return (
-		<section className="py-10 md:py-12">
+		<section className="pt-7 pb-10 md:pt-8 md:pb-12">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
 				<h2 className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.5rem,3vw,2rem)] font-light tracking-[-0.03em] text-[#1c1c1c]">
 					{displayName} works with

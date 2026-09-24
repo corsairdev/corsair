@@ -25,14 +25,6 @@ export const connectStepSchema = z.object({
 	description: text,
 });
 
-export const appDetailSchema = z.object({
-	id: text,
-	displayName: text,
-	description: text,
-	pageHref: text,
-	docsHref: text,
-});
-
 export const comboFaqSchema = z.object({
 	id: text,
 	question: text,
@@ -65,20 +57,18 @@ export const comboDataSchema = z
 		displayB: text,
 		title: text,
 		description: text,
-		introA: text,
-		introB: text,
-		counts: z.array(comboCountSchema).length(2),
+		introA: text.optional().default(''),
+		introB: text.optional().default(''),
+		counts: z.array(comboCountSchema).min(2),
 		triggers: z.array(comboTriggerSchema).min(1),
 		actions: z.array(comboActionSchema).min(1),
 		workflows: z.array(comboWorkflowSchema).min(1),
-		connectSteps: z.array(connectStepSchema).min(1),
-		appDetails: z.array(appDetailSchema).length(2),
+		connectSteps: z.array(connectStepSchema).optional().default([]),
 		worksWith: z.object({
 			a: text,
 			b: text,
 		}),
 		kb: z.object({
-			asker: text,
 			query: text,
 			answer: text,
 			tools: z.array(comboKbToolSchema).min(1),
@@ -104,13 +94,6 @@ export const comboDataSchema = z
 			return ids.has(combo.slugA) && ids.has(combo.slugB);
 		},
 		{ message: 'counts must include slugA and slugB' },
-	)
-	.refine(
-		(combo) => {
-			const ids = new Set(combo.appDetails.map((app) => app.id));
-			return ids.has(combo.slugA) && ids.has(combo.slugB);
-		},
-		{ message: 'appDetails must include slugA and slugB exactly once' },
 	)
 	.refine(
 		(combo) => {
@@ -143,20 +126,12 @@ export const comboDataSchema = z
 			);
 		},
 		{ message: 'workflow actions must exist in actions' },
-	)
-	.refine(
-		(combo) => {
-			const ids = new Set(combo.faqs.map((faq) => faq.id));
-			return ids.has('app-a-api') && ids.has('app-b-api');
-		},
-		{ message: 'faqs must include app-a-api and app-b-api' },
 	);
 
 export type ComboTrigger = z.infer<typeof comboTriggerSchema>;
 export type ComboAction = z.infer<typeof comboActionSchema>;
 export type ComboWorkflow = z.infer<typeof comboWorkflowSchema>;
 export type ConnectStep = z.infer<typeof connectStepSchema>;
-export type AppDetail = z.infer<typeof appDetailSchema>;
 export type ComboFaq = z.infer<typeof comboFaqSchema>;
 export type ComboKbApp = z.infer<typeof comboKbAppSchema>;
 export type ComboKbTool = z.infer<typeof comboKbToolSchema>;

@@ -200,43 +200,24 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 					Agent
 				</h2>
 				<p className="mx-auto mt-2 max-w-xl text-center text-[15px] leading-relaxed text-[#1c1c1c99]">
-					Send {combo.kb.asker}&apos;s question. The agent calls{' '}
-					{combo.displayA} and {combo.displayB} first, then answers.
+					Use Corsair&apos;s MCP with your agent
 				</p>
 
 				<div className="mt-7 overflow-hidden rounded-md border border-[#1c1c1c]/10 bg-white shadow-[0_8px_32px_rgba(28,28,28,0.05),inset_0_1px_0_rgba(255,255,255,0.8)]">
-					<div className="flex items-center justify-between gap-3 border-b border-[#1c1c1c]/8 px-4 py-2.5 sm:px-5">
-						<div className="flex min-w-0 items-center gap-2">
-							<span className="combo-agent-live size-1.5 shrink-0 rounded-full bg-[#1a7f4b]" />
-							<span className="truncate text-[11px] font-medium tracking-[0.01em] text-[#1c1c1c80]">
-								{busy && currentTool
-									? `${currentTool.label}…`
-									: 'Corsair connected'}
-							</span>
-							<span className="hidden text-[11px] text-[#1c1c1c30] sm:inline">
-								·
-							</span>
-							<span className="hidden truncate font-[family-name:var(--landing-font-mono)] text-[11px] text-[#1c1c1c66] sm:inline">
-								{combo.displayA} + {combo.displayB}
-							</span>
-						</div>
-						<span className="flex shrink-0 items-center gap-1" aria-hidden>
-							<IntegrationLogo
-								id={combo.slugA}
-								displayName={combo.displayA}
-								size={18}
-							/>
-							<IntegrationLogo
-								id={combo.slugB}
-								displayName={combo.displayB}
-								size={18}
-							/>
+					<div className="border-b border-[#1c1c1c]/8 px-4 py-2.5 sm:px-5">
+						<span className="truncate text-[11px] font-medium tracking-[0.01em] text-[#1c1c1c80]">
+							{busy && currentTool
+								? `${currentTool.label}…`
+								: 'Corsair connected'}
 						</span>
 					</div>
 
-					<div className="px-4 py-5 sm:px-6 sm:py-6" aria-busy={busy}>
+					<div
+						className="h-[320px] overflow-y-auto px-4 py-5 sm:h-[360px] sm:px-6 sm:py-6"
+						aria-busy={busy}
+					>
 						{phase === 'idle' ? (
-							<div className="flex min-h-[176px] flex-col items-center justify-center gap-4 text-center">
+							<div className="flex h-full min-h-0 flex-col items-center justify-center gap-4 text-center">
 								<span className="flex items-center" aria-hidden>
 									<span className="combo-agent-idle-mark">
 										<IntegrationLogo
@@ -259,25 +240,12 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 							</div>
 						) : (
 							<div className="flex flex-col gap-5">
-								<div className="combo-agent-row flex items-start gap-3">
-									<span
-										className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-[#4a38f5] font-[family-name:var(--landing-font-serif)] text-[14px] italic text-white shadow-[0_2px_8px_rgba(74,56,245,0.28)]"
-										aria-hidden
-									>
-										a
-									</span>
-									<div className="min-w-0 pt-1">
-										<p className="text-[11px] font-medium tracking-wide text-[#1c1c1c55]">
-											{combo.kb.asker}
-										</p>
-										<p className="mt-1 font-[family-name:var(--landing-font-serif)] text-[17px] italic leading-snug tracking-[-0.02em] text-[#1c1c1c]">
-											{combo.kb.query}
-										</p>
-									</div>
-								</div>
+								<p className="combo-agent-row rounded-md bg-[#f0f0f0] px-3.5 py-3 text-[15px] leading-snug text-[#1c1c1c]">
+									{combo.kb.query}
+								</p>
 
 								{shownTools > 0 ? (
-									<ul className="divide-y divide-[#1c1c1c0c] overflow-hidden rounded-md border border-[#1c1c1c0f] bg-[#fafafa]/80 sm:ml-11">
+									<ul className="divide-y divide-[#1c1c1c0c] overflow-hidden rounded-md border border-[#1c1c1c0f] bg-[#fafafa]/80">
 										{combo.kb.tools.slice(0, shownTools).map((t, i) => (
 											<ToolRow
 												key={`${t.op}-${t.label}`}
@@ -293,50 +261,45 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 								</p>
 
 								{phase === 'answer' || phase === 'done' ? (
-									<div className="combo-agent-row flex items-start gap-3">
-										<span
-											className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-[#0d0f1a] text-[11px] font-bold tracking-tight text-white"
-											aria-hidden
+									<div className="combo-agent-row min-w-0">
+										<p
+											aria-hidden={phase !== 'done'}
+											className="whitespace-pre-wrap text-[15px] leading-[1.7] text-[#1c1c1c]"
 										>
-											C
-										</span>
-										<div className="min-w-0 flex-1 pt-1">
-											<p className="text-[11px] font-medium tracking-wide text-[#1c1c1c55]">
-												Corsair
-											</p>
-											<p
-												aria-hidden={phase !== 'done'}
-												className="mt-1.5 whitespace-pre-wrap text-[15px] leading-[1.7] text-[#1c1c1c]"
-											>
-												{combo.kb.answer.slice(0, chars)}
-												{phase === 'answer' ? (
-													<span className="combo-agent-caret" aria-hidden />
-												) : null}
-											</p>
-											<p aria-live="polite" className="sr-only">
-												{phase === 'done'
-													? `Answer ready: ${combo.kb.answer}`
-													: ''}
-											</p>
-											{phase === 'done' ? (
-												<div className="mt-3.5 flex flex-wrap gap-1.5">
-													{combo.kb.sources.map((s, i) => (
-														<Link
-															key={s.label}
-															href={s.href}
-															style={{ animationDelay: `${i * 70}ms` }}
-															className="combo-agent-row inline-flex items-center gap-1.5 rounded-full border border-[#1c1c1c]/10 bg-white px-2.5 py-1 text-[12px] font-medium text-[#1c1c1c] no-underline transition-[border-color,transform] hover:-translate-y-px hover:border-[#4a38f5]/35"
-														>
-															<IntegrationLogo
-																id={s.appId}
-																displayName={s.appLabel}
-																size={14}
-															/>
-															{s.label}
-														</Link>
-													))}
-												</div>
+											{combo.kb.answer.slice(0, chars)}
+											{phase === 'answer' ? (
+												<span className="combo-agent-caret" aria-hidden />
 											) : null}
+										</p>
+										<p aria-live="polite" className="sr-only">
+											{phase === 'done'
+												? `Answer ready: ${combo.kb.answer}`
+												: ''}
+										</p>
+										<div className="mt-3.5 flex flex-wrap gap-1.5">
+											{combo.kb.sources.map((s, i) => (
+												<Link
+													key={`${s.appId}-${s.label}`}
+													href={s.href}
+													aria-label={`${s.appLabel} · ${s.label}`}
+													style={{
+														animationDelay:
+															phase === 'done' ? `${i * 70}ms` : undefined,
+													}}
+													className={cn(
+														'inline-flex items-center gap-2 rounded-full border border-[#1c1c1c]/10 bg-white py-1 pl-1 pr-2.5 text-[12px] font-medium text-[#1c1c1c] no-underline transition-[border-color,transform] hover:-translate-y-px hover:border-[#4a38f5]/35',
+														phase === 'done' && 'combo-agent-row',
+													)}
+												>
+													<IntegrationLogo
+														id={s.appId}
+														displayName={s.appLabel}
+														size={20}
+														className="rounded-full border-[#1c1c1c]/10"
+													/>
+													<span>{s.label}</span>
+												</Link>
+											))}
 										</div>
 									</div>
 								) : null}
@@ -353,10 +316,10 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 									: 'border-[#1c1c1c12]',
 							)}
 						>
-							<p className="min-w-0 flex-1 px-2 py-1.5 font-[family-name:var(--landing-font-serif)] text-[15px] italic leading-snug text-[#1c1c1c] sm:text-[16px]">
+							<p className="min-w-0 flex-1 px-2 py-1.5 text-[15px] leading-snug text-[#1c1c1c] sm:text-[16px]">
 								{combo.kb.query}
 							</p>
-							<span className="relative flex size-9 shrink-0 items-center justify-center">
+							<span className="relative flex size-11 shrink-0 items-center justify-center">
 								{!busy ? (
 									<span
 										className="landing-send-cta-ring pointer-events-none absolute inset-0 rounded-full bg-[#4a38f5]"
@@ -375,7 +338,7 @@ export function KbDemo({ combo }: { combo: ComboData }) {
 												: 'Agent is searching'
 									}
 									className={cn(
-										'relative z-10 flex size-9 items-center justify-center rounded-full bg-[#4a38f5] text-white transition-[opacity,transform] hover:brightness-110 disabled:cursor-default disabled:opacity-55',
+										'relative z-10 flex size-11 touch-manipulation items-center justify-center rounded-full bg-[#4a38f5] text-white transition-[opacity,transform] hover:brightness-110 disabled:cursor-default disabled:opacity-55',
 										!busy && 'landing-send-cta-pulse',
 									)}
 								>
