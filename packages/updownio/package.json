@@ -1,7 +1,7 @@
 {
-  "name": "@corsair-dev/boldsign",
+  "name": "@corsair-dev/updownio",
   "version": "0.1.0",
-  "description": "Boldsign plugin for Corsair",
+  "description": "Updown.io plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -33,7 +33,7 @@
   },
   "keywords": [
     "corsair",
-    "boldsign",
+    "updownio",
     "plugin"
   ],
   "author": "Corsair (https://corsair.dev)",
@@ -44,7 +44,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/corsairdev/corsair.git",
-    "directory": "packages/boldsign"
+    "directory": "packages/updownio"
   },
-  "homepage": "https://docs.corsair.dev/plugins/boldsign"
+  "homepage": "https://docs.corsair.dev/plugins/updownio"
 }

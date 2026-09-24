@@ -1,14 +1,16 @@
 ---
 title: Overview
-description: "ConvoloAi plugin for Corsair"
+description: "Website and API uptime monitoring - read your checks and the monitoring node addresses to allowlist."
 ---
 
-Use **ConvoloAi** through Corsair: one client, typed API calls, local DB sync.
+Use **Updown.io** through Corsair: one client, typed API calls, local DB sync.
+
+All five operations are read-only catalog endpoints backed by the Updown.io API.
 
 **What you get:**
 
-- 31 typed API operations
-- 4 synced entities (`agents`, `calls`, `leads`, `widgets`) for fast `.search()` / `.list()`
+- 5 typed API operations
+- 4 synced entities (`checkDomain`, `checks`, `checkSsl`, `nodes`) for fast `.search()` / `.list()`
 
 ## Setup
 
@@ -17,16 +19,16 @@ Use **ConvoloAi** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/convoloai
+npm install corsair @corsair-dev/updownio
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/convoloai
+yarn add corsair @corsair-dev/updownio
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/convoloai
+pnpm install corsair @corsair-dev/updownio
 ```
 ```bash bun
-bun add corsair @corsair-dev/convoloai
+bun add corsair @corsair-dev/updownio
 ```
 </CodeGroup>
 
@@ -36,11 +38,11 @@ bun add corsair @corsair-dev/convoloai
 ```ts corsair.ts
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
-import { convoloai } from '@corsair-dev/convoloai';
+import { updownio } from '@corsair-dev/updownio';
 
 export const corsair = createCorsair({
 	plugins: [
-		convoloai(),
+		updownio(),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -62,7 +64,7 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
-convoloai()
+updownio()
 ```
 
 More: [API Key](/concepts/api-key)
@@ -77,7 +79,7 @@ Mint a connect link and send the tenant to it. Hub hosts the page and delivers t
 
 ```ts
 const { connectUrl } = await corsair.manage.connect.createLink({
-	plugin: 'convoloai',
+	plugin: 'updownio',
 	tenantId: 'acme',
 });
 // redirect the user's browser to connectUrl
@@ -89,37 +91,28 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`agent.get`**
+**`checks.list`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.convoloai.api.agent.get({});
+await tenant.updownio.api.checks.list({});
 ```
 
-
-**`agent.create`**
-
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.convoloai.api.agent.create({});
-```
-
-
-See the full list on the [API](/plugins/convoloai/api) page.
+See the full list on the [API](/plugins/updownio/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.convoloai.db.<entity>.search()` and `.list()`: `agents`, `calls`, `leads`, `widgets`.
+Synced entities support `tenant.updownio.db.<entity>.search()` and `.list()`: `checkDomain`, `checks`, `checkSsl`, `nodes`.
 
-See [Database](/plugins/convoloai/database) for filters and operators.
+See [Database](/plugins/updownio/database) for filters and operators.
 
 ## What's next
 
 <CardGroup cols={2}>
-  <Card title="API reference" href="/plugins/convoloai/api">
-    Every `convoloai.api.*` operation with input and output types.
+  <Card title="API reference" href="/plugins/updownio/api">
+    Every `updownio.api.*` operation with input and output types.
   </Card>
-  <Card title="Database" href="/plugins/convoloai/database">
+  <Card title="Database" href="/plugins/updownio/database">
     Synced entities, search filters, and operators.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
