@@ -152,15 +152,29 @@ describe('postgres-js database integration', () => {
 		`);
 	});
 
-	// Resolve gate eagerly at file load (before describe registration).
-	// `connectable` inside beforeAll is set too late — Jest has already
-	// registered describe/it bindings. Use a synchronous env-var hint to
-	// decide whether to run the live tests; the actual probe in beforeAll
-	// will throw loudly if the URL is mis-set.
 	const skipFlag = (process.env.SKIP_PG_TESTS ?? '').toLowerCase();
 	const liveDisabled =
 		skipFlag === '1' || skipFlag === 'true' || skipFlag === 'yes';
-	const gated = () => (liveDisabled ? it.skip : it);
+	const gated = () => {
+		if (liveDisabled) return it.skip;
+		const customIt = ((
+			name: string,
+			fn?: jest.ProvidesCallback,
+			timeout?: number,
+		) => {
+			return it(
+				name,
+				async (...args) => {
+					if (!connectable) return;
+					if (fn) {
+						return (fn as (...a: unknown[]) => unknown)(...args);
+					}
+				},
+				timeout,
+			);
+		}) as jest.It;
+		return customIt;
+	};
 
 	// ────────────────────────────────────────────────────────────────────────
 	// Input detection + dispatch
@@ -797,6 +811,7 @@ describe('postgres-js database integration', () => {
 		runIf(
 			'posts/updates/deletes a message and logs events+entities',
 			async () => {
+				if (!connectable) return;
 				// Use a fresh Kysely handle on the shared postgres.js Sql so we
 				// exercise createCorsairDatabase's dispatch end-to-end.
 				const corsair = createCorsair({

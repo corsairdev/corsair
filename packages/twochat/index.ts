@@ -166,7 +166,6 @@ export type BaseTwoChatPlugin<T extends TwoChatPluginOptions> = CorsairPlugin<
 	'twochat',
 	typeof TwoChatSchema,
 	typeof twochatEndpointsNested,
-	// biome-ignore lint/complexity/noBannedTypes: empty webhooks object is intentional per spec
 	{},
 	T,
 	typeof defaultAuthType
