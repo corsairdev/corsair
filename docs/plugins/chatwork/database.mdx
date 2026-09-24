@@ -1,0 +1,149 @@
+---
+title: Database
+description: "Chatwork local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Chatwork plugin syncs data locally. Use `corsair.chatwork.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `chatwork.db.accounts.search`
+
+```ts
+const rows = await corsair.chatwork.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `number` | equals, gt, gte, lt, lte, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `chatwork_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `number` | equals, gt, gte, lt, lte, in |
+| `organization_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `introduction` | `string` | equals, contains, startsWith, endsWith, in |
+| `mail` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel_organization` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel_extension` | `string` | equals, contains, startsWith, endsWith, in |
+| `tel_mobile` | `string` | equals, contains, startsWith, endsWith, in |
+| `skype` | `string` | equals, contains, startsWith, endsWith, in |
+| `facebook` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitter` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_image_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Members
+
+Path: `chatwork.db.members.search`
+
+```ts
+const rows = await corsair.chatwork.db.members.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `number` | equals, gt, gte, lt, lte, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `chatwork_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization_id` | `number` | equals, gt, gte, lt, lte, in |
+| `organization_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `department` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_image_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `chatwork.db.messages.search`
+
+```ts
+const rows = await corsair.chatwork.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `send_time` | `number` | equals, gt, gte, lt, lte, in |
+| `update_time` | `number` | equals, gt, gte, lt, lte, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Rooms
+
+Path: `chatwork.db.rooms.search`
+
+```ts
+const rows = await corsair.chatwork.db.rooms.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `room_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `sticky` | `boolean` | equals |
+| `unread_num` | `number` | equals, gt, gte, lt, lte, in |
+| `mention_num` | `number` | equals, gt, gte, lt, lte, in |
+| `mytask_num` | `number` | equals, gt, gte, lt, lte, in |
+| `message_num` | `number` | equals, gt, gte, lt, lte, in |
+| `file_num` | `number` | equals, gt, gte, lt, lte, in |
+| `task_num` | `number` | equals, gt, gte, lt, lte, in |
+| `icon_path` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_update_time` | `number` | equals, gt, gte, lt, lte, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
