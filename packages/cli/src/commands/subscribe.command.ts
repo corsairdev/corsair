@@ -1,5 +1,14 @@
 import type { CommandActionData, CommandOption } from '../index.types';
+import {
+	formatSubscribePluginList,
+	isSubscribePluginId,
+	runWebhookSubscription,
+} from '../utils/subscription';
 import BaseCommand from './base.command';
+import GmailCommand from './subscribe/gmail.command';
+import GooglecalendarCommand from './subscribe/googlecalendar.command';
+import GoogledriveCommand from './subscribe/googledrive.command';
+import GooglesheetsCommand from './subscribe/googlesheets.command';
 import OnedriveCommand from './subscribe/onedrive.command';
 import OutlookCommand from './subscribe/outlook.command';
 import SharepointCommand from './subscribe/sharepoint.command';
@@ -11,7 +20,7 @@ export default class SubscribeCommand extends BaseCommand {
 	}
 
 	getDescription(): string {
-		return 'Subscribe to various kinds of webhooks';
+		return 'Subscribe to Microsoft and Google webhook providers';
 	}
 
 	getOptions(): CommandOption[] {
@@ -30,6 +39,10 @@ export default class SubscribeCommand extends BaseCommand {
 			new TeamsCommand(),
 			new OutlookCommand(),
 			new OnedriveCommand(),
+			new GmailCommand(),
+			new GoogledriveCommand(),
+			new GooglecalendarCommand(),
+			new GooglesheetsCommand(),
 		];
 	}
 
@@ -38,47 +51,17 @@ export default class SubscribeCommand extends BaseCommand {
 			console.error(
 				'Usage: corsair subscribe --plugin=<id> or corsair subscribe <plugin>',
 			);
+			console.error(`[#corsair]: Supported: ${formatSubscribePluginList()}`);
+			process.exit(1);
+		}
+
+		if (!isSubscribePluginId(options.plugin)) {
 			console.error(
-				'[#corsair]: Supported: outlook, sharepoint, teams, onedrive',
+				`[#corsair]: Unknown plugin for subscribe: '${options.plugin}'. Supported: ${formatSubscribePluginList()}`,
 			);
 			process.exit(1);
 		}
 
-		if (options.plugin === 'outlook') {
-			const { runOutlookSubscribe } = await import(
-				'../lib/microsoft/subscribe-microsoft'
-			);
-			await runOutlookSubscribe({ cwd: process.cwd() });
-			return;
-		}
-
-		if (options.plugin === 'sharepoint') {
-			const { runSharepointSubscribe } = await import(
-				'../lib/microsoft/subscribe-microsoft'
-			);
-			await runSharepointSubscribe({ cwd: process.cwd() });
-			return;
-		}
-
-		if (options.plugin === 'teams') {
-			const { runTeamsSubscribe } = await import(
-				'../lib/microsoft/subscribe-microsoft'
-			);
-			await runTeamsSubscribe({ cwd: process.cwd() });
-			return;
-		}
-
-		if (options.plugin === 'onedrive') {
-			const { runOnedriveSubscribe } = await import(
-				'../lib/microsoft/subscribe-microsoft'
-			);
-			await runOnedriveSubscribe({ cwd: process.cwd() });
-			return;
-		}
-
-		console.error(
-			`[#corsair]: Unknown plugin for subscribe: '${options.plugin}'. Supported: outlook, sharepoint, teams, onedrive`,
-		);
-		process.exit(1);
+		await runWebhookSubscription(process.cwd(), options.plugin);
 	}
 }
