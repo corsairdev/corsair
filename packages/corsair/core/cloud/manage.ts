@@ -3,7 +3,8 @@ import type {
 	PermissionLookupInput,
 	PermissionRecord,
 } from '../management/types';
-import { type TransportSource, resolveTransport } from './client';
+import type { TransportSource } from './client';
+import { resolveTransport } from './client';
 import { cloudRequest } from './http';
 import { CLOUD_ROUTES } from './routes';
 
@@ -30,7 +31,12 @@ export function buildCloudManagement(source: TransportSource) {
 					);
 				}
 				return resolveTransport(source).then((t) =>
-					cloudRequest<ConnectLink>(t, 'POST', CLOUD_ROUTES.connectLinks, input),
+					cloudRequest<ConnectLink>(
+						t,
+						'POST',
+						CLOUD_ROUTES.connectLinks,
+						input,
+					),
 				);
 			},
 		},

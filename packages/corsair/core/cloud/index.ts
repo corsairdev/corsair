@@ -4,15 +4,13 @@ import type {
 	CorsairTenantWrapper,
 } from '../client';
 import type { CorsairManageNamespace } from '../management';
+import type { ConnectLink } from '../management/types';
 import type { CorsairIntegration, CorsairPlugin } from '../plugins';
 import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
-import type { ConnectLink } from '../management/types';
-import {
-	type CreateCloudConnectLinkInput,
-	buildCloudManagement,
-} from './manage';
+import type { CreateCloudConnectLinkInput } from './manage';
+import { buildCloudManagement } from './manage';
 import { CLOUD_ROUTES } from './routes';
 import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
 

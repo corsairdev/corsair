@@ -271,7 +271,10 @@ describe('corsairCloud', () => {
 		});
 		// A plugin no client-side list would know still resolves to an HTTP call.
 		await expect(
-			corsair.withInstance('users').withTenant('acme').anyplugin.api.some.op({}),
+			corsair
+				.withInstance('users')
+				.withTenant('acme')
+				.anyplugin.api.some.op({}),
 		).resolves.toBeDefined();
 	});
 
