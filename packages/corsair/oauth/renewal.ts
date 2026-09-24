@@ -1,5 +1,5 @@
 import type { CorsairInternalConfig, CorsairKeyBuilderBase } from '../core';
-import { createAccountKeyManager } from '../core';
+import { AuthMissingError, createAccountKeyManager } from '../core';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { getPluginAuthType } from '../core/utils/plugin-auth';
 import { subscribeAndReport } from './subscribe-report';
@@ -22,12 +22,17 @@ export async function renewAccounts(input: {
 	internal: CorsairInternalConfig;
 	rows: SubscribableAccountRow[];
 	subscribeAndReport?: typeof subscribeAndReport;
-}): Promise<{ renewed: string[]; failed: string[] }> {
+}): Promise<{ renewed: string[]; failed: string[]; skipped: string[] }> {
 	const { corsair, internal, rows } = input;
 	const doSubscribe = input.subscribeAndReport ?? subscribeAndReport;
 	const renewed: string[] = [];
 	const failed: string[] = [];
-	if (!internal.database) return { renewed, failed };
+	// Accounts with no live credential for this plugin (never connected, or the
+	// managed connection was revoked). Enumerating every dek-bearing row means we
+	// meet these routinely — they aren't renewal failures, so skip them quietly
+	// instead of warn-spamming a stack trace every pass.
+	const skipped: string[] = [];
+	if (!internal.database) return { renewed, failed, skipped };
 
 	for (const row of rows) {
 		const plugin = internal.plugins.find((p) => p.id === row.integrationName);
@@ -54,13 +59,22 @@ export async function renewAccounts(input: {
 					get_expires_at: { value: async () => '0' },
 				});
 				await keyBuilder(
-					{ authType, keys: primingKeys, hub: internal.hub },
+					{
+						authType,
+						keys: primingKeys,
+						hub: internal.hub,
+						tenantId: row.tenantId,
+					},
 					'endpoint',
 				);
 			}
 			await doSubscribe(corsair, plugin, row.tenantId, keys);
 			renewed.push(label);
 		} catch (error) {
+			if (error instanceof AuthMissingError) {
+				skipped.push(label);
+				continue;
+			}
 			console.warn(
 				`[corsair:renewal] re-subscribe failed for '${label}':`,
 				error,
@@ -68,15 +82,15 @@ export async function renewAccounts(input: {
 			failed.push(label);
 		}
 	}
-	return { renewed, failed };
+	return { renewed, failed, skipped };
 }
 
 /** One renewal pass over every connected account of every subscribable plugin. */
 export async function renewSubscriptions(
 	corsair: unknown,
-): Promise<{ renewed: string[]; failed: string[] }> {
+): Promise<{ renewed: string[]; failed: string[]; skipped: string[] }> {
 	const internal = getCorsairInternal(corsair);
-	if (!internal.database) return { renewed: [], failed: [] };
+	if (!internal.database) return { renewed: [], failed: [], skipped: [] };
 
 	const rows = await internal.database.db
 		.selectFrom('corsair_accounts as a')

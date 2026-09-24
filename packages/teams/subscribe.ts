@@ -1,19 +1,44 @@
 import { MS_GRAPH_API_BASE, msGraphSubscribe } from 'corsair/core';
 
+type ChannelSubscriptionKeys = {
+	get_channel_team_id?: () => Promise<string | null | undefined>;
+	get_channel_id?: () => Promise<string | null | undefined>;
+};
+
 /**
  * BYO subscribe for Teams — resolves the connected user's id, then arms the
  * shared MS Graph subscribe on their chat messages (no resource data, so no
  * encryption certificate is required).
+ * When per-account channel_team_id + channel_id are set, subscribes to that
+ * channel's messages instead (multi-tenant safe — not plugin-wide options).
  * getAllMessages-class subscriptions carry Microsoft licensing ("model") and
  * permission requirements — expect live failures on unlicensed tenants; the
  * subscribe is best-effort and never fails the connect.
  */
 export async function teamsSubscribe(
 	ctx: Parameters<typeof msGraphSubscribe>[0],
-	input: { webhookUrl: string },
+	input: { webhookUrl: string; clientState?: string },
 ) {
 	const accessToken = await ctx.keys.get_access_token();
 	if (!accessToken) return null;
+
+	const channelKeys = ctx.keys as ChannelSubscriptionKeys;
+	const teamId = await channelKeys.get_channel_team_id?.();
+	const channelId = await channelKeys.get_channel_id?.();
+	const hasTeamId = Boolean(teamId);
+	const hasChannelId = Boolean(channelId);
+	if (hasTeamId !== hasChannelId) {
+		// Partial channel config must not fall back to chat messages.
+		return null;
+	}
+	if (teamId && channelId) {
+		return msGraphSubscribe(ctx, {
+			webhookUrl: input.webhookUrl,
+			resource: `teams/${teamId}/channels/${channelId}/messages`,
+			changeType: 'created',
+			clientState: input.clientState,
+		});
+	}
 
 	const meResp = await fetch(`${MS_GRAPH_API_BASE}/me`, {
 		headers: { authorization: `Bearer ${accessToken}` },
@@ -27,5 +52,6 @@ export async function teamsSubscribe(
 		webhookUrl: input.webhookUrl,
 		resource: `users/${id}/chats/getAllMessages`,
 		changeType: 'created',
+		clientState: input.clientState,
 	});
 }

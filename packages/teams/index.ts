@@ -40,8 +40,8 @@ import type {
 import {
 	TeamsChannelCreatedEventSchema,
 	TeamsChannelCreatedPayloadSchema,
-	TeamsChannelMessageEventSchema,
 	TeamsChannelMessagePayloadSchema,
+	TeamsChannelMessageWebhookResponseSchema,
 	TeamsChatMessageEventSchema,
 	TeamsChatMessagePayloadSchema,
 	TeamsMembershipChangedEventSchema,
@@ -372,7 +372,7 @@ const teamsWebhookSchemas = {
 	'channels.message': {
 		description: 'A message was created or updated in a team channel',
 		payload: TeamsChannelMessagePayloadSchema,
-		response: TeamsChannelMessageEventSchema,
+		response: TeamsChannelMessageWebhookResponseSchema,
 	},
 	'channels.created': {
 		description: 'A channel was created, updated, or deleted in a team',
@@ -393,10 +393,20 @@ const teamsWebhookSchemas = {
 
 export const teamsAuthConfig = {
 	oauth_2: {
-		account: ['subscription_id', 'client_state'] as const,
+		account: [
+			'subscription_id',
+			'client_state',
+			'channel_team_id',
+			'channel_id',
+		] as const,
 	},
 	managed: {
-		account: ['subscription_id', 'client_state'] as const,
+		account: [
+			'subscription_id',
+			'client_state',
+			'channel_team_id',
+			'channel_id',
+		] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
