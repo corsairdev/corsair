@@ -5,13 +5,20 @@ export const GITHUB_LICENSE_URL = `${GITHUB_URL}/blob/main/LICENSE`;
 export const APP_URL = 'https://hub.corsair.dev';
 
 /** Hub login from www integration pages (plugin-aware copy on the login card). */
-export function hubWwwPluginLoginUrl(pluginId: string): string {
+export function hubWwwPluginsLoginUrl(pluginIds: readonly string[]): string {
+	const plugins = [
+		...new Set(pluginIds.map((id) => id.trim().toLowerCase()).filter(Boolean)),
+	].join(',');
 	const params = new URLSearchParams({
 		title: 'app',
 		mode: 'www',
-		plugins: pluginId,
+		plugins,
 	});
 	return `${APP_URL}/login?${params.toString()}`;
+}
+
+export function hubWwwPluginLoginUrl(pluginId: string): string {
+	return hubWwwPluginsLoginUrl([pluginId]);
 }
 export const TWITTER_URL = 'https://x.com/corsairdotdev';
 export const DISCORD_URL = 'https://discord.com/invite/uNgCP3mSzU';

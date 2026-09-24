@@ -2,6 +2,7 @@ import { IntegrationFaqAccordion } from '@/components/integrations/detail/integr
 import { getComboCanonical } from '@/lib/combined-integrations';
 import type { ComboData } from '@/lib/combo-types';
 import { ComboHero } from './combo-hero';
+import { ComboHubCta } from './combo-hub-cta';
 import { AppDetails } from './combo-sections';
 import { ComboWorkflows } from './combo-workflows';
 import { KbDemo } from './kb-demo';
@@ -71,6 +72,7 @@ export function ComboPage({ combo }: { combo: ComboData }) {
 			<ComboJsonLd combo={combo} />
 			<ComboHero combo={combo} />
 			<WorkflowBuilder key={`builder-${key}`} combo={combo} />
+			<ComboHubCta combo={combo} />
 			<ComboWorkflows combo={combo} />
 			<KbDemo key={`kb-${key}`} combo={combo} />
 			<AppDetails combo={combo} />

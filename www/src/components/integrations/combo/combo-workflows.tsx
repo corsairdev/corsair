@@ -1,8 +1,11 @@
 import type { ComboData } from '@/lib/combo-types';
+import { hubWwwPluginsLoginUrl } from '@/lib/site-links';
 import { cn } from '@/lib/utils';
 import { WorkflowNodePair } from './workflow-nodes';
 
 export function ComboWorkflows({ combo }: { combo: ComboData }) {
+	const tryItHref = hubWwwPluginsLoginUrl([combo.slugA, combo.slugB]);
+
 	return (
 		<section id="workflows" className="py-10 md:py-12">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
@@ -10,8 +13,8 @@ export function ComboWorkflows({ combo }: { combo: ComboData }) {
 					Popular {combo.displayA} and {combo.displayB} workflows
 				</h2>
 				<p className="mx-auto mt-2 max-w-2xl text-center text-[15px] leading-relaxed text-[#1c1c1c99]">
-					When this happens in one app, do this in the other. Open a card in the
-					builder to try the pair.
+					When this happens in one app, do this in the other. Try it on Hub to
+					connect both apps and run the pair.
 				</p>
 				<div className="mt-7 grid gap-3 md:grid-cols-2 md:items-stretch">
 					{combo.workflows.map((w, i) => (
@@ -49,7 +52,9 @@ export function ComboWorkflows({ combo }: { combo: ComboData }) {
 									{w.trigger.appLabel} + {w.action.appLabel}
 								</span>
 								<a
-									href={`#builder?pair=${w.trigger.app}.${w.trigger.id}+${w.action.app}.${w.action.id}`}
+									href={tryItHref}
+									target="_blank"
+									rel="noopener noreferrer"
 									className="-my-1 shrink-0 touch-manipulation py-2 text-[13px] font-medium text-[#4a38f5] no-underline hover:underline"
 								>
 									Try it →
