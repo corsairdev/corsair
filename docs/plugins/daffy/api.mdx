@@ -1,0 +1,463 @@
+---
+title: API
+description: "API reference for Daffy: every `daffy.api.*` operation with input and output types."
+---
+
+Every `daffy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### getBalance
+
+`accounts.getBalance`
+
+Retrieve the authenticated user's fund balance.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | Not specified |
+| `pending_deposit_balance` | `number` | Yes | Not specified |
+| `portfolio_balance` | `number` | Yes | Not specified |
+| `available_balance` | `number` | Yes | Not specified |
+
+
+
+---
+
+### getContributions
+
+`accounts.getContributions`
+
+List contributions made to the authenticated fund.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getContributions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Not specified |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Not specified |
+| `meta` | `object` | Yes | Not specified |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDonations
+
+`accounts.getDonations`
+
+List donations made by the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getDonations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Not specified |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Not specified |
+| `meta` | `object` | Yes | Not specified |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserByUsername
+
+`accounts.getUserByUsername`
+
+Retrieve a public user profile by username.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserByUsername({ username: 'api-user' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Not specified |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getUserCauses
+
+`accounts.getUserCauses`
+
+Retrieve a user's supported charitable causes.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserCauses({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | Yes | Not specified |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserDonations
+
+`accounts.getUserDonations`
+
+Retrieve a user's public donations.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserDonations({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Not specified |
+| `userId` | `number` | Yes | Not specified |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Not specified |
+| `meta` | `object` | Yes | Not specified |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserProfile
+
+`accounts.getUserProfile`
+
+Retrieve the authenticated user's profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Gifts
+
+### create
+
+`gifts.create`
+
+Create a Daffy charitable gift for a beneficiary.
+
+**Risk:** `write`
+
+```ts
+await corsair.daffy.api.gifts.create({ name: 'Jamie', amount: 18 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Not specified |
+| `amount` | `number` | Yes | Not specified |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getByCode
+
+`gifts.getByCode`
+
+Retrieve a gift by its unique code.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.gifts.getByCode({ code: '6ba7b810-9dad-11d1-80b4-00c04fd430c8' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Not specified |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`gifts.list`
+
+List gifts associated with the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.gifts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Not specified |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Not specified |
+| `meta` | `object` | Yes | Not specified |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Non Profits
+
+### getByEin
+
+`nonProfits.getByEin`
+
+Retrieve a nonprofit organization by EIN.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.nonProfits.getByEin({ ein: '261544963' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ein` | `string` | Yes | Not specified |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### search
+
+`nonProfits.search`
+
+Search nonprofit organizations by cause or text.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.nonProfits.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Not specified |
+| `causeId` | `number` | No | Not specified |
+| `query` | `string` | No | Not specified |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Not specified |
+| `meta` | `object` | Yes | Not specified |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
