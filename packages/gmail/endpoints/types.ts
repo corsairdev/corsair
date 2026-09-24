@@ -42,11 +42,6 @@ const MessagesSendInputSchema = z.object({
 	threadId: z.string().optional(),
 });
 
-const MessagesDeleteInputSchema = z.object({
-	userId: z.string().optional(),
-	id: z.string(),
-});
-
 const MessagesModifyInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
@@ -194,11 +189,6 @@ const ThreadsModifyInputSchema = z.object({
 	removeLabelIds: z.array(z.string()).optional(),
 });
 
-const ThreadsDeleteInputSchema = z.object({
-	userId: z.string().optional(),
-	id: z.string(),
-});
-
 const ThreadsTrashInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
@@ -217,7 +207,6 @@ export const GmailEndpointInputSchemas = {
 	messagesList: MessagesListInputSchema,
 	messagesGet: MessagesGetInputSchema,
 	messagesSend: MessagesSendInputSchema,
-	messagesDelete: MessagesDeleteInputSchema,
 	messagesModify: MessagesModifyInputSchema,
 	messagesBatchModify: MessagesBatchModifyInputSchema,
 	messagesTrash: MessagesTrashInputSchema,
@@ -236,7 +225,6 @@ export const GmailEndpointInputSchemas = {
 	threadsList: ThreadsListInputSchema,
 	threadsGet: ThreadsGetInputSchema,
 	threadsModify: ThreadsModifyInputSchema,
-	threadsDelete: ThreadsDeleteInputSchema,
 	threadsTrash: ThreadsTrashInputSchema,
 	threadsUntrash: ThreadsUntrashInputSchema,
 	usersGetProfile: UsersGetProfileInputSchema,
@@ -378,7 +366,6 @@ export const GmailEndpointOutputSchemas = {
 	messagesList: MessageListResponseSchema,
 	messagesGet: MessageSchema,
 	messagesSend: MessageSchema,
-	messagesDelete: z.void(),
 	messagesModify: MessageSchema,
 	messagesBatchModify: z.void(),
 	messagesTrash: MessageSchema,
@@ -397,7 +384,6 @@ export const GmailEndpointOutputSchemas = {
 	threadsList: ThreadListResponseSchema,
 	threadsGet: ThreadSchema,
 	threadsModify: ThreadSchema,
-	threadsDelete: z.void(),
 	threadsTrash: ThreadSchema,
 	threadsUntrash: ThreadSchema,
 	usersGetProfile: ProfileSchema,
@@ -407,7 +393,6 @@ export type GmailEndpointOutputs = {
 	messagesList: MessageListResponse;
 	messagesGet: Message;
 	messagesSend: Message;
-	messagesDelete: void;
 	messagesModify: Message;
 	messagesBatchModify: void;
 	messagesTrash: Message;
@@ -426,7 +411,6 @@ export type GmailEndpointOutputs = {
 	threadsList: ThreadListResponse;
 	threadsGet: Thread;
 	threadsModify: Thread;
-	threadsDelete: void;
 	threadsTrash: Thread;
 	threadsUntrash: Thread;
 	usersGetProfile: Profile;
