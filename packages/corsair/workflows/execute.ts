@@ -103,6 +103,16 @@ const BLOCKED_KEYS = new Set<PropertyKey>([
 	'constructor',
 	'prototype',
 	'__proto__',
+	// Block well-known Symbols to prevent sandbox escape via type coercion
+	// (Symbol.toPrimitive), host object enumeration (Symbol.iterator), or
+	// host constructor access (Symbol.hasInstance, Symbol.species).
+	Symbol.toPrimitive,
+	Symbol.iterator,
+	Symbol.asyncIterator,
+	Symbol.hasInstance,
+	Symbol.species,
+	Symbol.toStringTag,
+	Symbol.unscopables,
 ]);
 
 export function harden(value: unknown, thisArg: unknown): unknown {
