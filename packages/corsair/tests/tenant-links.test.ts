@@ -7,6 +7,7 @@ import {
 	resolveAccountFromWebhookLink,
 	resolveTenantFromWebhookLink,
 	resolveTenantIdFromWebhookLink,
+	resolveTenantIdFromWebhookMatches,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
 
@@ -154,6 +155,62 @@ describe('webhook tenant links', () => {
 				match: { linkType: 'team_id', externalId: 'T111' },
 			});
 			expect(viaMatch).toBe('tenant_a');
+		} finally {
+			await destroy();
+		}
+	});
+
+	it('resolves ordered matches with precedence, falling back to the workspace link', async () => {
+		const { database, destroy } = createTestDatabase();
+		try {
+			const { integrationId, dek } = await seedSlackIntegration(database);
+			await seedSlackAccount(database, 'tenant_a', integrationId, dek);
+			await seedSlackAccount(database, 'tenant_b', integrationId, dek);
+
+			// Two tenants in the same workspace, each with its own user link.
+			for (const [tenant, user] of [
+				['tenant_a', 'U9'],
+				['tenant_b', 'U8'],
+			] as const) {
+				await setWebhookTenantLink({
+					database,
+					kek: KEK,
+					pluginId: 'slack',
+					tenantId: tenant,
+					link: { linkType: 'team_id', externalId: 'T111' },
+				});
+				await setWebhookTenantLink({
+					database,
+					kek: KEK,
+					pluginId: 'slack',
+					tenantId: tenant,
+					link: { linkType: 'slack_user', externalId: `T111:${user}` },
+				});
+			}
+
+			// User link wins over the shared workspace link.
+			const u9 = await resolveTenantIdFromWebhookMatches({
+				database,
+				kek: KEK,
+				pluginId: 'slack',
+				matches: [
+					{ linkType: 'slack_user', externalId: 'T111:U9' },
+					{ linkType: 'team_id', externalId: 'T111' },
+				],
+			});
+			expect(u9).toBe('tenant_a');
+
+			// Unknown user falls back to the workspace link (some tenant in T111).
+			const unknown = await resolveTenantIdFromWebhookMatches({
+				database,
+				kek: KEK,
+				pluginId: 'slack',
+				matches: [
+					{ linkType: 'slack_user', externalId: 'T111:U404' },
+					{ linkType: 'team_id', externalId: 'T111' },
+				],
+			});
+			expect(unknown === 'tenant_a' || unknown === 'tenant_b').toBe(true);
 		} finally {
 			await destroy();
 		}

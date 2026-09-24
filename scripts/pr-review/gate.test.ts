@@ -76,6 +76,21 @@ test('frpc binary-shim packages are not plugins', () => {
 	assert.equal(r.isPluginPr, false);
 });
 
+test('R1: slack webhook routing companion core files pass', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/slack/webhooks/tenant-matcher.ts',
+			'packages/corsair/core/webhooks/tenant-match.ts',
+			'packages/corsair/webhooks/tenant-links.ts',
+			'packages/corsair/hub/managed-oauth.ts',
+			'packages/corsair/tests/tenant-links.test.ts',
+		],
+	});
+	assert.equal(r.plugin, 'slack');
+	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
+});
+
 test('R1: out-of-scope file fails', () => {
 	const r = runGate({
 		...goodInput,
