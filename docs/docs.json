@@ -2368,6 +2368,14 @@
                 ]
               },
               {
+                "group": "SafetyCulture",
+                "pages": [
+                  "plugins/safetyculture/overview",
+                  "plugins/safetyculture/api",
+                  "plugins/safetyculture/database"
+                ]
+              },
+              {
                 "group": "Salesforce",
                 "pages": [
                   "plugins/salesforce/overview",
