@@ -9,6 +9,7 @@ import { buildCloudClient } from './client';
 import type { CloudTransport } from './http';
 import { cloudRequest } from './http';
 import { buildCloudManagement } from './manage';
+import { CLOUD_ROUTES } from './routes';
 import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
 
 const CLOUD_SINGLE_TENANT_ID = 'default';
@@ -187,7 +188,7 @@ async function fetchInstanceMap(
 	const res = await cloudRequest<{ instances: ResolvedInstance[] }>(
 		{ ...transport, baseUrl: projectRootFromBaseUrl(transport.baseUrl) },
 		'GET',
-		'instances',
+		CLOUD_ROUTES.instances,
 	);
 	const map = new Map<string, string>();
 	for (const instance of res.instances) {
