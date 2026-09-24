@@ -189,6 +189,7 @@ export const BaseProviders = [
 	'filloutforms',
 	'firecrawl',
 	'fireflies',
+	'fixer',
 	'flexisign',
 	'flutterwave',
 	'formbricks',
@@ -537,6 +538,7 @@ export const ProviderDisplayNames = {
 	filloutforms: 'FilloutForms',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	formbricks: 'Formbricks',
@@ -892,6 +894,7 @@ export type AllProviders =
 	| 'filloutforms'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
 	| 'formbricks'
