@@ -24,6 +24,7 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
 	makeRemoetRequest: jest.fn(),
 }));
 
@@ -401,7 +402,7 @@ describe('Remoet endpoints', () => {
 		mockRequest.mockResolvedValueOnce({ company: 'Starburst' });
 
 		const response = await Stars.create(context, {
-			companySlug: ' starburst ',
+			companySlug: ' Starburst ',
 		});
 
 		expect(response.company).toBe('Starburst');
@@ -420,6 +421,9 @@ describe('Remoet endpoints', () => {
 	it('stars.create rejects an empty slug before calling Remoet', async () => {
 		await expect(
 			Stars.create(context, { companySlug: '  ' }),
+		).rejects.toThrow();
+		await expect(
+			Stars.create(context, { companySlug: 'x'.repeat(101) }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});

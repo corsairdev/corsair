@@ -14,11 +14,15 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	Companies,
 	Education,
 	JobContext,
+	Jobs,
 	LinkTrees,
 	Profile,
 	Projects,
+	SavedJobs,
+	StarredJobs,
 	Stars,
 	WorkExperience,
 } from './endpoints';
@@ -67,6 +71,15 @@ export type RemoetEndpoints = {
 	linkTreesGet: RemoetEndpoint<'linkTreesGet'>;
 	jobContextGet: RemoetEndpoint<'jobContextGet'>;
 	starsCreate: RemoetEndpoint<'starsCreate'>;
+	jobsSearch: RemoetEndpoint<'jobsSearch'>;
+	companiesSearch: RemoetEndpoint<'companiesSearch'>;
+	companiesGet: RemoetEndpoint<'companiesGet'>;
+	starredJobsList: RemoetEndpoint<'starredJobsList'>;
+	savedJobsList: RemoetEndpoint<'savedJobsList'>;
+	savedJobsCreate: RemoetEndpoint<'savedJobsCreate'>;
+	savedJobsUpdate: RemoetEndpoint<'savedJobsUpdate'>;
+	savedJobsDelete: RemoetEndpoint<'savedJobsDelete'>;
+	starsDelete: RemoetEndpoint<'starsDelete'>;
 };
 
 const remoetEndpointsNested = {
@@ -93,6 +106,23 @@ const remoetEndpointsNested = {
 	},
 	stars: {
 		create: Stars.create,
+		delete: Stars.delete,
+	},
+	jobs: {
+		search: Jobs.search,
+	},
+	companies: {
+		search: Companies.search,
+		get: Companies.get,
+	},
+	starredJobs: {
+		list: StarredJobs.list,
+	},
+	savedJobs: {
+		list: SavedJobs.list,
+		create: SavedJobs.create,
+		update: SavedJobs.update,
+		delete: SavedJobs.delete,
 	},
 } as const;
 
@@ -138,6 +168,42 @@ export const remoetEndpointSchemas = {
 	'stars.create': {
 		input: RemoetEndpointInputSchemas.starsCreate,
 		output: RemoetEndpointOutputSchemas.starsCreate,
+	},
+	'jobs.search': {
+		input: RemoetEndpointInputSchemas.jobsSearch,
+		output: RemoetEndpointOutputSchemas.jobsSearch,
+	},
+	'companies.search': {
+		input: RemoetEndpointInputSchemas.companiesSearch,
+		output: RemoetEndpointOutputSchemas.companiesSearch,
+	},
+	'companies.get': {
+		input: RemoetEndpointInputSchemas.companiesGet,
+		output: RemoetEndpointOutputSchemas.companiesGet,
+	},
+	'starredJobs.list': {
+		input: RemoetEndpointInputSchemas.starredJobsList,
+		output: RemoetEndpointOutputSchemas.starredJobsList,
+	},
+	'savedJobs.list': {
+		input: RemoetEndpointInputSchemas.savedJobsList,
+		output: RemoetEndpointOutputSchemas.savedJobsList,
+	},
+	'savedJobs.create': {
+		input: RemoetEndpointInputSchemas.savedJobsCreate,
+		output: RemoetEndpointOutputSchemas.savedJobsCreate,
+	},
+	'savedJobs.update': {
+		input: RemoetEndpointInputSchemas.savedJobsUpdate,
+		output: RemoetEndpointOutputSchemas.savedJobsUpdate,
+	},
+	'savedJobs.delete': {
+		input: RemoetEndpointInputSchemas.savedJobsDelete,
+		output: RemoetEndpointOutputSchemas.savedJobsDelete,
+	},
+	'stars.delete': {
+		input: RemoetEndpointInputSchemas.starsDelete,
+		output: RemoetEndpointOutputSchemas.starsDelete,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof remoetEndpointsNested
@@ -191,6 +257,51 @@ const remoetEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Star a company on Remoet by its slug so its jobs reach the user feed. Stars are capped per user and removing one uses a limited budget, so confirm before starring',
+	},
+	'jobs.search': {
+		riskLevel: 'read',
+		description:
+			"Search Remoet's public tech job catalogue by keywords, tech stack, company, location, remote policy, seniority and salary floor. Each job's firstSeenAt is when Remoet first saw it, not when it was posted. Paginated with page and pageSize (max 50)",
+	},
+	'companies.search': {
+		riskLevel: 'read',
+		description:
+			"Search Remoet's tech companies by name, description, tech stack or seniority, or set starred to list the companies the user has starred. Paginated with page and pageSize (max 100)",
+	},
+	'companies.get': {
+		riskLevel: 'read',
+		description:
+			'Get one Remoet company by slug, including its tech stack, perks and open-role counts; pass checkTechStack to see which technologies it uses',
+	},
+	'starredJobs.list': {
+		riskLevel: 'read',
+		description:
+			'List jobs at the companies the user has starred, filtered by keywords, location, tech stack, remote policy, seniority and salary floor. createdAt is when Remoet first saw a job, not when it was posted. Paginated with page and pageSize (max 50)',
+	},
+	'savedJobs.list': {
+		riskLevel: 'read',
+		description:
+			"List the user's saved jobs with their notes. A locked entry has job null and a lockedReason saying how to unlock it, usually: star the company to see it again. Paginated with page and pageSize (max 50)",
+	},
+	'savedJobs.create': {
+		riskLevel: 'write',
+		description:
+			"Save a job to the user's saved jobs by its id, with an optional note (500 characters max)",
+	},
+	'savedJobs.update': {
+		riskLevel: 'write',
+		description:
+			'Replace the note on a saved-job entry by its saved-job id (not the job id); null clears it',
+	},
+	'savedJobs.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Remove a saved-job entry by its saved-job id (not the job id)',
+	},
+	'stars.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days, so confirm with the user first',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof remoetEndpointsNested>;
 
@@ -249,10 +360,16 @@ export function remoet<const T extends RemoetPluginOptions>(
 }
 
 export type {
+	CompaniesGetInput,
+	CompaniesGetResponse,
+	CompaniesSearchInput,
+	CompaniesSearchResponse,
 	EducationListInput,
 	EducationListResponse,
 	JobContextGetInput,
 	JobContextGetResponse,
+	JobsSearchInput,
+	JobsSearchResponse,
 	LinkTreesGetInput,
 	LinkTreesGetResponse,
 	LinkTreesListInput,
@@ -265,17 +382,33 @@ export type {
 	ProfileUpdateResponse,
 	ProjectsListInput,
 	ProjectsListResponse,
+	RemoetCompanySummary,
 	RemoetDataField,
 	RemoetEducation,
 	RemoetEndpointInputs,
 	RemoetEndpointOutputs,
 	RemoetJobContextMatch,
+	RemoetJobPosting,
 	RemoetLinkTree,
 	RemoetProfile,
 	RemoetProject,
+	RemoetSavedJob,
+	RemoetStarredJob,
 	RemoetWorkExperience,
+	SavedJobsCreateInput,
+	SavedJobsCreateResponse,
+	SavedJobsDeleteInput,
+	SavedJobsDeleteResponse,
+	SavedJobsListInput,
+	SavedJobsListResponse,
+	SavedJobsUpdateInput,
+	SavedJobsUpdateResponse,
+	StarredJobsListInput,
+	StarredJobsListResponse,
 	StarsCreateInput,
 	StarsCreateResponse,
+	StarsDeleteInput,
+	StarsDeleteResponse,
 	WorkExperienceListInput,
 	WorkExperienceListResponse,
 } from './endpoints/types';

@@ -137,4 +137,74 @@ describe('Remoet plugin through createCorsair', () => {
 			client('test-key').remoet.api.linkTrees.get({ slug: 'missing' }),
 		).rejects.toThrow('Link tree not found');
 	});
+
+	it('sends every jobs.search list as repeated keys, commas intact', async () => {
+		fetchMock.mockResolvedValueOnce(
+			reply({
+				status: 200,
+				body: {
+					jobs: [],
+					totalCount: 0,
+					page: 1,
+					pageSize: 20,
+					totalPages: 0,
+					hasNextPage: false,
+				},
+			}),
+		);
+
+		await client('test-key').remoet.api.jobs.search({
+			techStack: ['Go', 'Rust'],
+			remotePolicy: ['remote', 'hybrid'],
+			experienceLevel: ['senior'],
+			location: ['Portland, OR', 'Germany'],
+			pageSize: 20,
+		});
+
+		const [url] = fetchMock.mock.calls[0] ?? [];
+		const params = new URL(String(url)).searchParams;
+		expect(params.getAll('techStack')).toEqual(['Go', 'Rust']);
+		expect(params.getAll('remotePolicy')).toEqual(['remote', 'hybrid']);
+		expect(params.getAll('experienceLevel')).toEqual(['senior']);
+		expect(params.getAll('location')).toEqual(['Portland, OR', 'Germany']);
+		expect(params.get('pageSize')).toBe('20');
+		expect([...params.keys()].some((key) => key.includes('['))).toBe(false);
+		expect(String(url)).toContain('location=Portland%2C%20OR&location=Germany');
+
+		fetchMock.mockResolvedValueOnce(
+			reply({
+				status: 200,
+				body: {
+					jobs: [],
+					totalCount: 0,
+					page: 1,
+					pageSize: 20,
+					totalPages: 0,
+					hasNextPage: false,
+				},
+			}),
+		);
+		await client('test-key').remoet.api.jobs.search({ techStack: [] });
+		const [emptyUrl] = fetchMock.mock.calls[1] ?? [];
+		expect(String(emptyUrl)).toBe('https://api.remoet.dev/user/job-postings');
+	});
+
+	it('sends DELETE for stars.delete and does not retry a 409', async () => {
+		const message =
+			'You have used all 5 unstar operations for this period. Your budget resets on 2026-10-20T00:00:00.000Z.';
+		fetchMock.mockResolvedValue(
+			reply({
+				status: 409,
+				body: { message, error: 'Conflict', statusCode: 409 },
+			}),
+		);
+
+		await expect(
+			client('test-key').remoet.api.stars.delete({ companySlug: 'starburst' }),
+		).rejects.toMatchObject({ status: 409, message });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchMock.mock.calls[0] ?? [];
+		expect(String(url)).toBe('https://api.remoet.dev/user/stars/starburst');
+		expect(init?.method).toBe('DELETE');
+	});
 });

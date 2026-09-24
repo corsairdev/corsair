@@ -27,3 +27,26 @@ export const create: RemoetEndpoints['starsCreate'] = async (ctx, input) => {
 	);
 	return validated;
 };
+
+/**
+ * Unstars a company (DELETE /user/stars/:companySlug). Remoet answers 404 when
+ * the company is not starred, and 409 when the user's unstar budget, which
+ * resets every 30 days, is spent.
+ */
+export const remove: RemoetEndpoints['starsDelete'] = async (ctx, input) => {
+	const parsed = RemoetEndpointInputSchemas.starsDelete.parse(input);
+	const response = await makeRemoetRequest(
+		`/user/stars/${encodeURIComponent(parsed.companySlug)}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
+	const validated = RemoetEndpointOutputSchemas.starsDelete.parse(response);
+
+	await logEventFromContext(
+		ctx,
+		'remoet.stars.delete',
+		{ companySlug: parsed.companySlug, company: validated.company },
+		'completed',
+	);
+	return validated;
+};

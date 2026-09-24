@@ -3,9 +3,10 @@ import { remoet } from './index';
 
 // Live tests run only when a real key is provided via the environment.
 // Nothing is hardcoded here, so CI without a key skips this suite (R6).
-// Only read endpoints are exercised: stars.create and profile.update would
-// change the real account behind the key. Every call goes through the
-// assembled plugin, so each response is parsed by the endpoint's zod schema.
+// Only read endpoints are exercised: the star, saved-job and profile.update
+// writes would change the real account behind the key. Every call goes
+// through the assembled plugin, so each response is parsed by the endpoint's
+// zod schema.
 const API_KEY = process.env.REMOET_API_KEY;
 const describeLive = API_KEY ? describe : describe.skip;
 
@@ -58,5 +59,39 @@ describeLive('Remoet live API', () => {
 		const context = await liveApi().jobContext.get({ url: TRACKED_JOB_URL });
 		expect(context.match).not.toBeNull();
 		expect(context.match?.companySlug).toEqual(expect.any(String));
+	});
+
+	it('jobs.search', async () => {
+		const result = await liveApi().jobs.search({ pageSize: 5 });
+		expect(Array.isArray(result.jobs)).toBe(true);
+		expect(typeof result.totalCount).toBe('number');
+	});
+
+	it('companies.search', async () => {
+		const result = await liveApi().companies.search({ pageSize: 5 });
+		expect(Array.isArray(result.listings)).toBe(true);
+		expect(typeof result.totalCount).toBe('number');
+	});
+
+	it('companies.get for a slug returned by jobs.search', async () => {
+		const api = liveApi();
+		const { jobs } = await api.jobs.search({ pageSize: 1 });
+		const slug = jobs[0]?.companySlug;
+		expect(slug).toEqual(expect.any(String));
+		if (!slug) return;
+		const company = await api.companies.get({ slug });
+		expect(company.slug).toBe(slug);
+	});
+
+	it('starredJobs.list', async () => {
+		const result = await liveApi().starredJobs.list({ pageSize: 5 });
+		expect(Array.isArray(result.jobs)).toBe(true);
+		expect(typeof result.totalCount).toBe('number');
+	});
+
+	it('savedJobs.list', async () => {
+		const result = await liveApi().savedJobs.list({ pageSize: 5 });
+		expect(Array.isArray(result.items)).toBe(true);
+		expect(typeof result.totalCount).toBe('number');
 	});
 });

@@ -61,11 +61,12 @@ export async function makeRemoetRequest(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PATCH';
+		method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 		// unknown is used here because request bodies carry arbitrary
 		// provider JSON; values are serialized as-is and never cast.
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		// A string[] value is sent as repeated keys (`k=a&k=b`) by the transport.
+		query?: Record<string, string | string[] | number | boolean | undefined>;
 	} = {},
 ): Promise<unknown> {
 	const { method = 'GET', body, query } = options;
