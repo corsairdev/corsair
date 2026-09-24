@@ -108,6 +108,8 @@ export {
 	getManagedAccessToken,
 	type ManagedAccessTokenResult,
 	type ManagedAuthContext,
+	type ManagedKeyBuilderContext,
+	resolveManagedAccessToken,
 } from './managed-auth';
 export {
 	ManagedOAuthDeliveryError,

@@ -94,6 +94,7 @@ describe('Supabase plugin shape', () => {
 		expect(plugin.authConfig).toEqual({
 			api_key: {},
 			oauth_2: {},
+			managed: {},
 		});
 		expect(plugin.oauthConfig).toMatchObject({
 			providerName: 'Supabase',

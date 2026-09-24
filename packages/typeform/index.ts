@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	Forms,
 	Images,
@@ -122,7 +123,7 @@ export type TypeformBoundWebhooks = BindWebhooks<TypeformWebhooks>;
 // ── Plugin Options ────────────────────────────────────────────────────────────
 
 export type TypeformPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	/** Optional access token (overrides key manager) */
 	key?: string;
 	/** Optional webhook secret for signature verification */
@@ -483,6 +484,9 @@ export const typeformAuthConfig = {
 	oauth_2: {
 		account: ['form_id'] as const,
 	},
+	managed: {
+		account: ['form_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 const defaultAuthType: AuthTypes = 'oauth_2' as const;
@@ -514,6 +518,28 @@ export function typeform<const T extends TypeformPluginOptions>(
 	return {
 		id: 'typeform',
 		authConfig: typeformAuthConfig,
+		oauthConfig: {
+			providerName: 'Typeform',
+			authUrl: 'https://api.typeform.com/oauth/authorize',
+			tokenUrl: 'https://api.typeform.com/oauth/token',
+			scopes: [
+				'accounts:read',
+				'forms:read',
+				'forms:write',
+				'responses:read',
+				'responses:write',
+				'webhooks:read',
+				'webhooks:write',
+				'workspaces:read',
+				'workspaces:write',
+				'images:read',
+				'images:write',
+				'themes:read',
+				'themes:write',
+				'offline',
+			],
+			tokenAuthMethod: 'body',
+		},
 		schema: TypeformSchema,
 		options: options,
 		hooks: options.hooks,
@@ -559,6 +585,10 @@ export function typeform<const T extends TypeformPluginOptions>(
 					throw new AuthMissingError('typeform', 'oauth_2');
 				}
 				return res;
+			}
+
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'typeform');
 			}
 
 			throw new AuthMissingError('typeform', 'oauth_2');
