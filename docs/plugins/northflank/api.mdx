@@ -1,0 +1,1553 @@
+---
+title: API
+description: "API reference for Northflank: every `northflank.api.*` operation with input and output types."
+---
+
+Every `northflank.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Addon Types
+
+### list
+
+`addonTypes.list`
+
+List available Northflank addon types
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.addonTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  addonTypes: {
+    type: string,
+    name: string,
+    description?: string,
+    features?: {
+    },
+    resources?: {
+    },
+    versions?: string[],
+    majors?: string[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cloud Providers
+
+### listNodeTypes
+
+`cloudProviders.listNodeTypes`
+
+List supported cloud provider node types
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.cloudProviders.listNodeTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `region` | `string` | No | — |
+| `family` | `string` | No | — |
+| `maxGenerationAge` | `number` | No | — |
+| `hasGpu` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  nodeTypes: {
+    id: string,
+    name: string,
+    family?: string | null,
+    processorFamily?: string | null,
+    workloadType?: string | null,
+    generationAge?: number | null,
+    provider?: string | null,
+    resources?: {
+      vcpu?: number | null,
+      memory?: number | null
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRegions
+
+`cloudProviders.listRegions`
+
+List supported cloud provider regions
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.cloudProviders.listRegions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `provider` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regions: {
+    id: string,
+    name: string,
+    regionName?: string,
+    provider?: string,
+    availabilityZones?: {
+      id: string,
+      name: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Misc
+
+### getDnsId
+
+`misc.getDnsId`
+
+Get the DNS identifier for the authenticated account
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.misc.getDnsId({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  dns: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pipelines
+
+### list
+
+`pipelines.list`
+
+List pipelines in a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.pipelines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  pipelines: {
+    id: string,
+    name?: string,
+    description?: string,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Plans
+
+### list
+
+`plans.list`
+
+List available Northflank resource plans
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.plans.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  plans: {
+    id: string,
+    name: string,
+    currency?: string,
+    amountPerMonth?: number,
+    amountPerHour?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `region` | `string` | No | — |
+| `clusterId` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  color?: string,
+  region?: string,
+  clusterId?: string,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOrUpdate
+
+`projects.createOrUpdate`
+
+Create or update a Northflank project (upsert)
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `color` | `string` | No | — |
+| `region` | `string` | No | — |
+| `clusterId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  color?: string,
+  region?: string,
+  clusterId?: string,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `delete_child_objects` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get details of a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  color?: string,
+  region?: string,
+  clusterId?: string,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List Northflank projects
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  projects: {
+    id: string,
+    name: string,
+    description?: string,
+    color?: string,
+    region?: string,
+    clusterId?: string,
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update an existing Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  color?: string,
+  region?: string,
+  clusterId?: string,
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+List available Northflank regions
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.regions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regions: {
+    id: string,
+    name: string,
+    regionName?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create a new secret group in a Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `stageId` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `type` | `secret \| config` | No | — |
+| `secretType` | `environment-arguments \| environment \| arguments` | Yes | — |
+| `priority` | `number` | Yes | — |
+| `restrictions` | `object` | No | — |
+| `addonDependencies` | `object[]` | No | — |
+| `externalAddonDependencies` | `object[]` | No | — |
+| `secrets` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="restrictions full type">
+
+```ts
+{
+  restricted?: boolean,
+  nfObjects?: {
+    id: string,
+    type: service | job
+  }[],
+  tags?: string[],
+  tagMatchCondition?: and | or,
+  stageIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="addonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="externalAddonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="secrets full type">
+
+```ts
+{
+  variables?: {
+  },
+  files?: {
+  },
+  dockerSecretMounts?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  projectId?: string,
+  name: string,
+  description?: string,
+  tags?: string[],
+  type?: secret | config,
+  secretType?: environment-arguments | environment | arguments,
+  priority?: number,
+  restrictions?: {
+    restricted?: boolean,
+    nfObjects?: {
+      id: string,
+      type: service | job
+    }[],
+    tags?: string[],
+    tagMatchCondition?: and | or,
+    stageIds?: string[]
+  },
+  secrets?: {
+    variables?: {
+    },
+    files?: {
+    },
+    dockerSecretMounts?: {
+    }
+  },
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOrUpdate
+
+`secrets.createOrUpdate`
+
+Create or update a secret group in a Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.createOrUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `stageId` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `type` | `secret \| config` | No | — |
+| `secretType` | `environment-arguments \| environment \| arguments` | Yes | — |
+| `priority` | `number` | Yes | — |
+| `restrictions` | `object` | No | — |
+| `addonDependencies` | `object[]` | No | — |
+| `externalAddonDependencies` | `object[]` | No | — |
+| `secrets` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="restrictions full type">
+
+```ts
+{
+  restricted?: boolean,
+  nfObjects?: {
+    id: string,
+    type: service | job
+  }[],
+  tags?: string[],
+  tagMatchCondition?: and | or,
+  stageIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="addonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="externalAddonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="secrets full type">
+
+```ts
+{
+  variables?: {
+  },
+  files?: {
+  },
+  dockerSecretMounts?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  projectId?: string,
+  name: string,
+  description?: string,
+  tags?: string[],
+  type?: secret | config,
+  secretType?: environment-arguments | environment | arguments,
+  priority?: number,
+  restrictions?: {
+    restricted?: boolean,
+    nfObjects?: {
+      id: string,
+      type: service | job
+    }[],
+    tags?: string[],
+    tagMatchCondition?: and | or,
+    stageIds?: string[]
+  },
+  secrets?: {
+    variables?: {
+    },
+    files?: {
+    },
+    dockerSecretMounts?: {
+    }
+  },
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Get details of a Northflank secret group
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.secrets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+| `show` | `this \| inherited \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  projectId?: string,
+  name: string,
+  description?: string,
+  tags?: string[],
+  type?: secret | config,
+  secretType?: environment-arguments | environment | arguments,
+  priority?: number,
+  restrictions?: {
+    restricted?: boolean,
+    nfObjects?: {
+      id: string,
+      type: service | job
+    }[],
+    tags?: string[],
+    tagMatchCondition?: and | or,
+    stageIds?: string[]
+  },
+  secrets?: {
+    variables?: {
+    },
+    files?: {
+    },
+    dockerSecretMounts?: {
+    }
+  },
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDetails
+
+`secrets.getDetails`
+
+Get a secret group with linked addon details
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.secrets.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  projectId?: string,
+  name: string,
+  description?: string,
+  tags?: string[],
+  type?: secret | config,
+  secretType?: environment-arguments | environment | arguments,
+  priority?: number,
+  restrictions?: {
+    restricted?: boolean,
+    nfObjects?: {
+      id: string,
+      type: service | job
+    }[],
+    tags?: string[],
+    tagMatchCondition?: and | or,
+    stageIds?: string[]
+  },
+  secrets?: {
+    variables?: {
+    },
+    files?: {
+    },
+    dockerSecretMounts?: {
+    }
+  },
+  createdAt?: string,
+  updatedAt?: string,
+  addonSecrets?: {
+    id: string,
+    name: string,
+    addonType: string,
+    version: string,
+    variables?: {
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List secret groups in a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  secrets: {
+    id: string,
+    projectId?: string,
+    name: string,
+    description?: string,
+    tags?: string[],
+    type?: secret | config,
+    secretType?: environment-arguments | environment | arguments,
+    priority?: number,
+    restrictions?: {
+      restricted?: boolean,
+      nfObjects?: {
+        id: string,
+        type: service | job
+      }[],
+      tags?: string[],
+      tagMatchCondition?: and | or,
+      stageIds?: string[]
+    },
+    secrets?: {
+      variables?: {
+      },
+      files?: {
+      },
+      dockerSecretMounts?: {
+      }
+    },
+    createdAt?: string,
+    updatedAt?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`secrets.patch`
+
+Partially update a secret group in a Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `stageId` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `type` | `secret \| config` | No | — |
+| `secretType` | `environment-arguments \| environment \| arguments` | No | — |
+| `priority` | `number` | No | — |
+| `restrictions` | `object` | No | — |
+| `addonDependencies` | `object[]` | No | — |
+| `externalAddonDependencies` | `object[]` | No | — |
+| `secrets` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="restrictions full type">
+
+```ts
+{
+  restricted?: boolean,
+  nfObjects?: {
+    id: string,
+    type: service | job
+  }[],
+  tags?: string[],
+  tagMatchCondition?: and | or,
+  stageIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="addonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="externalAddonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="secrets full type">
+
+```ts
+{
+  variables?: {
+  },
+  files?: {
+  },
+  dockerSecretMounts?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  projectId?: string,
+  name: string,
+  description?: string,
+  tags?: string[],
+  type?: secret | config,
+  secretType?: environment-arguments | environment | arguments,
+  priority?: number,
+  restrictions?: {
+    restricted?: boolean,
+    nfObjects?: {
+      id: string,
+      type: service | job
+    }[],
+    tags?: string[],
+    tagMatchCondition?: and | or,
+    stageIds?: string[]
+  },
+  secrets?: {
+    variables?: {
+    },
+    files?: {
+    },
+    dockerSecretMounts?: {
+    }
+  },
+  createdAt?: string,
+  updatedAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Update a secret group in a Northflank project
+
+**Risk:** `write`
+
+```ts
+await corsair.northflank.api.secrets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `restrictions` | `object` | No | — |
+| `addonDependencies` | `object[]` | No | — |
+| `externalAddonDependencies` | `object[]` | No | — |
+| `type` | `secret \| config` | No | — |
+| `secretType` | `environment-arguments \| environment \| arguments` | No | — |
+| `secrets` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="restrictions full type">
+
+```ts
+{
+  restricted?: boolean,
+  nfObjects?: {
+    id: string,
+    type: service | job
+  }[],
+  tags?: string[],
+  tagMatchCondition?: and | or,
+  stageIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="addonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="externalAddonDependencies full type">
+
+```ts
+{
+  addonId: string,
+  keys?: {
+    keyName: string,
+    aliases?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="secrets full type">
+
+```ts
+{
+  variables?: {
+  },
+  files?: {
+  },
+  dockerSecretMounts?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### list
+
+`services.list`
+
+List services in a Northflank project
+
+**Risk:** `read`
+
+```ts
+await corsair.northflank.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  services: {
+    id: string,
+    appId?: string,
+    projectId?: string,
+    stageId?: string,
+    name?: string,
+    description?: string,
+    serviceType?: combined | build | deployment,
+    disabledCI?: boolean,
+    disabledCD?: boolean
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  cursor?: string,
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

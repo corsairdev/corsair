@@ -92,9 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.snapchat.api.actions.getAdAccount({
-	ad_account_id: 'adacc_123',
-});
+await tenant.snapchat.api.actions.getAdAccount({});
 ```
 
 
@@ -102,10 +100,7 @@ await tenant.snapchat.api.actions.getAdAccount({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.snapchat.api.actions.addSegmentUsers({
-	users: ['4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'],
-	segment_id: 'seg_123',
-});
+await tenant.snapchat.api.actions.addSegmentUsers({});
 ```
 
 

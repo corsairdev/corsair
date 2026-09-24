@@ -1,0 +1,479 @@
+{
+  "id": "leexi",
+  "displayName": "Leexi",
+  "description": "AI notetaker for calls and meetings — transcribe, analyse, and summarize conversations.",
+  "npmPackageName": "@corsair-dev/leexi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "key_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "leexi.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Get a specific call including topics and transcripts with paragraph and word-level timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, description?: string | null, created_at?: string | null, updated_at?: string | null, performed_at?: string | null, duration?: number | null, direction?: string | null, is_video?: boolean, locale?: string | null, source?: string | null, source_id?: string | null, visible?: boolean, leexi_url?: string | null, recording_url?: string | null, transcript_url?: string | null, simple_transcript?: string | null, summary?: string | null, custom_fields?: {} | null, customer_email_addresses?: string[], customer_phone_numbers?: string[], audio_archived_at?: string | null, video_archived_at?: string | null, transcript_archived_at?: string | null, completions_archived_at?: string | null, owner?: { uuid: string, name?: string | null, email?: string | null } | null, participating_users?: { uuid: string, name?: string | null, email?: string | null }[], customers?: { uuid: string, name?: string | null, email?: string | null, phone_number?: string | null }[], speakers?: { uuid: string, name?: string | null, index?: number, is_user?: boolean, email_address?: string | null, phone_number?: string | null, duration?: number | null, longest_monologue?: number | null }[], chapters?: { uuid: string, index?: number, title?: string | null, text?: string | null, start_time?: number | null }[], prompts?: { uuid: string, category?: string | null, title?: string | null, completions?: string[] }[], tasks?: { uuid: string, subject?: string | null, description?: string | null, done?: boolean, active?: boolean, created_at?: string | null, updated_at?: string | null, speaker?: { uuid: string, name?: string | null, index?: number, is_user?: boolean, email_address?: string | null, phone_number?: string | null, duration?: number | null, longest_monologue?: number | null } | null, last_editor?: { uuid: string, name?: string | null, email?: string | null } | null }[], conversation_type?: { uuid: string, slug?: string | null, active?: boolean } | null, tags?: { uuid: string, name?: string | null, color?: string | null }[], transcript?: { speaker_index?: number | null, start_time?: number | null, end_time?: number | null, items?: { content: string, start_time: number, end_time: number }[] }[], call_topics?: { uuid: string, topic_name?: string | null, keyphrase?: string | null, start_time?: number | null, end_time?: number | null, speaker?: { uuid: string, name?: string | null, index?: number, is_user?: boolean, email_address?: string | null, phone_number?: string | null, duration?: number | null, longest_monologue?: number | null } | null, created_at?: string | null, updated_at?: string | null }[], call_ai_topics?: { uuid: string, ai_topics?: { uuid: string, name?: string | null, color?: string | null }[], sentence?: string | null, start_time?: number | null, end_time?: number | null, speaker?: { uuid: string, name?: string | null, index?: number | null, is_user?: boolean, email_address?: string | null, phone_number?: string | null } | null, created_at?: string | null, updated_at?: string | null }[], deal?: {} | null, meeting_event?: {} | null, feedbacks?: {}[], scorecards?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List call records with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "created_at desc | created_at asc | performed_at desc | performed_at asc | updated_at desc | updated_at asc"
+          },
+          {
+            "key": "date_filter",
+            "optional": true,
+            "type": "created_at | performed_at | updated_at"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "owner_uuid",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "participating_user_uuid",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "conversation_type_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_phone_number",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customer_email_address",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "with_simple_transcript",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, description?: string | null, created_at?: string | null, updated_at?: string | null, performed_at?: string | null, duration?: number | null, direction?: string | null, is_video?: boolean, locale?: string | null, source?: string | null, source_id?: string | null, visible?: boolean, leexi_url?: string | null, recording_url?: string | null, transcript_url?: string | null, simple_transcript?: string | null, summary?: string | null, custom_fields?: {} | null, customer_email_addresses?: string[], customer_phone_numbers?: string[], audio_archived_at?: string | null, video_archived_at?: string | null, transcript_archived_at?: string | null, completions_archived_at?: string | null, owner?: { uuid: string, name?: string | null, email?: string | null } | null, participating_users?: { uuid: string, name?: string | null, email?: string | null }[], customers?: { uuid: string, name?: string | null, email?: string | null, phone_number?: string | null }[], speakers?: { uuid: string, name?: string | null, index?: number, is_user?: boolean, email_address?: string | null, phone_number?: string | null, duration?: number | null, longest_monologue?: number | null }[], chapters?: { uuid: string, index?: number, title?: string | null, text?: string | null, start_time?: number | null }[], prompts?: { uuid: string, category?: string | null, title?: string | null, completions?: string[] }[], tasks?: { uuid: string, subject?: string | null, description?: string | null, done?: boolean, active?: boolean, created_at?: string | null, updated_at?: string | null, speaker?: { uuid: string, name?: string | null, index?: number, is_user?: boolean, email_address?: string | null, phone_number?: string | null, duration?: number | null, longest_monologue?: number | null } | null, last_editor?: { uuid: string, name?: string | null, email?: string | null } | null }[], conversation_type?: { uuid: string, slug?: string | null, active?: boolean } | null, tags?: { uuid: string, name?: string | null, color?: string | null }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, items: number, count: number, pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.calls.requestPresignedUrl",
+      "shortPath": "calls.requestPresignedUrl",
+      "description": "Generate a presigned upload URL for a call recording (expires after 3 days if unused)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "extension",
+            "optional": true,
+            "type": ".mp4 | .mkv | .avi | .webm | .mov | .wmv | .mpg | .mpeg | .m4v | .mp3 | .wav | .aac | .flac | .ogg | .m4a | .wma | .opus | .aiff | .alac | .amr | .ape | .dts | .ac3 | .mid | .mp2 | .mpc | .ra | .tta | .vox"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url: string, recording_s3_key: string, headers: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.meetingEvents.create",
+      "shortPath": "meetingEvents.create",
+      "description": "Create a new meeting event in Leexi with timing, participants, and recording preferences",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meeting_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owned",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "internal",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "to_record",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "organizer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attendees",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "inbound | outbound"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, meeting_url?: string | null, start_time?: string | null, end_time?: string | null, owned?: boolean, internal?: boolean, to_record?: boolean, created_at?: string | null, updated_at?: string | null, active?: boolean, bot_scheduled?: boolean, bot_running?: boolean, origin?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.meetingEvents.delete",
+      "shortPath": "meetingEvents.delete",
+      "description": "Permanently delete a meeting event by UUID",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.meetingEvents.get",
+      "shortPath": "meetingEvents.get",
+      "description": "Get a specific meeting event by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, organizer?: { email: string } | null, attendees?: { email: string }[], meeting_url?: string | null, meeting_provider?: string | null, internal?: boolean, direction?: string | null, start_time?: string | null, end_time?: string | null, description?: string | null, owned?: boolean, to_record?: boolean, bot_scheduled?: boolean, bot_running?: boolean, bot_runs?: { uuid: string, start_time?: string | null, end_time?: string | null, recording_start_time?: string | null, end_reason?: string | null }[], origin?: string | null, created_at?: string | null, updated_at?: string | null, recording_notified?: boolean, active?: boolean, integration_user?: { uuid: string, name?: string | null, email?: string | null, active?: boolean, user?: { uuid: string, name?: string | null, email?: string | null } | null, integration?: { uuid: string, name?: string | null, slug?: string | null, category?: string | null, active?: boolean, url?: string | null, logo?: string | null } | null, calls?: { uuid: string, source?: string | null, source_id?: string | null, created_at?: string | null, updated_at?: string | null, performed_at?: string | null, locale?: string | null, duration?: number | null, direction?: string | null, is_video?: boolean, visible?: boolean, recording_url?: string | null, transcript_url?: string | null, leexi_url?: string | null }[] } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.meetingEvents.list",
+      "shortPath": "meetingEvents.list",
+      "description": "List meeting events in the Leexi workspace with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "created_at desc | created_at asc | start_time desc | start_time asc | end_time desc | end_time asc"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "calendar | manual | api"
+          },
+          {
+            "key": "date_filter",
+            "optional": true,
+            "type": "start_time | end_time"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, title?: string | null, organizer?: { email: string } | null, attendees?: { email: string }[], meeting_url?: string | null, meeting_provider?: string | null, internal?: boolean, direction?: string | null, start_time?: string | null, end_time?: string | null, description?: string | null, owned?: boolean, to_record?: boolean, bot_scheduled?: boolean, bot_running?: boolean, bot_runs?: { uuid: string, start_time?: string | null, end_time?: string | null, recording_start_time?: string | null, end_reason?: string | null }[], origin?: string | null, created_at?: string | null, updated_at?: string | null, recording_notified?: boolean, active?: boolean }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, items: number, count: number, pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams in the Leexi workspace with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string | null, active?: boolean, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, items: number, count: number, pages?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "leexi.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the Leexi workspace with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string | null, email?: string | null, active?: boolean, license?: string | null, roles?: string[], team?: { uuid: string, name?: string | null, active?: boolean } | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, items: number, count: number, pages?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
