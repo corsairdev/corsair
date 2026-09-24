@@ -359,14 +359,14 @@ describe('corsairCloud', () => {
 	});
 
 	it('resolves /instances at the project root even when the url has a trailing slash', async () => {
-		const fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(
-			async (url) => {
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (url) => {
 				if (String(url) === 'https://vm/p/instances') {
 					return instanceResolve('users', 'https://vm/users');
 				}
 				return new Response(JSON.stringify({ data: {} }), { status: 200 });
-			},
-		);
+			});
 
 		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
