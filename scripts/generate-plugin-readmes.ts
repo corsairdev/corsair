@@ -311,12 +311,39 @@ const FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 };
 
 /**
- * True when a plugin failed to load only because the `corsair` workspace
- * dependency is not installed — the signature of a lane-scoped CI install
- * (the plugin lane installs just the PR's plugin), not a broken plugin.
+ * Extracts the missing package name from a loadPlugin import failure, e.g.
+ * "import failed: Cannot find package 'zod' ..." -> "zod".
  */
-export function isWorkspaceNotInstalledError(error: string): boolean {
-	return error.startsWith("import failed: Cannot find package 'corsair'");
+export function missingPackageName(error: string): string | undefined {
+	const match = error.match(/^import failed: Cannot find package '([^']+)'/);
+	return match?.[1];
+}
+
+/**
+ * True when a plugin failed to load only because workspace dependencies are
+ * not installed — the signature of a lane-scoped CI install (the plugin lane
+ * installs just the PR's plugin), not a broken plugin.
+ *
+ * Every plugin depends on `corsair` (workspace:*) and `zod`. Either missing
+ * can mean not-installed. Both are needed because import order differs per
+ * plugin: e.g. zohobigin has only `import type ... from 'corsair/core'`
+ * (erased at runtime) followed by runtime `import { z } from 'zod'`, so its
+ * first runtime failure is `zod`, while plugins with a runtime
+ * `from 'corsair/core'` value import fail on `corsair` first.
+ *
+ * Only a plugin with no `packages/<dir>/node_modules` at all counts as not
+ * installed. An installed plugin that still cannot resolve `corsair` or
+ * `zod` (e.g. it never declared the dependency) is genuine breakage, so the
+ * full lane cannot pass silently.
+ */
+export function isWorkspaceNotInstalledError(
+	error: string,
+	dir: string,
+	root: string,
+): boolean {
+	const pkg = missingPackageName(error);
+	if (pkg !== 'corsair' && pkg !== 'zod') return false;
+	return !existsSync(join(root, 'packages', dir, 'node_modules'));
 }
 
 export type CheckResultSummary = {
@@ -329,16 +356,22 @@ export type CheckResultSummary = {
 /**
  * Decide a `--check` run: gaps and real load errors fail, uninstalled
  * plugins are skipped, and a run that introspected nothing fails so a
- * broken install can never pass vacuously.
+ * broken install can never pass vacuously. `root` is the repo root, used to
+ * tell uninstalled plugins apart via `packages/<dir>/node_modules`.
  */
 export function summarizeCheckResults(
 	results: { dir: string; gaps: string[]; error?: string }[],
+	root: string,
 ): CheckResultSummary {
 	const skipped = results
-		.filter((r) => r.error && isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const errored = results
-		.filter((r) => r.error && !isWorkspaceNotInstalledError(r.error))
+		.filter(
+			(r) => r.error && !isWorkspaceNotInstalledError(r.error, r.dir, root),
+		)
 		.map((r) => r.dir);
 	const offenders = results
 		.filter((r) => !r.error && r.gaps.length > 0)
@@ -539,11 +572,9 @@ async function main() {
 	const errored = results.filter((r) => r.error);
 
 	if (check) {
-		const summary = summarizeCheckResults(results);
+		const summary = summarizeCheckResults(results, root);
 		for (const dir of summary.skipped) {
-			console.warn(
-				`[${dir}] skipped: 'corsair' workspace dependency not installed`,
-			);
+			console.warn(`[${dir}] skipped: workspace dependency not installed`);
 		}
 		for (const dir of summary.errored) {
 			console.error(`[${dir}] ${results.find((r) => r.dir === dir)?.error}`);
