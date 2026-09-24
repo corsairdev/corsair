@@ -80,7 +80,10 @@ export async function resolveApprovalUrl(
 
 function parsePermissionArgs(args: string): unknown {
 	try {
-		return JSON.parse(args) as unknown;
+		// JSON.parse's return type is deliberately not trusted; the annotation
+		// contains it as unknown so downstream code must validate before use.
+		const parsed: unknown = JSON.parse(args);
+		return parsed;
 	} catch {
 		return args;
 	}
