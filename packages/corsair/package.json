@@ -1,7 +1,7 @@
 {
   "name": "corsair",
-  "version": "0.1.137",
-  "description": "Open-source integration layer for AI agents and apps. Managed OAuth, webhooks, and one API for 200+ integrations, with credentials that stay in your own database.",
+  "version": "0.1.138",
+  "description": "Open-source integration layer for AI agents and apps. Managed OAuth, webhooks, and one API for 350+ integrations, with credentials that stay in your own database.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

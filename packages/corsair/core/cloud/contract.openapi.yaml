@@ -250,6 +250,37 @@ paths:
         "502": { $ref: "#/components/responses/Error" }
         "500": { $ref: "#/components/responses/Error" }
 
+  /instances:
+    # Served at the PROJECT ROOT (one level above /api/corsair), so this path
+    # overrides the document server base. The SDK resolves it once per client
+    # (corsairCloud().withInstance) and caches the name -> callable-url map; each
+    # returned `url` is the base the per-op POST /{tenant}/{plugin}/call/{op} is
+    # appended to. The default instance path is gone — every call names one.
+    servers:
+      - url: "{projectRoot}"
+        variables:
+          projectRoot:
+            default: https://api.corsair.cloud/PROJECT
+            description: The project base minus /api/corsair.
+    get:
+      operationId: listInstances
+      tags: [discovery]
+      summary: The project's instances and each one's callable base URL.
+      responses:
+        "200":
+          description: Instance directory for this project.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [instances]
+                properties:
+                  instances:
+                    type: array
+                    items: { $ref: "#/components/schemas/InstanceRef" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+
 components:
   securitySchemes:
     projectKey:
@@ -279,6 +310,12 @@ components:
         reason: { type: string, description: "permission_denied/approval_required: denied|policy|timeout|pending" }
         providerStatus: { type: integer, description: "provider_error: upstream HTTP status" }
       additionalProperties: true
+    InstanceRef:
+      type: object
+      required: [instanceKey, url]
+      properties:
+        instanceKey: { type: string, description: "The instance name passed to withInstance(name)." }
+        url: { type: string, description: "Callable base URL for this instance; per-op calls are appended to it." }
     ConnectLink:
       type: object
       properties:
