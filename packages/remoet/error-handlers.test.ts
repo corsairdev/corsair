@@ -9,9 +9,13 @@ import { errorHandlers, isRemoetDailyCapError } from './error-handlers';
 function remoetError(
 	status: number,
 	transportMessage: string,
-	// unknown is used here because the mocked error body stands in for untyped
-	// wire JSON; only `message` is read.
-	body: { message?: string } & Record<string, unknown>,
+	// The shape of Remoet's error body; only `message` is read.
+	body: {
+		statusCode?: number;
+		message?: string;
+		error?: string;
+		limit?: number;
+	},
 	retryAfter?: number,
 ): RemoetAPIError {
 	const cause = new ApiError(

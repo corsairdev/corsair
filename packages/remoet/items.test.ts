@@ -2,9 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import { makeRemoetRequest } from './client';
 import { Education, Projects, WorkExperience } from './endpoints';
 import type {
+	EducationCreateInput,
 	EducationCreateResponse,
+	ProjectsCreateInput,
 	ProjectsCreateResponse,
 	RemoetContext,
+	WorkExperienceCreateInput,
 	WorkExperienceCreateResponse,
 } from './index';
 import { remoetError, TEST_KEY, testContext } from './test-utils';
@@ -388,9 +391,10 @@ const GROUPS: Array<{
 	name: 'workExperience' | 'projects' | 'education';
 	api: ItemGroupApi;
 	path: string;
-	// unknown is used here because each group's create input has a different
-	// shape; the value is only spread into a call that must reject it.
-	validCreateInput: Record<string, unknown>;
+	validCreateInput:
+		| WorkExperienceCreateInput
+		| ProjectsCreateInput
+		| EducationCreateInput;
 	fixture: { id: string };
 }> = [
 	{

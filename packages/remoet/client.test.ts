@@ -145,13 +145,12 @@ describe('Remoet client', () => {
 	it('wraps unexpected failures without inventing a status', async () => {
 		mockRequest.mockRejectedValueOnce(new Error('network down'));
 
-		// unknown is used here because rejected values are untyped; the value
-		// is narrowed below with toBeInstanceOf/toMatchObject.
-		const error = await makeRemoetRequest('/user/full', 'k').catch(
-			(caught: unknown) => caught,
-		);
+		const call = makeRemoetRequest('/user/full', 'k');
 
-		expect(error).toBeInstanceOf(RemoetAPIError);
-		expect(error).toMatchObject({ message: 'network down', status: undefined });
+		await expect(call).rejects.toBeInstanceOf(RemoetAPIError);
+		await expect(call).rejects.toMatchObject({
+			message: 'network down',
+			status: undefined,
+		});
 	});
 });

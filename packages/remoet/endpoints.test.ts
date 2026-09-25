@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { ZodType } from 'zod';
+import type { ZodType, z } from 'zod';
 import { makeRemoetRequest } from './client';
 import {
 	Education,
@@ -464,11 +464,13 @@ describe('Remoet endpoints', () => {
 
 describe('every endpoint validates its input before calling Remoet', () => {
 	const ID = '65f0000000000000000000a1';
-	// One otherwise-valid input per operation. Adding an operation without a
-	// row here fails the coverage test below.
-	// unknown is used here because every operation's input has a different
-	// shape; each row is checked against its own schema below.
-	const validInputs: Record<string, Record<string, unknown>> = {
+	// One otherwise-valid input per operation, each typed by its own schema,
+	// so a missing, extra or malformed row fails the typecheck.
+	const validInputs: {
+		[K in keyof typeof remoetEndpointSchemas]: z.input<
+			(typeof remoetEndpointSchemas)[K]['input']
+		>;
+	} = {
 		'profile.get': {},
 		'profile.getLinks': {},
 		'profile.update': { phone: '1' },
@@ -502,24 +504,15 @@ describe('every endpoint validates its input before calling Remoet', () => {
 	// Every endpoint, widened only in its input type: this test deliberately
 	// passes an input the endpoint's type forbids, to prove the runtime check
 	// rejects it.
-	// unknown is used here because only the rejection is asserted, never the
-	// endpoint's response.
-	type AnyInputEndpoint = (
-		ctx: RemoetContext,
-		input: never,
-	) => Promise<unknown>;
+	// Only the rejection is asserted, so the response is typed loosely as an
+	// object, which every operation returns.
+	type AnyInputEndpoint = (ctx: RemoetContext, input: never) => Promise<object>;
 	const endpoints: Record<string, Record<string, AnyInputEndpoint>> = remoet()
 		.endpoints ?? {};
 	const schemas: Record<string, { input: ZodType }> = remoetEndpointSchemas;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
-	});
-
-	it('has a row for every operation', () => {
-		expect(Object.keys(validInputs).sort()).toEqual(
-			Object.keys(remoetEndpointSchemas).sort(),
-		);
 	});
 
 	it.each(Object.entries(validInputs))(
