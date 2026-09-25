@@ -1339,6 +1339,7 @@ function createPluginEntityClient<DataSchema extends ZodTypeAny>(
 		entityTypeName,
 		version,
 		dataSchema,
+		{ isPg: database.isPg },
 	);
 }
 
