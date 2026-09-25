@@ -466,6 +466,8 @@ describe('every endpoint validates its input before calling Remoet', () => {
 	const ID = '65f0000000000000000000a1';
 	// One otherwise-valid input per operation. Adding an operation without a
 	// row here fails the coverage test below.
+	// unknown is used here because every operation's input has a different
+	// shape; each row is checked against its own schema below.
 	const validInputs: Record<string, Record<string, unknown>> = {
 		'profile.get': {},
 		'profile.getLinks': {},
@@ -500,6 +502,8 @@ describe('every endpoint validates its input before calling Remoet', () => {
 	// Every endpoint, widened only in its input type: this test deliberately
 	// passes an input the endpoint's type forbids, to prove the runtime check
 	// rejects it.
+	// unknown is used here because only the rejection is asserted, never the
+	// endpoint's response.
 	type AnyInputEndpoint = (
 		ctx: RemoetContext,
 		input: never,

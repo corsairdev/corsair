@@ -56,7 +56,11 @@ function messageOf(error: ApiError): string {
 	return error.message;
 }
 
-/** Sends an authenticated request to the Remoet API. */
+/**
+ * Sends an authenticated request to the Remoet API. It resolves to unknown
+ * because the response is unvalidated wire JSON: every caller parses it with
+ * its endpoint's zod output schema.
+ */
 export async function makeRemoetRequest(
 	endpoint: string,
 	apiKey: string,
@@ -90,6 +94,8 @@ export async function makeRemoetRequest(
 	};
 
 	try {
+		// unknown is used here because the response is unvalidated wire JSON,
+		// as the return type above explains.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: REMOET_RATE_LIMIT_CONFIG,
 		});

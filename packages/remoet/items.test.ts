@@ -388,6 +388,8 @@ const GROUPS: Array<{
 	name: 'workExperience' | 'projects' | 'education';
 	api: ItemGroupApi;
 	path: string;
+	// unknown is used here because each group's create input has a different
+	// shape; the value is only spread into a call that must reject it.
 	validCreateInput: Record<string, unknown>;
 	fixture: { id: string };
 }> = [
