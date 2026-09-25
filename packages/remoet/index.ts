@@ -439,6 +439,8 @@ export type ExternalRemoetPlugin<T extends RemoetPluginOptions> =
 
 /** Creates a Remoet plugin configured for API-key authentication. */
 export function remoet<const T extends RemoetPluginOptions>(
+	// The Corsair scaffold's default. TypeScript cannot prove `{}` satisfies the
+	// caller's T, but every option is optional, so an empty object is valid.
 	incomingOptions: RemoetPluginOptions & T = {} as RemoetPluginOptions & T,
 ): ExternalRemoetPlugin<T> {
 	const options = {

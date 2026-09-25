@@ -249,11 +249,11 @@ describe('Remoet plugin through createCorsair', () => {
 		const { endpointMeta } = remoet({});
 		if (!endpointMeta) throw new Error('remoet plugin has no endpointMeta');
 
-		const entries = Object.values(endpointMeta) as Array<{
+		const entries: Array<{
 			riskLevel: string;
 			description?: string;
 			irreversible?: boolean;
-		}>;
+		}> = Object.values(endpointMeta);
 		expect(entries.length).toBeGreaterThan(0);
 
 		for (const meta of entries) {

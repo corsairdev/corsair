@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { ZodType } from 'zod';
 import { makeRemoetRequest } from './client';
 import {
 	Education,
@@ -496,10 +497,16 @@ describe('every endpoint validates its input before calling Remoet', () => {
 		'savedJobs.delete': { savedJobId: ID },
 		'feed.list': {},
 	};
-	const endpoints = remoet().endpoints as unknown as Record<
-		string,
-		Record<string, (ctx: RemoetContext, input: unknown) => Promise<unknown>>
-	>;
+	// Every endpoint, widened only in its input type: this test deliberately
+	// passes an input the endpoint's type forbids, to prove the runtime check
+	// rejects it.
+	type AnyInputEndpoint = (
+		ctx: RemoetContext,
+		input: never,
+	) => Promise<unknown>;
+	const endpoints: Record<string, Record<string, AnyInputEndpoint>> = remoet()
+		.endpoints ?? {};
+	const schemas: Record<string, { input: ZodType }> = remoetEndpointSchemas;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -514,19 +521,15 @@ describe('every endpoint validates its input before calling Remoet', () => {
 	it.each(Object.entries(validInputs))(
 		'%s refuses an unknown key without sending a request',
 		async (path, validInput) => {
-			const [group, name] = path.split('.') as [string, string];
+			const [group = '', name = ''] = path.split('.');
 			const endpoint = endpoints[group]?.[name];
-			expect(endpoint).toBeDefined();
+			if (!endpoint) throw new Error(`no endpoint for ${path}`);
 			// The row is valid on its own, so the unknown key is the only reason
 			// the call below fails.
-			const schemas = remoetEndpointSchemas as Record<
-				string,
-				{ input: { safeParse: (value: unknown) => { success: boolean } } }
-			>;
 			expect(schemas[path]?.input.safeParse(validInput).success).toBe(true);
-			await expect(
-				endpoint!(context, { ...validInput, notAField: true }),
-			).rejects.toThrow();
+			// `as never`: the whole point is an input the endpoint's type forbids.
+			const invalid = { ...validInput, notAField: true } as never;
+			await expect(endpoint(context, invalid)).rejects.toThrow();
 			expect(mockRequest).not.toHaveBeenCalled();
 		},
 	);
