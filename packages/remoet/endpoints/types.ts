@@ -267,8 +267,17 @@ const WritableProfileValueSchema = z
 	.min(1)
 	.max(REMOET_PROFILE_FIELD_MAX_LENGTH);
 
+/**
+ * `schema` or null. A union rather than `.nullable()`: Corsair's generated docs
+ * and agent-facing schemas unwrap `.nullable()`, which would hide that null is
+ * accepted and mark a required nullable field optional.
+ */
+function orNull<T extends z.ZodType>(schema: T) {
+	return z.union([schema, z.null()]);
+}
+
 /** Any writable string field may also be set to null to clear it. */
-const NullableProfileValueSchema = WritableProfileValueSchema.nullable();
+const NullableProfileValueSchema = orNull(WritableProfileValueSchema);
 
 /** A writable profile field, described for the field it labels; null clears it. */
 function profileField(label: string) {
@@ -292,12 +301,7 @@ export const ProfileUpdateInputSchema = z
 		facebookUrl: profileField('Facebook profile URL.'),
 		twitterUrl: profileField('Twitter/X profile URL.'),
 		youtubeUrl: profileField('YouTube channel URL.'),
-		summary: z
-			.string()
-			.trim()
-			.min(1)
-			.max(REMOET_LONG_TEXT_MAX_LENGTH)
-			.nullable()
+		summary: orNull(z.string().trim().min(1).max(REMOET_LONG_TEXT_MAX_LENGTH))
 			.optional()
 			.describe('Brief professional summary or bio. Null clears it.'),
 		visibility: RemoetProfileVisibilitySchema.optional().describe(
@@ -1058,10 +1062,7 @@ export const SavedJobsCreateInputSchema = z
 			.enum(['ai_job', 'listing_job'])
 			.optional()
 			.describe('"ai_job" (the default) or "listing_job".'),
-		note: z
-			.string()
-			.max(500)
-			.nullable()
+		note: orNull(z.string().max(500))
 			.optional()
 			.describe('Optional note about why this job is interesting.'),
 	})
@@ -1081,11 +1082,9 @@ const SavedJobIdSchema = RemoetIdSchema.describe(
 export const SavedJobsUpdateInputSchema = z
 	.object({
 		savedJobId: SavedJobIdSchema,
-		note: z
-			.string()
-			.max(500)
-			.nullable()
-			.describe('The new note, or null to clear it.'),
+		note: orNull(z.string().max(500)).describe(
+			'The new note, or null to clear it.',
+		),
 	})
 	.strict();
 export type SavedJobsUpdateInput = z.input<typeof SavedJobsUpdateInputSchema>;

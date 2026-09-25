@@ -919,17 +919,17 @@ await corsair.remoet.api.profile.update({ location: 'Stockholm' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `phone` | `string` | No | Phone number. Null clears it. |
-| `url` | `string` | No | Personal website URL. Null clears it. |
-| `location` | `string` | No | Location. Null clears it. |
-| `githubUrl` | `string` | No | GitHub profile URL. Null clears it. |
-| `linkedinUrl` | `string` | No | LinkedIn profile URL. Null clears it. |
-| `name` | `string` | No | Full name. Null clears it. |
-| `avatarUrl` | `string` | No | Avatar/photo URL. Null clears it. |
-| `facebookUrl` | `string` | No | Facebook profile URL. Null clears it. |
-| `twitterUrl` | `string` | No | Twitter/X profile URL. Null clears it. |
-| `youtubeUrl` | `string` | No | YouTube channel URL. Null clears it. |
-| `summary` | `string` | No | Brief professional summary or bio. Null clears it. |
+| `phone` | `string \| null` | No | Phone number. Null clears it. |
+| `url` | `string \| null` | No | Personal website URL. Null clears it. |
+| `location` | `string \| null` | No | Location. Null clears it. |
+| `githubUrl` | `string \| null` | No | GitHub profile URL. Null clears it. |
+| `linkedinUrl` | `string \| null` | No | LinkedIn profile URL. Null clears it. |
+| `name` | `string \| null` | No | Full name. Null clears it. |
+| `avatarUrl` | `string \| null` | No | Avatar/photo URL. Null clears it. |
+| `facebookUrl` | `string \| null` | No | Facebook profile URL. Null clears it. |
+| `twitterUrl` | `string \| null` | No | Twitter/X profile URL. Null clears it. |
+| `youtubeUrl` | `string \| null` | No | YouTube channel URL. Null clears it. |
+| `summary` | `string \| null` | No | Brief professional summary or bio. Null clears it. |
 | `visibility` | `NONE \| STARRED \| ALL` | No | Who can see the profile in company candidate lists. Not writable to null; leave it out to leave it unchanged. |
 
 
@@ -1150,7 +1150,7 @@ await corsair.remoet.api.savedJobs.create({ jobId: '65f0000000000000000000b1' })
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | Id of the job, e.g. from jobs.search or starredJobs.list. |
 | `jobType` | `ai_job \| listing_job` | No | "ai_job" (the default) or "listing_job". |
-| `note` | `string` | No | Optional note about why this job is interesting. |
+| `note` | `string \| null` | No | Optional note about why this job is interesting. |
 
 
 
@@ -1306,7 +1306,7 @@ await corsair.remoet.api.savedJobs.update({ savedJobId: '65f0000000000000000000b
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `savedJobId` | `string` | Yes | The saved-job entry id, not the job id. |
-| `note` | `string` | No | The new note, or null to clear it. |
+| `note` | `string \| null` | Yes | The new note, or null to clear it. |
 
 
 
