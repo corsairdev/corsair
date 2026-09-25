@@ -1,4 +1,5 @@
-import type { Kysely, SelectQueryBuilder } from 'kysely';
+import type { Expression, Kysely, SelectQueryBuilder } from 'kysely';
+import { sql } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
@@ -69,6 +70,25 @@ function getDataFieldTypes(schema: ZodTypeAny): Record<string, DataFieldType> {
 	return fieldTypes;
 }
 
+/** Escapes LIKE wildcards so user text in contains/startsWith/endsWith matches literally. */
+function escapeLike(value: string): string {
+	return value.replace(/[\\%_]/g, '\\$&');
+}
+
+/**
+ * `expr LIKE pattern ESCAPE '\'`. The explicit ESCAPE is required on SQLite,
+ * which has no default escape character; on Postgres it matches the default.
+ */
+function likeLiteral(
+	expr: Expression<unknown>,
+	prefix: string,
+	value: string,
+	suffix: string,
+) {
+	const pattern = `${prefix}${escapeLike(value)}${suffix}`;
+	return sql<boolean>`${expr} like ${pattern} escape '\\'`;
+}
+
 function applyStringFilter(
 	q: EntityQueryBuilder,
 	expr: ReturnType<typeof jsonbTextField>,
@@ -87,13 +107,13 @@ function applyStringFilter(
 			q = q.where(expr, '=', obj.equals);
 		}
 		if ('contains' in obj && typeof obj.contains === 'string') {
-			q = q.where(expr, 'like', `%${obj.contains}%`);
+			q = q.where(likeLiteral(expr, '%', obj.contains, '%'));
 		}
 		if ('startsWith' in obj && typeof obj.startsWith === 'string') {
-			q = q.where(expr, 'like', `${obj.startsWith}%`);
+			q = q.where(likeLiteral(expr, '', obj.startsWith, '%'));
 		}
 		if ('endsWith' in obj && typeof obj.endsWith === 'string') {
-			q = q.where(expr, 'like', `%${obj.endsWith}`);
+			q = q.where(likeLiteral(expr, '%', obj.endsWith, ''));
 		}
 		if ('in' in obj && Array.isArray(obj.in)) {
 			q = q.where(expr, 'in', obj.in as string[]);
@@ -201,14 +221,15 @@ function applyEntityFieldFilter(
 	) {
 		const obj = filterValue as Record<string, unknown>;
 		if ('equals' in obj) q = q.where(key, '=', obj.equals as any);
+		const column = sql.ref(key);
 		if ('contains' in obj && typeof obj.contains === 'string') {
-			q = q.where(key, 'like', `%${obj.contains}%`);
+			q = q.where(likeLiteral(column, '%', obj.contains, '%'));
 		}
 		if ('startsWith' in obj && typeof obj.startsWith === 'string') {
-			q = q.where(key, 'like', `${obj.startsWith}%`);
+			q = q.where(likeLiteral(column, '', obj.startsWith, '%'));
 		}
 		if ('endsWith' in obj && typeof obj.endsWith === 'string') {
-			q = q.where(key, 'like', `%${obj.endsWith}`);
+			q = q.where(likeLiteral(column, '%', obj.endsWith, ''));
 		}
 		if ('in' in obj && Array.isArray(obj.in)) {
 			q = q.where(key, 'in', obj.in as any[]);
