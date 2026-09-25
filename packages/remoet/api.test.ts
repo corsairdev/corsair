@@ -3,10 +3,10 @@ import { remoet } from './index';
 
 // Live tests run only when a real key is provided via the environment.
 // Nothing is hardcoded here, so CI without a key skips this suite (R6).
-// Only read endpoints are exercised: the star, saved-job and profile.update
-// writes would change the real account behind the key. Every call goes
-// through the assembled plugin, so each response is parsed by the endpoint's
-// zod schema.
+// Only read endpoints are exercised: the star, saved-job, profile.update and
+// item (work experience, project, education) writes would change the real
+// account behind the key. Every call goes through the assembled plugin, so
+// each response is parsed by the endpoint's zod schema.
 const API_KEY = process.env.REMOET_API_KEY;
 const describeLive = API_KEY ? describe : describe.skip;
 
@@ -93,5 +93,11 @@ describeLive('Remoet live API', () => {
 		const result = await liveApi().savedJobs.list({ pageSize: 5 });
 		expect(Array.isArray(result.items)).toBe(true);
 		expect(typeof result.totalCount).toBe('number');
+	});
+
+	it('feed.list', async () => {
+		const result = await liveApi().feed.list({ pageSize: 5 });
+		expect(Array.isArray(result.entries)).toBe(true);
+		expect(typeof result.hasNextPage).toBe('boolean');
 	});
 });

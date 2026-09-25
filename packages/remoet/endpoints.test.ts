@@ -16,9 +16,9 @@ import type {
 	ProfileGetLinksResponse,
 	ProfileGetResponse,
 	ProjectsListResponse,
-	RemoetContext,
 	WorkExperienceListResponse,
 } from './index';
+import { testContext } from './test-utils';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
@@ -31,31 +31,11 @@ jest.mock('./client', () => ({
 const mockRequest = jest.mocked(makeRemoetRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-// Fully-typed test context: every field of RemoetContext is provided with an
-// inert stub, so no type assertion is needed. Endpoint implementations only
-// read ctx.key; the rest satisfies the type checker.
-function testContext(key: string): RemoetContext {
-	return {
-		db: {},
-		endpoints: {},
-		$getAccountId: () => Promise.resolve('test-account'),
-		key,
-		options: {},
-		keys: {
-			get_dek: () => Promise.resolve('test-dek'),
-			issue_new_dek: () => Promise.resolve('test-dek'),
-			get_api_key: () => Promise.resolve(key),
-			set_api_key: () => Promise.resolve(),
-			get_webhook_signature: () => Promise.resolve(null),
-			set_webhook_signature: () => Promise.resolve(),
-		},
-	};
-}
-
-const context = testContext('remoet-test-key');
+const context = testContext();
 
 const workExperienceFixture: WorkExperienceListResponse = [
 	{
+		id: '65f000000000000000000010',
 		createdAt: '2025-01-01T00:00:00.000Z',
 		updatedAt: '2025-02-01T00:00:00.000Z',
 		userId: '65f000000000000000000001',
@@ -75,6 +55,7 @@ const workExperienceFixture: WorkExperienceListResponse = [
 
 const projectsFixture: ProjectsListResponse = [
 	{
+		id: '65f000000000000000000011',
 		title: 'corsair-remoet',
 		shortDescription: 'A Corsair plugin',
 		technologies: ['TypeScript'],
@@ -93,6 +74,7 @@ const projectsFixture: ProjectsListResponse = [
 
 const educationFixture: EducationListResponse = [
 	{
+		id: '65f000000000000000000012',
 		institution: 'Example University',
 		institutionUrl: null,
 		studyLevel: 'Bachelor',
@@ -257,10 +239,75 @@ describe('Remoet endpoints', () => {
 		);
 	});
 
+	it('profile.update clears a field with null and sets visibility', async () => {
+		mockRequest.mockResolvedValueOnce({
+			updated: ['avatarUrl', 'summary', 'visibility'],
+		});
+
+		const response = await Profile.update(context, {
+			avatarUrl: null,
+			summary: null,
+			visibility: 'STARRED',
+		});
+
+		expect(response.updated).toEqual(['avatarUrl', 'summary', 'visibility']);
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/user/profile',
+			'remoet-test-key',
+			{
+				method: 'PATCH',
+				body: { avatarUrl: null, summary: null, visibility: 'STARRED' },
+			},
+		);
+	});
+
+	it('profile.update accepts null on every nullable social field, including facebookUrl', async () => {
+		mockRequest.mockResolvedValueOnce({
+			updated: ['facebookUrl', 'twitterUrl', 'youtubeUrl'],
+		});
+
+		const response = await Profile.update(context, {
+			facebookUrl: null,
+			twitterUrl: null,
+			youtubeUrl: null,
+		});
+
+		expect(response.updated).toEqual([
+			'facebookUrl',
+			'twitterUrl',
+			'youtubeUrl',
+		]);
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/user/profile',
+			'remoet-test-key',
+			{
+				method: 'PATCH',
+				body: { facebookUrl: null, twitterUrl: null, youtubeUrl: null },
+			},
+		);
+	});
+
 	it('profile.update rejects bad input before calling Remoet', async () => {
 		await expect(Profile.update(context, {})).rejects.toThrow();
 		await expect(
 			Profile.update(context, { url: 'x'.repeat(501) }),
+		).rejects.toThrow();
+		await expect(
+			Profile.update(context, { summary: 'x'.repeat(5001) }),
+		).rejects.toThrow();
+		await expect(
+			// @ts-expect-error: visibility cannot be cleared with null
+			Profile.update(context, { visibility: null }),
+		).rejects.toThrow();
+		await expect(
+			// @ts-expect-error: not a Remoet visibility value
+			Profile.update(context, { visibility: 'PUBLIC' }),
+		).rejects.toThrow();
+		await expect(
+			// @ts-expect-error: email is not writable
+			// Paired with a valid field: alone, this would already fail the
+			// at-least-one-field check even if the schema were not strict.
+			Profile.update(context, { phone: '1', email: 'new@example.com' }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
@@ -424,6 +471,17 @@ describe('Remoet endpoints', () => {
 		).rejects.toThrow();
 		await expect(
 			Stars.create(context, { companySlug: 'x'.repeat(101) }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('stars.create rejects an unknown key alongside a valid slug', async () => {
+		await expect(
+			Stars.create(context, {
+				companySlug: 'starburst',
+				// @ts-expect-error: unknown key
+				note: 'nice culture',
+			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});

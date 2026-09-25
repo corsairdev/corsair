@@ -1,5 +1,5 @@
 import { AuthMissingError, createCorsair } from 'corsair/core';
-import { remoet } from './index';
+import { remoet, remoetEndpointSchemas } from './index';
 
 // End-to-end through the assembled plugin: createCorsair binds the endpoints,
 // the keyBuilder, the error handlers and the real core HTTP transport. Only
@@ -206,5 +206,63 @@ describe('Remoet plugin through createCorsair', () => {
 		const [url, init] = fetchMock.mock.calls[0] ?? [];
 		expect(String(url)).toBe('https://api.remoet.dev/user/stars/starburst');
 		expect(init?.method).toBe('DELETE');
+	});
+
+	it('marks every write as write-risk, every delete as destructive', () => {
+		const { endpointMeta } = remoet({});
+		if (!endpointMeta) throw new Error('remoet plugin has no endpointMeta');
+
+		expect(endpointMeta['profile.update']?.riskLevel).toBe('write');
+		expect(endpointMeta['feed.list']?.riskLevel).toBe('read');
+
+		for (const group of ['workExperience', 'projects', 'education'] as const) {
+			expect(endpointMeta[`${group}.list`]?.riskLevel).toBe('read');
+			expect(endpointMeta[`${group}.create`]?.riskLevel).toBe('write');
+			expect(endpointMeta[`${group}.update`]?.riskLevel).toBe('write');
+			expect(endpointMeta[`${group}.delete`]?.riskLevel).toBe('destructive');
+			// A destructive op's description tells the agent to confirm first.
+			expect(endpointMeta[`${group}.delete`]?.description).toMatch(/confirm/i);
+		}
+	});
+
+	it('marks every hard delete irreversible, with "Permanently remove" in its description', () => {
+		const { endpointMeta } = remoet({});
+		if (!endpointMeta) throw new Error('remoet plugin has no endpointMeta');
+
+		for (const op of [
+			'workExperience.delete',
+			'projects.delete',
+			'education.delete',
+			'savedJobs.delete',
+		] as const) {
+			expect(endpointMeta[op]?.irreversible).toBe(true);
+			expect(endpointMeta[op]?.description).toMatch(/^Permanently remove/);
+		}
+
+		// stars.delete only spends a budget; it does not destroy stored data.
+		expect(endpointMeta['stars.delete']?.irreversible).toBeUndefined();
+	});
+
+	it('gives every endpoint a valid riskLevel and a non-empty description', () => {
+		const { endpointMeta } = remoet({});
+		if (!endpointMeta) throw new Error('remoet plugin has no endpointMeta');
+
+		const entries = Object.entries(endpointMeta) as Array<
+			[
+				string,
+				{ riskLevel: string; description?: string; irreversible?: boolean },
+			]
+		>;
+		expect(entries.length).toBeGreaterThan(0);
+
+		for (const [path, meta] of entries) {
+			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
+			expect(meta.description?.length ?? 0).toBeGreaterThan(0);
+			if (meta.riskLevel !== 'destructive') {
+				expect(meta.irreversible).toBeUndefined();
+			}
+			// Every op id round-trips through the plugin's own schema map.
+			expect(Object.keys(remoetEndpointSchemas)).toContain(path);
+		}
 	});
 });

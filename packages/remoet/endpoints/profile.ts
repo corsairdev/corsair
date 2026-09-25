@@ -44,9 +44,11 @@ export const getLinks: RemoetEndpoints['profileGetLinks'] = async (
 };
 
 /**
- * Writes contact fields on the user's profile (PATCH /user/profile). Only
- * phone, url, location, githubUrl and linkedinUrl are writable; visibility
- * of each field is left as the user set it.
+ * Writes profile fields (PATCH /user/profile): contact fields, name,
+ * avatarUrl, socials, summary and visibility. Every string field may be set
+ * to null to clear it; visibility cannot, so leave it out to keep it as is.
+ * Each field's public/private setting is left as the user set it, and
+ * email and slug are not writable here.
  */
 export const update: RemoetEndpoints['profileUpdate'] = async (ctx, input) => {
 	const parsed = RemoetEndpointInputSchemas.profileUpdate.parse(input);

@@ -16,6 +16,7 @@ import { AuthMissingError } from 'corsair/core';
 import {
 	Companies,
 	Education,
+	Feed,
 	JobContext,
 	Jobs,
 	LinkTrees,
@@ -65,8 +66,17 @@ export type RemoetEndpoints = {
 	profileGetLinks: RemoetEndpoint<'profileGetLinks'>;
 	profileUpdate: RemoetEndpoint<'profileUpdate'>;
 	workExperienceList: RemoetEndpoint<'workExperienceList'>;
+	workExperienceCreate: RemoetEndpoint<'workExperienceCreate'>;
+	workExperienceUpdate: RemoetEndpoint<'workExperienceUpdate'>;
+	workExperienceDelete: RemoetEndpoint<'workExperienceDelete'>;
 	projectsList: RemoetEndpoint<'projectsList'>;
+	projectsCreate: RemoetEndpoint<'projectsCreate'>;
+	projectsUpdate: RemoetEndpoint<'projectsUpdate'>;
+	projectsDelete: RemoetEndpoint<'projectsDelete'>;
 	educationList: RemoetEndpoint<'educationList'>;
+	educationCreate: RemoetEndpoint<'educationCreate'>;
+	educationUpdate: RemoetEndpoint<'educationUpdate'>;
+	educationDelete: RemoetEndpoint<'educationDelete'>;
 	linkTreesList: RemoetEndpoint<'linkTreesList'>;
 	linkTreesGet: RemoetEndpoint<'linkTreesGet'>;
 	jobContextGet: RemoetEndpoint<'jobContextGet'>;
@@ -80,6 +90,7 @@ export type RemoetEndpoints = {
 	savedJobsUpdate: RemoetEndpoint<'savedJobsUpdate'>;
 	savedJobsDelete: RemoetEndpoint<'savedJobsDelete'>;
 	starsDelete: RemoetEndpoint<'starsDelete'>;
+	feedList: RemoetEndpoint<'feedList'>;
 };
 
 const remoetEndpointsNested = {
@@ -90,12 +101,21 @@ const remoetEndpointsNested = {
 	},
 	workExperience: {
 		list: WorkExperience.list,
+		create: WorkExperience.create,
+		update: WorkExperience.update,
+		delete: WorkExperience.delete,
 	},
 	projects: {
 		list: Projects.list,
+		create: Projects.create,
+		update: Projects.update,
+		delete: Projects.delete,
 	},
 	education: {
 		list: Education.list,
+		create: Education.create,
+		update: Education.update,
+		delete: Education.delete,
 	},
 	linkTrees: {
 		list: LinkTrees.list,
@@ -124,6 +144,9 @@ const remoetEndpointsNested = {
 		update: SavedJobs.update,
 		delete: SavedJobs.delete,
 	},
+	feed: {
+		list: Feed.list,
+	},
 } as const;
 
 const remoetWebhooksNested = {} as const;
@@ -145,13 +168,49 @@ export const remoetEndpointSchemas = {
 		input: RemoetEndpointInputSchemas.workExperienceList,
 		output: RemoetEndpointOutputSchemas.workExperienceList,
 	},
+	'workExperience.create': {
+		input: RemoetEndpointInputSchemas.workExperienceCreate,
+		output: RemoetEndpointOutputSchemas.workExperienceCreate,
+	},
+	'workExperience.update': {
+		input: RemoetEndpointInputSchemas.workExperienceUpdate,
+		output: RemoetEndpointOutputSchemas.workExperienceUpdate,
+	},
+	'workExperience.delete': {
+		input: RemoetEndpointInputSchemas.workExperienceDelete,
+		output: RemoetEndpointOutputSchemas.workExperienceDelete,
+	},
 	'projects.list': {
 		input: RemoetEndpointInputSchemas.projectsList,
 		output: RemoetEndpointOutputSchemas.projectsList,
 	},
+	'projects.create': {
+		input: RemoetEndpointInputSchemas.projectsCreate,
+		output: RemoetEndpointOutputSchemas.projectsCreate,
+	},
+	'projects.update': {
+		input: RemoetEndpointInputSchemas.projectsUpdate,
+		output: RemoetEndpointOutputSchemas.projectsUpdate,
+	},
+	'projects.delete': {
+		input: RemoetEndpointInputSchemas.projectsDelete,
+		output: RemoetEndpointOutputSchemas.projectsDelete,
+	},
 	'education.list': {
 		input: RemoetEndpointInputSchemas.educationList,
 		output: RemoetEndpointOutputSchemas.educationList,
+	},
+	'education.create': {
+		input: RemoetEndpointInputSchemas.educationCreate,
+		output: RemoetEndpointOutputSchemas.educationCreate,
+	},
+	'education.update': {
+		input: RemoetEndpointInputSchemas.educationUpdate,
+		output: RemoetEndpointOutputSchemas.educationUpdate,
+	},
+	'education.delete': {
+		input: RemoetEndpointInputSchemas.educationDelete,
+		output: RemoetEndpointOutputSchemas.educationDelete,
 	},
 	'linkTrees.list': {
 		input: RemoetEndpointInputSchemas.linkTreesList,
@@ -205,6 +264,10 @@ export const remoetEndpointSchemas = {
 		input: RemoetEndpointInputSchemas.starsDelete,
 		output: RemoetEndpointOutputSchemas.starsDelete,
 	},
+	'feed.list': {
+		input: RemoetEndpointInputSchemas.feedList,
+		output: RemoetEndpointOutputSchemas.feedList,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof remoetEndpointsNested
 >;
@@ -225,20 +288,68 @@ const remoetEndpointMeta = {
 	'profile.update': {
 		riskLevel: 'write',
 		description:
-			"Update the user's phone, url, location, githubUrl or linkedinUrl on their Remoet profile (500 characters max each)",
+			"Update the user's Remoet profile: contact fields, name, avatarUrl, socials and summary (each may be set to null to clear it, 500 characters max, 5000 for summary), and visibility. Explain the visibility trade-off to the user before changing it: NONE hides them from every company's candidate list, STARRED shows them only to companies they have starred, and ALL shows them to every company on Remoet",
 	},
 	'workExperience.list': {
 		riskLevel: 'read',
 		description:
 			"List the user's work experience (their employment history, not job postings)",
 	},
+	'workExperience.create': {
+		riskLevel: 'write',
+		description:
+			"Add a work experience entry to the user's profile: title and startDate are required",
+	},
+	'workExperience.update': {
+		riskLevel: 'write',
+		description:
+			"Update a work experience entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared",
+	},
+	'workExperience.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Permanently remove a work experience entry by its id. Confirm with the user first',
+	},
 	'projects.list': {
 		riskLevel: 'read',
 		description: 'List the projects on the user profile',
 	},
+	'projects.create': {
+		riskLevel: 'write',
+		description:
+			"Add a project entry to the user's profile: title and shortDescription are required",
+	},
+	'projects.update': {
+		riskLevel: 'write',
+		description:
+			"Update a project entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared",
+	},
+	'projects.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Permanently remove a project entry by its id. Confirm with the user first',
+	},
 	'education.list': {
 		riskLevel: 'read',
 		description: 'List the education entries on the user profile',
+	},
+	'education.create': {
+		riskLevel: 'write',
+		description:
+			"Add an education entry to the user's profile: institution is required",
+	},
+	'education.update': {
+		riskLevel: 'write',
+		description:
+			"Update an education entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it. startDate, endDate and isCurrent can only be replaced, never cleared",
+	},
+	'education.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Permanently remove an education entry by its id. Confirm with the user first',
 	},
 	'linkTrees.list': {
 		riskLevel: 'read',
@@ -295,13 +406,19 @@ const remoetEndpointMeta = {
 	},
 	'savedJobs.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			'Remove a saved-job entry by its saved-job id (not the job id)',
+			'Permanently remove a saved-job entry by its saved-job id (not the job id). Confirm with the user first',
 	},
 	'stars.delete': {
 		riskLevel: 'destructive',
 		description:
 			'Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days, so confirm with the user first',
+	},
+	'feed.list': {
+		riskLevel: 'read',
+		description:
+			"List a page of the user's composed feed: their own item lane (new jobs, welcome, starred-company snapshots) merged with blog posts, job of the day and broadcasts, newest first. Paginated with pageSize (max 50) and cursor, taken from the previous page's nextCursor",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof remoetEndpointsNested>;
 
@@ -364,8 +481,16 @@ export type {
 	CompaniesGetResponse,
 	CompaniesSearchInput,
 	CompaniesSearchResponse,
+	EducationCreateInput,
+	EducationCreateResponse,
+	EducationDeleteInput,
+	EducationDeleteResponse,
 	EducationListInput,
 	EducationListResponse,
+	EducationUpdateInput,
+	EducationUpdateResponse,
+	FeedListInput,
+	FeedListResponse,
 	JobContextGetInput,
 	JobContextGetResponse,
 	JobsSearchInput,
@@ -380,13 +505,20 @@ export type {
 	ProfileGetResponse,
 	ProfileUpdateInput,
 	ProfileUpdateResponse,
+	ProjectsCreateInput,
+	ProjectsCreateResponse,
+	ProjectsDeleteInput,
+	ProjectsDeleteResponse,
 	ProjectsListInput,
 	ProjectsListResponse,
+	ProjectsUpdateInput,
+	ProjectsUpdateResponse,
 	RemoetCompanySummary,
 	RemoetDataField,
 	RemoetEducation,
 	RemoetEndpointInputs,
 	RemoetEndpointOutputs,
+	RemoetFeedEntry,
 	RemoetJobContextMatch,
 	RemoetJobPosting,
 	RemoetLinkTree,
@@ -409,6 +541,12 @@ export type {
 	StarsCreateResponse,
 	StarsDeleteInput,
 	StarsDeleteResponse,
+	WorkExperienceCreateInput,
+	WorkExperienceCreateResponse,
+	WorkExperienceDeleteInput,
+	WorkExperienceDeleteResponse,
 	WorkExperienceListInput,
 	WorkExperienceListResponse,
+	WorkExperienceUpdateInput,
+	WorkExperienceUpdateResponse,
 } from './endpoints/types';

@@ -38,16 +38,47 @@ describe('Remoet profile.update input', () => {
 				location: 'Remote',
 				githubUrl: 'https://github.com/x',
 				linkedinUrl: 'https://linkedin.com/in/x',
+				name: 'Someone',
+				avatarUrl: 'https://example.com/me.png',
+				summary: 'Builds things.',
+				visibility: 'STARRED',
 			}).success,
 		).toBe(true);
 	});
 
-	it('rejects keys Remoet would silently drop', () => {
+	it('accepts null on any writable string field to clear it, but not on visibility', () => {
 		expect(
-			ProfileUpdateInputSchema.safeParse({ name: 'Someone' }).success,
+			ProfileUpdateInputSchema.safeParse({ phone: null, avatarUrl: null })
+				.success,
+		).toBe(true);
+		expect(ProfileUpdateInputSchema.safeParse({ summary: null }).success).toBe(
+			true,
+		);
+		expect(
+			ProfileUpdateInputSchema.safeParse({ visibility: null }).success,
 		).toBe(false);
 		expect(
-			ProfileUpdateInputSchema.safeParse({ phone: '1', summary: 'x' }).success,
+			ProfileUpdateInputSchema.safeParse({ visibility: 'PUBLIC' }).success,
+		).toBe(false);
+	});
+
+	it('rejects keys Remoet would silently drop', () => {
+		// Each unknown key is paired with a valid field: alone, it would already
+		// fail the at-least-one-field check below even if the schema merely
+		// stripped unknown keys instead of rejecting them (i.e. without .strict()).
+		expect(
+			ProfileUpdateInputSchema.safeParse({ phone: '1', nickname: 'Someone' })
+				.success,
+		).toBe(false);
+		expect(
+			ProfileUpdateInputSchema.safeParse({
+				phone: '1',
+				email: 'new@example.com',
+			}).success,
+		).toBe(false);
+		expect(
+			ProfileUpdateInputSchema.safeParse({ phone: '1', slug: 'someone' })
+				.success,
 		).toBe(false);
 	});
 
@@ -74,6 +105,7 @@ describe('Remoet profile.update input', () => {
 describe('Remoet output schemas', () => {
 	it('requires a work experience start date but allows a null or absent end date', () => {
 		const role = {
+			id: '65f000000000000000000099',
 			createdAt: '2025-01-01T00:00:00.000Z',
 			updatedAt: '2025-01-01T00:00:00.000Z',
 			title: 'Engineer',
@@ -98,6 +130,7 @@ describe('Remoet output schemas', () => {
 	it('allows null start and end dates on projects and education', () => {
 		expect(
 			RemoetProjectSchema.safeParse({
+				id: '65f000000000000000000098',
 				title: 'Side project',
 				startDate: null,
 				endDate: null,
@@ -105,6 +138,7 @@ describe('Remoet output schemas', () => {
 		).toBe(true);
 		expect(
 			RemoetEducationSchema.safeParse({
+				id: '65f000000000000000000097',
 				institution: 'Uni',
 				startDate: null,
 				endDate: null,
