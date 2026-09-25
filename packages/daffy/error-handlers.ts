@@ -5,7 +5,7 @@ import { ApiError } from 'corsair/http';
 // rate-limit response could create a duplicate gift if the original request
 // was applied before the response reached Corsair.
 export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
-	'daffy.gifts.create',
+	'gifts.create',
 ]);
 
 export function isNonIdempotent(operation: string): boolean {

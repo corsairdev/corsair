@@ -30,7 +30,7 @@ describe('Daffy error handlers', () => {
 		const error = rateLimitError(2000);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 			error,
-			context('daffy.gifts.create', error),
+			context('gifts.create', error),
 		);
 		expect(result).toEqual({ maxRetries: 0 });
 	});
@@ -39,13 +39,13 @@ describe('Daffy error handlers', () => {
 		const error = rateLimitError(2000);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 			error,
-			context('daffy.gifts.list', error),
+			context('gifts.list', error),
 		);
 		expect(result).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
 	});
 
 	it('classifies only gift creation as non-idempotent', () => {
-		expect(isNonIdempotent('daffy.gifts.create')).toBe(true);
-		expect(isNonIdempotent('daffy.gifts.list')).toBe(false);
+		expect(isNonIdempotent('gifts.create')).toBe(true);
+		expect(isNonIdempotent('gifts.list')).toBe(false);
 	});
 });
