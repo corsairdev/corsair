@@ -88,19 +88,28 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`companies.get`**
+**Search open jobs**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.remoet.api.companies.get({});
+await tenant.remoet.api.jobs.search({
+	searchQuery: 'typescript',
+	remotePolicy: ['remote'],
+	pageSize: 5,
+});
 ```
 
 
-**`education.create`**
+**Add a work experience entry**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.remoet.api.education.create({});
+await tenant.remoet.api.workExperience.create({
+	title: 'Senior Engineer',
+	companyName: 'Acme',
+	startDate: '2023-04-01',
+	technologies: ['TypeScript', 'Go'],
+});
 ```
 
 

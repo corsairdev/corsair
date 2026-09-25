@@ -115,7 +115,7 @@ describe('Remoet profile item writes', () => {
 			);
 		});
 
-		it('rejects null, an empty date and unknown keys before calling Remoet', async () => {
+		it('rejects null, an empty or unparseable date and unknown keys before calling Remoet', async () => {
 			await expect(
 				WorkExperience.create(context, {
 					title: 'Staff Engineer',
@@ -130,6 +130,12 @@ describe('Remoet profile item writes', () => {
 					startDate: '',
 				}),
 			).rejects.toThrow();
+			await expect(
+				WorkExperience.create(context, {
+					title: 'Staff Engineer',
+					startDate: 'not-a-date',
+				}),
+			).rejects.toThrow('Must be a date');
 			await expect(
 				WorkExperience.create(context, {
 					title: 'Staff Engineer',

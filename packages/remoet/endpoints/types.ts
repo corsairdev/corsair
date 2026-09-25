@@ -33,10 +33,17 @@ const RemoetIdSchema = z
 const TechnologySchema = z.string().max(100);
 
 /**
- * A profile item's date field. The server parses it with Date.parse and caps
- * it at 64 characters; an empty string is rejected, so it must be non-blank.
+ * A profile item's date, e.g. "2024-01-15". Remoet parses it with Date.parse,
+ * caps it at 64 characters and refuses an empty one.
  */
-const ItemDateSchema = z.string().trim().min(1).max(64);
+const ItemDateSchema = z
+	.string()
+	.trim()
+	.min(1)
+	.max(64)
+	.refine((value) => !Number.isNaN(Date.parse(value)), {
+		message: 'Must be a date, e.g. "2024-01-15"',
+	});
 
 /** Shared shape for an item delete response: `{ deleted: true, id }`. */
 const ItemDeletedResponseSchema = z
