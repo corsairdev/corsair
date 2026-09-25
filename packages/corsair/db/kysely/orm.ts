@@ -15,6 +15,7 @@ import {
 import {
 	jsonBooleanField,
 	jsonNumberField,
+	jsonTextField,
 	jsonTimestampField,
 } from './sqlite';
 
@@ -39,7 +40,7 @@ type DataFieldType = 'string' | 'number' | 'boolean' | 'date';
 
 /**
  * JSON field extractors for the `data` column. Postgres uses `->>` plus `::`
- * casts; SQLite has no `::` cast syntax, so it needs `json_extract`/`CAST`.
+ * casts; SQLite has no `::` cast syntax, so it needs `CAST(... AS REAL)`.
  */
 type DataFieldExpressions = {
 	text: typeof jsonbTextField;
@@ -59,8 +60,7 @@ const POSTGRES_DATA_FIELDS: DataFieldExpressions = {
 };
 
 const SQLITE_DATA_FIELDS: DataFieldExpressions = {
-	// `->>` already works on SQLite (3.38+), so string filters keep their current SQL.
-	text: jsonbTextField,
+	text: jsonTextField,
 	number: jsonNumberField,
 	boolean: jsonBooleanField,
 	timestamp: jsonTimestampField,
