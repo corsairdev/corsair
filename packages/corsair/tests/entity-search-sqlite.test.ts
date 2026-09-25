@@ -92,7 +92,7 @@ describe('entity search on SQLite', () => {
 	});
 });
 
-test('typed filters on a top-level field whose name contains a dot', async () => {
+function releasesOrm(entity: z.AnyZodObject) {
 	const sqlite = new Database(':memory:');
 	sqlite.exec(`
 		CREATE TABLE corsair_integrations (
@@ -115,17 +115,19 @@ test('typed filters on a top-level field whose name contains a dot', async () =>
 		database: createCorsairDatabase(sqlite),
 		integrationName: 'tasks',
 		tenantId: 'default',
-		schema: {
-			version: '1.0.0',
-			entities: {
-				releases: z.object({
-					'release.version': z.number(),
-					'is.stable': z.boolean(),
-					'shipped.at': z.coerce.date(),
-				}),
-			},
-		},
+		schema: { version: '1.0.0', entities: { releases: entity } },
 	});
+	return { orm, sqlite };
+}
+
+test('typed filters on a top-level field whose name contains a dot', async () => {
+	const { orm, sqlite } = releasesOrm(
+		z.object({
+			'release.version': z.number(),
+			'is.stable': z.boolean(),
+			'shipped.at': z.coerce.date(),
+		}),
+	);
 	try {
 		await orm.releases.upsertByEntityId('r1', {
 			'release.version': 2,
@@ -144,6 +146,44 @@ test('typed filters on a top-level field whose name contains a dot', async () =>
 			data: { 'shipped.at': { after: new Date('2024-01-01T00:00:00.000Z') } },
 		});
 		expect(byDate.map((r) => r.entity_id)).toEqual(['r1']);
+	} finally {
+		sqlite.close();
+	}
+});
+
+test('typed filters on a field whose name starts with $ or contains a quote', async () => {
+	// SQLite reads a `->>` operand that starts with `$` as a JSON path, so these
+	// must still match the literal top-level key.
+	const { orm, sqlite } = releasesOrm(
+		z.object({
+			$id: z.string(),
+			'$.version': z.number(),
+			$stable: z.boolean(),
+			$shippedAt: z.coerce.date(),
+			'say "hi"': z.string(),
+			version: z.number(),
+		}),
+	);
+	try {
+		await orm.releases.upsertByEntityId('r1', {
+			$id: 'rel-1',
+			'$.version': 2,
+			$stable: true,
+			$shippedAt: new Date('2025-01-01T00:00:00.000Z'),
+			'say "hi"': 'hello',
+			version: 0,
+		});
+		const matches = async (data: Record<string, unknown>) =>
+			(await orm.releases.search({ data } as never)).map((r) => r.entity_id);
+		expect(await matches({ $id: 'rel-1' })).toEqual(['r1']);
+		expect(await matches({ '$.version': { gte: 2 } })).toEqual(['r1']);
+		expect(await matches({ $stable: true })).toEqual(['r1']);
+		expect(
+			await matches({
+				$shippedAt: { after: new Date('2024-01-01T00:00:00.000Z') },
+			}),
+		).toEqual(['r1']);
+		expect(await matches({ 'say "hi"': 'hello' })).toEqual(['r1']);
 	} finally {
 		sqlite.close();
 	}

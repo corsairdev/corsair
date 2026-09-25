@@ -1,15 +1,18 @@
 import { sql } from 'kysely';
 
 function escapeJsonKey(key: string): string {
-	// The key is embedded in a SQL string literal; SQLite only needs '' escaping.
-	return key.replace(/'/g, "''");
+	// A quoted path label reads the key as one literal top-level field, even when
+	// it contains `.` or `[` or starts with `$` (which `->>` would otherwise parse
+	// as a path). Inside the quotes `\` and `"` are backslash-escaped, and the
+	// whole path sits in a SQL string literal, so `'` becomes `''`.
+	const label = key.replace(/[\\"]/g, '\\$&');
+	return `$."${label}"`.replace(/'/g, "''");
 }
 
 /*
- * These use SQLite's `->>` operator (3.38+) with the key as a plain object
- * label, like the Postgres helpers. `json_extract(data, '$.key')` would parse
- * the key as a JSON path, so a top-level field such as `release.version` would
- * be read as a nested path instead.
+ * These use SQLite's `->>` operator (3.38+) with a quoted `$."key"` path, so the
+ * key is always one top-level field, like the Postgres `->>` helpers. An
+ * unquoted `$.key` path would read `release.version` as a nested field.
  */
 
 /**
