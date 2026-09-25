@@ -1,0 +1,1689 @@
+---
+title: API
+description: "API reference for Remoet: every `remoet.api.*` operation with input and output types."
+---
+
+Every `remoet.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### get
+
+`companies.get`
+
+Get one Remoet company by slug, including its tech stack, perks and open-role counts; pass checkTechStack to see which technologies it uses
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.companies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `checkTechStack` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `nbrOfStars` | `number` | No | — |
+| `jobCount` | `number` | No | — |
+| `techStack` | `string[]` | No | — |
+| `matchedTechStack` | `string[]` | No | — |
+| `techStackCount` | `number` | No | — |
+| `experienceLevels` | `object` | No | — |
+| `shortDescription` | `string` | No | — |
+| `isStarred` | `boolean` | No | — |
+| `jobPreview` | `string[]` | No | — |
+| `about` | `string` | No | — |
+| `careersUrl` | `string` | No | — |
+| `verified` | `boolean` | No | — |
+| `urls` | `object` | No | — |
+| `perks` | `object[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="experienceLevels full type">
+
+```ts
+{
+  junior?: number | null,
+  mid?: number | null,
+  senior?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="perks full type">
+
+```ts
+{
+  id?: string | null,
+  title: string,
+  tags?: string[] | null,
+  description?: string | null,
+  category?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`companies.search`
+
+Search Remoet's tech companies by name, description, tech stack or seniority, or set starred to list the companies the user has starred. Paginated with page and pageSize (max 100)
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.companies.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `starred` | `boolean` | No | — |
+| `searchQuery` | `string` | No | — |
+| `techStack` | `string[]` | No | — |
+| `techStackMatch` | `any \| all` | No | — |
+| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `sortBy` | `stars \| jobCount \| name` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listings` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+| `totalPages` | `number` | No | — |
+| `hasNextPage` | `boolean` | No | — |
+| `starred` | `boolean` | No | — |
+| `hint` | `string` | No | — |
+| `note` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="listings full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string,
+  url?: string | null,
+  nbrOfStars?: number | null,
+  jobCount?: number | null,
+  techStack?: string[] | null,
+  matchedTechStack?: string[] | null,
+  techStackCount?: number | null,
+  experienceLevels?: {
+    junior?: number | null,
+    mid?: number | null,
+    senior?: number | null
+  } | null,
+  shortDescription?: string | null,
+  isStarred?: boolean | null,
+  jobPreview?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Education
+
+### create
+
+`education.create`
+
+Add an education entry to the user's profile: institution is required
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.education.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `institution` | `string` | Yes | — |
+| `institutionUrl` | `string` | No | — |
+| `studyLevel` | `HIGH_SCHOOL \| ASSOCIATE \| BACHELOR \| MASTER \| DOCTORATE \| BOOTCAMP \| OTHER` | No | — |
+| `fieldOfStudy` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `institution` | `string` | Yes | — |
+| `institutionUrl` | `string` | No | — |
+| `studyLevel` | `string` | No | — |
+| `fieldOfStudy` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`education.delete`
+
+Permanently remove an education entry by its id. Confirm with the user first
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remoet.api.education.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`education.list`
+
+List the education entries on the user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.education.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  institution: string,
+  institutionUrl?: string | null,
+  studyLevel?: string | null,
+  fieldOfStudy?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  isCurrent?: boolean | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`education.update`
+
+Update an education entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it. startDate, endDate and isCurrent can only be replaced, never cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.education.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `institution` | `string` | No | — |
+| `institutionUrl` | `string` | No | — |
+| `studyLevel` | `HIGH_SCHOOL \| ASSOCIATE \| BACHELOR \| MASTER \| DOCTORATE \| BOOTCAMP \| OTHER` | No | — |
+| `fieldOfStudy` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `institution` | `string` | Yes | — |
+| `institutionUrl` | `string` | No | — |
+| `studyLevel` | `string` | No | — |
+| `fieldOfStudy` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+## Feed
+
+### list
+
+`feed.list`
+
+List a page of the user's composed feed: their own item lane (new jobs, welcome, starred-company snapshots) merged with blog posts, job of the day and broadcasts, newest first. Paginated with pageSize (max 50) and cursor, taken from the previous page's nextCursor
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.feed.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hasNextPage` | `boolean` | Yes | — |
+| `filtersApplied` | `boolean` | Yes | — |
+| `nextCursor` | `string` | No | — |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id: string,
+  kind: string,
+  date: string,
+  item?: {
+    id: string,
+    type: string,
+    listingId?: string | null,
+    isStarred?: boolean | null,
+    listingName?: string | null,
+    listingSlug?: string | null,
+    listingImage?: string | null,
+    jobs: {
+      id: string,
+      isActive: boolean,
+      savedJobId?: string | null,
+      title: string,
+      url?: string | null,
+      remotePolicy?: string | null,
+      remoteRestrictions?: string | null,
+      techStack?: string[] | null,
+      salaryEnriched?: {
+        from?: number | null,
+        to?: number | null,
+        currency?: string | null,
+        period?: string | null
+      } | null,
+      experienceLevel?: string | null,
+      isOnPublishablePlatform?: boolean | null,
+      postingCount?: number | null,
+      matchesFilters: boolean
+    }[],
+    jobCount?: number | null,
+    createdAt: string
+  } | null,
+  blogPost?: {
+    id: string,
+    createdAt: string,
+    updatedAt: string,
+    publishedAt?: string | null,
+    isPublished: boolean,
+    isFeatured?: boolean | null,
+    views?: number | null,
+    image?: string | null,
+    title: string,
+    slug: string,
+    description: string,
+    tags?: string[] | null,
+    readingTime?: number | null,
+    audience?: string | null
+  } | null,
+  broadcast?: {
+    id: string,
+    title: string,
+    body: string,
+    createdAt: string
+  } | null,
+  jobOfTheDay?: {
+    id: string,
+    listingId: string,
+    listingName: string,
+    listingSlug?: string | null,
+    listingImage?: string | null,
+    job: {
+      id: string,
+      isActive: boolean,
+      savedJobId?: string | null,
+      title: string,
+      url?: string | null,
+      remotePolicy?: string | null,
+      remoteRestrictions?: string | null,
+      techStack?: string[] | null,
+      salaryEnriched?: {
+        from?: number | null,
+        to?: number | null,
+        currency?: string | null,
+        period?: string | null
+      } | null,
+      experienceLevel?: string | null,
+      isOnPublishablePlatform?: boolean | null,
+      postingCount?: number | null
+    },
+    nbrOfStars?: number | null,
+    createdAt: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job Context
+
+### get
+
+`jobContext.get`
+
+Look up what Remoet knows about a job page URL: company, tech stack, salary, remote policy, reposts and how long ago Remoet first saw it (at least that old, not a posting date). Returns match null for untracked pages
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.jobContext.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `match` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="match full type">
+
+```ts
+{
+  company: string,
+  companySlug: string,
+  firstSeenAt: string,
+  daysSinceFirstSeen: number,
+  firstSeenAtIsCensored: boolean,
+  isActive: boolean,
+  deactivatedAt?: string | null,
+  reposts: {
+    removedAt: string,
+    repostedAt: string,
+    gapDays: number
+  }[],
+  otherOpenRoles: number,
+  isStarred: boolean,
+  techStack: string[],
+  remotePolicy?: string | null,
+  remoteRestrictions?: string | null,
+  salary?: {
+    from?: number | null,
+    to?: number | null,
+    currency?: string | null,
+    period?: string | null
+  } | null,
+  experienceLevel?: string | null,
+  summary?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### search
+
+`jobs.search`
+
+Search Remoet's public tech job catalogue by keywords, tech stack, company, location, remote policy, seniority and salary floor. Each job's firstSeenAt is when Remoet first saw it, not when it was posted. Paginated with page and pageSize (max 50)
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.jobs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchQuery` | `string` | No | — |
+| `techStack` | `string[]` | No | — |
+| `techStackMatch` | `any \| all` | No | — |
+| `companySlug` | `string` | No | — |
+| `remotePolicy` | `onsite \| hybrid \| remote \| remote-restricted[]` | No | — |
+| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `salaryMin` | `number` | No | — |
+| `location` | `string[]` | No | — |
+| `sortBy` | `newest \| salary` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `hint` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  company: string,
+  companySlug: string,
+  url?: string | null,
+  applyUrl?: string | null,
+  companyUrl?: string | null,
+  location?: string | null,
+  remotePolicy?: string | null,
+  remoteRestrictions?: string | null,
+  experienceLevel?: string | null,
+  salary?: {
+    from?: number | null,
+    to?: number | null,
+    currency?: string | null,
+    period?: string | null
+  } | null,
+  techStack?: string[] | null,
+  summary?: string | null,
+  firstSeenAt: string,
+  lastVerifiedAt?: string | null,
+  duplicateCount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Link Trees
+
+### get
+
+`linkTrees.get`
+
+Get one of the user's link tree pages by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.linkTrees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `slug` | `string` | Yes | — |
+| `links` | `object[]` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  id: string,
+  label: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`linkTrees.list`
+
+List the user's shareable link tree pages
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.linkTrees.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string | null,
+  slug: string,
+  links: {
+    id: string,
+    label: string,
+    url: string
+  }[],
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Profile
+
+### get
+
+`profile.get`
+
+Get the signed-in user's whole Remoet profile: contact fields, work experience, projects, education and link trees
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `ghId` | `number` | No | — |
+| `email` | `string` | No | — |
+| `profile` | `object` | Yes | — |
+| `jobs` | `object[]` | Yes | — |
+| `projects` | `object[]` | Yes | — |
+| `linkTrees` | `object[]` | Yes | — |
+| `education` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  updatedAt: string,
+  isPublic?: boolean | null,
+  slug?: string | null,
+  name?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  avatarUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  phone?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  url?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  summary?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  location?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  githubUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  facebookUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  twitterUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  linkedinUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null,
+  youtubeUrl?: {
+    value?: string | null,
+    isPublic: boolean
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="jobs full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  userId?: string | null,
+  title: string,
+  startDate: string,
+  endDate?: string | null,
+  isCurrent?: boolean | null,
+  isPublic?: boolean | null,
+  companyName?: string | null,
+  technologies?: string[] | null,
+  description?: string | null,
+  isRemote?: boolean | null,
+  companyUrl?: string | null,
+  listingId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="projects full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  shortDescription?: string | null,
+  technologies?: string[] | null,
+  isCurrent?: boolean | null,
+  isRemote?: boolean | null,
+  isOpenSource?: boolean | null,
+  description?: string | null,
+  role?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  repoUrl?: string | null,
+  demoUrl?: string | null,
+  jobId?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="linkTrees full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string | null,
+  slug: string,
+  links: {
+    id: string,
+    label: string,
+    url: string
+  }[],
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="education full type">
+
+```ts
+{
+  id: string,
+  institution: string,
+  institutionUrl?: string | null,
+  studyLevel?: string | null,
+  fieldOfStudy?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  isCurrent?: boolean | null,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLinks
+
+`profile.getLinks`
+
+Get the user's public profile links (website, GitHub, LinkedIn and more); private links come back null
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.profile.getLinks({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `githubUrl` | `string` | No | — |
+| `facebookUrl` | `string` | No | — |
+| `twitterUrl` | `string` | No | — |
+| `linkedinUrl` | `string` | No | — |
+| `youtubeUrl` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`profile.update`
+
+Update the user's Remoet profile: contact fields, name, avatarUrl, socials and summary (each may be set to null to clear it, 500 characters max, 5000 for summary), and visibility. Explain the visibility trade-off to the user before changing it: NONE hides them from every company's candidate list, STARRED shows them only to companies they have starred, and ALL shows them to every company on Remoet
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.profile.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | No | — |
+| `url` | `string` | No | — |
+| `location` | `string` | No | — |
+| `githubUrl` | `string` | No | — |
+| `linkedinUrl` | `string` | No | — |
+| `name` | `string` | No | — |
+| `avatarUrl` | `string` | No | — |
+| `facebookUrl` | `string` | No | — |
+| `twitterUrl` | `string` | No | — |
+| `youtubeUrl` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `visibility` | `NONE \| STARRED \| ALL` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updated` | `string[]` | Yes | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Add a project entry to the user's profile: title and shortDescription are required
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `shortDescription` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `isOpenSource` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `repoUrl` | `string` | No | — |
+| `demoUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `shortDescription` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `isOpenSource` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `repoUrl` | `string` | No | — |
+| `demoUrl` | `string` | No | — |
+| `jobId` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently remove a project entry by its id. Confirm with the user first
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remoet.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the projects on the user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  shortDescription?: string | null,
+  technologies?: string[] | null,
+  isCurrent?: boolean | null,
+  isRemote?: boolean | null,
+  isOpenSource?: boolean | null,
+  description?: string | null,
+  role?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  repoUrl?: string | null,
+  demoUrl?: string | null,
+  jobId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `shortDescription` | `string` | No | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `isOpenSource` | `boolean` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `repoUrl` | `string` | No | — |
+| `demoUrl` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `shortDescription` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `isOpenSource` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `role` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `repoUrl` | `string` | No | — |
+| `demoUrl` | `string` | No | — |
+| `jobId` | `string` | No | — |
+
+
+
+---
+
+## Saved Jobs
+
+### create
+
+`savedJobs.create`
+
+Save a job to the user's saved jobs by its id, with an optional note (500 characters max)
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.savedJobs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `jobType` | `ai_job \| listing_job` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `jobType` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `savedAt` | `string` | Yes | — |
+| `job` | `object` | No | — |
+| `locked` | `boolean` | No | — |
+| `lockedReason` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  title: string,
+  listingId?: string | null,
+  techStack?: string[] | null,
+  remotePolicy?: string | null,
+  experienceLevel?: string | null,
+  salaryMin?: number | null,
+  salaryMax?: number | null,
+  salaryCurrency?: string | null,
+  applicationUrl?: string | null,
+  isActive?: boolean | null,
+  deactivatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`savedJobs.delete`
+
+Permanently remove a saved-job entry by its saved-job id (not the job id). Confirm with the user first
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remoet.api.savedJobs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `savedJobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`savedJobs.list`
+
+List the user's saved jobs with their notes. A locked entry has job null and a lockedReason saying how to unlock it, usually: star the company to see it again. Paginated with page and pageSize (max 50)
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.savedJobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  jobId: string,
+  jobType: string,
+  note?: string | null,
+  savedAt: string,
+  job?: {
+    title: string,
+    listingId?: string | null,
+    techStack?: string[] | null,
+    remotePolicy?: string | null,
+    experienceLevel?: string | null,
+    salaryMin?: number | null,
+    salaryMax?: number | null,
+    salaryCurrency?: string | null,
+    applicationUrl?: string | null,
+    isActive?: boolean | null,
+    deactivatedAt?: string | null
+  } | null,
+  locked?: boolean,
+  lockedReason?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`savedJobs.update`
+
+Replace the note on a saved-job entry by its saved-job id (not the job id); null clears it
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.savedJobs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `savedJobId` | `string` | Yes | — |
+| `note` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `jobType` | `string` | Yes | — |
+| `note` | `string` | No | — |
+| `savedAt` | `string` | Yes | — |
+| `job` | `object` | No | — |
+| `locked` | `boolean` | No | — |
+| `lockedReason` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  title: string,
+  listingId?: string | null,
+  techStack?: string[] | null,
+  remotePolicy?: string | null,
+  experienceLevel?: string | null,
+  salaryMin?: number | null,
+  salaryMax?: number | null,
+  salaryCurrency?: string | null,
+  applicationUrl?: string | null,
+  isActive?: boolean | null,
+  deactivatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Starred Jobs
+
+### list
+
+`starredJobs.list`
+
+List jobs at the companies the user has starred, filtered by keywords, location, tech stack, remote policy, seniority and salary floor. createdAt is when Remoet first saw a job, not when it was posted. Paginated with page and pageSize (max 50)
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.starredJobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchQuery` | `string` | No | — |
+| `locationQuery` | `string` | No | — |
+| `techStack` | `string[]` | No | — |
+| `techStackMatch` | `any \| all` | No | — |
+| `remotePolicy` | `onsite \| hybrid \| remote \| remote-restricted[]` | No | — |
+| `experienceLevel` | `junior \| mid \| senior[]` | No | — |
+| `salaryMin` | `number` | No | — |
+| `sortBy` | `createdAt \| remotePolicy \| salaryEnriched.from \| experienceLevel` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `hasNextPage` | `boolean` | Yes | — |
+| `starsOverCap` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  url?: string | null,
+  createdAt: string,
+  remotePolicy?: string | null,
+  remoteRestrictions?: string | null,
+  techStack?: string[] | null,
+  salaryEnriched?: {
+    from?: number | null,
+    to?: number | null,
+    currency?: string | null,
+    period?: string | null
+  } | null,
+  experienceLevel?: string | null,
+  benefits?: string[] | null,
+  summary?: string | null,
+  isOnPublishablePlatform?: boolean | null,
+  listing: {
+    id: string,
+    name: string,
+    slug: string
+  },
+  postingCount?: number | null,
+  postingLocations?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="starsOverCap full type">
+
+```ts
+{
+  surplusStars: number,
+  maxActiveStars: number,
+  starsPendingDeletionAt?: string | null,
+  note: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stars
+
+### create
+
+`stars.create`
+
+Star a company on Remoet by its slug so its jobs reach the user feed. Stars are capped per user and removing one uses a limited budget, so confirm before starring
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.stars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companySlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`stars.delete`
+
+Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days, so confirm with the user first
+
+**Risk:** `destructive`
+
+```ts
+await corsair.remoet.api.stars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companySlug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+
+
+
+---
+
+## Work Experience
+
+### create
+
+`workExperience.create`
+
+Add a work experience entry to the user's profile: title and startDate are required
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.workExperience.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `companyName` | `string` | No | — |
+| `companyUrl` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `technologies` | `string[]` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `userId` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `companyName` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `companyUrl` | `string` | No | — |
+| `listingId` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`workExperience.delete`
+
+Permanently remove a work experience entry by its id. Confirm with the user first
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.remoet.api.workExperience.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`workExperience.list`
+
+List the user's work experience (their employment history, not job postings)
+
+**Risk:** `read`
+
+```ts
+await corsair.remoet.api.workExperience.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  createdAt: string,
+  updatedAt: string,
+  userId?: string | null,
+  title: string,
+  startDate: string,
+  endDate?: string | null,
+  isCurrent?: boolean | null,
+  isPublic?: boolean | null,
+  companyName?: string | null,
+  technologies?: string[] | null,
+  description?: string | null,
+  isRemote?: boolean | null,
+  companyUrl?: string | null,
+  listingId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workExperience.update`
+
+Update a work experience entry by its id. Omit a field to leave it unchanged; set an optional text field to '' to clear it or technologies to [] to empty it. startDate, endDate and the booleans can only be replaced, never cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.remoet.api.workExperience.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyUrl` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `technologies` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `updatedAt` | `string` | Yes | — |
+| `userId` | `string` | No | — |
+| `title` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | No | — |
+| `isCurrent` | `boolean` | No | — |
+| `isPublic` | `boolean` | No | — |
+| `companyName` | `string` | No | — |
+| `technologies` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `isRemote` | `boolean` | No | — |
+| `companyUrl` | `string` | No | — |
+| `listingId` | `string` | No | — |
+
+
+
+---
+
