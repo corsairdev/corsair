@@ -17,6 +17,7 @@ export type {
 export {
 	AuthMissingError,
 	CorsairKekMissingError,
+	assertReadonlyAllowed,
 	corsairCloud,
 	createCorsair,
 	PermissionRequiredError,
