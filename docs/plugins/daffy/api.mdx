@@ -270,7 +270,7 @@ Retrieve a user's supported charitable causes.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getUserCauses({});
+await corsair.daffy.api.accounts.getUserCauses({ userId: 1 });
 ```
 
 **Input**
@@ -309,7 +309,7 @@ Retrieve a user's public donations.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getUserDonations({});
+await corsair.daffy.api.accounts.getUserDonations({ userId: 1 });
 ```
 
 **Input**
@@ -467,7 +467,7 @@ Create a Daffy charitable gift for a beneficiary.
 **Risk:** `write`
 
 ```ts
-await corsair.daffy.api.gifts.create({});
+await corsair.daffy.api.gifts.create({ name: 'Jamie', amount: 18 });
 ```
 
 **Input**
