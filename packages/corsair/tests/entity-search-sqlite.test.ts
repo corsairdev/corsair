@@ -92,6 +92,63 @@ describe('entity search on SQLite', () => {
 	});
 });
 
+test('typed filters on a top-level field whose name contains a dot', async () => {
+	const sqlite = new Database(':memory:');
+	sqlite.exec(`
+		CREATE TABLE corsair_integrations (
+			id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+			name TEXT NOT NULL, config TEXT NOT NULL, dek TEXT NULL
+		);
+		CREATE TABLE corsair_accounts (
+			id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+			tenant_id TEXT NOT NULL, integration_id TEXT NOT NULL, config TEXT NOT NULL, dek TEXT NULL
+		);
+		CREATE TABLE corsair_entities (
+			id TEXT PRIMARY KEY, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+			account_id TEXT NOT NULL, entity_id TEXT NOT NULL, entity_type TEXT NOT NULL,
+			version TEXT NOT NULL, data TEXT NOT NULL
+		);
+		INSERT INTO corsair_integrations VALUES ('int-1', 0, 0, 'tasks', '{}', NULL);
+		INSERT INTO corsair_accounts VALUES ('acc-1', 0, 0, 'default', 'int-1', '{}', NULL);
+	`);
+	const orm = createPluginOrm({
+		database: createCorsairDatabase(sqlite),
+		integrationName: 'tasks',
+		tenantId: 'default',
+		schema: {
+			version: '1.0.0',
+			entities: {
+				releases: z.object({
+					'release.version': z.number(),
+					'is.stable': z.boolean(),
+					'shipped.at': z.coerce.date(),
+				}),
+			},
+		},
+	});
+	try {
+		await orm.releases.upsertByEntityId('r1', {
+			'release.version': 2,
+			'is.stable': true,
+			'shipped.at': new Date('2025-01-01T00:00:00.000Z'),
+		});
+		const byNumber = await orm.releases.search({
+			data: { 'release.version': { gte: 2 } },
+		});
+		expect(byNumber.map((r) => r.entity_id)).toEqual(['r1']);
+		const byBoolean = await orm.releases.search({
+			data: { 'is.stable': true },
+		});
+		expect(byBoolean.map((r) => r.entity_id)).toEqual(['r1']);
+		const byDate = await orm.releases.search({
+			data: { 'shipped.at': { after: new Date('2024-01-01T00:00:00.000Z') } },
+		});
+		expect(byDate.map((r) => r.entity_id)).toEqual(['r1']);
+	} finally {
+		sqlite.close();
+	}
+});
+
 describe('corsair.<plugin>.db search with a better-sqlite3 database', () => {
 	test('boolean and number filters on synced Slack channels', async () => {
 		const { slack } = await import('@corsair-dev/slack');
