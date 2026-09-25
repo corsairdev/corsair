@@ -92,7 +92,7 @@ describe('entity search on SQLite', () => {
 	});
 });
 
-function releasesOrm(entity: z.AnyZodObject) {
+function releasesOrm<T extends z.ZodObject>(entity: T) {
 	const sqlite = new Database(':memory:');
 	sqlite.exec(`
 		CREATE TABLE corsair_integrations (
