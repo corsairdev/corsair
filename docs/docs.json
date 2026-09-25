@@ -2310,6 +2310,14 @@
                 ]
               },
               {
+                "group": "Remoet",
+                "pages": [
+                  "plugins/remoet/overview",
+                  "plugins/remoet/api",
+                  "plugins/remoet/database"
+                ]
+              },
+              {
                 "group": "remove.bg",
                 "pages": [
                   "plugins/removebg/overview",
