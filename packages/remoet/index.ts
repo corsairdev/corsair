@@ -81,6 +81,7 @@ export type RemoetEndpoints = {
 	linkTreesGet: RemoetEndpoint<'linkTreesGet'>;
 	jobContextGet: RemoetEndpoint<'jobContextGet'>;
 	starsCreate: RemoetEndpoint<'starsCreate'>;
+	starsDelete: RemoetEndpoint<'starsDelete'>;
 	jobsSearch: RemoetEndpoint<'jobsSearch'>;
 	companiesSearch: RemoetEndpoint<'companiesSearch'>;
 	companiesGet: RemoetEndpoint<'companiesGet'>;
@@ -89,7 +90,6 @@ export type RemoetEndpoints = {
 	savedJobsCreate: RemoetEndpoint<'savedJobsCreate'>;
 	savedJobsUpdate: RemoetEndpoint<'savedJobsUpdate'>;
 	savedJobsDelete: RemoetEndpoint<'savedJobsDelete'>;
-	starsDelete: RemoetEndpoint<'starsDelete'>;
 	feedList: RemoetEndpoint<'feedList'>;
 };
 
@@ -228,6 +228,10 @@ export const remoetEndpointSchemas = {
 		input: RemoetEndpointInputSchemas.starsCreate,
 		output: RemoetEndpointOutputSchemas.starsCreate,
 	},
+	'stars.delete': {
+		input: RemoetEndpointInputSchemas.starsDelete,
+		output: RemoetEndpointOutputSchemas.starsDelete,
+	},
 	'jobs.search': {
 		input: RemoetEndpointInputSchemas.jobsSearch,
 		output: RemoetEndpointOutputSchemas.jobsSearch,
@@ -260,10 +264,6 @@ export const remoetEndpointSchemas = {
 		input: RemoetEndpointInputSchemas.savedJobsDelete,
 		output: RemoetEndpointOutputSchemas.savedJobsDelete,
 	},
-	'stars.delete': {
-		input: RemoetEndpointInputSchemas.starsDelete,
-		output: RemoetEndpointOutputSchemas.starsDelete,
-	},
 	'feed.list': {
 		input: RemoetEndpointInputSchemas.feedList,
 		output: RemoetEndpointOutputSchemas.feedList,
@@ -288,7 +288,7 @@ const remoetEndpointMeta = {
 	'profile.update': {
 		riskLevel: 'write',
 		description:
-			"Update the user's Remoet profile: contact fields, name, avatarUrl, socials and summary (each may be set to null to clear it, 500 characters max, 5000 for summary), and visibility. Explain the visibility trade-off to the user before changing it: NONE hides them from every company's candidate list, STARRED shows them only to companies they have starred, and ALL shows them to every company on Remoet",
+			"Update the user's Remoet profile: contact fields, name, avatarUrl, socials and summary (each may be set to null to clear it, 500 characters max, 5000 for summary), and visibility. Visibility controls who can see the profile in company candidate lists: NONE hides it from every company, STARRED shows it only to companies the user has starred, and ALL shows it to every company on Remoet",
 	},
 	'workExperience.list': {
 		riskLevel: 'read',
@@ -308,8 +308,7 @@ const remoetEndpointMeta = {
 	'workExperience.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description:
-			'Permanently remove a work experience entry by its id. Confirm with the user first',
+		description: 'Permanently remove a work experience entry by its id',
 	},
 	'projects.list': {
 		riskLevel: 'read',
@@ -328,8 +327,7 @@ const remoetEndpointMeta = {
 	'projects.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description:
-			'Permanently remove a project entry by its id. Confirm with the user first',
+		description: 'Permanently remove a project entry by its id',
 	},
 	'education.list': {
 		riskLevel: 'read',
@@ -348,8 +346,7 @@ const remoetEndpointMeta = {
 	'education.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description:
-			'Permanently remove an education entry by its id. Confirm with the user first',
+		description: 'Permanently remove an education entry by its id',
 	},
 	'linkTrees.list': {
 		riskLevel: 'read',
@@ -367,7 +364,12 @@ const remoetEndpointMeta = {
 	'stars.create': {
 		riskLevel: 'write',
 		description:
-			'Star a company on Remoet by its slug so its jobs reach the user feed. Stars are capped per user and removing one uses a limited budget, so confirm before starring',
+			'Star a company on Remoet by its slug so its jobs reach the user feed. Stars are capped per user, and removing one spends from a limited unstar budget',
+	},
+	'stars.delete': {
+		riskLevel: 'destructive',
+		description:
+			'Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days',
 	},
 	'jobs.search': {
 		riskLevel: 'read',
@@ -408,12 +410,7 @@ const remoetEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Permanently remove a saved-job entry by its saved-job id (not the job id). Confirm with the user first',
-	},
-	'stars.delete': {
-		riskLevel: 'destructive',
-		description:
-			'Unstar a company by its slug. Each unstar spends from a limited budget that resets every 30 days, so confirm with the user first',
+			'Permanently remove a saved-job entry by its saved-job id (not the job id)',
 	},
 	'feed.list': {
 		riskLevel: 'read',

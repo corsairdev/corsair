@@ -1,5 +1,5 @@
 import { AuthMissingError, createCorsair } from 'corsair/core';
-import { remoet, remoetEndpointSchemas } from './index';
+import { remoet } from './index';
 
 // End-to-end through the assembled plugin: createCorsair binds the endpoints,
 // the keyBuilder, the error handlers and the real core HTTP transport. Only
@@ -220,8 +220,6 @@ describe('Remoet plugin through createCorsair', () => {
 			expect(endpointMeta[`${group}.create`]?.riskLevel).toBe('write');
 			expect(endpointMeta[`${group}.update`]?.riskLevel).toBe('write');
 			expect(endpointMeta[`${group}.delete`]?.riskLevel).toBe('destructive');
-			// A destructive op's description tells the agent to confirm first.
-			expect(endpointMeta[`${group}.delete`]?.description).toMatch(/confirm/i);
 		}
 	});
 
@@ -243,26 +241,29 @@ describe('Remoet plugin through createCorsair', () => {
 		expect(endpointMeta['stars.delete']?.irreversible).toBeUndefined();
 	});
 
-	it('gives every endpoint a valid riskLevel and a non-empty description', () => {
+	// riskLevel's type and the exhaustive `satisfies` check already guarantee
+	// every path has one of the three valid values, and that endpointMeta and
+	// endpointSchemas share the same key set; only the content is worth a
+	// runtime check.
+	it('gives every endpoint a non-empty, fact-only description', () => {
 		const { endpointMeta } = remoet({});
 		if (!endpointMeta) throw new Error('remoet plugin has no endpointMeta');
 
-		const entries = Object.entries(endpointMeta) as Array<
-			[
-				string,
-				{ riskLevel: string; description?: string; irreversible?: boolean },
-			]
-		>;
+		const entries = Object.values(endpointMeta) as Array<{
+			riskLevel: string;
+			description?: string;
+			irreversible?: boolean;
+		}>;
 		expect(entries.length).toBeGreaterThan(0);
 
-		for (const [path, meta] of entries) {
-			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
+		for (const meta of entries) {
 			expect(meta.description?.length ?? 0).toBeGreaterThan(0);
 			if (meta.riskLevel !== 'destructive') {
 				expect(meta.irreversible).toBeUndefined();
 			}
-			// Every op id round-trips through the plugin's own schema map.
-			expect(Object.keys(remoetEndpointSchemas)).toContain(path);
+			// Descriptions state facts for the human approving the action, not
+			// orders to the agent; riskLevel and irreversible drive confirmation.
+			expect(meta.description).not.toMatch(/confirm|explain/i);
 		}
 	});
 });

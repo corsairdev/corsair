@@ -32,9 +32,12 @@ const RemoetIdSchema = z
 /** A single technology name, as sent in a tech stack list. */
 const TechnologySchema = z.string().max(100);
 
+/** Remoet's bound on its longer free-text fields: profile summary and item descriptions. */
+export const REMOET_LONG_TEXT_MAX_LENGTH = 5000;
+
 /**
- * A profile item's date, e.g. "2024-01-15". Remoet parses it with Date.parse,
- * caps it at 64 characters and refuses an empty one.
+ * A profile item's date. Remoet parses it with Date.parse, caps it at 64
+ * characters and refuses an empty one.
  */
 const ItemDateSchema = z
 	.string()
@@ -43,7 +46,26 @@ const ItemDateSchema = z
 	.max(64)
 	.refine((value) => !Number.isNaN(Date.parse(value)), {
 		message: 'Must be a date, e.g. "2024-01-15"',
-	});
+	})
+	.describe('A date, e.g. "2024-01-15".');
+
+/** An optional free-text field: stored as sent (not trimmed); '' clears it on update. */
+function optionalText(max: number, label: string) {
+	return z
+		.string()
+		.max(max)
+		.optional()
+		.describe(`${label}. On update, '' clears it.`);
+}
+
+/** A tech stack list on a profile item; on update, [] empties it. */
+const TechnologiesFieldSchema = z
+	.array(TechnologySchema)
+	.max(50)
+	.optional()
+	.describe(
+		'Technologies used, e.g. ["React", "Node.js"]. On update, [] empties it.',
+	);
 
 /** Shared shape for an item delete response: `{ deleted: true, id }`. */
 const ItemDeletedResponseSchema = z
@@ -77,8 +99,9 @@ export const RemoetWorkExperienceSchema = z
 		userId: z.string().nullish(),
 		title: z.string(),
 		startDate: IsoDateSchema,
-		/** Null or absent for a current role. */
-		endDate: IsoDateSchema.nullish(),
+		endDate: IsoDateSchema.nullish().describe(
+			'Null or absent for a current role.',
+		),
 		isCurrent: z.boolean().nullish(),
 		isPublic: z.boolean().nullish(),
 		companyName: z.string().nullish(),
@@ -86,7 +109,12 @@ export const RemoetWorkExperienceSchema = z
 		description: z.string().nullish(),
 		isRemote: z.boolean().nullish(),
 		companyUrl: z.string().nullish(),
-		listingId: z.string().nullish(),
+		listingId: z
+			.string()
+			.nullish()
+			.describe(
+				'Id of a Remoet company listing linked to this entry, when one is linked; usually null. Not evidence of a job match.',
+			),
 	})
 	.loose();
 
@@ -109,7 +137,10 @@ export const RemoetProjectSchema = z
 		endDate: IsoDateSchema.nullable(),
 		repoUrl: z.string().nullish(),
 		demoUrl: z.string().nullish(),
-		jobId: z.string().nullish(),
+		jobId: z
+			.string()
+			.nullish()
+			.describe('Set when this project is linked to a work experience entry.'),
 	})
 	.loose();
 
@@ -187,8 +218,12 @@ export const ProfileGetResponseSchema = z
 	.object({
 		createdAt: IsoDateSchema,
 		updatedAt: IsoDateSchema,
-		/** Numeric GitHub user id; absent for users who never linked GitHub. */
-		ghId: z.number().nullish(),
+		ghId: z
+			.number()
+			.nullish()
+			.describe(
+				'Numeric GitHub user id; absent for users who never linked GitHub.',
+			),
 		email: z.string().nullish(),
 		profile: RemoetProfileSchema,
 		jobs: z.array(RemoetWorkExperienceSchema),
@@ -226,9 +261,6 @@ export type ProfileGetLinksResponse = z.infer<
 /** Remoet rejects any value longer than this after trimming. */
 export const REMOET_PROFILE_FIELD_MAX_LENGTH = 500;
 
-/** Remoet's bound on its longer free-text fields: profile summary and item descriptions. */
-export const REMOET_LONG_TEXT_MAX_LENGTH = 5000;
-
 const WritableProfileValueSchema = z
 	.string()
 	.trim()
@@ -238,30 +270,39 @@ const WritableProfileValueSchema = z
 /** Any writable string field may also be set to null to clear it. */
 const NullableProfileValueSchema = WritableProfileValueSchema.nullable();
 
+/** A writable profile field, described for the field it labels; null clears it. */
+function profileField(label: string) {
+	return NullableProfileValueSchema.optional().describe(
+		`${label} Null clears it.`,
+	);
+}
+
 /** Who can see the profile in company candidate lists. */
 export const RemoetProfileVisibilitySchema = z.enum(['NONE', 'STARRED', 'ALL']);
 
 export const ProfileUpdateInputSchema = z
 	.object({
-		phone: NullableProfileValueSchema.optional(),
-		url: NullableProfileValueSchema.optional(),
-		location: NullableProfileValueSchema.optional(),
-		githubUrl: NullableProfileValueSchema.optional(),
-		linkedinUrl: NullableProfileValueSchema.optional(),
-		name: NullableProfileValueSchema.optional(),
-		avatarUrl: NullableProfileValueSchema.optional(),
-		facebookUrl: NullableProfileValueSchema.optional(),
-		twitterUrl: NullableProfileValueSchema.optional(),
-		youtubeUrl: NullableProfileValueSchema.optional(),
+		phone: profileField('Phone number.'),
+		url: profileField('Personal website URL.'),
+		location: profileField('Location.'),
+		githubUrl: profileField('GitHub profile URL.'),
+		linkedinUrl: profileField('LinkedIn profile URL.'),
+		name: profileField('Full name.'),
+		avatarUrl: profileField('Avatar/photo URL.'),
+		facebookUrl: profileField('Facebook profile URL.'),
+		twitterUrl: profileField('Twitter/X profile URL.'),
+		youtubeUrl: profileField('YouTube channel URL.'),
 		summary: z
 			.string()
 			.trim()
 			.min(1)
 			.max(REMOET_LONG_TEXT_MAX_LENGTH)
 			.nullable()
-			.optional(),
-		/** Not writable to null; leave it out to leave it unchanged. */
-		visibility: RemoetProfileVisibilitySchema.optional(),
+			.optional()
+			.describe('Brief professional summary or bio. Null clears it.'),
+		visibility: RemoetProfileVisibilitySchema.optional().describe(
+			'Who can see the profile in company candidate lists. Not writable to null; leave it out to leave it unchanged.',
+		),
 	})
 	.strict()
 	.refine((input) => Object.values(input).some((v) => v !== undefined), {
@@ -296,16 +337,18 @@ export type WorkExperienceListResponse = z.infer<
 
 export const WorkExperienceCreateInputSchema = z
 	.object({
-		title: z.string().trim().min(1).max(200),
+		title: z.string().trim().min(1).max(200).describe('Job title.'),
 		startDate: ItemDateSchema,
-		// Not trimmed: Remoet stores optional text as sent, and '' clears it.
-		companyName: z.string().max(200).optional(),
-		companyUrl: z.string().max(500).optional(),
+		companyName: optionalText(200, 'Company name'),
+		companyUrl: optionalText(500, 'Company website URL'),
 		endDate: ItemDateSchema.optional(),
-		isCurrent: z.boolean().optional(),
-		isRemote: z.boolean().optional(),
-		technologies: z.array(TechnologySchema).max(50).optional(),
-		description: z.string().max(REMOET_LONG_TEXT_MAX_LENGTH).optional(),
+		isCurrent: z
+			.boolean()
+			.optional()
+			.describe('Whether this is the current job.'),
+		isRemote: z.boolean().optional().describe('Whether this job is remote.'),
+		technologies: TechnologiesFieldSchema,
+		description: optionalText(REMOET_LONG_TEXT_MAX_LENGTH, 'Job description'),
 	})
 	.strict();
 export type WorkExperienceCreateInput = z.input<
@@ -356,19 +399,32 @@ export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 
 export const ProjectsCreateInputSchema = z
 	.object({
-		title: z.string().trim().min(1).max(200),
-		shortDescription: z.string().trim().min(1).max(500),
-		// Not trimmed: Remoet stores optional text as sent, and '' clears it.
-		description: z.string().max(REMOET_LONG_TEXT_MAX_LENGTH).optional(),
-		role: z.string().max(200).optional(),
-		technologies: z.array(TechnologySchema).max(50).optional(),
-		isCurrent: z.boolean().optional(),
-		isRemote: z.boolean().optional(),
-		isOpenSource: z.boolean().optional(),
+		title: z.string().trim().min(1).max(200).describe('Project title.'),
+		shortDescription: z
+			.string()
+			.trim()
+			.min(1)
+			.max(500)
+			.describe('A one-line summary of the project.'),
+		description: optionalText(
+			REMOET_LONG_TEXT_MAX_LENGTH,
+			'Full project description',
+		),
+		role: optionalText(200, 'Role on the project'),
+		technologies: TechnologiesFieldSchema,
+		isCurrent: z
+			.boolean()
+			.optional()
+			.describe('Whether this is an ongoing project.'),
+		isRemote: z.boolean().optional().describe('Whether this was remote work.'),
+		isOpenSource: z
+			.boolean()
+			.optional()
+			.describe('Whether this is open source.'),
 		startDate: ItemDateSchema.optional(),
 		endDate: ItemDateSchema.optional(),
-		repoUrl: z.string().max(500).optional(),
-		demoUrl: z.string().max(500).optional(),
+		repoUrl: optionalText(500, 'Repository URL'),
+		demoUrl: optionalText(500, 'Live demo URL'),
 	})
 	.strict();
 export type ProjectsCreateInput = z.input<typeof ProjectsCreateInputSchema>;
@@ -410,27 +466,39 @@ export type EducationListResponse = z.infer<typeof EducationListResponseSchema>;
 
 // ── education.create/update/delete (/user/education[/:id]) ───────────────────
 
-export const RemoetStudyLevelSchema = z.enum([
-	'HIGH_SCHOOL',
-	'ASSOCIATE',
-	'BACHELOR',
-	'MASTER',
-	'DOCTORATE',
-	'BOOTCAMP',
-	'OTHER',
-]);
+export const RemoetStudyLevelSchema = z
+	.enum([
+		'HIGH_SCHOOL',
+		'ASSOCIATE',
+		'BACHELOR',
+		'MASTER',
+		'DOCTORATE',
+		'BOOTCAMP',
+		'OTHER',
+	])
+	.describe('Level of study.');
 
 export const EducationCreateInputSchema = z
 	.object({
-		institution: z.string().trim().min(1).max(200),
-		// Not trimmed: Remoet stores optional text as sent, and '' clears it.
-		institutionUrl: z.string().max(500).optional(),
+		institution: z
+			.string()
+			.trim()
+			.min(1)
+			.max(200)
+			.describe('Institution name, e.g. "MIT".'),
+		institutionUrl: optionalText(500, 'Institution website URL'),
 		studyLevel: RemoetStudyLevelSchema.optional(),
-		fieldOfStudy: z.string().max(200).optional(),
+		fieldOfStudy: optionalText(200, 'Field of study, e.g. "Computer Science"'),
 		startDate: ItemDateSchema.optional(),
 		endDate: ItemDateSchema.optional(),
-		isCurrent: z.boolean().optional(),
-		description: z.string().max(REMOET_LONG_TEXT_MAX_LENGTH).optional(),
+		isCurrent: z
+			.boolean()
+			.optional()
+			.describe('Whether currently studying here.'),
+		description: optionalText(
+			REMOET_LONG_TEXT_MAX_LENGTH,
+			'Description of studies and achievements',
+		),
 	})
 	.strict();
 export type EducationCreateInput = z.input<typeof EducationCreateInputSchema>;
@@ -472,7 +540,11 @@ export type LinkTreesListResponse = z.infer<typeof LinkTreesListResponseSchema>;
 
 export const LinkTreesGetInputSchema = z
 	.object({
-		slug: z.string().trim().min(1),
+		slug: z
+			.string()
+			.trim()
+			.min(1)
+			.describe("The link tree's own slug, from linkTrees.list."),
 	})
 	.strict();
 export type LinkTreesGetInput = z.input<typeof LinkTreesGetInputSchema>;
@@ -484,8 +556,7 @@ export type LinkTreesGetResponse = z.infer<typeof LinkTreesGetResponseSchema>;
 
 export const JobContextGetInputSchema = z
 	.object({
-		/** Full URL of the job page, e.g. an ATS posting. */
-		url: z.url(),
+		url: z.url().describe('Full URL of the job page, e.g. an ATS posting.'),
 	})
 	.strict();
 export type JobContextGetInput = z.input<typeof JobContextGetInputSchema>;
@@ -511,15 +582,19 @@ export const RemoetJobContextMatchSchema = z
 	.object({
 		company: z.string(),
 		companySlug: z.string(),
-		/**
-		 * When Remoet FIRST SAW the job, not when the company posted it. Read it
-		 * as "at least n days old", never as "posted n days ago".
-		 */
-		firstSeenAt: IsoDateSchema,
-		/** Whole days since Remoet first saw the job: a lower bound on its age. */
-		daysSinceFirstSeen: z.number(),
-		/** Always true: the posting may be older than Remoet's first sighting. */
-		firstSeenAtIsCensored: z.boolean(),
+		firstSeenAt: IsoDateSchema.describe(
+			'When Remoet FIRST SAW the job, not when the company posted it. Read it as "at least n days old", never as "posted n days ago".',
+		),
+		daysSinceFirstSeen: z
+			.number()
+			.describe(
+				'Whole days since Remoet first saw the job: a lower bound on its age.',
+			),
+		firstSeenAtIsCensored: z
+			.boolean()
+			.describe(
+				"Always true: the posting may be older than Remoet's first sighting.",
+			),
 		isActive: z.boolean(),
 		deactivatedAt: IsoDateSchema.nullable(),
 		reposts: z.array(RemoetJobRepostSchema),
@@ -544,12 +619,13 @@ export const JobContextGetResponseSchema = z
 	.loose();
 export type JobContextGetResponse = z.infer<typeof JobContextGetResponseSchema>;
 
-// ── stars.create (POST /user/stars) ──────────────────────────────────────────
+// ── stars.create / stars.delete (POST /user/stars, DELETE /user/stars/:companySlug) ──
 
 export const StarsCreateInputSchema = z
 	.object({
-		/** Slug of an active Remoet company, e.g. from jobContext.get. */
-		companySlug: SlugSchema,
+		companySlug: SlugSchema.describe(
+			'Slug of an active Remoet company, e.g. from jobContext.get.',
+		),
 	})
 	.strict();
 export type StarsCreateInput = z.input<typeof StarsCreateInputSchema>;
@@ -561,10 +637,29 @@ export const StarsCreateResponseSchema = z
 	.loose();
 export type StarsCreateResponse = z.infer<typeof StarsCreateResponseSchema>;
 
+export const StarsDeleteInputSchema = z
+	.object({
+		companySlug: SlugSchema.describe('Slug of the company to unstar.'),
+	})
+	.strict();
+export type StarsDeleteInput = z.input<typeof StarsDeleteInputSchema>;
+
+export const StarsDeleteResponseSchema = z
+	.object({
+		company: z.string(),
+	})
+	.loose();
+export type StarsDeleteResponse = z.infer<typeof StarsDeleteResponseSchema>;
+
 // ── Discovery: shared inputs ─────────────────────────────────────────────────
 
 /** Remoet's page number bound on every paginated list. */
-const PageSchema = z.number().int().min(1).max(10_000);
+const PageSchema = z
+	.number()
+	.int()
+	.min(1)
+	.max(10_000)
+	.describe('Page number, starting from 1.');
 
 const FreeTextSchema = z.string().max(500);
 
@@ -575,7 +670,11 @@ export const RemoetRemotePolicySchema = z.enum([
 	'remote-restricted',
 ]);
 export const RemoetExperienceLevelSchema = z.enum(['junior', 'mid', 'senior']);
-const TechStackMatchSchema = z.enum(['any', 'all']);
+const TechStackMatchSchema = z
+	.enum(['any', 'all'])
+	.describe(
+		'How techStack combines: "any" (at least one) or "all" (every one required).',
+	);
 const SortOrderSchema = z.enum(['asc', 'desc']);
 
 /**
@@ -588,7 +687,8 @@ const SalaryMinSchema = z
 	.refine((n) => /^\d{1,12}(\.\d{1,4})?$/.test(String(n)), {
 		message:
 			'Must be a non-negative number with at most 12 digits and 4 decimals',
-	});
+	})
+	.describe('Minimum salary.');
 
 // ── Discovery: shared outputs ────────────────────────────────────────────────
 
@@ -609,8 +709,10 @@ export const RemoetCompanySummarySchema = z
 		url: z.string().nullish(),
 		nbrOfStars: z.number().nullish(),
 		jobCount: z.number().nullish(),
-		/** A preview capped by Remoet; techStackCount is the full size. */
-		techStack: z.array(z.string()).nullish(),
+		techStack: z
+			.array(z.string())
+			.nullish()
+			.describe('A preview capped by Remoet; techStackCount is the full size.'),
 		matchedTechStack: z.array(z.string()).nullish(),
 		techStackCount: z.number().nullish(),
 		experienceLevels: ExperienceLevelCountsSchema.nullish(),
@@ -639,8 +741,9 @@ export const RemoetJobPostingSchema = z
 		salary: RemoetSalarySchema.nullish(),
 		techStack: z.array(z.string()).nullish(),
 		summary: z.string().nullish(),
-		/** When Remoet first saw the role, not when the company posted it. */
-		firstSeenAt: IsoDateSchema,
+		firstSeenAt: IsoDateSchema.describe(
+			'When Remoet first saw the role, not when the company posted it.',
+		),
 		lastVerifiedAt: IsoDateSchema.nullish(),
 		duplicateCount: z.number().nullish(),
 	})
@@ -652,20 +755,41 @@ export type RemoetJobPosting = z.infer<typeof RemoetJobPostingSchema>;
 
 export const JobsSearchInputSchema = z
 	.object({
-		/** Free text over title, summary and tech stack; commas require ALL words. */
-		searchQuery: z.string().optional(),
-		techStack: z.array(z.string()).optional(),
+		searchQuery: z
+			.string()
+			.optional()
+			.describe(
+				'Free text, matched against the job title, summary and tech stack. Comma-separate keywords to require ALL of them.',
+			),
+		techStack: z
+			.array(z.string())
+			.optional()
+			.describe(
+				'Match roles carrying technologies from this list, e.g. ["React", "Go"].',
+			),
 		techStackMatch: TechStackMatchSchema.optional(),
-		companySlug: SlugSchema.optional(),
+		companySlug: SlugSchema.optional().describe(
+			'Restrict to one company by its Remoet slug, e.g. "stripe".',
+		),
 		remotePolicy: z.array(RemoetRemotePolicySchema).optional(),
 		experienceLevel: z.array(RemoetExperienceLevelSchema).optional(),
 		salaryMin: SalaryMinSchema.optional(),
-		/** Place names; each may itself contain commas, e.g. "Portland, OR". */
-		location: z.array(z.string()).optional(),
+		location: z
+			.array(z.string())
+			.optional()
+			.describe(
+				'Place names, e.g. ["Berlin"]. Each may itself contain a comma, e.g. "Portland, OR".',
+			),
 		sortBy: z.enum(['newest', 'salary']).optional(),
 		sortOrder: SortOrderSchema.optional(),
 		page: PageSchema.optional(),
-		pageSize: z.number().int().min(1).max(50).optional(),
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(50)
+			.optional()
+			.describe('Results per page, max 50.'),
 	})
 	.strict();
 export type JobsSearchInput = z.input<typeof JobsSearchInputSchema>;
@@ -678,8 +802,12 @@ export const JobsSearchResponseSchema = z
 		pageSize: z.number(),
 		totalPages: z.number(),
 		hasNextPage: z.boolean(),
-		/** Present on an empty result: which filter emptied it and what to try. */
-		hint: z.string().nullish(),
+		hint: z
+			.string()
+			.nullish()
+			.describe(
+				'Present on an empty result: which filter emptied it and what to try.',
+			),
 	})
 	.loose();
 export type JobsSearchResponse = z.infer<typeof JobsSearchResponseSchema>;
@@ -688,15 +816,27 @@ export type JobsSearchResponse = z.infer<typeof JobsSearchResponseSchema>;
 
 export const CompaniesSearchInputSchema = z
 	.object({
-		/** True lists the user's starred companies instead of searching. */
-		starred: z.boolean().optional(),
-		searchQuery: FreeTextSchema.optional(),
+		starred: z
+			.boolean()
+			.optional()
+			.describe(
+				'Set true to list every starred company instead of searching; the other filters and paging are ignored.',
+			),
+		searchQuery: FreeTextSchema.optional().describe(
+			'Search keyword: matches company name, description and about text.',
+		),
 		techStack: z.array(TechnologySchema).optional(),
 		techStackMatch: TechStackMatchSchema.optional(),
 		experienceLevel: z.array(RemoetExperienceLevelSchema).optional(),
 		sortBy: z.enum(['stars', 'jobCount', 'name']).optional(),
 		page: PageSchema.optional(),
-		pageSize: z.number().int().min(1).max(100).optional(),
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(100)
+			.optional()
+			.describe('Results per page, max 100.'),
 	})
 	.strict();
 export type CompaniesSearchInput = z.input<typeof CompaniesSearchInputSchema>;
@@ -723,9 +863,14 @@ export type CompaniesSearchResponse = z.infer<
 
 export const CompaniesGetInputSchema = z
 	.object({
-		slug: SlugSchema,
-		/** Technologies to check against the company's full stack (max 50). */
-		checkTechStack: z.array(TechnologySchema).max(50).optional(),
+		slug: SlugSchema.describe('The company\'s slug, e.g. "stripe".'),
+		checkTechStack: z
+			.array(TechnologySchema)
+			.max(50)
+			.optional()
+			.describe(
+				"Technologies to check against the company's full stack (max 50); matches come back in matchedTechStack.",
+			),
 	})
 	.strict();
 export type CompaniesGetInput = z.input<typeof CompaniesGetInputSchema>;
@@ -757,8 +902,12 @@ export type CompaniesGetResponse = z.infer<typeof CompaniesGetResponseSchema>;
 
 export const StarredJobsListInputSchema = z
 	.object({
-		searchQuery: FreeTextSchema.optional(),
-		locationQuery: FreeTextSchema.optional(),
+		searchQuery: FreeTextSchema.optional().describe(
+			'Search keywords for job title, summary or tech stack.',
+		),
+		locationQuery: FreeTextSchema.optional().describe(
+			'Filter by location or remote restrictions.',
+		),
 		techStack: z.array(TechnologySchema).optional(),
 		techStackMatch: TechStackMatchSchema.optional(),
 		remotePolicy: z.array(RemoetRemotePolicySchema).optional(),
@@ -774,7 +923,13 @@ export const StarredJobsListInputSchema = z
 			.optional(),
 		sortOrder: SortOrderSchema.optional(),
 		page: PageSchema.optional(),
-		pageSize: z.number().int().min(1).max(50).optional(),
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(50)
+			.optional()
+			.describe('Results per page, max 50.'),
 	})
 	.strict();
 export type StarredJobsListInput = z.input<typeof StarredJobsListInputSchema>;
@@ -784,8 +939,9 @@ export const RemoetStarredJobSchema = z
 		id: z.string(),
 		title: z.string(),
 		url: z.string().nullish(),
-		/** When Remoet first saw the role, not when the company posted it. */
-		createdAt: IsoDateSchema,
+		createdAt: IsoDateSchema.describe(
+			'When Remoet first saw the role, not when the company posted it.',
+		),
 		remotePolicy: z.string().nullish(),
 		remoteRestrictions: z.string().nullish(),
 		techStack: z.array(z.string()).nullish(),
@@ -811,7 +967,6 @@ export const StarredJobsListResponseSchema = z
 		page: z.number(),
 		pageSize: z.number(),
 		hasNextPage: z.boolean(),
-		/** Present when the user holds more stars than the cap allows. */
 		starsOverCap: z
 			.object({
 				surplusStars: z.number(),
@@ -820,7 +975,8 @@ export const StarredJobsListResponseSchema = z
 				note: z.string(),
 			})
 			.loose()
-			.nullish(),
+			.nullish()
+			.describe('Present when the user holds more stars than the cap allows.'),
 	})
 	.loose();
 export type StarredJobsListResponse = z.infer<
@@ -851,8 +1007,11 @@ export const RemoetSavedJobDetailSchema = z
  */
 export const RemoetSavedJobSchema = z
 	.object({
-		/** The saved-job entry id, used by savedJobs.update and savedJobs.delete. */
-		id: z.string(),
+		id: z
+			.string()
+			.describe(
+				'The saved-job entry id, used by savedJobs.update and savedJobs.delete.',
+			),
 		jobId: z.string(),
 		jobType: z.string(),
 		note: z.string().nullish(),
@@ -867,7 +1026,13 @@ export type RemoetSavedJob = z.infer<typeof RemoetSavedJobSchema>;
 export const SavedJobsListInputSchema = z
 	.object({
 		page: PageSchema.optional(),
-		pageSize: z.number().int().min(1).max(50).optional(),
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(50)
+			.optional()
+			.describe('Results per page, max 50.'),
 	})
 	.strict();
 export type SavedJobsListInput = z.input<typeof SavedJobsListInputSchema>;
@@ -886,11 +1051,19 @@ export type SavedJobsListResponse = z.infer<typeof SavedJobsListResponseSchema>;
 
 export const SavedJobsCreateInputSchema = z
 	.object({
-		/** Id of the job, e.g. from jobs.search or starredJobs.list. */
-		jobId: RemoetIdSchema,
-		/** "ai_job" (the default) or "listing_job". */
-		jobType: z.enum(['ai_job', 'listing_job']).optional(),
-		note: z.string().max(500).nullable().optional(),
+		jobId: RemoetIdSchema.describe(
+			'Id of the job, e.g. from jobs.search or starredJobs.list.',
+		),
+		jobType: z
+			.enum(['ai_job', 'listing_job'])
+			.optional()
+			.describe('"ai_job" (the default) or "listing_job".'),
+		note: z
+			.string()
+			.max(500)
+			.nullable()
+			.optional()
+			.describe('Optional note about why this job is interesting.'),
 	})
 	.strict();
 export type SavedJobsCreateInput = z.input<typeof SavedJobsCreateInputSchema>;
@@ -900,12 +1073,19 @@ export type SavedJobsCreateResponse = z.infer<
 	typeof SavedJobsCreateResponseSchema
 >;
 
+/** The saved-job entry id, not the job id; shared by savedJobs.update and savedJobs.delete. */
+const SavedJobIdSchema = RemoetIdSchema.describe(
+	'The saved-job entry id, not the job id.',
+);
+
 export const SavedJobsUpdateInputSchema = z
 	.object({
-		/** The saved-job entry id, not the job id. */
-		savedJobId: RemoetIdSchema,
-		/** The new note, or null to clear it. */
-		note: z.string().max(500).nullable(),
+		savedJobId: SavedJobIdSchema,
+		note: z
+			.string()
+			.max(500)
+			.nullable()
+			.describe('The new note, or null to clear it.'),
 	})
 	.strict();
 export type SavedJobsUpdateInput = z.input<typeof SavedJobsUpdateInputSchema>;
@@ -917,8 +1097,7 @@ export type SavedJobsUpdateResponse = z.infer<
 
 export const SavedJobsDeleteInputSchema = z
 	.object({
-		/** The saved-job entry id, not the job id. */
-		savedJobId: RemoetIdSchema,
+		savedJobId: SavedJobIdSchema,
 	})
 	.strict();
 export type SavedJobsDeleteInput = z.input<typeof SavedJobsDeleteInputSchema>;
@@ -927,22 +1106,6 @@ export const SavedJobsDeleteResponseSchema = ItemDeletedResponseSchema;
 export type SavedJobsDeleteResponse = z.infer<
 	typeof SavedJobsDeleteResponseSchema
 >;
-
-// ── stars.delete (DELETE /user/stars/:companySlug) ───────────────────────────
-
-export const StarsDeleteInputSchema = z
-	.object({
-		companySlug: SlugSchema,
-	})
-	.strict();
-export type StarsDeleteInput = z.input<typeof StarsDeleteInputSchema>;
-
-export const StarsDeleteResponseSchema = z
-	.object({
-		company: z.string(),
-	})
-	.loose();
-export type StarsDeleteResponse = z.infer<typeof StarsDeleteResponseSchema>;
 
 // ── feed.list (GET /user/feed) ────────────────────────────────────────────────
 
@@ -954,8 +1117,12 @@ const FeedJobSchema = z
 	.object({
 		id: z.string(),
 		isActive: z.boolean(),
-		/** Set when the user has saved this job; unsaves it without a lookup. */
-		savedJobId: z.string().nullish(),
+		savedJobId: z
+			.string()
+			.nullish()
+			.describe(
+				'Set when the user has saved this job; unsaves it without a lookup.',
+			),
 		title: z.string(),
 		url: z.string().nullish(),
 		remotePolicy: z.string().nullish(),
@@ -972,8 +1139,7 @@ const FeedJobSchema = z
 const FeedItemSchema = z
 	.object({
 		id: z.string(),
-		/** "new_jobs" | "welcome" | "starred_snapshot". */
-		type: z.string(),
+		type: z.string().describe('"new_jobs" | "welcome" | "starred_snapshot".'),
 		listingId: z.string().nullish(),
 		isStarred: z.boolean().nullish(),
 		listingName: z.string().nullish(),
@@ -1017,8 +1183,7 @@ const FeedBlogPostSchema = z
 		description: z.string(),
 		tags: z.array(z.string()).nullish(),
 		readingTime: z.number().nullish(),
-		/** "consumer" | "partner" | "both". */
-		audience: z.string().nullish(),
+		audience: z.string().nullish().describe('"consumer" | "partner" | "both".'),
 	})
 	.loose();
 
@@ -1039,8 +1204,9 @@ const FeedBroadcastSchema = z
 export const RemoetFeedEntrySchema = z
 	.object({
 		id: z.string(),
-		/** "item" | "job_of_the_day" | "blog" | "broadcast". */
-		kind: z.string(),
+		kind: z
+			.string()
+			.describe('"item" | "job_of_the_day" | "blog" | "broadcast".'),
 		date: IsoDateSchema,
 		item: FeedItemSchema.nullish(),
 		blogPost: FeedBlogPostSchema.nullish(),
@@ -1052,9 +1218,18 @@ export type RemoetFeedEntry = z.infer<typeof RemoetFeedEntrySchema>;
 
 export const FeedListInputSchema = z
 	.object({
-		pageSize: z.number().int().min(1).max(50).optional(),
-		/** The previous page's nextCursor. */
-		cursor: z.string().max(64).optional(),
+		pageSize: z
+			.number()
+			.int()
+			.min(1)
+			.max(50)
+			.optional()
+			.describe('Items per page, max 50.'),
+		cursor: z
+			.string()
+			.max(64)
+			.optional()
+			.describe('nextCursor from the previous page. Omit for the newest page.'),
 	})
 	.strict();
 export type FeedListInput = z.input<typeof FeedListInputSchema>;
@@ -1091,6 +1266,7 @@ export type RemoetEndpointInputs = {
 	linkTreesGet: LinkTreesGetInput;
 	jobContextGet: JobContextGetInput;
 	starsCreate: StarsCreateInput;
+	starsDelete: StarsDeleteInput;
 	jobsSearch: JobsSearchInput;
 	companiesSearch: CompaniesSearchInput;
 	companiesGet: CompaniesGetInput;
@@ -1099,7 +1275,6 @@ export type RemoetEndpointInputs = {
 	savedJobsCreate: SavedJobsCreateInput;
 	savedJobsUpdate: SavedJobsUpdateInput;
 	savedJobsDelete: SavedJobsDeleteInput;
-	starsDelete: StarsDeleteInput;
 	feedList: FeedListInput;
 };
 
@@ -1123,6 +1298,7 @@ export type RemoetEndpointOutputs = {
 	linkTreesGet: LinkTreesGetResponse;
 	jobContextGet: JobContextGetResponse;
 	starsCreate: StarsCreateResponse;
+	starsDelete: StarsDeleteResponse;
 	jobsSearch: JobsSearchResponse;
 	companiesSearch: CompaniesSearchResponse;
 	companiesGet: CompaniesGetResponse;
@@ -1131,7 +1307,6 @@ export type RemoetEndpointOutputs = {
 	savedJobsCreate: SavedJobsCreateResponse;
 	savedJobsUpdate: SavedJobsUpdateResponse;
 	savedJobsDelete: SavedJobsDeleteResponse;
-	starsDelete: StarsDeleteResponse;
 	feedList: FeedListResponse;
 };
 
@@ -1155,6 +1330,7 @@ export const RemoetEndpointInputSchemas = {
 	linkTreesGet: LinkTreesGetInputSchema,
 	jobContextGet: JobContextGetInputSchema,
 	starsCreate: StarsCreateInputSchema,
+	starsDelete: StarsDeleteInputSchema,
 	jobsSearch: JobsSearchInputSchema,
 	companiesSearch: CompaniesSearchInputSchema,
 	companiesGet: CompaniesGetInputSchema,
@@ -1163,7 +1339,6 @@ export const RemoetEndpointInputSchemas = {
 	savedJobsCreate: SavedJobsCreateInputSchema,
 	savedJobsUpdate: SavedJobsUpdateInputSchema,
 	savedJobsDelete: SavedJobsDeleteInputSchema,
-	starsDelete: StarsDeleteInputSchema,
 	feedList: FeedListInputSchema,
 } as const;
 
@@ -1187,6 +1362,7 @@ export const RemoetEndpointOutputSchemas = {
 	linkTreesGet: LinkTreesGetResponseSchema,
 	jobContextGet: JobContextGetResponseSchema,
 	starsCreate: StarsCreateResponseSchema,
+	starsDelete: StarsDeleteResponseSchema,
 	jobsSearch: JobsSearchResponseSchema,
 	companiesSearch: CompaniesSearchResponseSchema,
 	companiesGet: CompaniesGetResponseSchema,
@@ -1195,6 +1371,5 @@ export const RemoetEndpointOutputSchemas = {
 	savedJobsCreate: SavedJobsCreateResponseSchema,
 	savedJobsUpdate: SavedJobsUpdateResponseSchema,
 	savedJobsDelete: SavedJobsDeleteResponseSchema,
-	starsDelete: StarsDeleteResponseSchema,
 	feedList: FeedListResponseSchema,
 } as const;

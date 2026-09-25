@@ -11,19 +11,7 @@ export const list: RemoetEndpoints['starredJobsList'] = async (ctx, input) => {
 	const parsed = RemoetEndpointInputSchemas.starredJobsList.parse(input);
 	const response = await makeRemoetRequest('/user/starred-jobs', ctx.key, {
 		method: 'GET',
-		query: {
-			searchQuery: parsed.searchQuery,
-			locationQuery: parsed.locationQuery,
-			techStack: parsed.techStack,
-			techStackMatch: parsed.techStackMatch,
-			remotePolicy: parsed.remotePolicy,
-			experienceLevel: parsed.experienceLevel,
-			salaryMin: parsed.salaryMin,
-			sortBy: parsed.sortBy,
-			sortOrder: parsed.sortOrder,
-			page: parsed.page,
-			pageSize: parsed.pageSize,
-		},
+		query: parsed,
 	});
 	const validated = RemoetEndpointOutputSchemas.starredJobsList.parse(response);
 

@@ -15,20 +15,7 @@ export const search: RemoetEndpoints['jobsSearch'] = async (ctx, input) => {
 	const parsed = RemoetEndpointInputSchemas.jobsSearch.parse(input);
 	const response = await makeRemoetRequest('/user/job-postings', ctx.key, {
 		method: 'GET',
-		query: {
-			searchQuery: parsed.searchQuery,
-			techStack: parsed.techStack,
-			techStackMatch: parsed.techStackMatch,
-			companySlug: parsed.companySlug,
-			remotePolicy: parsed.remotePolicy,
-			experienceLevel: parsed.experienceLevel,
-			salaryMin: parsed.salaryMin,
-			location: parsed.location,
-			sortBy: parsed.sortBy,
-			sortOrder: parsed.sortOrder,
-			page: parsed.page,
-			pageSize: parsed.pageSize,
-		},
+		query: parsed,
 	});
 	const validated = RemoetEndpointOutputSchemas.jobsSearch.parse(response);
 

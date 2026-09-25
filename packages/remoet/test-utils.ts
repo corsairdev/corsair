@@ -1,3 +1,5 @@
+import { ApiError } from 'corsair/http';
+import { RemoetAPIError } from './client';
 import type { RemoetContext } from './index';
 
 /** The fixed API key every mocked-request unit test signs requests with. */
@@ -24,4 +26,20 @@ export function testContext(key: string = TEST_KEY): RemoetContext {
 			set_webhook_signature: () => Promise.resolve(),
 		},
 	};
+}
+
+/** The error the client throws for a Remoet error response, for mocking a failed request. */
+export function remoetError(status: number, message: string): RemoetAPIError {
+	const cause = new ApiError(
+		{ method: 'GET', url: '/user' },
+		{
+			url: 'https://api.remoet.dev/user',
+			ok: false,
+			status,
+			statusText: '',
+			body: { statusCode: status, message },
+		},
+		message,
+	);
+	return new RemoetAPIError(message, { cause });
 }

@@ -1,6 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { ApiError } from 'corsair/http';
-import { makeRemoetRequest, RemoetAPIError } from './client';
+import { makeRemoetRequest } from './client';
 import { Companies, Jobs, SavedJobs, StarredJobs, Stars } from './endpoints';
 import type {
 	CompaniesGetResponse,
@@ -10,7 +9,7 @@ import type {
 	SavedJobsListResponse,
 	StarredJobsListResponse,
 } from './index';
-import { TEST_KEY, testContext } from './test-utils';
+import { remoetError, TEST_KEY, testContext } from './test-utils';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
@@ -25,22 +24,6 @@ const mockLog = jest.mocked(logEventFromContext);
 
 const context = testContext();
 const KEY = TEST_KEY;
-
-/** The error the client throws for a Remoet error response. */
-function remoetError(status: number, message: string): RemoetAPIError {
-	const cause = new ApiError(
-		{ method: 'GET', url: '/user' },
-		{
-			url: 'https://api.remoet.dev/user',
-			ok: false,
-			status,
-			statusText: '',
-			body: { statusCode: status, message },
-		},
-		message,
-	);
-	return new RemoetAPIError(message, { cause });
-}
 
 const jobPosting = {
 	id: '65f0000000000000000000a1',
@@ -275,26 +258,17 @@ describe('Remoet discovery endpoints', () => {
 			).rejects.toThrow();
 			expect(mockRequest).not.toHaveBeenCalled();
 		});
-
-		it('rejects an unknown key alongside valid filters', async () => {
-			await expect(
-				Jobs.search(context, {
-					pageSize: 20,
-					// @ts-expect-error: unknown key
-					minSalary: 100000,
-				}),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
-		});
 	});
 
 	describe('companies.search', () => {
-		it('sends its filters and paging', async () => {
+		it('sends every schema key through to the query', async () => {
 			mockRequest.mockResolvedValueOnce(companiesFixture);
 
 			const response = await Companies.search(context, {
+				starred: false,
 				searchQuery: 'data',
 				techStack: ['Java', 'Trino'],
+				techStackMatch: 'all',
 				experienceLevel: ['mid', 'senior'],
 				sortBy: 'jobCount',
 				page: 1,
@@ -305,10 +279,10 @@ describe('Remoet discovery endpoints', () => {
 			expect(mockRequest).toHaveBeenCalledWith('/user/companies', KEY, {
 				method: 'GET',
 				query: {
-					starred: undefined,
+					starred: false,
 					searchQuery: 'data',
 					techStack: ['Java', 'Trino'],
-					techStackMatch: undefined,
+					techStackMatch: 'all',
 					experienceLevel: ['mid', 'senior'],
 					sortBy: 'jobCount',
 					page: 1,
@@ -339,17 +313,6 @@ describe('Remoet discovery endpoints', () => {
 		it('rejects a page size over 100', async () => {
 			await expect(
 				Companies.search(context, { pageSize: 101 }),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
-		});
-
-		it('rejects an unknown key alongside a valid query', async () => {
-			await expect(
-				Companies.search(context, {
-					searchQuery: 'data',
-					// @ts-expect-error: unknown key
-					industry: 'fintech',
-				}),
 			).rejects.toThrow();
 			expect(mockRequest).not.toHaveBeenCalled();
 		});
@@ -387,28 +350,22 @@ describe('Remoet discovery endpoints', () => {
 			).rejects.toThrow();
 			expect(mockRequest).not.toHaveBeenCalled();
 		});
-
-		it('rejects an unknown key alongside a valid slug', async () => {
-			await expect(
-				Companies.get(context, {
-					slug: 'starburst',
-					// @ts-expect-error: unknown key
-					includePerks: true,
-				}),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
-		});
 	});
 
 	describe('starredJobs.list', () => {
-		it('sends its filters and reports the over-cap notice', async () => {
+		it('sends every schema key through to the query', async () => {
 			mockRequest.mockResolvedValueOnce(starredJobsFixture);
 
 			const response = await StarredJobs.list(context, {
+				searchQuery: 'engineer',
 				locationQuery: 'Boston',
 				techStack: ['Go'],
+				techStackMatch: 'any',
 				remotePolicy: ['hybrid', 'remote-restricted'],
+				experienceLevel: ['senior'],
+				salaryMin: 150000,
 				sortBy: 'salaryEnriched.from',
+				sortOrder: 'desc',
 				page: 1,
 				pageSize: 50,
 			});
@@ -418,15 +375,15 @@ describe('Remoet discovery endpoints', () => {
 			expect(mockRequest).toHaveBeenCalledWith('/user/starred-jobs', KEY, {
 				method: 'GET',
 				query: {
-					searchQuery: undefined,
+					searchQuery: 'engineer',
 					locationQuery: 'Boston',
 					techStack: ['Go'],
-					techStackMatch: undefined,
+					techStackMatch: 'any',
 					remotePolicy: ['hybrid', 'remote-restricted'],
-					experienceLevel: undefined,
-					salaryMin: undefined,
+					experienceLevel: ['senior'],
+					salaryMin: 150000,
 					sortBy: 'salaryEnriched.from',
-					sortOrder: undefined,
+					sortOrder: 'desc',
 					page: 1,
 					pageSize: 50,
 				},
@@ -437,17 +394,6 @@ describe('Remoet discovery endpoints', () => {
 				{ page: 1, resultCount: 1, totalCount: 1 },
 				'completed',
 			);
-		});
-
-		it('rejects an unknown key alongside a valid filter', async () => {
-			await expect(
-				StarredJobs.list(context, {
-					locationQuery: 'Boston',
-					// @ts-expect-error: unknown key
-					onlyRemote: true,
-				}),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
 		});
 	});
 
@@ -509,32 +455,6 @@ describe('Remoet discovery endpoints', () => {
 				SavedJobs.create(context, {
 					jobId: savedJob.jobId,
 					note: 'x'.repeat(501),
-				}),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
-		});
-
-		it('rejects an unknown key alongside a valid jobId', async () => {
-			await expect(
-				SavedJobs.create(context, {
-					jobId: savedJob.jobId,
-					// @ts-expect-error: unknown key
-					priority: 'high',
-				}),
-			).rejects.toThrow();
-			await expect(
-				SavedJobs.update(context, {
-					savedJobId: savedJob.id,
-					note: 'kept',
-					// @ts-expect-error: unknown key
-					priority: 'high',
-				}),
-			).rejects.toThrow();
-			await expect(
-				SavedJobs.delete(context, {
-					savedJobId: savedJob.id,
-					// @ts-expect-error: unknown key
-					reason: 'no longer interested',
 				}),
 			).rejects.toThrow();
 			expect(mockRequest).not.toHaveBeenCalled();
@@ -623,17 +543,6 @@ describe('Remoet discovery endpoints', () => {
 			await expect(
 				Stars.delete(context, { companySlug: 'starburst' }),
 			).rejects.toMatchObject({ status: 404 });
-		});
-
-		it('rejects an unknown key alongside a valid slug', async () => {
-			await expect(
-				Stars.delete(context, {
-					companySlug: 'starburst',
-					// @ts-expect-error: unknown key
-					reason: 'no longer relevant',
-				}),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
 		});
 	});
 });

@@ -14,16 +14,7 @@ export const search: RemoetEndpoints['companiesSearch'] = async (
 	const parsed = RemoetEndpointInputSchemas.companiesSearch.parse(input);
 	const response = await makeRemoetRequest('/user/companies', ctx.key, {
 		method: 'GET',
-		query: {
-			starred: parsed.starred,
-			searchQuery: parsed.searchQuery,
-			techStack: parsed.techStack,
-			techStackMatch: parsed.techStackMatch,
-			experienceLevel: parsed.experienceLevel,
-			sortBy: parsed.sortBy,
-			page: parsed.page,
-			pageSize: parsed.pageSize,
-		},
+		query: parsed,
 	});
 	const validated = RemoetEndpointOutputSchemas.companiesSearch.parse(response);
 
@@ -42,14 +33,12 @@ export const search: RemoetEndpoints['companiesSearch'] = async (
 
 /** Reads one company by slug (GET /user/companies/:slug). */
 export const get: RemoetEndpoints['companiesGet'] = async (ctx, input) => {
-	const parsed = RemoetEndpointInputSchemas.companiesGet.parse(input);
+	const { slug, ...query } =
+		RemoetEndpointInputSchemas.companiesGet.parse(input);
 	const response = await makeRemoetRequest(
-		`/user/companies/${encodeURIComponent(parsed.slug)}`,
+		`/user/companies/${encodeURIComponent(slug)}`,
 		ctx.key,
-		{
-			method: 'GET',
-			query: { checkTechStack: parsed.checkTechStack },
-		},
+		{ method: 'GET', query },
 	);
 	const validated = RemoetEndpointOutputSchemas.companiesGet.parse(response);
 

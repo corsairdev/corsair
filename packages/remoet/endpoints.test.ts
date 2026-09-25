@@ -16,8 +16,10 @@ import type {
 	ProfileGetLinksResponse,
 	ProfileGetResponse,
 	ProjectsListResponse,
+	RemoetContext,
 	WorkExperienceListResponse,
 } from './index';
+import { remoet, remoetEndpointSchemas } from './index';
 import { testContext } from './test-utils';
 
 jest.mock('corsair/core', () => ({
@@ -239,75 +241,46 @@ describe('Remoet endpoints', () => {
 		);
 	});
 
-	it('profile.update clears a field with null and sets visibility', async () => {
+	it('profile.update clears fields with null and sets visibility', async () => {
 		mockRequest.mockResolvedValueOnce({
-			updated: ['avatarUrl', 'summary', 'visibility'],
+			updated: ['avatarUrl', 'summary', 'facebookUrl', 'visibility'],
 		});
 
 		const response = await Profile.update(context, {
 			avatarUrl: null,
 			summary: null,
-			visibility: 'STARRED',
-		});
-
-		expect(response.updated).toEqual(['avatarUrl', 'summary', 'visibility']);
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/user/profile',
-			'remoet-test-key',
-			{
-				method: 'PATCH',
-				body: { avatarUrl: null, summary: null, visibility: 'STARRED' },
-			},
-		);
-	});
-
-	it('profile.update accepts null on every nullable social field, including facebookUrl', async () => {
-		mockRequest.mockResolvedValueOnce({
-			updated: ['facebookUrl', 'twitterUrl', 'youtubeUrl'],
-		});
-
-		const response = await Profile.update(context, {
 			facebookUrl: null,
 			twitterUrl: null,
 			youtubeUrl: null,
+			visibility: 'STARRED',
 		});
 
 		expect(response.updated).toEqual([
+			'avatarUrl',
+			'summary',
 			'facebookUrl',
-			'twitterUrl',
-			'youtubeUrl',
+			'visibility',
 		]);
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/user/profile',
 			'remoet-test-key',
 			{
 				method: 'PATCH',
-				body: { facebookUrl: null, twitterUrl: null, youtubeUrl: null },
+				body: {
+					avatarUrl: null,
+					summary: null,
+					facebookUrl: null,
+					twitterUrl: null,
+					youtubeUrl: null,
+					visibility: 'STARRED',
+				},
 			},
 		);
 	});
 
-	it('profile.update rejects bad input before calling Remoet', async () => {
-		await expect(Profile.update(context, {})).rejects.toThrow();
-		await expect(
-			Profile.update(context, { url: 'x'.repeat(501) }),
-		).rejects.toThrow();
+	it('profile.update refuses a summary over 5000 characters without calling Remoet', async () => {
 		await expect(
 			Profile.update(context, { summary: 'x'.repeat(5001) }),
-		).rejects.toThrow();
-		await expect(
-			// @ts-expect-error: visibility cannot be cleared with null
-			Profile.update(context, { visibility: null }),
-		).rejects.toThrow();
-		await expect(
-			// @ts-expect-error: not a Remoet visibility value
-			Profile.update(context, { visibility: 'PUBLIC' }),
-		).rejects.toThrow();
-		await expect(
-			// @ts-expect-error: email is not writable
-			// Paired with a valid field: alone, this would already fail the
-			// at-least-one-field check even if the schema were not strict.
-			Profile.update(context, { phone: '1', email: 'new@example.com' }),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
@@ -475,17 +448,6 @@ describe('Remoet endpoints', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('stars.create rejects an unknown key alongside a valid slug', async () => {
-		await expect(
-			Stars.create(context, {
-				companySlug: 'starburst',
-				// @ts-expect-error: unknown key
-				note: 'nice culture',
-			}),
-		).rejects.toThrow();
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
 	it('rejects provider payloads that fail output validation', async () => {
 		mockRequest.mockResolvedValue({ unexpected: 'shape' });
 
@@ -497,4 +459,75 @@ describe('Remoet endpoints', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(3);
 		mockRequest.mockReset();
 	});
+});
+
+describe('every endpoint validates its input before calling Remoet', () => {
+	const ID = '65f0000000000000000000a1';
+	// One otherwise-valid input per operation. Adding an operation without a
+	// row here fails the coverage test below.
+	const validInputs: Record<string, Record<string, unknown>> = {
+		'profile.get': {},
+		'profile.getLinks': {},
+		'profile.update': { phone: '1' },
+		'workExperience.list': {},
+		'workExperience.create': { title: 'Engineer', startDate: '2024-01-15' },
+		'workExperience.update': { id: ID, title: 'Engineer' },
+		'workExperience.delete': { id: ID },
+		'projects.list': {},
+		'projects.create': { title: 'Remoet', shortDescription: 'A job board' },
+		'projects.update': { id: ID, title: 'Remoet' },
+		'projects.delete': { id: ID },
+		'education.list': {},
+		'education.create': { institution: 'Lund University' },
+		'education.update': { id: ID, institution: 'Lund University' },
+		'education.delete': { id: ID },
+		'linkTrees.list': {},
+		'linkTrees.get': { slug: 'carl' },
+		'jobContext.get': { url: 'https://boards.greenhouse.io/acme/jobs/1' },
+		'stars.create': { companySlug: 'starburst' },
+		'stars.delete': { companySlug: 'starburst' },
+		'jobs.search': { pageSize: 20 },
+		'companies.search': { searchQuery: 'data' },
+		'companies.get': { slug: 'starburst' },
+		'starredJobs.list': { pageSize: 20 },
+		'savedJobs.list': {},
+		'savedJobs.create': { jobId: ID },
+		'savedJobs.update': { savedJobId: ID, note: 'kept' },
+		'savedJobs.delete': { savedJobId: ID },
+		'feed.list': {},
+	};
+	const endpoints = remoet().endpoints as unknown as Record<
+		string,
+		Record<string, (ctx: RemoetContext, input: unknown) => Promise<unknown>>
+	>;
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('has a row for every operation', () => {
+		expect(Object.keys(validInputs).sort()).toEqual(
+			Object.keys(remoetEndpointSchemas).sort(),
+		);
+	});
+
+	it.each(Object.entries(validInputs))(
+		'%s refuses an unknown key without sending a request',
+		async (path, validInput) => {
+			const [group, name] = path.split('.') as [string, string];
+			const endpoint = endpoints[group]?.[name];
+			expect(endpoint).toBeDefined();
+			// The row is valid on its own, so the unknown key is the only reason
+			// the call below fails.
+			const schemas = remoetEndpointSchemas as Record<
+				string,
+				{ input: { safeParse: (value: unknown) => { success: boolean } } }
+			>;
+			expect(schemas[path]?.input.safeParse(validInput).success).toBe(true);
+			await expect(
+				endpoint!(context, { ...validInput, notAField: true }),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
 });

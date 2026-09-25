@@ -1,6 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { ApiError } from 'corsair/http';
-import { makeRemoetRequest, RemoetAPIError } from './client';
+import { makeRemoetRequest } from './client';
 import { Education, Projects, WorkExperience } from './endpoints';
 import type {
 	EducationCreateResponse,
@@ -8,7 +7,7 @@ import type {
 	RemoetContext,
 	WorkExperienceCreateResponse,
 } from './index';
-import { TEST_KEY, testContext } from './test-utils';
+import { remoetError, TEST_KEY, testContext } from './test-utils';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
@@ -24,22 +23,6 @@ const mockLog = jest.mocked(logEventFromContext);
 const context = testContext();
 const KEY = TEST_KEY;
 const ID = '65f0000000000000000000e1';
-
-/** The error the client throws for a Remoet error response, as in discovery.test.ts. */
-function remoetError(status: number, message: string): RemoetAPIError {
-	const cause = new ApiError(
-		{ method: 'GET', url: '/user' },
-		{
-			url: 'https://api.remoet.dev/user',
-			ok: false,
-			status,
-			statusText: '',
-			body: { statusCode: status, message },
-		},
-		message,
-	);
-	return new RemoetAPIError(message, { cause });
-}
 
 const workExperience: WorkExperienceCreateResponse = {
 	id: ID,
@@ -115,7 +98,9 @@ describe('Remoet profile item writes', () => {
 			);
 		});
 
-		it('rejects null, an empty or unparseable date and unknown keys before calling Remoet', async () => {
+		it('rejects null, an empty or unparseable date before calling Remoet', async () => {
+			// Unknown-key strictness for create is covered once, below, in the
+			// shared mutation contract.
 			await expect(
 				WorkExperience.create(context, {
 					title: 'Staff Engineer',
@@ -136,14 +121,6 @@ describe('Remoet profile item writes', () => {
 					startDate: 'not-a-date',
 				}),
 			).rejects.toThrow('Must be a date');
-			await expect(
-				WorkExperience.create(context, {
-					title: 'Staff Engineer',
-					startDate: '2024-01-15',
-					// @ts-expect-error: unknown key, paired with valid fields
-					nickname: 'Staffy',
-				}),
-			).rejects.toThrow();
 			await expect(
 				WorkExperience.create(context, {
 					technologies: Array.from({ length: 51 }, (_, i) => `t${i}`),
@@ -445,13 +422,6 @@ describe.each(GROUPS)(
 	({ name, api, path, validCreateInput, fixture }) => {
 		afterEach(() => {
 			jest.clearAllMocks();
-		});
-
-		it('create rejects an unknown key even alongside otherwise-valid fields', async () => {
-			await expect(
-				api.create(context, { ...validCreateInput, notAField: true }),
-			).rejects.toThrow();
-			expect(mockRequest).not.toHaveBeenCalled();
 		});
 
 		it('update requires at least one field besides id', async () => {

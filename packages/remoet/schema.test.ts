@@ -62,26 +62,6 @@ describe('Remoet profile.update input', () => {
 		).toBe(false);
 	});
 
-	it('rejects keys Remoet would silently drop', () => {
-		// Each unknown key is paired with a valid field: alone, it would already
-		// fail the at-least-one-field check below even if the schema merely
-		// stripped unknown keys instead of rejecting them (i.e. without .strict()).
-		expect(
-			ProfileUpdateInputSchema.safeParse({ phone: '1', nickname: 'Someone' })
-				.success,
-		).toBe(false);
-		expect(
-			ProfileUpdateInputSchema.safeParse({
-				phone: '1',
-				email: 'new@example.com',
-			}).success,
-		).toBe(false);
-		expect(
-			ProfileUpdateInputSchema.safeParse({ phone: '1', slug: 'someone' })
-				.success,
-		).toBe(false);
-	});
-
 	it('requires at least one non-blank field', () => {
 		expect(ProfileUpdateInputSchema.safeParse({}).success).toBe(false);
 		expect(ProfileUpdateInputSchema.safeParse({ phone: '   ' }).success).toBe(
