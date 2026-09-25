@@ -85,6 +85,20 @@ const ContributionSchema = z.object({
 	id: z.number().describe('Contribution ID.'),
 });
 
+// Donation list responses contain a compact nonprofit record. The full
+// nonprofit lookup response additionally includes a primary cause and causes.
+const DonationNonProfitSchema = z.object({
+	ein: z.string().describe('Employer Identification Number.'),
+	name: z.string().describe('Organization name.'),
+	website: z.string().nullable().describe('Organization website URL.'),
+	city: z.string().describe('Organization city.'),
+	state: z.string().describe('Organization state.'),
+	public_path: z.string().describe('Daffy public profile path.'),
+	public_url: z.string().describe('Daffy public profile URL.'),
+	logo: z.string().nullable().describe('Organization logo URL.'),
+	cause_id: z.number().optional().describe('Primary charitable cause ID.'),
+});
+
 const DonationSchema = z.object({
 	id: z.number().describe('Donation ID.'),
 	amount: z.number().optional().describe('Donation amount in US dollars.'),
@@ -99,7 +113,7 @@ const DonationSchema = z.object({
 	visibility: z.string().optional().describe('Donation visibility.'),
 	created_at: z.string().describe('Donation creation timestamp.'),
 	mailed_at: z.string().nullable().describe('Donation mailed timestamp.'),
-	non_profit: NonProfitSchema.describe('Recipient nonprofit.'),
+	non_profit: DonationNonProfitSchema.describe('Recipient nonprofit.'),
 	fund: z
 		.object({ id: z.number(), name: z.string() })
 		.optional()

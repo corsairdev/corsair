@@ -66,6 +66,25 @@ const donation = {
 	mailed_at: null,
 	non_profit: nonprofit,
 };
+const publicDonation = {
+	id: 1,
+	user_id: 1,
+	status: 'completed',
+	note: 'Thank you',
+	created_at: '2022-11-23T01:28:17.821Z',
+	mailed_at: null,
+	non_profit: {
+		ein: '261544963',
+		name: 'Khan Academy',
+		website: 'https://www.khanacademy.org/',
+		city: 'Mountain View',
+		state: 'CA',
+		public_path: '/charities/261544963-khan-academy',
+		public_url: 'https://www.daffy.org/charities/261544963-khan-academy',
+		logo: 'https://static.daffy.org/nonprofit.png',
+		cause_id: 1,
+	},
+};
 const user = {
 	id: 1,
 	name: 'API User',
@@ -136,7 +155,7 @@ describe('Daffy endpoints', () => {
 	});
 
 	it('accounts.getUserDonations uses the public user donation route', async () => {
-		mockedRequest.mockResolvedValue(page({ ...donation, user_id: 1 }));
+		mockedRequest.mockResolvedValue(page(publicDonation));
 		await Accounts.getUserDonations(ctx, { userId: 1, page: 2 });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/users/1/donations',
