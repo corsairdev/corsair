@@ -4,8 +4,6 @@ import type { OpenAPIConfig } from '../async-core/OpenAPI';
 import type { RateLimitConfig } from '../async-core/rate-limit';
 import { request } from '../async-core/request';
 
-const originalFetch = global.fetch;
-
 const config: OpenAPIConfig = {
 	BASE: 'https://api.example.com',
 	VERSION: '1',
@@ -26,8 +24,8 @@ const baseRateLimitConfig: RateLimitConfig = {
 	headerNames: {},
 };
 
-function mockAlways429(): jest.Mock {
-	const fetchMock = jest.fn(
+function mockAlways429() {
+	return jest.spyOn(global, 'fetch').mockImplementation(
 		async () =>
 			new Response(JSON.stringify({ error: 'rate_limited' }), {
 				status: 429,
@@ -35,35 +33,47 @@ function mockAlways429(): jest.Mock {
 				headers: { 'content-type': 'application/json' },
 			}),
 	);
-	global.fetch = fetchMock as unknown as typeof fetch;
-	return fetchMock;
+}
+
+async function captureError(promise: Promise<unknown>): Promise<unknown> {
+	try {
+		await promise;
+	} catch (error) {
+		return error;
+	}
+	throw new Error('Expected request to reject');
 }
 
 afterEach(() => {
-	global.fetch = originalFetch;
+	jest.restoreAllMocks();
 });
 
 describe('request() with rateLimitConfig.enabled = false', () => {
 	it('does not retry a 429 when rate-limit handling is disabled', async () => {
 		const fetchMock = mockAlways429();
 
-		const promise = request(config, options, {
-			rateLimitConfig: { ...baseRateLimitConfig, enabled: false },
-		});
+		const error = await captureError(
+			request(config, options, {
+				rateLimitConfig: { ...baseRateLimitConfig, enabled: false },
+			}),
+		);
 
-		await expect(promise).rejects.toMatchObject({ status: 429 });
-		await expect(promise).rejects.toBeInstanceOf(ApiError);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 429 });
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('still retries a 429 up to maxRetries when rate-limit handling is enabled', async () => {
 		const fetchMock = mockAlways429();
 
-		const promise = request(config, options, {
-			rateLimitConfig: baseRateLimitConfig,
-		});
+		const error = await captureError(
+			request(config, options, {
+				rateLimitConfig: baseRateLimitConfig,
+			}),
+		);
 
-		await expect(promise).rejects.toMatchObject({ status: 429 });
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 429 });
 		expect(fetchMock).toHaveBeenCalledTimes(baseRateLimitConfig.maxRetries + 1);
 	});
 });
