@@ -1,0 +1,748 @@
+---
+title: API
+description: "API reference for Daffy: every `daffy.api.*` operation with input and output types."
+---
+
+Every `daffy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### getBalance
+
+`accounts.getBalance`
+
+Retrieve the authenticated user's fund balance.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | Total fund amount. |
+| `pending_deposit_balance` | `number` | Yes | Deposits not yet available in the fund. |
+| `portfolio_balance` | `number` | Yes | Fund amount invested in the portfolio. |
+| `available_balance` | `number` | Yes | Amount currently available for donations. |
+
+
+
+---
+
+### getContributions
+
+`accounts.getContributions`
+
+List contributions made to the authenticated fund.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getContributions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Page of returned records. |
+| `meta` | `object` | Yes | Pagination metadata. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  units: number,
+  type: string,
+  status: string,
+  valuation: number,
+  currency: string,
+  frequency: string,
+  created_at: string,
+  received_at?: string | null,
+  completed_at?: string | null,
+  id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDonations
+
+`accounts.getDonations`
+
+List donations made by the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getDonations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Page of returned records. |
+| `meta` | `object` | Yes | Pagination metadata. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  amount?: number,
+  user_id?: number,
+  status: string,
+  note?: string | null,
+  scheduled_donation_id?: number | null,
+  visibility?: string,
+  created_at: string,
+  mailed_at?: string | null,
+  non_profit: {
+    ein: string,
+    name: string,
+    website?: string | null,
+    city: string,
+    state: string,
+    public_path: string,
+    public_url: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    logo?: string | null,
+    cause: {
+      id: number,
+      name: string,
+      logo?: string | null,
+      color: string
+    },
+    causes: {
+      id: number,
+      name: string,
+      logo?: string | null,
+      color: string
+    }[]
+  },
+  fund?: {
+    id: number,
+    name: string
+  },
+  user?: {
+    id: number,
+    name: string,
+    avatar?: string | null,
+    slug: string,
+    city?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserByUsername
+
+`accounts.getUserByUsername`
+
+Retrieve a public user profile by username.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserByUsername({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Public Daffy username. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | User ID. |
+| `name` | `string` | Yes | User name. |
+| `avatar` | `string` | No | User avatar URL. |
+| `slug` | `string` | Yes | User profile slug. |
+| `cover_image` | `string` | No | User cover image URL. |
+| `fund_name` | `string` | Yes | User fund name. |
+| `current_fund` | `object` | Yes | Current donor-advised fund. |
+| `follows_user` | `boolean` | Yes | Whether the viewer follows this user. |
+| `follows_viewer` | `boolean` | Yes | Whether this user follows the viewer. |
+| `onboarding_status` | `string` | Yes | User onboarding status. |
+
+<AccordionGroup>
+<Accordion title="current_fund full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  summary: string,
+  causes: {
+    id: number,
+    name: string,
+    logo?: string | null,
+    color: string
+  }[],
+  users: {
+    id: number,
+    name: string,
+    avatar?: string | null,
+    slug: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserCauses
+
+`accounts.getUserCauses`
+
+Retrieve a user's supported charitable causes.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserCauses({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `number` | Yes | Daffy user ID. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  logo?: string | null,
+  color: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUserDonations
+
+`accounts.getUserDonations`
+
+Retrieve a user's public donations.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserDonations({ userId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number. |
+| `userId` | `number` | Yes | Daffy user ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Page of returned records. |
+| `meta` | `object` | Yes | Pagination metadata. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  amount?: number,
+  user_id?: number,
+  status: string,
+  note?: string | null,
+  scheduled_donation_id?: number | null,
+  visibility?: string,
+  created_at: string,
+  mailed_at?: string | null,
+  non_profit: {
+    ein: string,
+    name: string,
+    website?: string | null,
+    city: string,
+    state: string,
+    public_path: string,
+    public_url: string,
+    latitude?: number | null,
+    longitude?: number | null,
+    logo?: string | null,
+    cause: {
+      id: number,
+      name: string,
+      logo?: string | null,
+      color: string
+    },
+    causes: {
+      id: number,
+      name: string,
+      logo?: string | null,
+      color: string
+    }[]
+  },
+  fund?: {
+    id: number,
+    name: string
+  },
+  user?: {
+    id: number,
+    name: string,
+    avatar?: string | null,
+    slug: string,
+    city?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserProfile
+
+`accounts.getUserProfile`
+
+Retrieve the authenticated user's profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.accounts.getUserProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | User ID. |
+| `name` | `string` | Yes | User name. |
+| `avatar` | `string` | No | User avatar URL. |
+| `slug` | `string` | Yes | User profile slug. |
+| `cover_image` | `string` | No | User cover image URL. |
+| `fund_name` | `string` | Yes | User fund name. |
+| `current_fund` | `object` | Yes | Current donor-advised fund. |
+| `follows_user` | `boolean` | Yes | Whether the viewer follows this user. |
+| `follows_viewer` | `boolean` | Yes | Whether this user follows the viewer. |
+| `onboarding_status` | `string` | Yes | User onboarding status. |
+
+<AccordionGroup>
+<Accordion title="current_fund full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  summary: string,
+  causes: {
+    id: number,
+    name: string,
+    logo?: string | null,
+    color: string
+  }[],
+  users: {
+    id: number,
+    name: string,
+    avatar?: string | null,
+    slug: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gifts
+
+### create
+
+`gifts.create`
+
+Create a Daffy charitable gift for a beneficiary.
+
+**Risk:** `write`
+
+```ts
+await corsair.daffy.api.gifts.create({ name: 'Jamie', amount: 18 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Gift beneficiary name. |
+| `amount` | `number` | Yes | Gift amount in US dollars, minimum 18. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Gift beneficiary name. |
+| `amount` | `number` | Yes | Gift amount in US dollars. |
+| `message` | `string` | No | Gift message. |
+| `code` | `string` | Yes | Unique gift code. |
+| `ein` | `string` | No | Associated nonprofit EIN. |
+| `seen` | `boolean` | Yes | Whether the gift was seen. |
+| `status` | `new \| accepted \| denied \| claimed` | Yes | Gift status. |
+| `updated_at` | `string` | Yes | Gift status update timestamp. |
+| `created_at` | `string` | Yes | Gift creation timestamp. |
+| `claimed` | `boolean` | Yes | Whether the gift was claimed. |
+| `url` | `string` | Yes | Shareable gift URL. |
+
+
+
+---
+
+### getByCode
+
+`gifts.getByCode`
+
+Retrieve a gift by its unique code.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.gifts.getByCode({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Unique gift UUID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Gift beneficiary name. |
+| `amount` | `number` | Yes | Gift amount in US dollars. |
+| `message` | `string` | No | Gift message. |
+| `code` | `string` | Yes | Unique gift code. |
+| `ein` | `string` | No | Associated nonprofit EIN. |
+| `seen` | `boolean` | Yes | Whether the gift was seen. |
+| `status` | `new \| accepted \| denied \| claimed` | Yes | Gift status. |
+| `updated_at` | `string` | Yes | Gift status update timestamp. |
+| `created_at` | `string` | Yes | Gift creation timestamp. |
+| `claimed` | `boolean` | Yes | Whether the gift was claimed. |
+| `url` | `string` | Yes | Shareable gift URL. |
+
+
+
+---
+
+### list
+
+`gifts.list`
+
+List gifts associated with the authenticated user.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.gifts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Page of returned records. |
+| `meta` | `object` | Yes | Pagination metadata. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name: string,
+  amount: number,
+  message?: string | null,
+  code: string,
+  ein?: string | null,
+  seen: boolean,
+  status: new | accepted | denied | claimed,
+  updated_at: string,
+  created_at: string,
+  claimed: boolean,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Non Profits
+
+### getByEin
+
+`nonProfits.getByEin`
+
+Retrieve a nonprofit organization by EIN.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.nonProfits.getByEin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ein` | `string` | Yes | Nonprofit employer identification number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ein` | `string` | Yes | Employer Identification Number. |
+| `name` | `string` | Yes | Organization name. |
+| `website` | `string` | No | Organization website URL. |
+| `city` | `string` | Yes | Organization city. |
+| `state` | `string` | Yes | Organization state. |
+| `public_path` | `string` | Yes | Daffy public profile path. |
+| `public_url` | `string` | Yes | Daffy public profile URL. |
+| `latitude` | `number` | No | Organization latitude. |
+| `longitude` | `number` | No | Organization longitude. |
+| `logo` | `string` | No | Organization logo URL. |
+| `cause` | `object` | Yes | Primary charitable cause. |
+| `causes` | `object[]` | Yes | All charitable causes. |
+
+<AccordionGroup>
+<Accordion title="cause full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  logo?: string | null,
+  color: string
+}
+```
+</Accordion>
+
+<Accordion title="causes full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  logo?: string | null,
+  color: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`nonProfits.search`
+
+Search nonprofit organizations by cause or text.
+
+**Risk:** `read`
+
+```ts
+await corsair.daffy.api.nonProfits.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number. |
+| `causeId` | `number` | No | Daffy cause ID. |
+| `query` | `string` | No | Nonprofit name or keyword. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | Page of returned records. |
+| `meta` | `object` | Yes | Pagination metadata. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  ein: string,
+  name: string,
+  website?: string | null,
+  city: string,
+  state: string,
+  public_path: string,
+  public_url: string,
+  latitude?: number | null,
+  longitude?: number | null,
+  logo?: string | null,
+  cause: {
+    id: number,
+    name: string,
+    logo?: string | null,
+    color: string
+  },
+  causes: {
+    id: number,
+    name: string,
+    logo?: string | null,
+    color: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number,
+  page: number,
+  last: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

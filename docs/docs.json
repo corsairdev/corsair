@@ -1344,6 +1344,14 @@
                 ]
               },
               {
+                "group": "Daffy",
+                "pages": [
+                  "plugins/daffy/overview",
+                  "plugins/daffy/api",
+                  "plugins/daffy/database"
+                ]
+              },
+              {
                 "group": "Databricks",
                 "pages": [
                   "plugins/databricks/overview",
