@@ -1,7 +1,16 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
+import {
+	DummyDriver,
+	Kysely,
+	PostgresAdapter,
+	PostgresIntrospector,
+	PostgresQueryCompiler,
+} from 'kysely';
 import { z } from 'zod';
+import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
+import { createKyselyEntityClient } from '../db/kysely/orm';
 import { createPluginOrm } from '../db/orm';
 
 const ChannelSchema = z.object({ name: z.string() });
@@ -81,5 +90,38 @@ describe('entity search treats contains/startsWith/endsWith text literally', () 
 			data: { name: { contains: 'eng' } },
 		});
 		expect(ids(rows)).toEqual(['teamXeng', 'team_eng']);
+	});
+});
+
+describe('LIKE escape on Postgres', () => {
+	test('binds the escape character instead of inlining a backslash literal', async () => {
+		// With standard_conforming_strings=off, an inline `escape '\'` makes the
+		// backslash escape the closing quote and the query fails to parse.
+		const statements: string[] = [];
+		const db = new Kysely<CorsairKyselyDatabase>({
+			dialect: {
+				createAdapter: () => new PostgresAdapter(),
+				createDriver: () => new DummyDriver(),
+				createIntrospector: (k) => new PostgresIntrospector(k),
+				createQueryCompiler: () => new PostgresQueryCompiler(),
+			},
+			log: (event) => {
+				statements.push(event.query.sql);
+			},
+		});
+		const client = createKyselyEntityClient(
+			db,
+			async () => 'acc-1',
+			'channels',
+			'1.0.0',
+			ChannelSchema,
+		);
+		await client.search({
+			entity_id: { startsWith: 'C_' },
+			data: { name: { contains: 'team_' } },
+		});
+		const sql = statements.join('\n');
+		expect(sql).toMatch(/like \$\d+ escape \$\d+/);
+		expect(sql).not.toContain("escape '\\'");
 	});
 });

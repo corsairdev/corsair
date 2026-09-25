@@ -75,9 +75,13 @@ function escapeLike(value: string): string {
 	return value.replace(/[\\%_]/g, '\\$&');
 }
 
+const LIKE_ESCAPE = '\\';
+
 /**
- * `expr LIKE pattern ESCAPE '\'`. The explicit ESCAPE is required on SQLite,
- * which has no default escape character; on Postgres it matches the default.
+ * `expr LIKE pattern ESCAPE <backslash>`. The explicit ESCAPE is required on
+ * SQLite, which has no default escape character; on Postgres it matches the
+ * default. The escape character is bound as a parameter so the SQL does not
+ * depend on Postgres' `standard_conforming_strings` setting.
  */
 function likeLiteral(
 	expr: Expression<unknown>,
@@ -86,7 +90,7 @@ function likeLiteral(
 	suffix: string,
 ) {
 	const pattern = `${prefix}${escapeLike(value)}${suffix}`;
-	return sql<boolean>`${expr} like ${pattern} escape '\\'`;
+	return sql<boolean>`${expr} like ${pattern} escape ${LIKE_ESCAPE}`;
 }
 
 function applyStringFilter(
