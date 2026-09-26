@@ -21,6 +21,10 @@ test('uses report-only CSP while the production allowlist is observed', () => {
 		headerValue('Content-Security-Policy-Report-Only') ?? '',
 		/https:\/\/cdn\.sanity\.io/,
 	);
+	assert.match(
+		headerValue('Content-Security-Policy-Report-Only') ?? '',
+		/report-uri \/api\/csp-reports/,
+	);
 });
 
 test('sets defense-in-depth browser headers without enabling HSTS preload', () => {

@@ -14,6 +14,7 @@ const contentSecurityPolicyReportOnly = [
 	"img-src 'self' data: https://cdn.sanity.io https://github.com https://twenty-icons.com",
 	"font-src 'self' data:",
 	"connect-src 'self' https://us.i.posthog.com https://us-assets.i.posthog.com",
+	'report-uri /api/csp-reports',
 ].join('; ');
 
 /**
