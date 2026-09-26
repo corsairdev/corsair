@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next';
+import { securityHeaders } from './src/lib/security-headers';
 
 const nextConfig: NextConfig = {
+	poweredByHeader: false,
 	images: {
 		remotePatterns: [
 			{
@@ -17,6 +19,9 @@ const nextConfig: NextConfig = {
 				permanent: true,
 			},
 		];
+	},
+	async headers() {
+		return [{ source: '/:path*', headers: [...securityHeaders] }];
 	},
 	// PostHog reverse proxy (US region): assets served from us-assets, everything
 	// else (ingest, flags, recordings) from us.i. Specific rules must precede the
