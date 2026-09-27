@@ -1,0 +1,1891 @@
+{
+  "id": "zohobigin",
+  "displayName": "Zoho Bigin",
+  "description": "Zoho Bigin plugin for Corsair",
+  "npmPackageName": "@corsair-dev/zohobigin",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 55,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zohobigin.api.attachments.delete",
+      "shortPath": "attachments.delete",
+      "description": "Delete attachment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.attachments.download",
+      "shortPath": "attachments.download",
+      "description": "Download attachment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attachmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "zohobigin.api.attachments.get",
+      "shortPath": "attachments.get",
+      "description": "Get attachments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.attachments.upload",
+      "shortPath": "attachments.upload",
+      "description": "Upload attachment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "attachmentUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachment_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.bulk.createReadJob",
+      "shortPath": "bulk.createReadJob",
+      "description": "Create bulk read job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{}"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.bulk.downloadReadResult",
+      "shortPath": "bulk.downloadReadResult",
+      "description": "Download bulk read result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "zohobigin.api.bulk.getReadJobStatus",
+      "shortPath": "bulk.getReadJobStatus",
+      "description": "Get bulk read job status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getCustomView",
+      "shortPath": "metadata.getCustomView",
+      "description": "Get custom view",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "viewId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_views",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getCustomViews",
+      "shortPath": "metadata.getCustomViews",
+      "description": "Get custom views",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_views",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getFields",
+      "shortPath": "metadata.getFields",
+      "description": "Get fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getLayout",
+      "shortPath": "metadata.getLayout",
+      "description": "Get layout",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "layoutId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layouts",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getLayouts",
+      "shortPath": "metadata.getLayouts",
+      "description": "Get layouts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "layouts",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getModule",
+      "shortPath": "metadata.getModule",
+      "description": "Get module metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modules",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getModules",
+      "shortPath": "metadata.getModules",
+      "description": "Get modules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "void"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modules",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.metadata.getRelatedLists",
+      "shortPath": "metadata.getRelatedLists",
+      "description": "Get related lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "related_lists",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create notes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Note_Title?: string, Note_Content: string, Parent_Id?: string, se_module?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.createRecordNotes",
+      "shortPath": "notes.createRecordNotes",
+      "description": "Create record notes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Note_Title?: string, Note_Content: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete notes",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.deleteRecordNote",
+      "shortPath": "notes.deleteRecordNote",
+      "description": "Delete record note",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.getAll",
+      "shortPath": "notes.getAll",
+      "description": "Get all notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.getRecordNotes",
+      "shortPath": "notes.getRecordNotes",
+      "description": "Get record notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noteId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ Note_Title?: string, Note_Content: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notifications.disable",
+      "shortPath": "notifications.disable",
+      "description": "Disable notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notifications.enable",
+      "shortPath": "notifications.enable",
+      "description": "Enable notifications",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch",
+            "optional": false,
+            "type": "{ channel_id: string, events: string[], token?: string, notify_url: string, channel_expiry?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notifications.getDetails",
+      "shortPath": "notifications.getDetails",
+      "description": "Get notification details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notifications.updateDetails",
+      "shortPath": "notifications.updateDetails",
+      "description": "Update notification details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch",
+            "optional": false,
+            "type": "{ channel_id: string, events: string[], token?: string, notify_url: string, channel_expiry?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.notifications.updateInfo",
+      "shortPath": "notifications.updateInfo",
+      "description": "Update notification info",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "watch",
+            "optional": false,
+            "type": "{ channel_id: string, events: string[], token?: string, notify_url: string, channel_expiry?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.add",
+      "shortPath": "records.add",
+      "description": "Add records to module",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string",
+            "description": "Target module API name e.g. Contacts, Pipelines, Accounts"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]",
+            "description": "Array of record objects to insert"
+          },
+          {
+            "key": "trigger",
+            "optional": true,
+            "type": "string[]",
+            "description": "Triggers such as approval, workflow, blueprint"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.count",
+      "shortPath": "records.count",
+      "description": "Count records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cvid",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.delete",
+      "shortPath": "records.delete",
+      "description": "Delete multiple records",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.deletePhoto",
+      "shortPath": "records.deletePhoto",
+      "description": "Delete record photo",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.deleteRecord",
+      "shortPath": "records.deleteRecord",
+      "description": "Delete single record",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.downloadPhoto",
+      "shortPath": "records.downloadPhoto",
+      "description": "Download record photo",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "zohobigin.api.records.get",
+      "shortPath": "records.get",
+      "description": "Get records from module",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ per_page?: number, count?: number, page?: number, more_records?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.getDeleted",
+      "shortPath": "records.getDeleted",
+      "description": "Get deleted records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | recycle | permanent"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.getPipelines",
+      "shortPath": "records.getPipelines",
+      "description": "Get team pipelines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ per_page?: number, count?: number, page?: number, more_records?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.getRecord",
+      "shortPath": "records.getRecord",
+      "description": "Get single record",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.getRelated",
+      "shortPath": "records.getRelated",
+      "description": "Get related records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relatedList",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ per_page?: number, count?: number, page?: number, more_records?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.search",
+      "shortPath": "records.search",
+      "description": "Search records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "word",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{ per_page?: number, count?: number, page?: number, more_records?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.update",
+      "shortPath": "records.update",
+      "description": "Update multiple records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{} & { id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.updateRecord",
+      "shortPath": "records.updateRecord",
+      "description": "Update single record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.updateRelated",
+      "shortPath": "records.updateRelated",
+      "description": "Update related records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relatedList",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.uploadPhoto",
+      "shortPath": "records.uploadPhoto",
+      "description": "Upload record photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.records.upsert",
+      "shortPath": "records.upsert",
+      "description": "Upsert records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "duplicate_check_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.tags.addToRecords",
+      "shortPath": "tags.addToRecords",
+      "description": "Add tags to records",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ name: string }[]"
+          },
+          {
+            "key": "overWrite",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ name: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.tags.delinkRelated",
+      "shortPath": "tags.delinkRelated",
+      "description": "Delink related records",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "module",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recordId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relatedList",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "relatedRecordId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ code: string, details: {}, message: string, status: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.getOrganization",
+      "shortPath": "users.getOrganization",
+      "description": "Get organization details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "void"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.getProfiles",
+      "shortPath": "users.getProfiles",
+      "description": "Get profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "void"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.getRoles",
+      "shortPath": "users.getRoles",
+      "description": "Get roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "void"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.getUser",
+      "shortPath": "users.getUser",
+      "description": "Get user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.getUsers",
+      "shortPath": "users.getUsers",
+      "description": "Get users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "ActiveUsers | DeactiveUsers | AdminUsers | AllUsers"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "info",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.updateUser",
+      "shortPath": "users.updateUser",
+      "description": "Update user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.updateUsers",
+      "shortPath": "users.updateUsers",
+      "description": "Update users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{} & { id: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohobigin.api.users.uploadOrgPhoto",
+      "shortPath": "users.uploadOrgPhoto",
+      "description": "Upload organization photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

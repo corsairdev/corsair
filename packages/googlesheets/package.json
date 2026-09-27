@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/googlesheets",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Google sheets plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,9 +40,15 @@
     "googlesheets",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/googlesheets"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/googlesheets"
 }

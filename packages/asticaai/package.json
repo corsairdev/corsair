@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/asticaai",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "AsticaAi plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -37,9 +37,15 @@
     "asticaai",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/asticaai"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/asticaai"
 }

@@ -1,0 +1,194 @@
+---
+title: API
+description: "API reference for TPSCheck: every `tpscheck.api.*` operation with input and output types."
+---
+
+Every `tpscheck.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch
+
+### post
+
+`batch.post`
+
+Check multiple UK phone numbers against TPS and CTPS registers
+
+**Risk:** `read`
+
+```ts
+await corsair.tpscheck.api.batch.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phones` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | No | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  input: string,
+  e164?: string,
+  valid: boolean,
+  line?: {
+    type?: string,
+    original_carrier?: string,
+    location?: string,
+    country?: string,
+    prefix?: string
+  },
+  reachability?: {
+    status?: string,
+    confidence?: string
+  },
+  tps?: boolean,
+  ctps?: boolean,
+  risk?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Check
+
+### post
+
+`check.post`
+
+Check a UK phone number against TPS and CTPS registers
+
+**Risk:** `read`
+
+```ts
+await corsair.tpscheck.api.check.post({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `e164` | `string` | No | — |
+| `valid` | `boolean` | Yes | — |
+| `line` | `object` | No | — |
+| `reachability` | `object` | No | — |
+| `tps` | `boolean` | No | — |
+| `ctps` | `boolean` | No | — |
+| `risk` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="line full type">
+
+```ts
+{
+  type?: string,
+  original_carrier?: string,
+  location?: string,
+  country?: string,
+  prefix?: string
+}
+```
+</Accordion>
+
+<Accordion title="reachability full type">
+
+```ts
+{
+  status?: string,
+  confidence?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Get TPSCheck API usage and remaining credits
+
+**Risk:** `read`
+
+```ts
+await corsair.tpscheck.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests_used` | `number` | Yes | — |
+| `requests_remaining` | `number` | Yes | — |
+| `monthly_limit` | `number` | Yes | — |
+| `plan` | `string` | Yes | — |
+| `reset_date` | `string` | Yes | — |
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Check TPSCheck API health and version
+
+**Risk:** `read`
+
+```ts
+await corsair.tpscheck.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+

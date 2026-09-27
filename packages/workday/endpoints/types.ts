@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import type { WorkdayRouteName } from './routes';
-import { workdayRoutes } from './routes';
 
 // Workday responses vary widely across services; validate known keys + allow extras.
 export const WorkdayResourceSchema = z

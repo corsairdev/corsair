@@ -71,4 +71,40 @@ describe('account key manager concurrent field writes', () => {
 			cleanup();
 		}
 	});
+
+	// Regression: a long-lived manager (kept alive by the /call client cache) must
+	// not serve a token snapshot from its first read after the account is rewritten
+	// out-of-band (reconnect / Hub token (re)delivery). Before the account-row
+	// re-read fix this returned the stale token → AuthMissingError → "needs reconnect"
+	// even though the DB held a valid one.
+	it('re-reads the account so an out-of-band token write is observed', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedOutlookAccount(database);
+			const reader = createAccountKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				tenantId: 'default',
+				kek: KEK,
+				database,
+			});
+			// First read populates any per-manager cache with the seeded token.
+			expect(await reader.get_access_token()).toBe('tok-old');
+
+			// A separate manager rewrites the token, as Hub delivery does on reconnect.
+			const writer = createAccountKeyManager({
+				authType: 'oauth_2',
+				integrationName: 'outlook',
+				tenantId: 'default',
+				kek: KEK,
+				database,
+			});
+			await writer.set_access_token('tok-new');
+
+			// The original manager must observe the new token, not its snapshot.
+			expect(await reader.get_access_token()).toBe('tok-new');
+		} finally {
+			cleanup();
+		}
+	});
 });
