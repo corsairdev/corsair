@@ -30,14 +30,30 @@ export function compactBody(
  * Resolves the account subdomain - the second half of the Workable
  * credential, https://<subdomain>.workable.com.
  *
+ * Only authenticated endpoints call this (the public job-board endpoints
+ * resolve their subdomain directly), so it also enforces key presence: a
+ * tenant with no stored key gets AuthMissingError here - before any request
+ * is issued - instead of a downstream configuration error. The keyBuilder
+ * deliberately resolves empty so keyless public calls keep working, which is
+ * why this check lives here rather than there.
+ *
  * Raises rather than returning an empty string so a missing subdomain
  * surfaces as the configuration gap it is, instead of a confusing transport
  * error against `https://.workable.com`.
  */
 export async function resolveAccount(ctx: {
+	key?: string;
 	options?: { account?: string };
 	keys?: { get_account?: () => Promise<string | null | undefined> };
 }): Promise<string> {
+	if (!ctx.key) {
+		throw new AuthMissingError(
+			'workable',
+			'api_key',
+			'[auth-missing:workable:api_key]: a Workable access token is required - generate one under Settings > Integrations > Apps',
+		);
+	}
+
 	const account =
 		ctx.options?.account ?? (await ctx.keys?.get_account?.()) ?? '';
 

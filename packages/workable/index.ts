@@ -501,9 +501,18 @@ export function workable<const T extends WorkablePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				// Resolve (never throw): the unauthenticated job-board endpoints
 				// ignore ctx.key entirely, so they must work without a connected
-				// account. Authenticated endpoints fail fast in the HTTP client
-				// via assertCredentials instead (MISSING_ACCESS_TOKEN).
-				return (await ctx.keys.get_api_key()) ?? '';
+				// account. Authenticated endpoints enforce key presence
+				// themselves via resolveAccount, preserving AuthMissingError.
+				try {
+					return (await ctx.keys.get_api_key()) ?? '';
+				} catch (error) {
+					// why safe: narrows to the uninitialized-tenant case, which
+					// carries no credential to resolve — anything else rethrows.
+					if (error instanceof Error && /no dek found/i.test(error.message)) {
+						return '';
+					}
+					throw error;
+				}
 			}
 			return '';
 		},

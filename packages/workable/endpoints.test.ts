@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import * as Accounts from './endpoints/accounts';
 import * as Candidates from './endpoints/candidates';
 import * as Departments from './endpoints/departments';
@@ -40,7 +41,7 @@ function makeStore() {
 }
 
 /** Builds a mock endpoint context bound to the `example` test account. */
-function makeCtx() {
+function makeCtx(key = 'test-token') {
 	const stores = {
 		departments: makeStore(),
 		employees: makeStore(),
@@ -49,7 +50,7 @@ function makeCtx() {
 		candidates: makeStore(),
 	};
 	const ctx = {
-		key: 'test-token',
+		key,
 		options: { account: 'example' },
 		keys: { get_account: async () => 'example' },
 		db: stores,
@@ -97,6 +98,14 @@ describe('Workable endpoints', () => {
 	}
 
 	describe('accounts (WORKABLE_GET_ACCOUNTS / WORKABLE_GET_ACCOUNT)', () => {
+		it('raises AuthMissingError before any request when no key is stored', async () => {
+			const { ctx } = makeCtx('');
+			await expect(Departments.list(ctx, {})).rejects.toBeInstanceOf(
+				AuthMissingError,
+			);
+			expect(calls).toHaveLength(0);
+		});
+
 		it('accounts.list hits GET /accounts', async () => {
 			const { ctx } = makeCtx();
 			respondWith({ accounts: [{ id: '1', subdomain: 'example' }] });

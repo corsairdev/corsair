@@ -195,5 +195,24 @@ describe('Workable client', () => {
 			);
 			expect(key).toBe('');
 		});
+
+		it('resolves to an empty key when the tenant was never initialized', async () => {
+			const { workable } = await import('./index');
+			const uninitialized = {
+				authType: 'api_key',
+				options: {},
+				keys: {
+					get_api_key: async (): Promise<string | null> => {
+						throw new Error(
+							'No DEK found for account (tenant: "default"). Initialize the account first.',
+						);
+					},
+					get_account: async () => 'example',
+				},
+				tenantId: 'default',
+			};
+			const key = await keyBuilderOf(workable({}))(uninitialized, 'endpoint');
+			expect(key).toBe('');
+		});
 	});
 });
