@@ -4,6 +4,8 @@ import { z } from 'zod';
  * Workable SPI v3 entity shapes for Corsair DB cache (`ctx.db.*`).
  * Loose + catchall - Workable's account-configured custom fields mean
  * responses carry tenant-specific extras beyond what's documented.
+ * Every `z.unknown()` below is that same tenant-specific free-form data,
+ * validated by zod before the plugin reads any known field.
  */
 
 /** GET /departments, POST /departments, PUT /departments. */
@@ -40,6 +42,7 @@ export const WorkableMember = z
 		email: z.string().optional(),
 		roles: z.array(z.string()).optional(),
 		active: z.boolean().optional(),
+		// unknown: collaboration-rule values are account-configured and undocumented.
 		collaboration_rules: z.array(z.unknown()).optional(),
 	})
 	.catchall(z.unknown());

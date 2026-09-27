@@ -1,12 +1,28 @@
 import { WorkableAPIError } from './client';
 
+/** Reads a fetch stub's headers into a plain object regardless of their shape. */
 function readHeaders(init: RequestInit | undefined): Record<string, string> {
 	const raw = init?.headers;
 	if (!raw) return {};
 	if (raw instanceof Headers) return Object.fromEntries(raw.entries());
 	if (Array.isArray(raw)) return Object.fromEntries(raw);
+	// why safe: test-only narrowing — Headers and array branches handled
+	// above, so the remainder is the plain-object HeadersInit branch.
 	return Object.fromEntries(Object.entries(raw as Record<string, string>));
 }
+
+jest.mock('corsair/core', () => ({
+	logEventFromContext: jest.fn().mockResolvedValue(undefined),
+	AuthMissingError: class AuthMissingError extends Error {
+		constructor(
+			public plugin: string,
+			public credential: string,
+			message?: string,
+		) {
+			super(message ?? `Missing ${credential} for ${plugin}`);
+		}
+	},
+}));
 
 describe('Workable client', () => {
 	const originalFetch = globalThis.fetch;
@@ -14,6 +30,8 @@ describe('Workable client', () => {
 
 	beforeEach(() => {
 		calls = [];
+		// why safe: test-only fetch stub — signature matches fetch, cast
+		// bridges the local `(url: string)` narrowing to the global type.
 		globalThis.fetch = (async (url: string, init?: RequestInit) => {
 			calls.push({ url: String(url), init });
 			return new Response(JSON.stringify({ departments: [] }), {
@@ -110,6 +128,72 @@ describe('Workable client', () => {
 				WorkableAPIError,
 			);
 			expect(calls).toHaveLength(0);
+		});
+
+		it('routes the documented /locations suffix without authentication', async () => {
+			const { makeWorkablePublicRequest } = await import('./client');
+			await makeWorkablePublicRequest('example', undefined, '/locations');
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.url).toBe(
+				'https://www.workable.com/api/accounts/example/locations',
+			);
+			const headers = readHeaders(calls[0]?.init);
+			expect(Object.keys(headers).map((h) => h.toLowerCase())).not.toContain(
+				'authorization',
+			);
+		});
+	});
+
+	describe('keyBuilder', () => {
+		/** keyBuilder is optional on the shared plugin type; asserts it is wired. */
+		function keyBuilderOf(plugin: { keyBuilder?: unknown }) {
+			const keyBuilder = plugin.keyBuilder;
+			if (typeof keyBuilder !== 'function') {
+				throw new Error('keyBuilder is not registered');
+			}
+			// why safe: test-only adapter — narrows the optional plugin field
+			// to a callable with unknown context, matching keyBuilder's shape.
+			return keyBuilder as (ctx: unknown, source: string) => Promise<string>;
+		}
+
+		/** Builds a minimal keyBuilder context with a stubbed key manager. */
+		function fakeKeyCtx(apiKey: string | null) {
+			return {
+				authType: 'api_key',
+				options: {},
+				keys: {
+					get_api_key: async () => apiKey,
+					get_account: async () => 'example',
+				},
+				tenantId: 'default',
+			};
+		}
+
+		it('returns the configured options key without touching the key manager', async () => {
+			const { workable } = await import('./index');
+			const key = await keyBuilderOf(workable({ key: 'opt-key' }))(
+				fakeKeyCtx(null),
+				'endpoint',
+			);
+			expect(key).toBe('opt-key');
+		});
+
+		it('returns the managed api key when configured', async () => {
+			const { workable } = await import('./index');
+			const key = await keyBuilderOf(workable({}))(
+				fakeKeyCtx('managed-key'),
+				'endpoint',
+			);
+			expect(key).toBe('managed-key');
+		});
+
+		it('resolves to an empty key instead of throwing, so public endpoints stay usable', async () => {
+			const { workable } = await import('./index');
+			const key = await keyBuilderOf(workable({}))(
+				fakeKeyCtx(null),
+				'endpoint',
+			);
+			expect(key).toBe('');
 		});
 	});
 });

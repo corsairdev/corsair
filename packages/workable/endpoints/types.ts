@@ -21,13 +21,18 @@ const MemberRoleSchema = z.enum([
 	'workable.superadmin',
 ]);
 
-/** Generic list envelope for reference/config endpoints whose row shape Workable doesn't
- * document in detail (custom attributes, disqualification reasons, permission sets, etc).
- * Loose so a plugin call doesn't fail parsing when the account has custom configuration. */
+/** Builds a loose `{ [key]: row[] }` envelope schema for a reference/config
+ * endpoint whose row shape Workable doesn't document in detail (custom
+ * attributes, disqualification reasons, permission sets, etc). Loose so a
+ * plugin call doesn't fail parsing when the account has custom configuration. */
 function listEnvelope(key: string) {
-	return z
-		.object({ [key]: z.array(z.record(z.string(), z.unknown())) })
-		.loose();
+	return (
+		z
+			// unknown: row shapes are account-configured and undocumented — kept
+			// loose so parsing never fails on tenant-specific extras.
+			.object({ [key]: z.array(z.record(z.string(), z.unknown())) })
+			.loose()
+	);
 }
 
 const WorkableAccount = z
@@ -37,6 +42,7 @@ const WorkableAccount = z
 		subdomain: z.string().optional(),
 		website_url: z.string().optional(),
 	})
+	// unknown: account payloads carry undocumented extras — catchall keeps parsing loose.
 	.catchall(z.unknown());
 
 const SuccessResponseSchema = z
@@ -87,11 +93,13 @@ export const WorkableEndpointInputSchemas = {
 	employeesCreate: z.object({
 		state: z.enum(['draft', 'published']),
 		member_id: z.string().optional(),
+		// unknown: free-form employee payload — field set varies per account.
 		employee: z.record(z.string(), z.unknown()),
 	}),
 	employeesUpdate: z.object({
 		id: NonEmptyString,
 		member_id: z.string().optional(),
+		// unknown: free-form employee payload — field set varies per account.
 		employee: z.record(z.string(), z.unknown()),
 	}),
 	employeesUploadDocuments: z.object({
@@ -118,11 +126,13 @@ export const WorkableEndpointInputSchemas = {
 		email: z.string().email(),
 		roles: z.array(MemberRoleSchema).min(1),
 		member_id: z.string().optional(),
+		// unknown: collaboration-rule values are account-configured and undocumented.
 		collaboration_rules: z.array(z.record(z.string(), z.unknown())).optional(),
 	}),
 	membersUpdate: z.object({
 		id: NonEmptyString,
 		roles: z.array(MemberRoleSchema).min(1),
+		// unknown: collaboration-rule values are account-configured and undocumented.
 		collaboration_rules: z.array(z.record(z.string(), z.unknown())).optional(),
 	}),
 	membersEnable: z.object({ id: NonEmptyString }),
@@ -225,6 +235,10 @@ export const WorkableEndpointInputSchemas = {
 		subdomain: NonEmptyString.optional(),
 		details: z.boolean().optional(),
 	}),
+	// public (unauthenticated) locations — takes no query params per the docs.
+	publicLocationsList: z.object({
+		subdomain: NonEmptyString.optional(),
+	}),
 } as const;
 
 export const WorkableEndpointOutputSchemas = {
@@ -262,6 +276,7 @@ export const WorkableEndpointOutputSchemas = {
 	candidatesList: z
 		.object({
 			candidates: z.array(WorkableCandidate),
+			// unknown: opaque paging envelope — shape varies, never read by the plugin.
 			paging: z.record(z.string(), z.unknown()).optional(),
 		})
 		.loose(),
@@ -279,6 +294,7 @@ export const WorkableEndpointOutputSchemas = {
 	eventsList: listEnvelope('events'),
 
 	subscriptionsList: listEnvelope('subscriptions'),
+	// unknown: webhook-subscription response is opaque and never read by the plugin.
 	subscriptionsCreate: z.record(z.string(), z.unknown()),
 	subscriptionsDelete: SuccessResponseSchema,
 
@@ -286,9 +302,22 @@ export const WorkableEndpointOutputSchemas = {
 		.object({
 			name: z.string().optional(),
 			description: z.string().optional(),
+			// unknown: public job-board row shape varies per posting and is display-only.
 			jobs: z.array(z.record(z.string(), z.unknown())).optional(),
 		})
 		.loose(),
+	// The locations endpoint returns a bare array (not an envelope object).
+	// @see https://workable.readme.io/reference/apiaccountssubdomainlocations
+	publicLocationsList: z.array(
+		z
+			.object({
+				code: z.string().optional(),
+				name: z.string().optional(),
+				count: z.number().optional(),
+				url: z.string().optional(),
+			})
+			.loose(),
+	),
 } as const;
 
 export type WorkableEndpointInputs = {

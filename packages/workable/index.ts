@@ -12,7 +12,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import * as Accounts from './endpoints/accounts';
 import * as Candidates from './endpoints/candidates';
 import * as Departments from './endpoints/departments';
@@ -124,6 +123,7 @@ export type WorkableEndpoints = {
 	subscriptionsCreate: WorkableEndpoint<'subscriptionsCreate'>;
 	subscriptionsDelete: WorkableEndpoint<'subscriptionsDelete'>;
 	publicJobsList: WorkableEndpoint<'publicJobsList'>;
+	publicLocationsList: WorkableEndpoint<'publicLocationsList'>;
 };
 
 const workableEndpointsNested = {
@@ -168,6 +168,7 @@ const workableEndpointsNested = {
 		delete: Subscriptions.remove,
 	},
 	publicJobs: { list: PublicJobs.list },
+	publicLocations: { list: PublicJobs.listLocations },
 } as const;
 
 const workableEndpointSchemas = {
@@ -307,6 +308,10 @@ const workableEndpointSchemas = {
 		input: WorkableEndpointInputSchemas.publicJobsList,
 		output: WorkableEndpointOutputSchemas.publicJobsList,
 	},
+	'publicLocations.list': {
+		input: WorkableEndpointInputSchemas.publicLocationsList,
+		output: WorkableEndpointOutputSchemas.publicLocationsList,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof workableEndpointsNested
 >;
@@ -435,6 +440,11 @@ const workableEndpointMeta = {
 		description:
 			"List an account's public job postings (no authentication required)",
 	},
+	'publicLocations.list': {
+		riskLevel: 'read',
+		description:
+			"List the locations of an account's public jobs with per-country counts (no authentication required)",
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof workableEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -453,7 +463,13 @@ export type InternalWorkablePlugin = BaseWorkablePlugin<WorkablePluginOptions>;
 export type ExternalWorkablePlugin<T extends WorkablePluginOptions> =
 	BaseWorkablePlugin<T>;
 
+/**
+ * Creates the Workable plugin. Auth is `api_key`-only: a bearer token plus the
+ * account subdomain, since Workable's OAuth flow is partner-provisioned only.
+ */
 export function workable<const T extends WorkablePluginOptions>(
+	// why safe: standard generator default for the generic factory — callers
+	// always pass a full options object; `{}` only types the no-arg case.
 	incomingOptions: WorkablePluginOptions & T = {} as WorkablePluginOptions & T,
 ): ExternalWorkablePlugin<T> {
 	const options = {
@@ -483,11 +499,13 @@ export function workable<const T extends WorkablePluginOptions>(
 		keyBuilder: async (ctx: WorkableKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const key = (await ctx.keys.get_api_key()) ?? '';
-				if (!key) throw new AuthMissingError('workable', 'api_key');
-				return key;
+				// Resolve (never throw): the unauthenticated job-board endpoints
+				// ignore ctx.key entirely, so they must work without a connected
+				// account. Authenticated endpoints fail fast in the HTTP client
+				// via assertCredentials instead (MISSING_ACCESS_TOKEN).
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
-			throw new AuthMissingError('workable', 'api_key');
+			return '';
 		},
 	} satisfies InternalWorkablePlugin;
 }

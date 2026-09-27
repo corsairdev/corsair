@@ -3,25 +3,42 @@ import { makeWorkableRequest } from '../client';
 import type { WorkableEndpoints } from '../index';
 import { WorkableCandidate } from '../schema/database';
 import { persistRows } from './persist';
-import { compactQuery, resolveAccount } from './shared';
+import {
+	compactQuery,
+	parseEndpointInput,
+	parseEndpointOutput,
+	resolveAccount,
+} from './shared';
 import type { WorkableEndpointOutputs } from './types';
+import {
+	WorkableEndpointInputSchemas,
+	WorkableEndpointOutputSchemas,
+} from './types';
 
 export const list: WorkableEndpoints['candidatesList'] = async (ctx, input) => {
+	const valid = parseEndpointInput(
+		WorkableEndpointInputSchemas.candidatesList,
+		input,
+	);
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
+	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['candidatesList']
 	>('/candidates', ctx.key, account, {
 		query: compactQuery({
-			email: input.email,
-			shortcode: input.shortcode,
-			stage: input.stage,
-			limit: input.limit,
-			since_id: input.since_id,
-			max_id: input.max_id,
-			created_after: input.created_after,
-			updated_after: input.updated_after,
+			email: valid.email,
+			shortcode: valid.shortcode,
+			stage: valid.stage,
+			limit: valid.limit,
+			since_id: valid.since_id,
+			max_id: valid.max_id,
+			created_after: valid.created_after,
+			updated_after: valid.updated_after,
 		}),
 	});
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.candidatesList,
+		raw,
+	);
 	await persistRows(
 		ctx.db.candidates,
 		WorkableCandidate,
@@ -31,7 +48,7 @@ export const list: WorkableEndpoints['candidatesList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'workable.candidates.list',
-		{ shortcode: input.shortcode, stage: input.stage },
+		{ shortcode: valid.shortcode, stage: valid.stage },
 		'completed',
 	);
 	return response;

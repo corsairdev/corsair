@@ -6,22 +6,27 @@ import { ApiError } from 'corsair/http';
  * Corsair replays the whole endpoint call on retry. Workable has no
  * idempotency-key header, so a transport failure on a write cannot be told
  * apart from "the write already landed" - these are never retried after one.
+ *
+ * Names are the dotted operation paths Corsair passes as `context.operation`
+ * (e.g. `departments.create`), matching `bindEndpointsRecursively`'s
+ * `[...currentPath, key].join('.')` format.
  */
 export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
-	'departmentsCreate',
-	'departmentsUpdate',
-	'departmentsMerge',
-	'departmentsDelete',
-	'employeesCreate',
-	'employeesUpdate',
-	'employeesUploadDocuments',
-	'membersInvite',
-	'membersUpdate',
-	'membersEnable',
-	'subscriptionsCreate',
-	'subscriptionsDelete',
+	'departments.create',
+	'departments.update',
+	'departments.merge',
+	'departments.delete',
+	'employees.create',
+	'employees.update',
+	'employees.uploadDocuments',
+	'members.invite',
+	'members.update',
+	'members.enable',
+	'subscriptions.create',
+	'subscriptions.delete',
 ]);
 
+/** Reports whether the dotted operation path is a non-idempotent write. */
 function isNonIdempotent(operation: string): boolean {
 	return NON_IDEMPOTENT_OPERATIONS.has(operation);
 }
@@ -30,6 +35,8 @@ export const errorHandlers = {
 	CONFIGURATION_ERROR: {
 		match: (error) => {
 			if (error instanceof AuthMissingError) return true;
+			// why safe: narrows the union to read the optional `code` our own
+			// client sets (MISSING_ACCESS_TOKEN / MISSING_ACCOUNT / INVALID_ACCOUNT).
 			const code = (error as { code?: string }).code;
 			return (
 				code === 'MISSING_ACCESS_TOKEN' ||
@@ -53,7 +60,16 @@ export const errorHandlers = {
 				message.includes('too many requests') || message.includes('rate limit')
 			);
 		},
-		handler: async (error) => {
+		handler: async (error, context) => {
+			// A throttled write is still a write: Workable offers no idempotency
+			// key, so a replayed create/invite could land twice. Fail fast and
+			// let the caller retry explicitly instead.
+			if (isNonIdempotent(context.operation)) {
+				console.warn(
+					`[WORKABLE:${context.operation}] Rate limited on a write operation - not retried, since Workable offers no idempotency key: ${error.message}`,
+				);
+				return { maxRetries: 0 };
+			}
 			const retryAfterMs =
 				error instanceof ApiError ? error.retryAfter : undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };

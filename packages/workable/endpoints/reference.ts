@@ -1,8 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeWorkableRequest } from '../client';
 import type { WorkableEndpoints } from '../index';
-import { compactQuery, resolveAccount } from './shared';
+import {
+	compactQuery,
+	parseEndpointInput,
+	parseEndpointOutput,
+	resolveAccount,
+} from './shared';
 import type { WorkableEndpointOutputs } from './types';
+import {
+	WorkableEndpointInputSchemas,
+	WorkableEndpointOutputSchemas,
+} from './types';
 
 /**
  * Read-only reference/configuration data (pipeline stages, requisitions,
@@ -15,9 +24,15 @@ import type { WorkableEndpointOutputs } from './types';
 
 export const stagesList: WorkableEndpoints['stagesList'] = async (ctx) => {
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
-		WorkableEndpointOutputs['stagesList']
-	>('/stages', ctx.key, account);
+	const raw = await makeWorkableRequest<WorkableEndpointOutputs['stagesList']>(
+		'/stages',
+		ctx.key,
+		account,
+	);
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.stagesList,
+		raw,
+	);
 	await logEventFromContext(ctx, 'workable.stages.list', {}, 'completed');
 	return response;
 };
@@ -26,16 +41,24 @@ export const requisitionsList: WorkableEndpoints['requisitionsList'] = async (
 	ctx,
 	input,
 ) => {
+	const valid = parseEndpointInput(
+		WorkableEndpointInputSchemas.requisitionsList,
+		input,
+	);
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
+	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['requisitionsList']
 	>('/requisitions', ctx.key, account, {
 		query: compactQuery({
-			limit: input.limit,
-			since_id: input.since_id,
-			max_id: input.max_id,
+			limit: valid.limit,
+			since_id: valid.since_id,
+			max_id: valid.max_id,
 		}),
 	});
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.requisitionsList,
+		raw,
+	);
 	await logEventFromContext(ctx, 'workable.requisitions.list', {}, 'completed');
 	return response;
 };
@@ -44,12 +67,20 @@ export const recruitersList: WorkableEndpoints['recruitersList'] = async (
 	ctx,
 	input,
 ) => {
+	const valid = parseEndpointInput(
+		WorkableEndpointInputSchemas.recruitersList,
+		input,
+	);
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
+	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['recruitersList']
 	>('/recruiters', ctx.key, account, {
-		query: compactQuery({ shortcode: input.shortcode }),
+		query: compactQuery({ shortcode: valid.shortcode }),
 	});
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.recruitersList,
+		raw,
+	);
 	await logEventFromContext(ctx, 'workable.recruiters.list', {}, 'completed');
 	return response;
 };
@@ -58,9 +89,13 @@ export const legalEntitiesList: WorkableEndpoints['legalEntitiesList'] = async (
 	ctx,
 ) => {
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
+	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['legalEntitiesList']
 	>('/legal_entities', ctx.key, account);
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.legalEntitiesList,
+		raw,
+	);
 	await logEventFromContext(
 		ctx,
 		'workable.legal_entities.list',
@@ -73,9 +108,13 @@ export const legalEntitiesList: WorkableEndpoints['legalEntitiesList'] = async (
 export const customAttributesList: WorkableEndpoints['customAttributesList'] =
 	async (ctx) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['customAttributesList']
 		>('/custom_attributes', ctx.key, account);
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.customAttributesList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.custom_attributes.list',
@@ -88,9 +127,13 @@ export const customAttributesList: WorkableEndpoints['customAttributesList'] =
 export const disqualificationReasonsList: WorkableEndpoints['disqualificationReasonsList'] =
 	async (ctx) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['disqualificationReasonsList']
 		>('/disqualification_reasons', ctx.key, account);
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.disqualificationReasonsList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.disqualification_reasons.list',
@@ -103,9 +146,13 @@ export const disqualificationReasonsList: WorkableEndpoints['disqualificationRea
 export const permissionSetsList: WorkableEndpoints['permissionSetsList'] =
 	async (ctx) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['permissionSetsList']
 		>('/permission_sets', ctx.key, account);
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.permissionSetsList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.permission_sets.list',
@@ -118,9 +165,13 @@ export const permissionSetsList: WorkableEndpoints['permissionSetsList'] =
 export const employeeFieldsList: WorkableEndpoints['employeeFieldsList'] =
 	async (ctx) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['employeeFieldsList']
 		>('/employee_fields', ctx.key, account);
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.employeeFieldsList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.employee_fields.list',
@@ -133,9 +184,13 @@ export const employeeFieldsList: WorkableEndpoints['employeeFieldsList'] =
 export const timeoffCategoriesList: WorkableEndpoints['timeoffCategoriesList'] =
 	async (ctx) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['timeoffCategoriesList']
 		>('/timeoff/categories', ctx.key, account);
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.timeoffCategoriesList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.timeoff_categories.list',
@@ -147,12 +202,20 @@ export const timeoffCategoriesList: WorkableEndpoints['timeoffCategoriesList'] =
 
 export const timeoffBalancesList: WorkableEndpoints['timeoffBalancesList'] =
 	async (ctx, input) => {
+		const valid = parseEndpointInput(
+			WorkableEndpointInputSchemas.timeoffBalancesList,
+			input,
+		);
 		const account = await resolveAccount(ctx);
-		const response = await makeWorkableRequest<
+		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['timeoffBalancesList']
 		>('/timeoff/balances', ctx.key, account, {
-			query: compactQuery({ employee_id: input.employee_id }),
+			query: compactQuery({ employee_id: valid.employee_id }),
 		});
+		const response = parseEndpointOutput(
+			WorkableEndpointOutputSchemas.timeoffBalancesList,
+			raw,
+		);
 		await logEventFromContext(
 			ctx,
 			'workable.timeoff_balances.list',
@@ -166,9 +229,13 @@ export const workSchedulesList: WorkableEndpoints['workSchedulesList'] = async (
 	ctx,
 ) => {
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
+	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['workSchedulesList']
 	>('/work_schedules', ctx.key, account);
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.workSchedulesList,
+		raw,
+	);
 	await logEventFromContext(
 		ctx,
 		'workable.work_schedules.list',
@@ -182,24 +249,35 @@ export const eventsList: WorkableEndpoints['eventsList'] = async (
 	ctx,
 	input,
 ) => {
+	const valid = parseEndpointInput(
+		WorkableEndpointInputSchemas.eventsList,
+		input,
+	);
 	const account = await resolveAccount(ctx);
-	const response = await makeWorkableRequest<
-		WorkableEndpointOutputs['eventsList']
-	>('/events', ctx.key, account, {
-		query: compactQuery({
-			type: input.type,
-			limit: input.limit,
-			start_date: input.start_date,
-			end_date: input.end_date,
-			candidate_id: input.candidate_id,
-			shortcode: input.shortcode,
-			member_id: input.member_id,
-			context: input.context,
-			include_cancelled: input.include_cancelled,
-			since_id: input.since_id,
-			max_id: input.max_id,
-		}),
-	});
+	const raw = await makeWorkableRequest<WorkableEndpointOutputs['eventsList']>(
+		'/events',
+		ctx.key,
+		account,
+		{
+			query: compactQuery({
+				type: valid.type,
+				limit: valid.limit,
+				start_date: valid.start_date,
+				end_date: valid.end_date,
+				candidate_id: valid.candidate_id,
+				shortcode: valid.shortcode,
+				member_id: valid.member_id,
+				context: valid.context,
+				include_cancelled: valid.include_cancelled,
+				since_id: valid.since_id,
+				max_id: valid.max_id,
+			}),
+		},
+	);
+	const response = parseEndpointOutput(
+		WorkableEndpointOutputSchemas.eventsList,
+		raw,
+	);
 	await logEventFromContext(ctx, 'workable.events.list', {}, 'completed');
 	return response;
 };

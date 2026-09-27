@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import type { z } from 'zod';
 
 /** Strips keys whose value is `undefined` so they don't get serialised as literal "undefined". */
 export function compactQuery(
@@ -11,9 +12,13 @@ export function compactQuery(
 	return out;
 }
 
+/** Strips `undefined`-valued keys from a JSON body before it is serialised. */
 export function compactBody(
+	// unknown: generic JSON body values — stripped of `undefined`, never inspected.
 	body: Record<string, unknown>,
+	// unknown: same generic JSON body values as the input — never inspected.
 ): Record<string, unknown> {
+	// unknown: generic JSON body values — stripped of `undefined`, never inspected.
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(body)) {
 		if (value !== undefined) out[key] = value;
@@ -58,4 +63,28 @@ export function buildCursorPaginationQuery(input: {
 		since_id: input.since_id,
 		max_id: input.max_id,
 	});
+}
+
+/**
+ * Validates an endpoint's input against its zod schema at runtime. The Corsair
+ * binder passes caller args straight through, so each endpoint enforces its
+ * own contract rather than relying on registration metadata.
+ */
+export function parseEndpointInput<SchemaT extends z.ZodType>(
+	schema: SchemaT,
+	input: unknown,
+): SchemaT['_output'] {
+	return schema.parse(input);
+}
+
+/**
+ * Validates a provider response against the endpoint's zod output schema at
+ * runtime, so callers never receive data that violates the declared types
+ * (e.g. date strings where the schema promises `Date` objects).
+ */
+export function parseEndpointOutput<SchemaT extends z.ZodType>(
+	schema: SchemaT,
+	output: unknown,
+): SchemaT['_output'] {
+	return schema.parse(output);
 }
