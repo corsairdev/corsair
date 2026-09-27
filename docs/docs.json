@@ -2347,6 +2347,14 @@
                 ]
               },
               {
+                "group": "Workable",
+                "pages": [
+                  "plugins/workable/overview",
+                  "plugins/workable/api",
+                  "plugins/workable/database"
+                ]
+              },
+              {
                 "group": "Workday",
                 "pages": [
                   "plugins/workday/overview",
