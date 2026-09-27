@@ -41,7 +41,10 @@ function makeStore() {
 }
 
 /** Builds a mock endpoint context bound to the `example` test account. */
-function makeCtx(key = 'test-token') {
+function makeCtx(
+	key = 'test-token',
+	account: string | null | Error = 'example',
+) {
 	const stores = {
 		departments: makeStore(),
 		employees: makeStore(),
@@ -51,8 +54,15 @@ function makeCtx(key = 'test-token') {
 	};
 	const ctx = {
 		key,
-		options: { account: 'example' },
-		keys: { get_account: async () => 'example' },
+		options: { account: undefined },
+		keys: {
+			// why safe: test-only stub — throws like the real key manager
+			// when simulating a tenant with no account row.
+			get_account: async () => {
+				if (account instanceof Error) throw account;
+				return account;
+			},
+		},
 		db: stores,
 		// why safe: test-only ctx mock — narrowed from the real endpoint
 		// parameter type via `Parameters<typeof …>[0]` above.
@@ -101,6 +111,17 @@ describe('Workable endpoints', () => {
 		it('raises AuthMissingError before any request when no key is stored', async () => {
 			const { ctx } = makeCtx('');
 			await expect(Departments.list(ctx, {})).rejects.toBeInstanceOf(
+				AuthMissingError,
+			);
+			expect(calls).toHaveLength(0);
+		});
+
+		it('accounts.list with no stored subdomain raises AuthMissingError for the account', async () => {
+			const noAccount = new Error(
+				'No DEK found for account (tenant: "default"). Initialize the account first.',
+			);
+			const { ctx } = makeCtx('test-token', noAccount);
+			await expect(Accounts.list(ctx, {})).rejects.toBeInstanceOf(
 				AuthMissingError,
 			);
 			expect(calls).toHaveLength(0);
@@ -539,6 +560,30 @@ describe('Workable endpoints', () => {
 			expect(calls.at(-1)?.url).toBe(
 				'https://www.workable.com/api/accounts/example',
 			);
+		});
+
+		it('publicJobs.list with an explicit subdomain never touches the key manager', async () => {
+			const noAccount = new Error(
+				'No DEK found for account (tenant: "default"). Initialize the account first.',
+			);
+			const { ctx } = makeCtx('test-token', noAccount);
+			respondWith({ name: 'Example Co', jobs: [] });
+			const result = await PublicJobs.list(ctx, { subdomain: 'other-co' });
+			expect(result.name).toBe('Example Co');
+			expect(calls.at(-1)?.url).toBe(
+				'https://www.workable.com/api/accounts/other-co',
+			);
+		});
+
+		it('publicJobs.list without any subdomain raises the clean missing-subdomain error', async () => {
+			const noAccount = new Error(
+				'No DEK found for account (tenant: "default"). Initialize the account first.',
+			);
+			const { ctx } = makeCtx('test-token', noAccount);
+			await expect(PublicJobs.list(ctx, {})).rejects.toThrow(
+				'workable.publicJobs.list requires a subdomain',
+			);
+			expect(calls).toHaveLength(0);
 		});
 	});
 

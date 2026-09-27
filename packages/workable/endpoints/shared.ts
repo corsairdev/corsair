@@ -55,7 +55,7 @@ export async function resolveAccount(ctx: {
 	}
 
 	const account =
-		ctx.options?.account ?? (await ctx.keys?.get_account?.()) ?? '';
+		ctx.options?.account ?? (await resolveStoredAccount(ctx)) ?? '';
 
 	if (!account) {
 		throw new AuthMissingError(
@@ -66,6 +66,52 @@ export async function resolveAccount(ctx: {
 	}
 
 	return account;
+}
+
+/**
+ * Reads the stored account subdomain best-effort. A tenant with no account
+ * row has no DEK, so the key manager throws instead of returning null -
+ * that case resolves to null so callers surface their clean
+ * missing-configuration error. Anything else (e.g. transient transport
+ * failures, which stay retryable) rethrows.
+ */
+async function resolveStoredAccount(ctx: {
+	keys?: { get_account?: () => Promise<string | null | undefined> };
+}): Promise<string | null | undefined> {
+	try {
+		return await ctx.keys?.get_account?.();
+	} catch (error) {
+		// why safe: narrows to the uninitialized-tenant case, which carries
+		// no stored subdomain — anything else rethrows untouched.
+		if (error instanceof Error && /no dek found/i.test(error.message)) {
+			return null;
+		}
+		throw error;
+	}
+}
+
+/**
+ * Resolves the subdomain for the unauthenticated job-board endpoints. An
+ * explicit subdomain always wins and never touches the key manager, so
+ * tenants with no account row can still look up any public careers page.
+ * The stored account is only a best-effort fallback; without any source the
+ * caller gets a clean missing-subdomain error rather than a manager failure.
+ */
+export async function resolvePublicSubdomain(
+	ctx: {
+		options?: { account?: string };
+		keys?: { get_account?: () => Promise<string | null | undefined> };
+	},
+	input: { subdomain?: string },
+	endpoint: string,
+): Promise<string> {
+	if (input.subdomain) return input.subdomain;
+	if (ctx.options?.account) return ctx.options.account;
+	const stored = await resolveStoredAccount(ctx);
+	if (stored) return stored;
+	throw new Error(
+		`workable.${endpoint} requires a subdomain, either explicitly or via a connected Workable account`,
+	);
 }
 
 /** Shared `limit`/`since_id`/`max_id` cursor pagination used by jobs, candidates, members, events. */

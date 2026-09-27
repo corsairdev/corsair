@@ -5,6 +5,7 @@ import {
 	compactQuery,
 	parseEndpointInput,
 	parseEndpointOutput,
+	resolvePublicSubdomain,
 } from './shared';
 import type { WorkableEndpointOutputs } from './types';
 import {
@@ -24,16 +25,7 @@ export const list: WorkableEndpoints['publicJobsList'] = async (ctx, input) => {
 		WorkableEndpointInputSchemas.publicJobsList,
 		input,
 	);
-	const subdomain =
-		valid.subdomain ??
-		ctx.options?.account ??
-		(await ctx.keys?.get_account?.()) ??
-		'';
-	if (!subdomain) {
-		throw new Error(
-			'workable.publicJobs.list requires a subdomain, either explicitly or via a connected Workable account',
-		);
-	}
+	const subdomain = await resolvePublicSubdomain(ctx, valid, 'publicJobs.list');
 
 	const raw = await makeWorkablePublicRequest<
 		WorkableEndpointOutputs['publicJobsList']
@@ -64,16 +56,11 @@ export const listLocations: WorkableEndpoints['publicLocationsList'] = async (
 		WorkableEndpointInputSchemas.publicLocationsList,
 		input,
 	);
-	const subdomain =
-		valid.subdomain ??
-		ctx.options?.account ??
-		(await ctx.keys?.get_account?.()) ??
-		'';
-	if (!subdomain) {
-		throw new Error(
-			'workable.publicLocations.list requires a subdomain, either explicitly or via a connected Workable account',
-		);
-	}
+	const subdomain = await resolvePublicSubdomain(
+		ctx,
+		valid,
+		'publicLocations.list',
+	);
 
 	const raw = await makeWorkablePublicRequest<
 		WorkableEndpointOutputs['publicLocationsList']
