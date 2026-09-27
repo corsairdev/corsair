@@ -15,7 +15,11 @@ import {
 	WorkableEndpointOutputSchemas,
 } from './types';
 
-export const list: WorkableEndpoints['departmentsList'] = async (ctx) => {
+export const list: WorkableEndpoints['departmentsList'] = async (
+	ctx,
+	input,
+) => {
+	parseEndpointInput(WorkableEndpointInputSchemas.departmentsList, input);
 	const account = await resolveAccount(ctx);
 	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['departmentsList']

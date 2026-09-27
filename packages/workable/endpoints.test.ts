@@ -614,5 +614,20 @@ describe('Workable endpoints', () => {
 				'https://www.workable.com/api/accounts/example/locations',
 			);
 		});
+
+		it('publicLocations.list with an explicit subdomain never touches the key manager', async () => {
+			const noAccount = new Error(
+				'No DEK found for account (tenant: "default"). Initialize the account first.',
+			);
+			const { ctx } = makeCtx('test-token', noAccount);
+			respondWith([{ code: 'GB', name: 'United Kingdom', count: 1 }]);
+			const result = await PublicJobs.listLocations(ctx, {
+				subdomain: 'other-co',
+			});
+			expect(result).toHaveLength(1);
+			expect(calls.at(-1)?.url).toBe(
+				'https://www.workable.com/api/accounts/other-co/locations',
+			);
+		});
 	});
 });

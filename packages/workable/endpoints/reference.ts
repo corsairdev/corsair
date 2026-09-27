@@ -22,7 +22,11 @@ import {
  * creates or updates, so there's nothing to keep a local mirror in sync for.
  */
 
-export const stagesList: WorkableEndpoints['stagesList'] = async (ctx) => {
+export const stagesList: WorkableEndpoints['stagesList'] = async (
+	ctx,
+	input,
+) => {
+	parseEndpointInput(WorkableEndpointInputSchemas.stagesList, input);
 	const account = await resolveAccount(ctx);
 	const raw = await makeWorkableRequest<WorkableEndpointOutputs['stagesList']>(
 		'/stages',
@@ -87,7 +91,9 @@ export const recruitersList: WorkableEndpoints['recruitersList'] = async (
 
 export const legalEntitiesList: WorkableEndpoints['legalEntitiesList'] = async (
 	ctx,
+	input,
 ) => {
+	parseEndpointInput(WorkableEndpointInputSchemas.legalEntitiesList, input);
 	const account = await resolveAccount(ctx);
 	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['legalEntitiesList']
@@ -106,7 +112,11 @@ export const legalEntitiesList: WorkableEndpoints['legalEntitiesList'] = async (
 };
 
 export const customAttributesList: WorkableEndpoints['customAttributesList'] =
-	async (ctx) => {
+	async (ctx, input) => {
+		parseEndpointInput(
+			WorkableEndpointInputSchemas.customAttributesList,
+			input,
+		);
 		const account = await resolveAccount(ctx);
 		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['customAttributesList']
@@ -125,7 +135,11 @@ export const customAttributesList: WorkableEndpoints['customAttributesList'] =
 	};
 
 export const disqualificationReasonsList: WorkableEndpoints['disqualificationReasonsList'] =
-	async (ctx) => {
+	async (ctx, input) => {
+		parseEndpointInput(
+			WorkableEndpointInputSchemas.disqualificationReasonsList,
+			input,
+		);
 		const account = await resolveAccount(ctx);
 		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['disqualificationReasonsList']
@@ -144,7 +158,8 @@ export const disqualificationReasonsList: WorkableEndpoints['disqualificationRea
 	};
 
 export const permissionSetsList: WorkableEndpoints['permissionSetsList'] =
-	async (ctx) => {
+	async (ctx, input) => {
+		parseEndpointInput(WorkableEndpointInputSchemas.permissionSetsList, input);
 		const account = await resolveAccount(ctx);
 		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['permissionSetsList']
@@ -163,7 +178,8 @@ export const permissionSetsList: WorkableEndpoints['permissionSetsList'] =
 	};
 
 export const employeeFieldsList: WorkableEndpoints['employeeFieldsList'] =
-	async (ctx) => {
+	async (ctx, input) => {
+		parseEndpointInput(WorkableEndpointInputSchemas.employeeFieldsList, input);
 		const account = await resolveAccount(ctx);
 		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['employeeFieldsList']
@@ -182,7 +198,11 @@ export const employeeFieldsList: WorkableEndpoints['employeeFieldsList'] =
 	};
 
 export const timeoffCategoriesList: WorkableEndpoints['timeoffCategoriesList'] =
-	async (ctx) => {
+	async (ctx, input) => {
+		parseEndpointInput(
+			WorkableEndpointInputSchemas.timeoffCategoriesList,
+			input,
+		);
 		const account = await resolveAccount(ctx);
 		const raw = await makeWorkableRequest<
 			WorkableEndpointOutputs['timeoffCategoriesList']
@@ -227,7 +247,9 @@ export const timeoffBalancesList: WorkableEndpoints['timeoffBalancesList'] =
 
 export const workSchedulesList: WorkableEndpoints['workSchedulesList'] = async (
 	ctx,
+	input,
 ) => {
+	parseEndpointInput(WorkableEndpointInputSchemas.workSchedulesList, input);
 	const account = await resolveAccount(ctx);
 	const raw = await makeWorkableRequest<
 		WorkableEndpointOutputs['workSchedulesList']
