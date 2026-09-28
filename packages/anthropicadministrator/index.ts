@@ -36,6 +36,8 @@ import { AnthropicAdministratorSchema } from './schema';
 export type AnthropicAdministratorPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	/** Standard Anthropic API key (`sk-ant-api…`) for Messages and Models endpoints. */
+	inferenceKey?: string;
 	hooks?: InternalAnthropicAdministratorPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<

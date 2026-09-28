@@ -180,7 +180,12 @@ export const CreateMessageInputSchema = z.object({
 	system: z.any().optional(),
 	metadata: z.any().optional(),
 	stop_sequences: z.array(z.string()).optional(),
-	stream: z.boolean().optional(),
+	stream: z
+		.boolean()
+		.optional()
+		.refine((value) => value !== true, {
+			message: 'Streaming is not supported',
+		}),
 	temperature: z.number().optional(),
 	top_k: z.number().optional(),
 	top_p: z.number().optional(),

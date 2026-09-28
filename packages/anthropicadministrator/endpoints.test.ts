@@ -1,4 +1,5 @@
 import { request } from 'corsair/http';
+import { CreateMessageInputSchema } from './endpoints/types/inputs';
 import type { AnthropicAdministratorContext } from './index';
 import { anthropicadministrator } from './index';
 
@@ -31,7 +32,7 @@ function entity(name: string) {
 
 const ctx = {
 	key: 'sk-ant-admin-test',
-	options: {},
+	options: { inferenceKey: 'sk-ant-api-test' },
 	db: {
 		users: entity('users'),
 		invites: entity('invites'),
@@ -291,6 +292,25 @@ describe('Admin API routes', () => {
 			'POST',
 			'/v1/organizations/api_keys/k1',
 		],
+		[
+			'messages',
+			'createMessage',
+			{
+				model: 'claude-3-5-sonnet-20241022',
+				max_tokens: 10,
+				messages: [{ role: 'user', content: 'hi' }],
+			},
+			'POST',
+			'/v1/messages',
+		],
+		[
+			'models',
+			'getModel',
+			{ model_id: 'claude-3-5-sonnet-20241022' },
+			'GET',
+			'/v1/models/claude-3-5-sonnet-20241022',
+		],
+		['models', 'listModels', { limit: 20 }, 'GET', '/v1/models'],
 	] as const)('%s.%s -> %s', async (group, name, input, method, url) => {
 		mockRequest.mockResolvedValueOnce({ data: [] });
 		await call(group, name, input as Record<string, unknown>);
@@ -320,6 +340,55 @@ describe('Admin API routes', () => {
 			limit: 50,
 			email: 'a@b.com',
 			roles: ['admin', 'developer'],
+		});
+	});
+});
+
+describe('Messages and Models API transport', () => {
+	it('uses the standard inference key, not the Admin credential', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
+		await call('messages', 'createMessage', {
+			model: 'claude-3-5-sonnet-20241022',
+			max_tokens: 10,
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+
+		expect(sent().config.HEADERS['x-api-key']).toBe('sk-ant-api-test');
+		expect(sent().config.HEADERS['x-api-key']).not.toBe('sk-ant-admin-test');
+	});
+
+	it('always sends stream false on createMessage', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
+		await call('messages', 'createMessage', {
+			model: 'claude-3-5-sonnet-20241022',
+			max_tokens: 10,
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+
+		expect(sent().options.body).toMatchObject({ stream: false });
+	});
+
+	it('rejects stream=true in the input schema', () => {
+		expect(() =>
+			CreateMessageInputSchema.parse({
+				model: 'claude-3-5-sonnet-20241022',
+				max_tokens: 10,
+				stream: true,
+				messages: [{ role: 'user', content: 'hi' }],
+			}),
+		).toThrow(/Streaming is not supported/);
+	});
+
+	it('passes model list pagination through as query parameters', async () => {
+		mockRequest.mockResolvedValueOnce({ data: [], has_more: false });
+		await call('models', 'listModels', {
+			limit: 10,
+			after_id: 'model_1',
+		});
+
+		expect(sent().options.query).toMatchObject({
+			limit: 10,
+			after_id: 'model_1',
 		});
 	});
 });

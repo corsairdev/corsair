@@ -1,7 +1,4 @@
-import type {
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-} from 'corsair/core';
+import type { RequiredPluginEndpointSchemas } from 'corsair/core';
 import {
 	AnthropicAdministratorEndpointInputSchemas,
 	AnthropicAdministratorEndpointOutputSchemas,

@@ -1,5 +1,5 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import { callAdminApi, compact } from './shared';
+import { callStandardApi, compact } from './shared';
 import type { AnthropicAdministratorEndpointOutputs as Outputs } from './types/index';
 
 export const MessagesEndpoints: Pick<
@@ -14,13 +14,13 @@ export const MessagesEndpoints: Pick<
 			system: input.system,
 			metadata: input.metadata,
 			stop_sequences: input.stop_sequences,
-			stream: input.stream,
+			stream: false,
 			temperature: input.temperature,
 			top_k: input.top_k,
 			top_p: input.top_p,
 		});
 
-		return callAdminApi<Outputs['createMessage']>(
+		return callStandardApi<Outputs['createMessage']>(
 			ctx,
 			'messages.createMessage',
 			'/v1/messages',

@@ -1,5 +1,5 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import { callAdminApi, compact } from './shared';
+import { callStandardApi, compact } from './shared';
 import type { AnthropicAdministratorEndpointOutputs as Outputs } from './types/index';
 
 export const ModelsEndpoints: Pick<
@@ -7,7 +7,7 @@ export const ModelsEndpoints: Pick<
 	'getModel' | 'listModels'
 > = {
 	getModel: async (ctx, input) => {
-		return callAdminApi<Outputs['getModel']>(
+		return callStandardApi<Outputs['getModel']>(
 			ctx,
 			'models.getModel',
 			`/v1/models/${encodeURIComponent(input.model_id)}`,
@@ -22,7 +22,7 @@ export const ModelsEndpoints: Pick<
 			after_id: input.after_id,
 		}) as Record<string, string | number | boolean | string[] | undefined>;
 
-		return callAdminApi<Outputs['listModels']>(
+		return callStandardApi<Outputs['listModels']>(
 			ctx,
 			'models.listModels',
 			'/v1/models',
