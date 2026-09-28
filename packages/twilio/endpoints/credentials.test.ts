@@ -1,140 +1,121 @@
-import * as client from '../client';
-import { Calls, Messages } from './index';
+import { createCorsair } from 'corsair/core';
+import type { OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { twilio } from '../index';
 
-jest.mock('corsair/core', () => {
-	const actual =
-		jest.requireActual<typeof import('corsair/core')>('corsair/core');
-
+jest.mock('corsair/http', () => {
+	const original = jest.requireActual('corsair/http');
 	return {
-		...actual,
-		logEventFromContext: jest.fn().mockResolvedValue(null),
+		...original,
+		request: jest.fn(),
 	};
 });
 
-jest.mock('../client', () => {
-	const actual = jest.requireActual<typeof import('../client')>('../client');
-
-	return {
-		...actual,
-		makeTwilioRequest: jest.fn(),
-	};
-});
-
-const mockedRequest = client.makeTwilioRequest as jest.MockedFunction<
-	typeof client.makeTwilioRequest
->;
-
-type EndpointCtx = Parameters<typeof Messages.send>[0];
-
-function makeCtx(key: string): EndpointCtx {
-	// Narrow stub: only the context fields the credential path touches.
-	// The double assertion is confined to this test helper; every input
-	// below is fully typed via the endpoint signatures.
-	return {
-		key,
-		options: {},
-		keys: {
-			get_accountSid: jest.fn().mockResolvedValue(undefined),
-		},
-		db: {},
-	} as unknown as EndpointCtx;
-}
+const mockRequest = request as jest.Mock;
 
 const COLON_KEY = 'AC123:my:secret:with:colons';
+const EXPECTED_AUTH = `Basic ${Buffer.from(COLON_KEY).toString('base64')}`;
 
-describe('twilio credential parsing (request level)', () => {
+describe('twilio colon-containing credentials (request level)', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
-		mockedRequest.mockResolvedValue({ sid: 'SM123' } as never);
+		mockRequest.mockClear();
+		mockRequest.mockImplementation(() => Promise.resolve({ sid: 'SM123' }));
 	});
 
-	it('passes the full colon-containing token for messages.send', async () => {
-		const input: Parameters<typeof Messages.send>[1] = {
+	async function setup() {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'twilio');
+
+		const corsair = createCorsair({
+			plugins: [
+				twilio({
+					authType: 'api_key',
+					key: COLON_KEY,
+				}),
+			],
+			database: testDb.db,
+			kek: 'mock-kek-32-chars-long-mock-kek-3',
+		});
+
+		// Initialize the account DEK with an empty stored config so the
+		// stored accountSid lookup resolves to undefined and the key is
+		// the source of both the SID and the token below.
+		await corsair.twilio.keys.issue_new_dek();
+
+		return { corsair, testDb };
+	}
+
+	function expectColonCredentials(url: string) {
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				HEADERS: expect.objectContaining({
+					Authorization: EXPECTED_AUTH,
+				}),
+			}),
+			expect.objectContaining({ url }),
+		);
+	}
+
+	it('passes the full token for messages.send', async () => {
+		const { corsair, testDb } = await setup();
+
+		await corsair.twilio.api.messages.send({
 			To: '+1234567890',
 			From: '+1098765432',
 			Body: 'hi',
-		};
+		});
 
-		await Messages.send(makeCtx(COLON_KEY), input);
-
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Messages.json',
-			'AC123',
-			'my:secret:with:colons',
-			{ method: 'POST', body: input },
-		);
+		expectColonCredentials('Accounts/AC123/Messages.json');
+		testDb.cleanup();
 	});
 
-	it('passes the full colon-containing token for messages.get', async () => {
-		const input: Parameters<typeof Messages.get>[1] = {
-			messageSid: 'SM123',
-		};
+	it('passes the full token for messages.get', async () => {
+		const { corsair, testDb } = await setup();
 
-		await Messages.get(makeCtx(COLON_KEY), input);
+		await corsair.twilio.api.messages.get({ messageSid: 'SM123' });
 
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Messages/SM123.json',
-			'AC123',
-			'my:secret:with:colons',
-			{ method: 'GET' },
-		);
+		expectColonCredentials('Accounts/AC123/Messages/SM123.json');
+		testDb.cleanup();
 	});
 
-	it('passes the full colon-containing token for messages.list', async () => {
-		const input: Parameters<typeof Messages.list>[1] = {};
+	it('passes the full token for messages.list', async () => {
+		const { corsair, testDb } = await setup();
 
-		await Messages.list(makeCtx(COLON_KEY), input);
+		await corsair.twilio.api.messages.list({});
 
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Messages.json',
-			'AC123',
-			'my:secret:with:colons',
-			expect.objectContaining({ method: 'GET' }),
-		);
+		expectColonCredentials('Accounts/AC123/Messages.json');
+		testDb.cleanup();
 	});
 
-	it('passes the full colon-containing token for calls.create', async () => {
-		const input: Parameters<typeof Calls.create>[1] = {
+	it('passes the full token for calls.create', async () => {
+		const { corsair, testDb } = await setup();
+
+		await corsair.twilio.api.calls.create({
 			To: '+1234567890',
 			From: '+1098765432',
 			Url: 'https://example.com/voice.xml',
-		};
+		});
 
-		await Calls.create(makeCtx(COLON_KEY), input);
-
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Calls.json',
-			'AC123',
-			'my:secret:with:colons',
-			{ method: 'POST', body: input },
-		);
+		expectColonCredentials('Accounts/AC123/Calls.json');
+		testDb.cleanup();
 	});
 
-	it('passes the full colon-containing token for calls.get', async () => {
-		const input: Parameters<typeof Calls.get>[1] = {
-			callSid: 'CA123',
-		};
+	it('passes the full token for calls.get', async () => {
+		const { corsair, testDb } = await setup();
 
-		await Calls.get(makeCtx(COLON_KEY), input);
+		await corsair.twilio.api.calls.get({ callSid: 'CA123' });
 
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Calls/CA123.json',
-			'AC123',
-			'my:secret:with:colons',
-			{ method: 'GET' },
-		);
+		expectColonCredentials('Accounts/AC123/Calls/CA123.json');
+		testDb.cleanup();
 	});
 
-	it('passes the full colon-containing token for calls.list', async () => {
-		const input: Parameters<typeof Calls.list>[1] = {};
+	it('passes the full token for calls.list', async () => {
+		const { corsair, testDb } = await setup();
 
-		await Calls.list(makeCtx(COLON_KEY), input);
+		await corsair.twilio.api.calls.list({});
 
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'Accounts/AC123/Calls.json',
-			'AC123',
-			'my:secret:with:colons',
-			expect.objectContaining({ method: 'GET' }),
-		);
+		expectColonCredentials('Accounts/AC123/Calls.json');
+		testDb.cleanup();
 	});
 });
