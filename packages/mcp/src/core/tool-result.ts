@@ -21,8 +21,7 @@ export function isActionToolError(err: unknown): boolean {
 	return (
 		err instanceof AuthMissingError ||
 		err instanceof PermissionRequiredError ||
-		(err instanceof Error &&
-			isAgentFacingActionMessage(safeString(err.message)))
+		(err instanceof Error && isAgentFacingActionMessage(errorMessage(err)))
 	);
 }
 
@@ -55,6 +54,14 @@ function safeString(value: unknown): string {
 		return String(value);
 	} catch {
 		return '[Unserializable value]';
+	}
+}
+
+function errorMessage(err: Error): string {
+	try {
+		return safeString(err.message);
+	} catch {
+		return '[Unreadable error message]';
 	}
 }
 
@@ -144,8 +151,7 @@ export function formatRunScriptResult(result: unknown): CallToolResult {
 }
 
 export function formatRunScriptError(err: unknown): CallToolResult {
-	const message =
-		err instanceof Error ? safeString(err.message) : safeString(err);
+	const message = err instanceof Error ? errorMessage(err) : safeString(err);
 
 	if (isActionToolError(err)) {
 		return toolErrorResult(message);

@@ -113,6 +113,15 @@ describe('formatRunScriptError', () => {
 		);
 	});
 
+	it('serializes self-referential errors without throwing', () => {
+		const error = new Error('failed');
+		Object.defineProperty(error, 'cause', { value: error });
+
+		expect(formatRunScriptError(error).content[0]?.text).toContain(
+			'"cause": "[Circular]"',
+		);
+	});
+
 	it('redacts nested request data from error details', () => {
 		const error = Object.assign(new Error('request failed'), {
 			request: {
@@ -139,6 +148,20 @@ describe('formatRunScriptError', () => {
 		expect(() => formatRunScriptError(error)).not.toThrow();
 		expect(formatRunScriptError(error).content[0]?.text).toContain(
 			'[Unreadable property]',
+		);
+	});
+
+	it('returns an MCP error when an error message cannot be read', () => {
+		const error = new Error('request failed');
+		Object.defineProperty(error, 'message', {
+			get() {
+				throw new Error('unreadable message');
+			},
+		});
+
+		expect(() => formatRunScriptError(error)).not.toThrow();
+		expect(formatRunScriptError(error).content[0]?.text).toContain(
+			'[Unreadable error message]',
 		);
 	});
 });
