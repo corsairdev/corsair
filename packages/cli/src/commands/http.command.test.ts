@@ -43,6 +43,29 @@ function mockTunnelSuccess() {
 	jest.spyOn(console, 'log').mockImplementation(() => {});
 }
 
+function mockInvalidPort() {
+	const error = jest.spyOn(console, 'error').mockImplementation(() => {});
+	const exit = jest.spyOn(process, 'exit').mockImplementation(((
+		code?: number,
+	) => {
+		throw new Error(`process.exit:${String(code)}`);
+	}) as never);
+	return { error, exit };
+}
+
+async function expectInvalidPort(args: string[]) {
+	const { error, exit } = mockInvalidPort();
+	const command = new HttpCommand();
+
+	await expect(command.action({ args, options: {} })).rejects.toThrow(
+		'process.exit:1',
+	);
+	expect(exit).toHaveBeenCalledWith(1);
+	expect(error).toHaveBeenCalledWith(expect.stringContaining('No valid port'));
+	expect(runTunnelMock).not.toHaveBeenCalled();
+	expect(extractMock).not.toHaveBeenCalled();
+}
+
 describe('HttpCommand port parsing', () => {
 	const originalPort = process.env.PORT;
 
@@ -92,41 +115,22 @@ describe('HttpCommand port parsing', () => {
 	});
 
 	it('rejects a non-numeric port', async () => {
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-		jest.spyOn(process, 'exit').mockImplementation((() => {
-			throw new Error('process.exit:1');
-		}) as never);
-		const command = new HttpCommand();
-
-		await expect(
-			command.action({ args: ['abc'], options: {} }),
-		).rejects.toThrow('process.exit:1');
-		expect(runTunnelMock).not.toHaveBeenCalled();
+		await expectInvalidPort(['abc']);
 	});
 
 	it('rejects port 0', async () => {
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-		jest.spyOn(process, 'exit').mockImplementation((() => {
-			throw new Error('process.exit:1');
-		}) as never);
-		const command = new HttpCommand();
-
-		await expect(command.action({ args: ['0'], options: {} })).rejects.toThrow(
-			'process.exit:1',
-		);
-		expect(runTunnelMock).not.toHaveBeenCalled();
+		await expectInvalidPort(['0']);
 	});
 
 	it('rejects a port above 65535', async () => {
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-		jest.spyOn(process, 'exit').mockImplementation((() => {
-			throw new Error('process.exit:1');
-		}) as never);
-		const command = new HttpCommand();
+		await expectInvalidPort(['99999']);
+	});
 
-		await expect(
-			command.action({ args: ['99999'], options: {} }),
-		).rejects.toThrow('process.exit:1');
-		expect(runTunnelMock).not.toHaveBeenCalled();
+	it('rejects a padded port above 65535', async () => {
+		await expectInvalidPort([' 99999 ']);
+	});
+
+	it('rejects whitespace-only input', async () => {
+		await expectInvalidPort(['   ']);
 	});
 });
