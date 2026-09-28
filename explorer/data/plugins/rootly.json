@@ -1,0 +1,417 @@
+{
+  "id": "rootly",
+  "displayName": "Rootly",
+  "description": "Rootly plugin for Corsair",
+  "npmPackageName": "@corsair-dev/rootly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rootly.api.actionItems.delete",
+      "shortPath": "actionItems.delete",
+      "description": "Delete a Rootly incident action item",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rootly.api.actionItems.get",
+      "shortPath": "actionItems.get",
+      "description": "Get a Rootly incident action item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rootly.api.actionItems.list",
+      "shortPath": "actionItems.list",
+      "description": "List action items for a Rootly incident",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rootly.api.incidents.delete",
+      "shortPath": "incidents.delete",
+      "description": "Delete a Rootly incident",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rootly.api.incidents.get",
+      "shortPath": "incidents.get",
+      "description": "Get a Rootly incident",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rootly.api.incidents.update",
+      "shortPath": "incidents.update",
+      "description": "Update a Rootly incident",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_incident_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duplicate_incident_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "severity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "public_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alert_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "environment_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "incident_type_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "service_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "functionality_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "muted_service_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cause_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "slack_channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slack_channel_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slack_channel_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slack_channel_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "google_drive_parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "google_drive_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jira_issue_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jira_issue_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jira_issue_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "in_triage_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detected_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "acknowledged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mitigated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolved_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mitigation_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resolution_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellation_message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "{ id: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

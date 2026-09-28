@@ -16,6 +16,7 @@ import type {
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	DocumentsEndpoints,
+	SheetsEndpoints,
 	StructureEndpoints,
 	TablesEndpoints,
 	TextEndpoints,
@@ -81,6 +82,7 @@ export type GoogleDocsBoundWebhooks = BindWebhooks<
 
 const googleDocsEndpointsNested = {
 	documents: DocumentsEndpoints,
+	sheets: SheetsEndpoints,
 	text: TextEndpoints,
 	structure: StructureEndpoints,
 	tables: TablesEndpoints,
@@ -116,7 +118,7 @@ export type GoogleDocsPluginOptions = {
 export type GoogleDocsKeyBuilderContext =
 	KeyBuilderContext<GoogleDocsPluginOptions>;
 
-// Programmatic build keeps the 35 schema entries in lockstep with the nested
+// Programmatic build keeps schema entries in lockstep with the nested
 // endpoint tree (group.name), so a new endpoint can't drift out of sync.
 export const googledocsEndpointSchemas = Object.fromEntries(
 	(
@@ -211,6 +213,11 @@ const googledocsEndpointMeta = {
 	'documents.listSpreadsheetCharts': {
 		riskLevel: 'read',
 		description: 'List charts in a Google Sheets spreadsheet for embedding',
+	},
+	'sheets.readValues': {
+		riskLevel: 'read',
+		description:
+			'Read cell values from a spreadsheet (Sheets API via spreadsheets.readonly)',
 	},
 	'text.insertText': {
 		riskLevel: 'write',
@@ -341,8 +348,8 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 			scopes: [
 				'https://www.googleapis.com/auth/documents',
 				'https://www.googleapis.com/auth/drive',
-				// listSpreadsheetCharts reads via the Sheets API, which does not
-				// accept Docs/Drive scopes; without this every call 403s.
+				// Sheets API reads (listSpreadsheetCharts, sheets.readValues) require
+				// spreadsheets.readonly; Docs/Drive scopes alone return 403.
 				'https://www.googleapis.com/auth/spreadsheets.readonly',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },

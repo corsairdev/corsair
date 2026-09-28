@@ -1,0 +1,1983 @@
+{
+  "id": "spoki",
+  "displayName": "Spoki integration for Corsair",
+  "description": "Spoki integration for Corsair",
+  "npmPackageName": "@corsair-dev/spoki",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 60,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "spoki.api.accounts.createOnboardingLink",
+      "shortPath": "accounts.createOnboardingLink",
+      "description": "Create an account onboarding link",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.accounts.getAccount",
+      "shortPath": "accounts.getAccount",
+      "description": "Retrieve a Spoki account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_credit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_official_verification",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "daily_limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "phone_status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quality_score",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quality_reasons",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "estimated_available_conversations",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "account_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "default_pricing_delta",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "low_credit_threshold",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_low_credit_alert",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "default_prefix",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_country_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacted_in_24h",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacted_in_7d",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "primary_channel_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ name: string, identifier: string, platform: string, status: string, phone_status: string, quality_score: string, is_primary: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spoki.api.accounts.getAccountByPhone",
+      "shortPath": "accounts.getAccountByPhone",
+      "description": "Retrieve a Spoki account by phone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_credit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_official_verification",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "daily_limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "phone_status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quality_score",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quality_reasons",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "estimated_available_conversations",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "account_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "default_pricing_delta",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "low_credit_threshold",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_low_credit_alert",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "default_prefix",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_country_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacted_in_24h",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacted_in_7d",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "primary_channel_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ name: string, identifier: string, platform: string, status: string, phone_status: string, quality_score: string, is_primary: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spoki.api.accounts.getCurrentReport",
+      "shortPath": "accounts.getCurrentReport",
+      "description": "Get the current account report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.accounts.listAccounts",
+      "shortPath": "accounts.listAccounts",
+      "description": "List Spoki WhatsApp accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, current_credit: number, status: string, default_language: string, phone?: string | null, has_official_verification: boolean, daily_limit: number, phone_status: string, quality_score: number, quality_reasons?: any, is_active: boolean, country_code: string, estimated_available_conversations: number, account_type: number, default_pricing_delta: number, low_credit_threshold: number, has_low_credit_alert: boolean, default_prefix: string, default_country_code: string, timezone: string, contacted_in_24h: number, contacted_in_7d: number, primary_channel_id?: number | null, channels?: { name: string, identifier: string, platform: string, status: string, phone_status: string, quality_score: string, is_primary: boolean }[] }[]"
+      }
+    },
+    {
+      "path": "spoki.api.agencies.list",
+      "shortPath": "agencies.list",
+      "description": "List agencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.automation.triggerAutomation",
+      "shortPath": "automation.triggerAutomation",
+      "description": "Trigger a Spoki automation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spoki.api.automations.list",
+      "shortPath": "automations.list",
+      "description": "List automations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.automations.retrieve",
+      "shortPath": "automations.retrieve",
+      "description": "Retrieve an automation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_datetime",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.addOperator",
+      "shortPath": "contacts.addOperator",
+      "description": "Assign an operator to a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "operator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "role_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.createOrUpdate",
+      "shortPath": "contacts.createOrUpdate",
+      "description": "Create or update a contact by phone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.removeOperator",
+      "shortPath": "contacts.removeOperator",
+      "description": "Remove an operator from a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.retrieve",
+      "shortPath": "contacts.retrieve",
+      "description": "Retrieve a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.syncBulk",
+      "shortPath": "contacts.syncBulk",
+      "description": "Bulk sync contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Create a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Delete a custom field",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.customFields.retrieve",
+      "shortPath": "customFields.retrieve",
+      "description": "Retrieve a custom field",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Update a custom field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.invitations.resend",
+      "shortPath": "invitations.resend",
+      "description": "Resend an invitation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.invitations.updateRole",
+      "shortPath": "invitations.updateRole",
+      "description": "Update an invitation role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a contact list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a contact list",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List contact lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.removeAllContacts",
+      "shortPath": "lists.removeAllContacts",
+      "description": "Remove all contacts from a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.removeContacts",
+      "shortPath": "lists.removeContacts",
+      "description": "Remove contacts from a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.retrieve",
+      "shortPath": "lists.retrieve",
+      "description": "Retrieve a contact list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.lists.syncContacts",
+      "shortPath": "lists.syncContacts",
+      "description": "Sync contacts into a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.media.create",
+      "shortPath": "media.create",
+      "description": "Create a media file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.media.delete",
+      "shortPath": "media.delete",
+      "description": "Delete a media file",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.media.list",
+      "shortPath": "media.list",
+      "description": "List media files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.media.retrieve",
+      "shortPath": "media.retrieve",
+      "description": "Retrieve a media file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.media.update",
+      "shortPath": "media.update",
+      "description": "Update a media file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.messaging.sendMessage",
+      "shortPath": "messaging.sendMessage",
+      "description": "Send a WhatsApp message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "spoki.api.partners.list",
+      "shortPath": "partners.list",
+      "description": "List partners",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.reports.list",
+      "shortPath": "reports.list",
+      "description": "List usage reports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.addServiceUser",
+      "shortPath": "roles.addServiceUser",
+      "description": "Add a service user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.checkPrivateKey",
+      "shortPath": "roles.checkPrivateKey",
+      "description": "Check whether a role has a private key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.delete",
+      "shortPath": "roles.delete",
+      "description": "Delete a role",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.generatePrivateKey",
+      "shortPath": "roles.generatePrivateKey",
+      "description": "Generate a role private key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "List roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.retrieve",
+      "shortPath": "roles.retrieve",
+      "description": "Retrieve a role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.roles.update",
+      "shortPath": "roles.update",
+      "description": "Update a role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.tags.retrieve",
+      "shortPath": "tags.retrieve",
+      "description": "Retrieve a tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.clone",
+      "shortPath": "templates.clone",
+      "description": "Clone a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a WhatsApp template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templatelocalization_set",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a WhatsApp template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "force_delete",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.retrieve",
+      "shortPath": "templates.retrieve",
+      "description": "Retrieve a template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.revertToDraft",
+      "shortPath": "templates.revertToDraft",
+      "description": "Revert a template to draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a WhatsApp template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.tickets.create",
+      "shortPath": "tickets.create",
+      "description": "Create a ticket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.tickets.delete",
+      "shortPath": "tickets.delete",
+      "description": "Delete a ticket",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "spoki.api.tickets.list",
+      "shortPath": "tickets.list",
+      "description": "List tickets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | {}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "spoki.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "current_credit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_official_verification",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "daily_limit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "phone_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quality_score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "estimated_available_conversations",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "account_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "default_pricing_delta",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "low_credit_threshold",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "has_low_credit_alert",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "default_prefix",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contacted_in_24h",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "contacted_in_7d",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "primary_channel_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "spoki.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quality_score",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_primary",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

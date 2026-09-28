@@ -1,0 +1,49 @@
+{
+  "id": "beamer",
+  "displayName": "Beamer",
+  "description": "Beamer plugin for Corsair",
+  "npmPackageName": "@corsair-dev/beamer",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "beamer.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Get Beamer posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number | string, date?: string, dueDate?: string, published?: boolean | true | false, pinned?: boolean | true | false, showInWidget?: boolean | true | false, showInStandalone?: boolean | true | false, category?: string, boostedAnnouncement?: string, translations?: { title?: string, content?: string, contentHtml?: string, language?: string, category?: string, linkUrl?: string | string[], linkText?: string | string[], images?: string[] }[], filter?: string, filterUrl?: string, autoOpen?: boolean | true | false, editionDate?: string, feedbackEnabled?: boolean | true | false, reactionsEnabled?: boolean | true | false, views?: number | string, uniqueViews?: number | string, clicks?: number | string, feedbacks?: number | string, positiveReactions?: number | string, neutralReactions?: number | string, negativeReactions?: number | string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
