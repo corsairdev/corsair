@@ -38,8 +38,30 @@ export const imageEditBatch: ClaidAiEndpoints['imageEditBatch'] = async (
 		ctx,
 		'claidai.image_edit.batch',
 		input,
-		'completed',
+		'processing',
 	);
+
+	const batchStatus = response.data?.status?.toUpperCase();
+	if (batchStatus === 'DONE') {
+		await logEventFromContext(
+			ctx,
+			'claidai.image_edit.batch',
+			{ ...input, response },
+			'completed',
+		);
+	} else if (
+		(response.data?.errors?.length ?? 0) > 0 ||
+		batchStatus === 'ERROR' ||
+		batchStatus === 'FAILED'
+	) {
+		await logEventFromContext(
+			ctx,
+			'claidai.image_edit.batch',
+			{ ...input, response },
+			'failed',
+		);
+	}
+
 	return response;
 };
 
