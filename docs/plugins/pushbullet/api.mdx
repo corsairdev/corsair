@@ -1,0 +1,657 @@
+---
+title: API
+description: "API reference for Pushbullet: every `pushbullet.api.*` operation with input and output types."
+---
+
+Every `pushbullet.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chats
+
+### create
+
+`chats.create`
+
+Start a chat with another Pushbullet user by email
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.chats.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `muted` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+| `with` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="with full type">
+
+```ts
+{
+  iden?: string,
+  email?: string,
+  name?: string,
+  image_url?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`chats.delete`
+
+Delete a chat
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushbullet.api.chats.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`chats.list`
+
+List the chats on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.pushbullet.api.chats.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chats` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="chats full type">
+
+```ts
+{
+  iden: string,
+  active?: boolean,
+  muted?: boolean,
+  created?: number,
+  modified?: number,
+  with?: {
+    iden?: string,
+    email?: string,
+    name?: string,
+    image_url?: string,
+    type?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setMuted
+
+`chats.setMuted`
+
+Mute or unmute a chat
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.chats.setMuted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `muted` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `muted` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+| `with` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="with full type">
+
+```ts
+{
+  iden?: string,
+  email?: string,
+  name?: string,
+  image_url?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Devices
+
+### delete
+
+`devices.delete`
+
+Delete a device from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushbullet.api.devices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`devices.list`
+
+List devices registered to the account
+
+**Risk:** `read`
+
+```ts
+await corsair.pushbullet.api.devices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `active` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `devices` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="devices full type">
+
+```ts
+{
+  iden: string,
+  active?: boolean,
+  nickname?: string,
+  manufacturer?: string,
+  model?: string,
+  icon?: string,
+  app_version?: number,
+  push_token?: string,
+  has_sms?: boolean,
+  created?: number,
+  modified?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### register
+
+`devices.register`
+
+Register a new device on the account
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.devices.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nickname` | `string` | No | — |
+| `model` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `push_token` | `string` | No | — |
+| `app_version` | `number` | No | — |
+| `icon` | `string` | No | — |
+| `has_sms` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `nickname` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `model` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `app_version` | `number` | No | — |
+| `push_token` | `string` | No | — |
+| `has_sms` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`devices.update`
+
+Update a device nickname, model or push token
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.devices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `nickname` | `string` | No | — |
+| `model` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `push_token` | `string` | No | — |
+| `app_version` | `number` | No | — |
+| `icon` | `string` | No | — |
+| `has_sms` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `nickname` | `string` | No | — |
+| `manufacturer` | `string` | No | — |
+| `model` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `app_version` | `number` | No | — |
+| `push_token` | `string` | No | — |
+| `has_sms` | `boolean` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+
+
+
+---
+
+## Files
+
+### uploadRequest
+
+`files.uploadRequest`
+
+Reserve an upload slot, returning the upload URL and the file URL to use in a file push
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.files.uploadRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | Yes | — |
+| `file_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_name` | `string` | Yes | — |
+| `file_type` | `string` | Yes | — |
+| `upload_url` | `string` | Yes | — |
+| `file_url` | `string` | Yes | — |
+
+
+
+---
+
+## Pushes
+
+### create
+
+`pushes.create`
+
+Send a note, link or file push to a device, person or channel
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.pushes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `note \| link \| file` | Yes | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `url` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `file_type` | `string` | No | — |
+| `file_url` | `string` | No | — |
+| `guid` | `string` | No | — |
+| `source_device_iden` | `string` | No | — |
+| `device_iden` | `string` | No | — |
+| `email` | `string` | No | — |
+| `channel_tag` | `string` | No | — |
+| `client_iden` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `url` | `string` | No | — |
+| `dismissed` | `boolean` | No | — |
+| `direction` | `string` | No | — |
+| `sender_iden` | `string` | No | — |
+| `sender_email` | `string` | No | — |
+| `receiver_iden` | `string` | No | — |
+| `receiver_email` | `string` | No | — |
+| `target_device_iden` | `string` | No | — |
+| `source_device_iden` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `file_type` | `string` | No | — |
+| `file_url` | `string` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`pushes.delete`
+
+Delete a single push
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushbullet.api.pushes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteAll
+
+`pushes.deleteAll`
+
+Delete every push on the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushbullet.api.pushes.deleteAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`pushes.list`
+
+List pushes on the account, optionally modified after a time
+
+**Risk:** `read`
+
+```ts
+await corsair.pushbullet.api.pushes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modified_after` | `number` | No | — |
+| `active` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pushes` | `object[]` | Yes | — |
+| `cursor` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pushes full type">
+
+```ts
+{
+  iden: string,
+  active?: boolean,
+  type?: string,
+  title?: string,
+  body?: string,
+  url?: string,
+  dismissed?: boolean,
+  direction?: string,
+  sender_iden?: string,
+  sender_email?: string,
+  receiver_iden?: string,
+  receiver_email?: string,
+  target_device_iden?: string,
+  source_device_iden?: string,
+  file_name?: string,
+  file_type?: string,
+  file_url?: string,
+  created?: number,
+  modified?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pushes.update`
+
+Mark a push dismissed or undismissed
+
+**Risk:** `write`
+
+```ts
+await corsair.pushbullet.api.pushes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `dismissed` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `active` | `boolean` | No | — |
+| `type` | `string` | No | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `url` | `string` | No | — |
+| `dismissed` | `boolean` | No | — |
+| `direction` | `string` | No | — |
+| `sender_iden` | `string` | No | — |
+| `sender_email` | `string` | No | — |
+| `receiver_iden` | `string` | No | — |
+| `receiver_email` | `string` | No | — |
+| `target_device_iden` | `string` | No | — |
+| `source_device_iden` | `string` | No | — |
+| `file_name` | `string` | No | — |
+| `file_type` | `string` | No | — |
+| `file_url` | `string` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+
+
+
+---
+
+## Users
+
+### me
+
+`users.me`
+
+Retrieve the account the access token belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.pushbullet.api.users.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iden` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `email_normalized` | `string` | No | — |
+| `name` | `string` | No | — |
+| `image_url` | `string` | No | — |
+| `max_upload_size` | `number` | No | — |
+| `created` | `number` | No | — |
+| `modified` | `number` | No | — |
+
+
+
+---
+
