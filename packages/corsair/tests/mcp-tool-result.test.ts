@@ -59,6 +59,21 @@ describe('formatRunScriptResult', () => {
 			formatRunScriptResult({ first: shared, second: shared }).content[0]?.text,
 		).toBe(JSON.stringify({ first: shared, second: shared }, null, 2));
 	});
+
+	it('redacts request data from returned errors', () => {
+		const error = Object.assign(new Error('request failed'), {
+			request: {
+				body: { email: 'member@example.com' },
+				headers: { authorization: 'Bearer secret-token' },
+			},
+		});
+
+		const text = formatRunScriptResult(error).content[0]?.text ?? '';
+
+		expect(text).not.toContain('member@example.com');
+		expect(text).not.toContain('secret-token');
+		expect(text).toContain('[REDACTED]');
+	});
 });
 
 describe('formatRunScriptError', () => {
@@ -111,6 +126,18 @@ describe('formatRunScriptError', () => {
 		expect(formatRunScriptError(error).content[0]?.text).toContain(
 			'inner failure',
 		);
+	});
+
+	it('redacts sensitive text from nested errors', () => {
+		const error = Object.assign(new Error('outer failure'), {
+			details: new Error('member@example.com Bearer secret-token'),
+		});
+
+		const text = formatRunScriptError(error).content[0]?.text ?? '';
+
+		expect(text).not.toContain('member@example.com');
+		expect(text).not.toContain('secret-token');
+		expect(text).toContain('[REDACTED]');
 	});
 
 	it('serializes self-referential errors without throwing', () => {

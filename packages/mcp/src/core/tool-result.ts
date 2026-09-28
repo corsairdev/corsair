@@ -49,6 +49,21 @@ const SENSITIVE_ERROR_FIELDS = new Set([
 	'token',
 ]);
 
+const SENSITIVE_TEXT_PATTERNS = [
+	/(Bearer\s+)[^\s,;]+/gi,
+	/([?&](?:api[_-]?key|key|token|appid)=)[^&#\s]*/gi,
+	/(?:\b(?:api[_-]?key|authorization|client[_-]?secret|cookie|password|secret|token)\b\s*[:=]\s*)[^\s,;]+/gi,
+	/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
+];
+
+function redactSensitiveText(value: string): string {
+	return SENSITIVE_TEXT_PATTERNS.reduce(
+		(text, pattern) => text.replace(pattern, '$1[REDACTED]'),
+		value,
+	);
+}
+
+// Script values cross plugin boundaries without a shared schema.
 function safeString(value: unknown): string {
 	try {
 		return String(value);
@@ -59,15 +74,17 @@ function safeString(value: unknown): string {
 
 function errorMessage(err: Error): string {
 	try {
-		return safeString(err.message);
+		return redactSensitiveText(safeString(err.message));
 	} catch {
 		return '[Unreadable error message]';
 	}
 }
 
+// `unknown` preserves arbitrary script output until it is safely serialized.
 function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 	const ancestors: object[] = [];
 	const serializedErrors = new WeakMap<Error, Record<string, unknown>>();
+	const errorPropertyRecords = new WeakSet<object>();
 
 	function errorProperties(err: Error): Record<string, unknown> {
 		const cached = serializedErrors.get(err);
@@ -77,10 +94,15 @@ function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 
 		const properties: Record<string, unknown> = {};
 		serializedErrors.set(err, properties);
+		errorPropertyRecords.add(properties);
 
 		for (const key of Object.getOwnPropertyNames(err)) {
 			try {
-				properties[key] = err[key as keyof Error];
+				const property = err[key as keyof Error];
+				properties[key] =
+					typeof property === 'string'
+						? redactSensitiveText(property)
+						: property;
 			} catch {
 				properties[key] = '[Unreadable property]';
 			}
@@ -108,7 +130,7 @@ function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 					}
 
 					if (
-						redactSensitiveFields &&
+						(redactSensitiveFields || errorPropertyRecords.has(this)) &&
 						SENSITIVE_ERROR_FIELDS.has(_key.toLowerCase())
 					) {
 						return '[REDACTED]';
