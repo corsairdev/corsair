@@ -32,6 +32,44 @@ export function toolErrorResult(message: string): CallToolResult {
 	};
 }
 
+function safeSerialize(value: unknown): string {
+	const ancestors: object[] = [];
+
+	try {
+		return (
+			JSON.stringify(
+				value,
+				function (_key, nestedValue: unknown) {
+					while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+						ancestors.pop();
+					}
+
+					if (typeof nestedValue === 'bigint') {
+						return nestedValue.toString();
+					}
+
+					if (typeof nestedValue === 'object' && nestedValue !== null) {
+						if (ancestors.includes(nestedValue)) {
+							return '[Circular]';
+						}
+
+						ancestors.push(nestedValue);
+					}
+
+					return nestedValue;
+				},
+				2,
+			) ?? String(value)
+		);
+	} catch {
+		try {
+			return String(value);
+		} catch {
+			return '[Unserializable value]';
+		}
+	}
+}
+
 export function formatRunScriptResult(result: unknown): CallToolResult {
 	if (isAgentFacingActionMessage(result)) {
 		return toolErrorResult(result);
@@ -41,7 +79,7 @@ export function formatRunScriptResult(result: unknown): CallToolResult {
 		content: [
 			{
 				type: 'text',
-				text: JSON.stringify(result ?? null, null, 2),
+				text: safeSerialize(result ?? null),
 			},
 		],
 	};
@@ -56,7 +94,16 @@ export function formatRunScriptError(err: unknown): CallToolResult {
 
 	const extra =
 		err instanceof Error && err.cause ? `\nCause: ${String(err.cause)}` : '';
-	const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
+	const full = safeSerialize(
+		err instanceof Error
+			? Object.fromEntries(
+					Object.getOwnPropertyNames(err).map((key) => [
+						key,
+						err[key as keyof Error],
+					]),
+				)
+			: err,
+	);
 
 	return toolErrorResult(`Error running snippet: ${message}${extra}\n${full}`);
 }
