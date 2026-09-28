@@ -35,6 +35,30 @@ describe('formatRunScriptResult', () => {
 		expect(result.isError).toBe(true);
 		expect(result.content[0]?.text).toContain('Approval required');
 	});
+
+	it('serializes BigInt values without throwing', () => {
+		const result = formatRunScriptResult({ v: 10n });
+
+		expect(result.isError).toBeUndefined();
+		expect(result.content[0]?.text).toContain('"v": "10"');
+	});
+
+	it('serializes circular values without throwing', () => {
+		const result: { self?: unknown } = {};
+		result.self = result;
+
+		expect(formatRunScriptResult(result).content[0]?.text).toContain(
+			'"self": "[Circular]"',
+		);
+	});
+
+	it('preserves repeated non-circular references', () => {
+		const shared = { value: 'shared' };
+
+		expect(
+			formatRunScriptResult({ first: shared, second: shared }).content[0]?.text,
+		).toBe(JSON.stringify({ first: shared, second: shared }, null, 2));
+	});
 });
 
 describe('formatRunScriptError', () => {
@@ -61,5 +85,21 @@ describe('formatRunScriptError', () => {
 
 		expect(result.isError).toBe(true);
 		expect(result.content[0]?.text).toContain('[auth-missing:gmail]');
+	});
+
+	it('serializes BigInt properties on errors without throwing', () => {
+		const error = Object.assign(new Error('failed'), { details: { v: 10n } });
+
+		expect(formatRunScriptError(error).content[0]?.text).toContain('"v": "10"');
+	});
+
+	it('serializes circular error causes without throwing', () => {
+		const cause: { self?: unknown } = {};
+		cause.self = cause;
+		const error = new Error('failed', { cause });
+
+		expect(formatRunScriptError(error).content[0]?.text).toContain(
+			'"self": "[Circular]"',
+		);
 	});
 });
