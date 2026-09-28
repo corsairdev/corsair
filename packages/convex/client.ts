@@ -109,6 +109,7 @@ export async function makeConvexRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Repository typing rule: ApiError.body is unknown — narrow to Convex error shape.
 			const body = error.body as
 				| { message?: string; error?: string; code?: string }
 				| undefined;
