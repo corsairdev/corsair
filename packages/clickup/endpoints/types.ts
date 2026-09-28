@@ -138,6 +138,7 @@ export const TasksCreateInputSchema = z.object({
 	notify_all: z.boolean().optional(),
 	parent: z.string().optional(),
 	links_to: z.string().optional(),
+	// Field-type-specific per ClickUp custom field definitions; values use z.unknown().
 	custom_fields: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
