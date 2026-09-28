@@ -24,7 +24,12 @@ const mockedRequest = client.makeTwilioRequest as jest.MockedFunction<
 	typeof client.makeTwilioRequest
 >;
 
-function makeCtx(key: string) {
+type EndpointCtx = Parameters<typeof Messages.send>[0];
+
+function makeCtx(key: string): EndpointCtx {
+	// Narrow stub: only the context fields the credential path touches.
+	// The double assertion is confined to this test helper; every input
+	// below is fully typed via the endpoint signatures.
 	return {
 		key,
 		options: {},
@@ -32,8 +37,10 @@ function makeCtx(key: string) {
 			get_accountSid: jest.fn().mockResolvedValue(undefined),
 		},
 		db: {},
-	} as any;
+	} as unknown as EndpointCtx;
 }
+
+const COLON_KEY = 'AC123:my:secret:with:colons';
 
 describe('twilio credential parsing (request level)', () => {
 	beforeEach(() => {
@@ -42,9 +49,13 @@ describe('twilio credential parsing (request level)', () => {
 	});
 
 	it('passes the full colon-containing token for messages.send', async () => {
-		const input = { To: '+1234567890', From: '+1098765432', Body: 'hi' };
+		const input: Parameters<typeof Messages.send>[1] = {
+			To: '+1234567890',
+			From: '+1098765432',
+			Body: 'hi',
+		};
 
-		await Messages.send(makeCtx('AC123:my:secret:with:colons'), input as any);
+		await Messages.send(makeCtx(COLON_KEY), input);
 
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'Accounts/AC123/Messages.json',
@@ -54,20 +65,76 @@ describe('twilio credential parsing (request level)', () => {
 		);
 	});
 
+	it('passes the full colon-containing token for messages.get', async () => {
+		const input: Parameters<typeof Messages.get>[1] = {
+			messageSid: 'SM123',
+		};
+
+		await Messages.get(makeCtx(COLON_KEY), input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'Accounts/AC123/Messages/SM123.json',
+			'AC123',
+			'my:secret:with:colons',
+			{ method: 'GET' },
+		);
+	});
+
+	it('passes the full colon-containing token for messages.list', async () => {
+		const input: Parameters<typeof Messages.list>[1] = {};
+
+		await Messages.list(makeCtx(COLON_KEY), input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'Accounts/AC123/Messages.json',
+			'AC123',
+			'my:secret:with:colons',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
 	it('passes the full colon-containing token for calls.create', async () => {
-		const input = {
+		const input: Parameters<typeof Calls.create>[1] = {
 			To: '+1234567890',
 			From: '+1098765432',
 			Url: 'https://example.com/voice.xml',
 		};
 
-		await Calls.create(makeCtx('AC123:part1:part2'), input as any);
+		await Calls.create(makeCtx(COLON_KEY), input);
 
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'Accounts/AC123/Calls.json',
 			'AC123',
-			'part1:part2',
+			'my:secret:with:colons',
 			{ method: 'POST', body: input },
+		);
+	});
+
+	it('passes the full colon-containing token for calls.get', async () => {
+		const input: Parameters<typeof Calls.get>[1] = {
+			callSid: 'CA123',
+		};
+
+		await Calls.get(makeCtx(COLON_KEY), input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'Accounts/AC123/Calls/CA123.json',
+			'AC123',
+			'my:secret:with:colons',
+			{ method: 'GET' },
+		);
+	});
+
+	it('passes the full colon-containing token for calls.list', async () => {
+		const input: Parameters<typeof Calls.list>[1] = {};
+
+		await Calls.list(makeCtx(COLON_KEY), input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'Accounts/AC123/Calls.json',
+			'AC123',
+			'my:secret:with:colons',
+			expect.objectContaining({ method: 'GET' }),
 		);
 	});
 });
