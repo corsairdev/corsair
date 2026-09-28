@@ -1,0 +1,78 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeClickmeetingRequest } from '../client';
+import type { ClickmeetingEndpoints } from '../index';
+import { ClickmeetingEndpointOutputSchemas } from './types';
+
+export const getPing: ClickmeetingEndpoints['getPing'] = async (ctx) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
+	const res = await makeClickmeetingRequest<unknown>('/ping', ctx.key, {
+		method: 'GET',
+	});
+	await logEventFromContext(
+		ctx,
+		'clickmeeting.utility.getPing',
+		{},
+		'completed',
+	);
+	return ClickmeetingEndpointOutputSchemas.getPing.parse(res);
+};
+
+export const getTimeZoneList: ClickmeetingEndpoints['getTimeZoneList'] = async (
+	ctx,
+) => {
+	// unknown: provider JSON shape is untyped before Zod parsing
+	const res = await makeClickmeetingRequest<unknown>(
+		'/time_zone_list',
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'clickmeeting.utility.getTimeZoneList',
+		{},
+		'completed',
+	);
+	return ClickmeetingEndpointOutputSchemas.getTimeZoneList.parse(res);
+};
+
+export const getTimeZoneListByCountry: ClickmeetingEndpoints['getTimeZoneListByCountry'] =
+	async (ctx, input) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
+		const res = await makeClickmeetingRequest<unknown>(
+			`/time_zone_list/${encodeURIComponent(input.country)}`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'clickmeeting.utility.getTimeZoneListByCountry',
+			{ country: input.country },
+			'completed',
+		);
+		return ClickmeetingEndpointOutputSchemas.getTimeZoneListByCountry.parse(
+			res,
+		);
+	};
+
+export const getPhoneGateways: ClickmeetingEndpoints['getPhoneGateways'] =
+	async (ctx) => {
+		// unknown: provider JSON shape is untyped before Zod parsing
+		const res = await makeClickmeetingRequest<unknown>(
+			'/phone_gateways',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'clickmeeting.utility.getPhoneGateways',
+			{},
+			'completed',
+		);
+		return ClickmeetingEndpointOutputSchemas.getPhoneGateways.parse(res);
+	};

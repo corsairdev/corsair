@@ -212,6 +212,137 @@ await corsair.amara.api.messages.send({});
 
 ## Teams
 
+### addMember
+
+`teams.addMember`
+
+Add a new member to a team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.addMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `role` | `owner \| admin \| manager \| contributor \| proj_lang_manager \| limited_contributor` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `role` | `string` | No | — |
+| `languages_managed` | `string[]` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  username?: string | null,
+  id?: string,
+  full_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  biography?: string | null,
+  homepage?: string | null,
+  avatar?: string | null,
+  languages?: string[],
+  num_videos?: number,
+  resource_uri?: string,
+  created_by?: string | null,
+  is_partner?: boolean,
+  activity_uri?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createProject
+
+`teams.createProject`
+
+Create a new project in a team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.createProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `guidelines` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `description` | `string` | No | — |
+| `guidelines` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `workflow_enabled` | `boolean` | No | — |
+| `resource_uri` | `string` | No | — |
+
+
+
+---
+
+### deleteProject
+
+`teams.deleteProject`
+
+Delete a project from a team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.deleteProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `project_slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | No | — |
+
+
+
+---
+
 ### getDetails
 
 `teams.getDetails`
@@ -288,6 +419,166 @@ await corsair.amara.api.teams.getLanguages({});
 
 ---
 
+### getMember
+
+`teams.getMember`
+
+Get details for a specific team member
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.getMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `role` | `string` | No | — |
+| `languages_managed` | `string[]` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  username?: string | null,
+  id?: string,
+  full_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  biography?: string | null,
+  homepage?: string | null,
+  avatar?: string | null,
+  languages?: string[],
+  num_videos?: number,
+  resource_uri?: string,
+  created_by?: string | null,
+  is_partner?: boolean,
+  activity_uri?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProject
+
+`teams.getProject`
+
+Get details for a specific team project
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.getProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `project_slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `description` | `string` | No | — |
+| `guidelines` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `workflow_enabled` | `boolean` | No | — |
+| `resource_uri` | `string` | No | — |
+
+
+
+---
+
+### getTask
+
+`teams.getTask`
+
+Get details for a specific team task
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.getTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `task_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
+| `video_id` | `string` | No | — |
+| `language` | `string` | No | — |
+| `type` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `assignee` | `object` | No | — |
+| `completed` | `string \| boolean` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  username?: string | null,
+  id?: string,
+  full_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  biography?: string | null,
+  homepage?: string | null,
+  avatar?: string | null,
+  languages?: string[],
+  num_videos?: number,
+  resource_uri?: string,
+  created_by?: string | null,
+  is_partner?: boolean,
+  activity_uri?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### list
 
 `teams.list`
@@ -354,6 +645,443 @@ await corsair.amara.api.teams.list({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### listApplications
+
+`teams.listApplications`
+
+List membership applications for a team
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.listApplications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `user` | `string` | No | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number | string,
+  user?: {
+    username?: string | null,
+    id?: string,
+    full_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    biography?: string | null,
+    homepage?: string | null,
+    avatar?: string | null,
+    languages?: string[],
+    num_videos?: number,
+    resource_uri?: string,
+    created_by?: string | null,
+    is_partner?: boolean,
+    activity_uri?: string
+  } | string,
+  status?: string,
+  created?: string | null,
+  message?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMembers
+
+`teams.listMembers`
+
+List members of a team
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.listMembers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  user?: {
+    username?: string | null,
+    id?: string,
+    full_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    biography?: string | null,
+    homepage?: string | null,
+    avatar?: string | null,
+    languages?: string[],
+    num_videos?: number,
+    resource_uri?: string,
+    created_by?: string | null,
+    is_partner?: boolean,
+    activity_uri?: string
+  } | string,
+  role?: string,
+  languages_managed?: string[],
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProjects
+
+`teams.listProjects`
+
+List projects within a team
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  name?: string,
+  slug?: string,
+  description?: string | null,
+  guidelines?: string | null,
+  created?: string | null,
+  modified?: string | null,
+  workflow_enabled?: boolean,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTasks
+
+`teams.listTasks`
+
+List tasks within a team with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.listTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `assignee` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `type` | `string` | No | — |
+| `video_id` | `string` | No | — |
+| `completed` | `string \| boolean` | No | — |
+| `open` | `string \| boolean` | No | — |
+| `order_by` | `string` | No | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number | string,
+  video_id?: string,
+  language?: string,
+  type?: string,
+  priority?: number,
+  assignee?: {
+    username?: string | null,
+    id?: string,
+    full_name?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    biography?: string | null,
+    homepage?: string | null,
+    avatar?: string | null,
+    languages?: string[],
+    num_videos?: number,
+    resource_uri?: string,
+    created_by?: string | null,
+    is_partner?: boolean,
+    activity_uri?: string
+  } | string | null,
+  completed?: string | boolean | null,
+  created?: string | null,
+  modified?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeMember
+
+`teams.removeMember`
+
+Remove a member from a team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | No | — |
+
+
+
+---
+
+### updateMember
+
+`teams.updateMember`
+
+Update member role in a team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.updateMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `role` | `owner \| admin \| manager \| contributor \| proj_lang_manager \| limited_contributor` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+| `role` | `string` | No | — |
+| `languages_managed` | `string[]` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  username?: string | null,
+  id?: string,
+  full_name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  biography?: string | null,
+  homepage?: string | null,
+  avatar?: string | null,
+  languages?: string[],
+  num_videos?: number,
+  resource_uri?: string,
+  created_by?: string | null,
+  is_partner?: boolean,
+  activity_uri?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProject
+
+`teams.updateProject`
+
+Update a team project
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.teams.updateProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_slug` | `string` | Yes | — |
+| `project_slug` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `guidelines` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `description` | `string` | No | — |
+| `guidelines` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `workflow_enabled` | `boolean` | No | — |
+| `resource_uri` | `string` | No | — |
 
 
 

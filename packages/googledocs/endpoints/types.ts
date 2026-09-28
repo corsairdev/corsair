@@ -5,6 +5,7 @@ import type {
 	DriveFile,
 	DriveFileList,
 	SpreadsheetChartsResponse,
+	ValueRange,
 } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -113,6 +114,24 @@ const SearchDocumentsInputSchema = z.object({
 
 const ListSpreadsheetChartsInputSchema = z.object({
 	spreadsheetId: z.string(),
+});
+
+const ReadSpreadsheetValuesInputSchema = z.object({
+	spreadsheetId: z.string(),
+	sheetName: z.string().optional(),
+	range: z
+		.string()
+		.optional()
+		.describe(
+			'A1 notation range (e.g. "Sheet1!A1:D10"). When omitted, defaults to sheetName!A:Z or Sheet1!A:Z.',
+		),
+	valueRenderOption: z
+		.enum(['FORMATTED_VALUE', 'UNFORMATTED_VALUE', 'FORMULA'])
+		.optional(),
+	dateTimeRenderOption: z
+		.enum(['SERIAL_NUMBER', 'FORMATTED_STRING'])
+		.optional(),
+	majorDimension: z.enum(['ROWS', 'COLUMNS']).optional(),
 });
 
 const InsertTextInputSchema = z.object({
@@ -282,6 +301,7 @@ export const GoogleDocsEndpointInputSchemas = {
 	exportDocumentAsPdf: ExportDocumentAsPdfInputSchema,
 	searchDocuments: SearchDocumentsInputSchema,
 	listSpreadsheetCharts: ListSpreadsheetChartsInputSchema,
+	readValues: ReadSpreadsheetValuesInputSchema,
 	insertText: InsertTextInputSchema,
 	replaceAllText: ReplaceAllTextInputSchema,
 	deleteContentRange: DeleteContentRangeInputSchema,
@@ -370,6 +390,16 @@ const SpreadsheetChartsResponseSchema = z.object({
 	sheets: z.array(z.unknown()).optional(),
 });
 
+const ValueRangeSchema = z.object({
+	range: z.string().optional(),
+	majorDimension: z
+		.enum(['ROWS', 'COLUMNS', 'DIMENSION_UNSPECIFIED'])
+		.optional(),
+	values: z
+		.array(z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])))
+		.optional(),
+});
+
 const PlaintextResultSchema = z.object({
 	documentId: z.string(),
 	title: z.string().optional(),
@@ -398,6 +428,7 @@ export const GoogleDocsEndpointOutputSchemas = {
 	exportDocumentAsPdf: ExportResultSchema,
 	searchDocuments: DriveFileListSchema,
 	listSpreadsheetCharts: SpreadsheetChartsResponseSchema,
+	readValues: ValueRangeSchema,
 	insertText: BatchUpdateResponseSchema,
 	replaceAllText: BatchUpdateResponseSchema,
 	deleteContentRange: BatchUpdateResponseSchema,
@@ -439,6 +470,7 @@ export type GoogleDocsEndpointOutputs = {
 	exportDocumentAsPdf: ExportResult;
 	searchDocuments: DriveFileList;
 	listSpreadsheetCharts: SpreadsheetChartsResponse;
+	readValues: ValueRange;
 	insertText: BatchUpdateResponse;
 	replaceAllText: BatchUpdateResponse;
 	deleteContentRange: BatchUpdateResponse;

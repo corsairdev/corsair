@@ -1,0 +1,79 @@
+displayName: Filevine
+description: Legal case management platform for projects, contacts, documents, tasks, and deadlines.
+domain: filevine.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: contacts.get
+    args:
+      contactId: 456
+  write:
+    path: contacts.attach
+    args:
+      projectId: 123
+      contactId: 456
+apiExamples:
+  contacts.attach:
+    projectId: 123
+    contactId: 456
+  contacts.create:
+    firstName: John
+    organization: Acme
+  contacts.get:
+    contactId: 456
+  contacts.list:
+    limit: 50
+  deadlines.create:
+    projectId: 123
+    name: Filing
+    dueDate: '2026-12-01T00:00:00Z'
+  deadlines.list:
+    projectId: 123
+    limit: 50
+  documents.get:
+    documentId: 123
+  documents.list:
+    projectId: 123
+    limit: 50
+  documents.upload:
+    call: "{ projectId: 123, filename: 'contract.pdf', file: new Blob(['content']) }"
+  identity.getAccessToken:
+    token: PAT_xxx
+  identity.getUserOrgsWithToken: {}
+  notes.create:
+    projectId: 123
+    body: Hello
+  notes.list:
+    projectId: 123
+    limit: 50
+  notes.update:
+    noteId: 123
+    body: Updated
+  projects.create:
+    projectTypeId: 1
+    projectName: Test
+    clientId: 456
+  projects.get:
+    projectId: 123
+  projects.list:
+    limit: 50
+  projects.update:
+    projectId: 123
+    phaseName: Discovery
+  tasks.create:
+    projectId: 123
+    title: Review
+    assigneeId: 456
+  tasks.list:
+    projectId: 123
+    limit: 50
+  tasks.update:
+    call: "{ taskId: 123, status: 'completed' }"
+  webhooks.create:
+    name: Hook
+    endpoint: https://example.com/hook
+    events:
+      - project.created
+  webhooks.delete:
+    subscriptionId: sub_123
+  webhooks.list: {}
