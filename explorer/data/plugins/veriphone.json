@@ -1,0 +1,347 @@
+{
+  "id": "veriphone",
+  "displayName": "Veriphone",
+  "description": "Veriphone plugin for Corsair",
+  "npmPackageName": "@corsair-dev/veriphone",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "veriphone.api.coverage",
+      "shortPath": "coverage",
+      "description": "List countries where Current (mode=current) lookups are available",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "countries",
+            "optional": false,
+            "type": "{ iso: string, covered: boolean }[]"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "veriphone.api.credits",
+      "shortPath": "credits",
+      "description": "Get the account credit balance and usage by lookup mode",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "counter",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "payg",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "renew",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "last_reset",
+            "optional": true,
+            "type": "string | { seconds: number, nanos: number }"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ static?: { count: number, credits: number }, current?: { count: number, credits: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "veriphone.api.getExamplePhoneNumber",
+      "shortPath": "getExamplePhoneNumber",
+      "description": "Tool to retrieve an example phone number for a specified country and type. Use after confirming the country code. Example: 'Get an example mobile number for US'.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code, e.g. US. Confirm it before calling."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "mobile | fixed_line | toll_free | premium_rate | shared_cost | voip",
+            "description": "Example number line type. Defaults to mobile when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | error"
+          },
+          {
+            "key": "phone_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "country_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "international_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "local_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "e164",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "E164",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "veriphone.api.verifyPhoneNumber",
+      "shortPath": "verifyPhoneNumber",
+      "description": "Tool to verify if a phone number is valid. Use when you need to confirm formatting, region, and carrier details.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "phone",
+            "optional": false,
+            "type": "string",
+            "description": "Phone number to verify. International E.164 format recommended."
+          },
+          {
+            "key": "default_country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code used when the number has no international prefix."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "static | current",
+            "description": "static (default, 1 credit) or current (live registry lookup, 10 credits)."
+          },
+          {
+            "key": "record",
+            "optional": true,
+            "type": "boolean",
+            "description": "true to save the result to the account verification history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success | error | syntax-error"
+          },
+          {
+            "key": "phone_valid",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "too_short | too_long | invalid_length | invalid_country_code | unrecognized_range | not_a_number"
+          },
+          {
+            "key": "phone_type",
+            "optional": true,
+            "type": "mobile | fixed_line | fixed_line_or_mobile | toll_free | premium_rate | shared_cost | voip | short_code | emergency | unknown"
+          },
+          {
+            "key": "shortcode_cost",
+            "optional": true,
+            "type": "toll_free | standard_rate | premium_rate | unknown"
+          },
+          {
+            "key": "carrier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "international_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "local_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "e164",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "geographical",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_carrier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_line_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original_mccmnc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "current_carrier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "current_line_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "current_mccmnc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "current_lookup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ported",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "carrier_data_source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

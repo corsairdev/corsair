@@ -1,0 +1,524 @@
+---
+title: API
+description: "API reference for Extractaai: every `extractaai.api.*` operation with input and output types."
+---
+
+Every `extractaai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Classification
+
+### create
+
+`classification.create`
+
+Create a document classification (EXTRACTA_AI_CREATE_CLASSIFICATION)
+
+**Risk:** `write`
+
+```ts
+await corsair.extractaai.api.classification.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `classificationDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="classificationDetails full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  documentTypes: {
+    name: string,
+    description: string,
+    uniqueWords: string[],
+    extractionId?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `created` | Yes | — |
+| `createdAt` | `number` | Yes | — |
+| `classificationId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`classification.delete`
+
+Delete a document classification (EXTRACTA_AI_DELETE_CLASSIFICATION) [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.extractaai.api.classification.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `classificationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`classification.update`
+
+Update a document classification (EXTRACTA_AI_UPDATE_CLASSIFICATION)
+
+**Risk:** `write`
+
+```ts
+await corsair.extractaai.api.classification.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `classificationId` | `string` | Yes | — |
+| `classificationDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="classificationDetails full type">
+
+```ts
+{
+  name: string,
+  description: string,
+  documentTypes: {
+    name: string,
+    description: string,
+    uniqueWords: string[],
+    extractionId?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `updated` | Yes | — |
+| `updatedAt` | `number` | Yes | — |
+| `classificationId` | `string` | Yes | — |
+
+
+
+---
+
+### view
+
+`classification.view`
+
+View a document classification configuration (EXTRACTA_AI_VIEW_CLASSIFICATION)
+
+**Risk:** `read`
+
+```ts
+await corsair.extractaai.api.classification.view({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `classificationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `classificationId` | `string` | Yes | — |
+| `classificationDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="classificationDetails full type">
+
+```ts
+{
+  createdAt?: number,
+  name: string,
+  description?: string,
+  documentTypes: {
+    name: string,
+    description: string,
+    uniqueWords: string[],
+    extractionId?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Credits
+
+### get
+
+`credits.get`
+
+Get the account credit balance (EXTRACTA_AI_GET_CREDITS)
+
+**Risk:** `read`
+
+```ts
+await corsair.extractaai.api.credits.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `ok` | Yes | — |
+| `credits` | `number` | Yes | — |
+
+
+
+---
+
+## Extraction
+
+### create
+
+`extraction.create`
+
+Create a document extraction template (EXTRACTA_AI_CREATE_EXTRACTION)
+
+**Risk:** `write`
+
+```ts
+await corsair.extractaai.api.extraction.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extractionDetails full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  language: string,
+  options?: {
+    hasTable?: boolean,
+    hasVisuals?: boolean,
+    handwrittenTextRecognition?: boolean,
+    checkboxRecognition?: boolean,
+    longDocument?: boolean,
+    splitPdfPages?: boolean,
+    specificPageProcessing?: boolean,
+    specificPageProcessingOptions?: {
+      from: number,
+      to: number
+    }
+  },
+  fields: {
+    key: string,
+    description?: string,
+    example?: string,
+    type?: string | object | array,
+    properties?: lazy[],
+    items?: {
+      type: string | object,
+      example?: string,
+      properties?: lazy[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `created` | Yes | — |
+| `createdAt` | `number` | Yes | — |
+| `extractionId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`extraction.delete`
+
+Delete an extraction, batch, or file (EXTRACTA_AI_DELETE_EXTRACTION) [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.extractaai.api.extraction.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionId` | `string` | Yes | — |
+| `batchId` | `string` | No | — |
+| `fileId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `deleted` | Yes | — |
+| `deletedAt` | `number` | Yes | — |
+
+
+
+---
+
+### getBatchResults
+
+`extraction.getBatchResults`
+
+Get extraction results for a batch (EXTRACTA_AI_GET_BATCH_RESULTS)
+
+**Risk:** `read`
+
+```ts
+await corsair.extractaai.api.extraction.getBatchResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionId` | `string` | Yes | — |
+| `batchId` | `string` | Yes | — |
+| `fileId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status: waiting,
+  extractionId?: string,
+  batchId?: string,
+  fileId?: string
+} | {
+  extractionId: string,
+  batchId: string,
+  fileId?: string,
+  files: {
+    fileId?: string,
+    fileName?: string,
+    status: string,
+    result?: lazy,
+    url?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`extraction.update`
+
+Update a document extraction configuration (EXTRACTA_AI_UPDATE_EXTRACTION)
+
+**Risk:** `write`
+
+```ts
+await corsair.extractaai.api.extraction.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionId` | `string` | Yes | — |
+| `extractionDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extractionDetails full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  language?: string,
+  options?: {
+    hasTable?: boolean,
+    hasVisuals?: boolean,
+    handwrittenTextRecognition?: boolean,
+    checkboxRecognition?: boolean,
+    longDocument?: boolean,
+    splitPdfPages?: boolean,
+    specificPageProcessing?: boolean,
+    specificPageProcessingOptions?: {
+      from: number,
+      to: number
+    }
+  },
+  fields?: {
+    key: string,
+    description?: string,
+    example?: string,
+    type?: string | object | array,
+    properties?: lazy[],
+    items?: {
+      type: string | object,
+      example?: string,
+      properties?: lazy[]
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `updated` | Yes | — |
+| `updatedAt` | `number` | Yes | — |
+| `extractionId` | `string` | Yes | — |
+
+
+
+---
+
+### view
+
+`extraction.view`
+
+View a document extraction configuration (EXTRACTA_AI_VIEW_EXTRACTION)
+
+**Risk:** `read`
+
+```ts
+await corsair.extractaai.api.extraction.view({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `extractionId` | `string` | Yes | — |
+| `extractionDetails` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="extractionDetails full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  language: string,
+  options?: {
+    hasTable?: boolean,
+    hasVisuals?: boolean,
+    handwrittenTextRecognition?: boolean,
+    checkboxRecognition?: boolean,
+    longDocument?: boolean,
+    splitPdfPages?: boolean,
+    specificPageProcessing?: boolean,
+    specificPageProcessingOptions?: {
+      from: number,
+      to: number
+    }
+  },
+  fields: {
+    key: string,
+    description?: string,
+    example?: string,
+    type?: string | object | array,
+    properties?: lazy[],
+    items?: {
+      type: string | object,
+      example?: string,
+      properties?: lazy[]
+    }
+  }[],
+  status?: string,
+  batches?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

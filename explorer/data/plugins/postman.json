@@ -1,0 +1,5811 @@
+{
+  "id": "postman",
+  "displayName": "Postman",
+  "description": "Postman plugin for Corsair",
+  "npmPackageName": "@corsair-dev/postman",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 135,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "postman.api.accessKeys.list",
+      "shortPath": "accessKeys.list",
+      "description": "Get collection access keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, token?: string, status?: ACTIVE | INACTIVE, teamId?: number, userId?: number, collectionId?: string, expiresAfter?: string, lastUsedAt?: string, createdAt?: string, updatedAt?: string, deletedAt?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string, prevCursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.account.me",
+      "shortPath": "account.me",
+      "description": "Get authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number, sub?: string, username?: string, email?: string, fullName?: string, avatar?: string | null, isPublic?: boolean, emailVerified?: boolean, teamId?: number, teamName?: string, teamDomain?: string, roles?: string[] }"
+          },
+          {
+            "key": "operations",
+            "optional": true,
+            "type": "{ limit?: number, name?: string, overage?: number, usage?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.create",
+      "shortPath": "apis.create",
+      "description": "Create an API (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.createCollectionFromSchema",
+      "shortPath": "apis.createCollectionFromSchema",
+      "description": "Add a collection (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ data?: { collectionId?: string }, operationType?: COPY_COLLECTION } | { data?: { info?: { name?: string, schema?: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: lazy[] }[] }, operationType?: CREATE_NEW } | { name?: string, operationType?: GENERATE_FROM_SCHEMA, options?: {} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.createOrUpdateSchemaFile",
+      "shortPath": "apis.createOrUpdateSchemaFile",
+      "description": "Create or update a schema file (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "{ enabled?: boolean }"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "root",
+            "optional": true,
+            "type": "{ enabled?: boolean }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.createRelations",
+      "shortPath": "apis.createRelations",
+      "description": "Create API version relations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.createSchema",
+      "shortPath": "apis.createSchema",
+      "description": "Create a schema (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "proto:2 | proto:3 | graphql | openapi:3_1 | openapi:3 | openapi:2 | openapi:1 | raml:1 | raml:0_8 | wsdl:2 | wsdl:1 | asyncapi:2"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ path?: string, root?: { enabled?: boolean }, content?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "proto:2 | proto:3 | graphql | openapi:3_1 | openapi:3 | openapi:2 | openapi:1 | raml:1 | raml:0_8 | wsdl:2 | wsdl:1 | asyncapi:2"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, path?: string, createdAt?: string, root?: { enabled?: boolean }, createdBy?: string, updatedAt?: string, updatedBy?: string }[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.deleteComment",
+      "shortPath": "apis.deleteComment",
+      "description": "Delete an API's comment (Deprecated by Postman.)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.apis.deleteSchemaFile",
+      "shortPath": "apis.deleteSchemaFile",
+      "description": "Delete a schema file (Deprecated by Postman.)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.apis.get",
+      "shortPath": "apis.get",
+      "description": "Get an API (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "collections | versions | schemas | gitInfo[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string, summary?: string, createdAt?: string, createdBy?: number, updatedAt?: string, updatedBy?: number, description?: string } | { id?: string, name?: string, summary?: string, createdAt?: string, createdBy?: number, updatedAt?: string, updatedBy?: number, description?: string, gitInfo?: { domain?: string | null, repository?: string, organization?: string, schemaFolder?: string, collectionFolder?: string }, schemas?: { id?: string }[], versions?: { id?: string, name?: string }[], collections?: { id?: string }[] }"
+      }
+    },
+    {
+      "path": "postman.api.apis.getComments",
+      "shortPath": "apis.getComments",
+      "description": "Get an API's comments (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, status?: Open | Resolved, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.getContractTestRelations",
+      "shortPath": "apis.getContractTestRelations",
+      "description": "Get contract test relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getDocumentationRelations",
+      "shortPath": "apis.getDocumentationRelations",
+      "description": "Get documentation relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getEnvironmentRelations",
+      "shortPath": "apis.getEnvironmentRelations",
+      "description": "Get environment relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getIntegrationTestRelations",
+      "shortPath": "apis.getIntegrationTestRelations",
+      "description": "Get integration test relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getLinkedRelations",
+      "shortPath": "apis.getLinkedRelations",
+      "description": "Get all linked relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getSchema",
+      "shortPath": "apis.getSchema",
+      "description": "Get a schema (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bundled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, type?: string, files?: { data?: { id?: string, name?: string, path?: string, createdAt?: string, createdBy?: string, updatedAt?: string, updatedBy?: string }[], meta?: { nextPath?: string } }, createdAt?: string, createdBy?: string, updatedAt?: string, updatedBy?: string } | { id?: string, type?: string, createdBy?: string, updatedBy?: string, createdAt?: string, updatedAt?: string, content?: string }"
+      }
+    },
+    {
+      "path": "postman.api.apis.getSchemaFileContents",
+      "shortPath": "apis.getSchemaFileContents",
+      "description": "Get schema file contents (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.getSchemaFiles",
+      "shortPath": "apis.getSchemaFiles",
+      "description": "Get schema files (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schemaId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string }"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, name?: string, path?: string, createdAt?: string, createdBy?: number, updatedAt?: string, updatedBy?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.getTestRelations",
+      "shortPath": "apis.getTestRelations",
+      "description": "Get all test relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getTestSuiteRelations",
+      "shortPath": "apis.getTestSuiteRelations",
+      "description": "Get test suite relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getUnclassifiedRelations",
+      "shortPath": "apis.getUnclassifiedRelations",
+      "description": "Get unclassified relations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.getVersion",
+      "shortPath": "apis.getVersion",
+      "description": "Get a version (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "{ id?: string, name?: string, createdAt?: string, updatedAt?: string, releaseNotes?: string, schemas?: { id?: string, type?: string }[], collections?: { id?: string, type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.list",
+      "shortPath": "apis.list",
+      "description": "Get all APIs (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "{ id?: string, name?: string, summary?: string, createdAt?: string, createdBy?: number, updatedAt?: string, updatedBy?: number, description?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number, total?: number, nextCursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.listReleases",
+      "shortPath": "apis.listReleases",
+      "description": "Get all API releases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.apis.listVersions",
+      "shortPath": "apis.listVersions",
+      "description": "Get all versions (Deprecated by Postman.)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number, total?: number, nextCursor?: string }"
+          },
+          {
+            "key": "versions",
+            "optional": true,
+            "type": "{ id?: string, name?: string, createdAt?: string, updatedAt?: string, releaseNotes?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.remove",
+      "shortPath": "apis.remove",
+      "description": "Delete an API (Deprecated by Postman.)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.apis.update",
+      "shortPath": "apis.update",
+      "description": "Update an API (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.apis.updateComment",
+      "shortPath": "apis.updateComment",
+      "description": "Update an API's comment (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.billing.getAccount",
+      "shortPath": "billing.getAccount",
+      "description": "Get accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billingEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "salesChannel",
+            "optional": true,
+            "type": "SELF_SERVE | SALES_SERVE"
+          },
+          {
+            "key": "slots",
+            "optional": true,
+            "type": "{ available?: number, consumed?: number, total?: number, unbilled?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.billing.listInvoices",
+      "shortPath": "billing.listInvoices",
+      "description": "List account invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "PAID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string, status?: string, issuedAt?: string, totalAmount?: { value?: number, currency?: string }, links?: { web?: any } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.create",
+      "shortPath": "collections.create",
+      "description": "Create a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ info: { name: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json }, item: { name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }[], event?: { listen: test | prerequest, script?: { type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean }[], auth?: { type: noauth | basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid, noauth?: any, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createComment",
+      "shortPath": "collections.createComment",
+      "description": "Create a collection comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createFolder",
+      "shortPath": "collections.createFolder",
+      "description": "Create a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, order?: string[], owner?: string, folder?: string | null, folders?: string[], requests?: string[], createdAt?: string, updatedAt?: string, collection?: string, description?: string, folders_order?: string[], lastUpdatedBy?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createFolderComment",
+      "shortPath": "collections.createFolderComment",
+      "description": "Create a folder comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createPullRequest",
+      "shortPath": "collections.createPullRequest",
+      "description": "Create a pull request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviewers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "destinationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destinationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createRequest",
+      "shortPath": "collections.createRequest",
+      "description": "Create a request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "GET | PUT | POST | PATCH | DELETE | COPY | HEAD | OPTIONS | LINK | UNLINK | PURGE | LOCK | UNLOCK | PROPFIND | VIEW"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+          },
+          {
+            "key": "headerData",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string }[]"
+          },
+          {
+            "key": "queryParams",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string, enabled?: boolean }[]"
+          },
+          {
+            "key": "dataMode",
+            "optional": true,
+            "type": "raw | urlencoded | formdata | binary | graphql"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string, enabled?: boolean, type?: text | file, uuid?: string }[]"
+          },
+          {
+            "key": "rawModeData",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graphqlModeData",
+            "optional": true,
+            "type": "{ query?: string, variables?: string }"
+          },
+          {
+            "key": "dataOptions",
+            "optional": true,
+            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+          },
+          {
+            "key": "auth",
+            "optional": true,
+            "type": "{ type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap | noauth, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], jwt?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], asap?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ listen?: test | prerequest, script?: { id?: string, type?: string, exec?: string[] } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, folder?: string | null, responses?: string[], collection?: string, responses_order?: string[], createdAt?: string, updatedAt?: string, lastUpdatedBy?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createRequestComment",
+      "shortPath": "collections.createRequestComment",
+      "description": "Create a request comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createResponse",
+      "shortPath": "collections.createResponse",
+      "description": "Create a response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "GET | PUT | POST | PATCH | DELETE | COPY | HEAD | OPTIONS | LINK | UNLINK | PURGE | LOCK | UNLOCK | PROPFIND | VIEW"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key: string, value: string, description?: string | null }[]"
+          },
+          {
+            "key": "dataMode",
+            "optional": true,
+            "type": "raw | urlencoded | formdata | binary | graphql"
+          },
+          {
+            "key": "rawModeData",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataOptions",
+            "optional": true,
+            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+          },
+          {
+            "key": "responseCode",
+            "optional": true,
+            "type": "{ code?: number, name?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rawDataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestObject",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, owner?: string, request?: string, createdAt?: string, updatedAt?: string, lastUpdatedBy?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.createResponseComment",
+      "shortPath": "collections.createResponseComment",
+      "description": "Create a response comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteComment",
+      "shortPath": "collections.deleteComment",
+      "description": "Delete a collection's comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteFolder",
+      "shortPath": "collections.deleteFolder",
+      "description": "Delete a folder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, owner?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteFolderComment",
+      "shortPath": "collections.deleteFolderComment",
+      "description": "Delete a folder's comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteRequestComment",
+      "shortPath": "collections.deleteRequestComment",
+      "description": "Delete a request's comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteResponse",
+      "shortPath": "collections.deleteResponse",
+      "description": "Delete a response",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, owner?: string }"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.deleteResponseComment",
+      "shortPath": "collections.deleteResponseComment",
+      "description": "Delete a response's comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.collections.duplicate",
+      "shortPath": "collections.duplicate",
+      "description": "Duplicate a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "suffix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": true,
+            "type": "{ id?: string, status?: processing | completed | failed, reason?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.fork",
+      "shortPath": "collections.fork",
+      "description": "Create a fork",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, name?: string, fork?: { label?: string, createdAt?: string, from?: string }, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.generateSpec",
+      "shortPath": "collections.generateSpec",
+      "description": "Generate spec from collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionUid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elementType",
+            "optional": false,
+            "type": "spec"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "JSON | YAML"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getComments",
+      "shortPath": "collections.getComments",
+      "description": "Get a collection's comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, status?: Open | Resolved, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getDuplicationStatus",
+      "shortPath": "collections.getDuplicationStatus",
+      "description": "Get duplication task status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": true,
+            "type": "{ id?: string, status?: processing | completed | failed, reason?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getFolder",
+      "shortPath": "collections.getFolder",
+      "description": "Get a folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "populate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, createdAt?: string, updatedAt?: string, owner?: string, lastUpdatedBy?: string, lastRevision?: number, collection?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getFolderComments",
+      "shortPath": "collections.getFolderComments",
+      "description": "Get a folder's comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, status?: Open | Resolved, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getForks",
+      "shortPath": "collections.getForks",
+      "description": "Get a collection's forks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ createdAt?: string, createdBy?: string, forkId?: string, forkName?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getGeneratedSpecs",
+      "shortPath": "collections.getGeneratedSpecs",
+      "description": "Get generated spec",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionUid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elementType",
+            "optional": false,
+            "type": "spec"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specs",
+            "optional": true,
+            "type": "{ id?: string, name?: string, state?: in-sync | out-of-sync | sync-in-progress, createdAt?: string, updatedAt?: string, createdBy?: number, updatedBy?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getPullRequests",
+      "shortPath": "collections.getPullRequests",
+      "description": "Get a collection's pull requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ createdAt?: string, createdBy?: string, description?: string, destinationId?: string, href?: string, id?: string, sourceId?: string, status?: open | approved | declined | merged, comment?: string, title?: string, updatedBy?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getRequest",
+      "shortPath": "collections.getRequest",
+      "description": "Get a request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "populate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, lastRevision?: number, lastUpdatedBy?: string, createdAt?: string, updatedAt?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getRequestComments",
+      "shortPath": "collections.getRequestComments",
+      "description": "Get a request's comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, status?: Open | Resolved, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getResponse",
+      "shortPath": "collections.getResponse",
+      "description": "Get a response",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "populate",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, request?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, lastRevision?: number, lastUpdatedBy?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getResponseComments",
+      "shortPath": "collections.getResponseComments",
+      "description": "Get a response's comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, status?: Open | Resolved, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getRoles",
+      "shortPath": "collections.getRoles",
+      "description": "Get a collection's roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ role?: VIEWER | EDITOR, id?: number }[]"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ role?: VIEWER | EDITOR, id?: number }[]"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ role?: VIEWER | EDITOR, id?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getSourceStatus",
+      "shortPath": "collections.getSourceStatus",
+      "description": "Get source collection's status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ collectionUid?: { isSourceAhead?: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.getUpdateStatus",
+      "shortPath": "collections.getUpdateStatus",
+      "description": "Get async collection update status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "successful | failed | in-progress"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "Get all collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, uid?: string, fork?: { label?: string, createdAt?: string, from?: string }, isPublic?: boolean }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, offset?: number, limit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.listForked",
+      "shortPath": "collections.listForked",
+      "description": "Get all forked collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ forkName?: string, forkId?: string, sourceId?: string, createdAt?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, nextCursor?: string | null, inaccessibleFork?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.mergeFork",
+      "shortPath": "collections.mergeFork",
+      "description": "Merge a fork (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "strategy",
+            "optional": true,
+            "type": "deleteSource | updateSourceWithDestination"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.pullChanges",
+      "shortPath": "collections.pullChanges",
+      "description": "Pull source changes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ destinationId?: string, sourceId?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.remove",
+      "shortPath": "collections.remove",
+      "description": "Delete a collection",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.replace",
+      "shortPath": "collections.replace",
+      "description": "Replace a collection's data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ info: { name: string, _postman_id?: string, description?: string, schema: https://schema.postman.com/json/collection/v2.1.0/collection.json, updatedAt?: string, createdAt?: string, lastUpdatedBy?: string, uid?: string }, item: { id: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, uid?: string }[], event?: { id?: string, listen: test | prerequest, script?: { id?: string, type?: string, exec?: string[] } }[], variable?: ({ key?: string, value?: string | boolean | number, disabled?: boolean } | { enabled?: boolean, key?: string, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[], auth?: { type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], jwt?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], asap?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }, protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: { cache-control?: boolean, postman-token?: boolean, content-type?: boolean, content-length?: boolean, accept-encoding?: boolean, connection?: boolean, host?: boolean }, insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.syncWithSchema",
+      "shortPath": "collections.syncWithSchema",
+      "description": "Sync collection with schema (Deprecated by Postman.)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.syncWithSpec",
+      "shortPath": "collections.syncWithSpec",
+      "description": "Sync collection with spec",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionUid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.transferFolders",
+      "shortPath": "collections.transferFolders",
+      "description": "Transfer folders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "copy | move"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "{ id: string, model: collection | folder | request }"
+          },
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ id?: string | null, model?: string | null, position: start | end | before | after }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.transformToOpenapi",
+      "shortPath": "collections.transformToOpenapi",
+      "description": "Transform collection to OpenAPI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | yaml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.update",
+      "shortPath": "collections.update",
+      "description": "Update part of a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string | { info?: { name?: string, description?: string, schema?: string }, item?: { id?: string, uid?: string, name?: string, description?: string | null, variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], request?: string | { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } }, response?: { id?: string, name?: string, status?: string, code?: string | number, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], cookie?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string, responseTime?: string | number, originalRequest?: { url?: string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }, auth?: any, method?: string, description?: string | null, header?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], body?: string | { mode?: string, raw?: string, urlencoded?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], formdata?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], file?: { src?: string, content?: string }, graphql?: {}, options?: {} } } }[], protocolProfileBehavior?: { strictSSL?: boolean, followRedirects?: boolean, maxRedirects?: number, disableBodyPruning?: boolean, disableUrlEncoding?: boolean, disabledSystemHeaders?: string[], insecureHTTPParser?: boolean, followOriginalHttpMethod?: boolean, followAuthorizationHeader?: boolean, protocolVersion?: http1 | http2 | auto, removeRefererHeaderOnRedirect?: boolean, tlsPreferServerCiphers?: boolean, tlsDisabledProtocols?: string[], tlsCipherSelection?: string[] }, createdAt?: string, updatedAt?: string, item?: lazy[] }[], event?: { id?: string, listen?: test | prerequest, script?: { id?: string, name?: string, type?: string, exec?: string[] } }[], variable?: { key?: string, value?: string | boolean | number, description?: string, disabled?: boolean, type?: string }[], auth?: any }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateFolder",
+      "shortPath": "collections.updateFolder",
+      "description": "Update a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, createdAt?: string, updatedAt?: string, owner?: string, lastUpdatedBy?: string, lastRevision?: number, collection?: string, folder?: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateFolderComment",
+      "shortPath": "collections.updateFolderComment",
+      "description": "Update a folder's comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateRequest",
+      "shortPath": "collections.updateRequest",
+      "description": "Update a request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "GET | PUT | POST | PATCH | DELETE | COPY | HEAD | OPTIONS | LINK | UNLINK | PURGE | LOCK | UNLOCK | PROPFIND | VIEW"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+          },
+          {
+            "key": "headerData",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string }[]"
+          },
+          {
+            "key": "queryParams",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string, enabled?: boolean }[]"
+          },
+          {
+            "key": "dataMode",
+            "optional": true,
+            "type": "raw | urlencoded | formdata | binary | graphql"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ key?: string, value?: string, description?: string, enabled?: boolean, type?: text | file, uuid?: string }[]"
+          },
+          {
+            "key": "rawModeData",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graphqlModeData",
+            "optional": true,
+            "type": "{ query?: string, variables?: string }"
+          },
+          {
+            "key": "dataOptions",
+            "optional": true,
+            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+          },
+          {
+            "key": "auth",
+            "optional": true,
+            "type": "{ type: basic | bearer | apikey | digest | oauth1 | oauth2 | hawk | awsv4 | ntlm | edgegrid | jwt | asap | noauth, apikey?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], awsv4?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], basic?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], bearer?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], digest?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], edgegrid?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], hawk?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], ntlm?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth1?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], oauth2?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], jwt?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[], asap?: { key: string, value?: string | { key: string, value?: string | number | boolean, type?: string }[], type?: string | boolean | number | array | object | any }[] }"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ listen?: test | prerequest, script?: { id?: string, type?: string, exec?: string[] } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, description?: string, createdAt?: string, updatedAt?: string, owner?: string, lastUpdatedBy?: string, lastRevision?: number }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateRequestComment",
+      "shortPath": "collections.updateRequestComment",
+      "description": "Update a request's comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateResponse",
+      "shortPath": "collections.updateResponse",
+      "description": "Update a response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string | { raw?: string, protocol?: string, host?: string[], path?: string[], port?: string, query?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[], variable?: { key?: string, value?: string, description?: string | null, disabled?: boolean }[] }"
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "GET | PUT | POST | PATCH | DELETE | COPY | HEAD | OPTIONS | LINK | UNLINK | PURGE | LOCK | UNLOCK | PROPFIND | VIEW"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key: string, value: string, description?: string | null }[]"
+          },
+          {
+            "key": "dataMode",
+            "optional": true,
+            "type": "raw | urlencoded | formdata | binary | graphql"
+          },
+          {
+            "key": "rawModeData",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataOptions",
+            "optional": true,
+            "type": "{ raw?: { language?: string }, urlencoded?: {}, params?: {}, binary?: {}, graphql?: {} }"
+          },
+          {
+            "key": "responseCode",
+            "optional": true,
+            "type": "{ code?: number, name?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rawDataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "requestObject",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, lastRevision?: number, lastUpdatedBy?: string }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.collections.updateResponseComment",
+      "shortPath": "collections.updateResponseComment",
+      "description": "Update a response's comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ {{userName}}?: { type: user, id: string } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, threadId?: number, createdBy?: number, createdAt?: string, updatedAt?: string, body?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.comments.resolve",
+      "shortPath": "comments.resolve",
+      "description": "Resolve a comment thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.environments.create",
+      "shortPath": "environments.create",
+      "description": "Create an environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ name: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.fork",
+      "shortPath": "environments.fork",
+      "description": "Create a fork",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "forkName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ uid?: string, name?: string, forkName?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.get",
+      "shortPath": "environments.get",
+      "description": "Get an environment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: {}, description?: string })[], isPublic?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.getForks",
+      "shortPath": "environments.getForks",
+      "description": "Get an environment's forks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "createdAt"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ forkId?: string, forkName?: string, createdAt?: string, createdBy?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, nextCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.list",
+      "shortPath": "environments.list",
+      "description": "Get all environments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environments",
+            "optional": true,
+            "type": "{ id?: string, name?: string, createdAt?: string, updatedAt?: string, owner?: string, uid?: string, isPublic?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.mergeFork",
+      "shortPath": "environments.mergeFork",
+      "description": "Merge a fork",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleteSource",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.remove",
+      "shortPath": "environments.remove",
+      "description": "Delete an environment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ id?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.replace",
+      "shortPath": "environments.replace",
+      "description": "Replace an environment's data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ name?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string })[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.environments.update",
+      "shortPath": "environments.update",
+      "description": "Update an environment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ op: string, path: string, value: { enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: { postman?: {}, provider?: postman }, description?: string } }[] | { op: string, path: string, value: string }[] | { op: string, path: string, value: string }[] | { op: string, path: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "{ id?: string, name?: string, owner?: string, createdAt?: string, updatedAt?: string, values?: ({ enabled?: boolean, key?: string, value?: string, type?: secret | default, description?: string } | { enabled?: boolean, key?: string, value?: string, type?: secret | default, secret?: boolean, source?: {}, description?: string })[], uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "Get all groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, teamId?: number, name?: string, summary?: string, createdBy?: number, createdAt?: string, updatedAt?: string, members?: number[], roles?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.create",
+      "shortPath": "mocks.create",
+      "description": "Create a mock server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "{ collection: string, environment?: string, name?: string, private?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "{ id?: string, owner?: string, uid?: string, collection?: string, mockUrl?: string, name?: string, config?: { delay?: { type?: fixed, preset?: 1 | 2, duration?: number }, headers?: string[], matchBody?: boolean, matchHeader?: boolean, matchQueryParams?: boolean, matchWildcards?: boolean, serverResponseId?: string | null }, createdAt?: string, updatedAt?: string, environment?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.createServerResponse",
+      "shortPath": "mocks.createServerResponse",
+      "description": "Create a server response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mockId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serverResponse",
+            "optional": true,
+            "type": "{ name: string, statusCode: number, headers?: { key?: string, value?: string }[], language?: text | javascript | json | html | xml, body?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key?: string, value?: string }[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "text | javascript | json | html | xml"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.deleteServerResponse",
+      "shortPath": "mocks.deleteServerResponse",
+      "description": "Delete a server response",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mockId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serverResponseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key?: string, value?: string }[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "text | javascript | json | html | xml"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.list",
+      "shortPath": "mocks.list",
+      "description": "Get all mock servers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocks",
+            "optional": true,
+            "type": "{ id?: string, owner?: string, uid?: string, collection?: string, mockUrl?: string, name?: string, config?: { delay?: any, headers?: string[], matchBody?: boolean, matchHeader?: boolean, matchQueryParams?: boolean, matchWildcards?: boolean, serverResponseId?: string | null }, createdAt?: string, updatedAt?: string, isPublic?: boolean, deactivated?: boolean, environment?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.publish",
+      "shortPath": "mocks.publish",
+      "description": "Publish a mock server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mockId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.update",
+      "shortPath": "mocks.update",
+      "description": "Update a mock server",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mockId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "{ name?: string, environment?: string, description?: string, private?: boolean, versionTag?: string, collection?: string, config?: { serverResponseId?: string | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "{ id?: string, owner?: string, uid?: string, collection?: string, mockUrl?: string, name?: string, config?: { delay?: { type?: fixed, preset?: 1 | 2, duration?: number }, headers?: string[], matchBody?: boolean, matchHeader?: boolean, matchQueryParams?: boolean, matchWildcards?: boolean, serverResponseId?: string | null }, createdAt?: string, updatedAt?: string, environment?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.mocks.updateServerResponse",
+      "shortPath": "mocks.updateServerResponse",
+      "description": "Update a server response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mockId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serverResponseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "serverResponse",
+            "optional": true,
+            "type": "{ name?: string, statusCode?: number, headers?: { key?: string, value?: string }[], language?: text | javascript | json | html | xml, body?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{ key?: string, value?: string }[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "text | javascript | json | html | xml"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mock",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ name: string, active?: boolean, notificationLimit?: number, collection: string, environment?: string, retry?: { attempts?: number }, options?: { followRedirects?: boolean, requestDelay?: number, requestTimeout?: number, strictSSL?: boolean }, schedule: { cron?: string, timezone?: string }, distribution?: { region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip }[], notifications?: { onError?: { email?: string }[], onFailure?: { email?: string }[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ id?: string, name?: string, active?: boolean, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.get",
+      "shortPath": "monitors.get",
+      "description": "Get a monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string, owner?: number, active?: boolean, notificationLimit?: number, collectionUid?: string, environmentUid?: string, jobId?: string, options?: { followRedirects?: boolean, requestDelay?: number, requestTimeout?: number, strictSSL?: boolean }, notifications?: { onError?: any[], onFailure?: any[] }, distribution?: { region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip }[], schedule?: { cron?: string, nextRun?: string, timezone?: string }, retry?: { attempts?: number }, lastRun?: { status?: string, startedAt?: string, finishedAt?: string, stats?: { assertions?: any, requests?: any, runCount?: number, errorCount?: number, abortedCount?: number, responseLatency?: number, responseSize?: number } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "Get all monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collectionUid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environmentUid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitors",
+            "optional": true,
+            "type": "{ id?: string, name?: string, active?: boolean, uid?: string, owner?: number, collectionUid?: string, environmentUid?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null, limit?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.remove",
+      "shortPath": "monitors.remove",
+      "description": "Delete a monitor",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ id?: string, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.run",
+      "shortPath": "monitors.run",
+      "description": "Run a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run",
+            "optional": true,
+            "type": "{ info?: { jobId?: string, collectionUid?: string, environmentUid?: string, monitorId?: string, name?: string, status?: string, startedAt?: string, finishedAt?: string }, stats?: { assertions?: { total?: number, failed?: number }, requests?: { total?: number, failed?: number }, runCount?: number, errorCount?: number, abortedCount?: number, responseLatency?: number, responseSize?: number }, executions?: { id?: number, item?: any, request?: any, response?: any, errors?: any[] }[], failures?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Update a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ name?: string, active?: boolean, notificationLimit?: number, retry?: { attempts?: number }, options?: { followRedirects?: boolean, requestDelay?: number, requestTimeout?: number, strictSSL?: boolean }, schedule?: { cron?: string, timezone?: string }, distribution?: { region?: us-east | us-west | ap-southeast | ca-central | eu-central | sa-east | uk | us-east-staticip | us-west-staticip }[], notifications?: { onError?: { email?: string }[], onFailure?: { email?: string }[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitor",
+            "optional": true,
+            "type": "{ id?: string, name?: string, active?: boolean, uid?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.pullRequests.review",
+      "shortPath": "pullRequests.review",
+      "description": "Review a pull request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "approve | decline | merge | unapprove"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviewedBy",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string }"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.pullRequests.update",
+      "shortPath": "pullRequests.update",
+      "description": "Update a pull request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pullRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviewers",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destinationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "forkType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | approved | declined | merged"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.scim.getResourceTypes",
+      "shortPath": "scim.getResourceTypes",
+      "description": "Get resource types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ schemas?: string[], id?: string, name?: string, endpoint?: string, description?: string, schema?: string, schemaExtensions?: { schema?: string, required?: boolean }[] }[]"
+      }
+    },
+    {
+      "path": "postman.api.scim.getServiceConfig",
+      "shortPath": "scim.getServiceConfig",
+      "description": "Get service provider configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "schemas",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "documentationUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "patch",
+            "optional": true,
+            "type": "{ supported?: boolean }"
+          },
+          {
+            "key": "bulk",
+            "optional": true,
+            "type": "{ maxOperations?: number, maxPayloadSize?: number, supported?: boolean }"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ maxResults?: number, supported?: boolean }"
+          },
+          {
+            "key": "changePassword",
+            "optional": true,
+            "type": "{ supported?: boolean }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ supported?: boolean }"
+          },
+          {
+            "key": "authenticationSchemes",
+            "optional": true,
+            "type": "{ description?: string, name?: string, specUri?: string, type?: string }[]"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "{ supported?: boolean }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ resourceType?: string, location?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.create",
+      "shortPath": "specs.create",
+      "description": "Create a spec",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "({ path: string, content: string, type: DEFAULT | ROOT } | { path: string, content: string })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.createFile",
+      "shortPath": "specs.createFile",
+      "description": "Create a spec file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | ROOT"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.deleteFile",
+      "shortPath": "specs.deleteFile",
+      "description": "Delete a spec file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.specs.generateCollection",
+      "shortPath": "specs.generateCollection",
+      "description": "Generate a collection from spec",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elementType",
+            "optional": false,
+            "type": "collection"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "{ requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.get",
+      "shortPath": "specs.get",
+      "description": "Get a spec",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileFormat",
+            "optional": true,
+            "type": "json | yaml | proto | graphql | smithy"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.getDefinition",
+      "shortPath": "specs.getDefinition",
+      "description": "Get a spec's definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "postman.api.specs.getFile",
+      "shortPath": "specs.getFile",
+      "description": "Get a spec file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "ROOT | DEFAULT"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.getFiles",
+      "shortPath": "specs.getFiles",
+      "description": "Get a spec's files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, path?: string, name?: string, createdBy?: number, updatedBy?: number, createdAt?: string, updatedAt?: string, type?: ROOT | DEFAULT }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.getGeneratedCollections",
+      "shortPath": "specs.getGeneratedCollections",
+      "description": "Get a spec's generated collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elementType",
+            "optional": false,
+            "type": "collection"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: string, name?: string, state?: in-sync | out-of-sync | sync-in-progress, createdAt?: string, updatedAt?: string, createdBy?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.list",
+      "shortPath": "specs.list",
+      "description": "Get all specs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null }"
+          },
+          {
+            "key": "specs",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0, createdBy?: number, updatedBy?: number, createdAt?: string, updatedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.remove",
+      "shortPath": "specs.remove",
+      "description": "Delete a spec",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "postman.api.specs.syncWithCollection",
+      "shortPath": "specs.syncWithCollection",
+      "description": "Sync spec with collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collectionUid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.update",
+      "shortPath": "specs.update",
+      "description": "Update a spec's properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "OPENAPI:2.0 | OPENAPI:3.0 | OPENAPI:3.1 | ASYNCAPI:2.0 | ASYNCAPI:3.0 | PROTOBUF:2 | PROTOBUF:3 | GRAPHQL | SMITHY:2.0"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.specs.updateFile",
+      "shortPath": "specs.updateFile",
+      "description": "Update a spec file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "specId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | ROOT"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "DEFAULT | ROOT"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.tools.importOpenapi",
+      "shortPath": "tools.importOpenapi",
+      "description": "Import an OpenAPI definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ type: json, input: {}, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } } | { type: string, input: string, options?: { requestNameSource?: Fallback | URL, indentCharacter?: Tab | Space, parametersResolution?: string, folderStrategy?: Paths | Tags, includeAuthInfoInExample?: boolean, enableOptionalParameters?: boolean, keepImplicitHeaders?: boolean, includeDeprecated?: boolean, alwaysInheritAuthentication?: boolean, nestedFolderHierarchy?: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": true,
+            "type": "{ id?: string, name?: string, uid?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a team user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "joinedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.users.list",
+      "shortPath": "users.list",
+      "description": "Get all team users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string, email?: string, roles?: string[], joinedAt?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ id?: string, name?: string, collection?: string, webhookUrl?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.create",
+      "shortPath": "workspaces.create",
+      "description": "Create a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ name: string, type: personal | private | public | team | partner, description?: string, about?: string, teamId?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: personal | team | private | public | partner, description?: string | null, visibility?: personal | team | private | public | partner, createdBy?: string, updatedBy?: string, createdAt?: string, updatedAt?: string, about?: string, team?: string, collections?: { id?: string, name?: string, uid?: string }[], environments?: { id?: string, name?: string, uid?: string }[], mocks?: { id?: string, name?: string, uid?: string, deactivated?: boolean }[], monitors?: { id?: string, name?: string, uid?: string, deactivated?: boolean }[], specs?: { id?: string, name?: string, uid?: string }[], scim?: { createdBy?: string, updatedBy?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.getActivity",
+      "shortPath": "workspaces.getActivity",
+      "description": "Get a workspace's activity feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elementType",
+            "optional": true,
+            "type": "collection | workspace | environment | mock | monitor"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ workspaceId?: string, createdAt?: string, updatedAt?: string, id?: number, user?: { id?: number, username?: string, isPartner?: boolean, name?: string }, action?: create | update | destroy, elementType?: string, trigger?: string, elementId?: string, elementName?: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.getGlobalVariables",
+      "shortPath": "workspaces.getGlobalVariables",
+      "description": "Get global variables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ key?: string, type?: default | secret, value?: string, enabled?: boolean, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.getRoles",
+      "shortPath": "workspaces.getRoles",
+      "description": "Get a workspace's roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "scim"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ id?: string, user?: string[], usergroup?: string[], partner?: string[], displayName?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "Get all workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "personal | team | private | public | partner"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "mocks:deactivated | scim"
+          },
+          {
+            "key": "elementType",
+            "optional": true,
+            "type": "collection | specification"
+          },
+          {
+            "key": "elementId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaces",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: personal | team | private | public | partner, visibility?: personal | team | private | public | partner, createdBy?: string, about?: string, createdAt?: string, updatedAt?: string, scim?: { createdBy?: string } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ nextCursor?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.remove",
+      "shortPath": "workspaces.remove",
+      "description": "Delete a workspace",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Update a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ name?: string, type?: private | personal | team | public, description?: string, about?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "postman.api.workspaces.updateGlobalVariables",
+      "shortPath": "workspaces.updateGlobalVariables",
+      "description": "Update global variables",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ key?: string, type?: default | secret, value?: string, enabled?: boolean, description?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": true,
+            "type": "{ key?: string, type?: default | secret, value?: string, enabled?: boolean, description?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "postman.db.collection.search",
+      "entityName": "collection",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "postman.db.environment.search",
+      "entityName": "environment",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "postman.db.mock.search",
+      "entityName": "mock",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "postman.db.monitor.search",
+      "entityName": "monitor",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "postman.db.workspace.search",
+      "entityName": "workspace",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}
