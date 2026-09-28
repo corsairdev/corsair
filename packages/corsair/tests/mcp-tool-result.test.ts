@@ -103,6 +103,16 @@ describe('formatRunScriptError', () => {
 		);
 	});
 
+	it('includes messages from wrapped errors', () => {
+		const error = new Error('outer failure', {
+			cause: new Error('inner failure'),
+		});
+
+		expect(formatRunScriptError(error).content[0]?.text).toContain(
+			'inner failure',
+		);
+	});
+
 	it('redacts nested request data from error details', () => {
 		const error = Object.assign(new Error('request failed'), {
 			request: {

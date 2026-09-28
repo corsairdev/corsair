@@ -60,18 +60,44 @@ function safeString(value: unknown): string {
 
 function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 	const ancestors: object[] = [];
+	const serializedErrors = new WeakMap<Error, Record<string, unknown>>();
+
+	function errorProperties(err: Error): Record<string, unknown> {
+		const cached = serializedErrors.get(err);
+		if (cached) {
+			return cached;
+		}
+
+		const properties: Record<string, unknown> = {};
+		serializedErrors.set(err, properties);
+
+		for (const key of Object.getOwnPropertyNames(err)) {
+			try {
+				properties[key] = err[key as keyof Error];
+			} catch {
+				properties[key] = '[Unreadable property]';
+			}
+		}
+
+		return properties;
+	}
 
 	try {
 		return (
 			JSON.stringify(
 				value,
 				function (_key, nestedValue: unknown) {
+					const serializableValue =
+						nestedValue instanceof Error
+							? errorProperties(nestedValue)
+							: nestedValue;
+
 					while (ancestors.length > 0 && ancestors.at(-1) !== this) {
 						ancestors.pop();
 					}
 
-					if (typeof nestedValue === 'bigint') {
-						return nestedValue.toString();
+					if (typeof serializableValue === 'bigint') {
+						return serializableValue.toString();
 					}
 
 					if (
@@ -81,15 +107,18 @@ function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 						return '[REDACTED]';
 					}
 
-					if (typeof nestedValue === 'object' && nestedValue !== null) {
-						if (ancestors.includes(nestedValue)) {
+					if (
+						typeof serializableValue === 'object' &&
+						serializableValue !== null
+					) {
+						if (ancestors.includes(serializableValue)) {
 							return '[Circular]';
 						}
 
-						ancestors.push(nestedValue);
+						ancestors.push(serializableValue);
 					}
 
-					return nestedValue;
+					return serializableValue;
 				},
 				2,
 			) ?? safeString(value)
@@ -97,20 +126,6 @@ function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 	} catch {
 		return safeString(value);
 	}
-}
-
-function serializeError(err: Error): string {
-	const properties: Record<string, unknown> = {};
-
-	for (const key of Object.getOwnPropertyNames(err)) {
-		try {
-			properties[key] = err[key as keyof Error];
-		} catch {
-			properties[key] = '[Unreadable property]';
-		}
-	}
-
-	return safeSerialize(properties, true);
 }
 
 export function formatRunScriptResult(result: unknown): CallToolResult {
@@ -136,8 +151,7 @@ export function formatRunScriptError(err: unknown): CallToolResult {
 		return toolErrorResult(message);
 	}
 
-	const full =
-		err instanceof Error ? serializeError(err) : safeSerialize(err, true);
+	const full = safeSerialize(err, true);
 
 	return toolErrorResult(`Error running snippet: ${message}\n${full}`);
 }
