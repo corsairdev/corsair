@@ -76,7 +76,13 @@ async function parseResponseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
 	const contentType = response.headers.get('Content-Type');
 	if (contentType?.toLowerCase().includes('application/json')) {
-		return response.json();
+		const text = await response.text();
+		if (text.length === 0) return undefined;
+		try {
+			return JSON.parse(text) as unknown;
+		} catch {
+			return undefined;
+		}
 	}
 	return response.text();
 }
@@ -235,12 +241,12 @@ function toRequestBody(body: string | Uint8Array | undefined): {
 }
 
 function assertSafePath(endpoint: string): void {
-	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+	const pathPart = endpoint.split('?')[0] ?? '';
+	if (pathPart.length > MAX_ENDPOINT_LENGTH) {
 		throw new Error(
 			`Invalid DocuSign request path: exceeds ${MAX_ENDPOINT_LENGTH} characters.`,
 		);
 	}
-	const pathPart = endpoint.split('?')[0] ?? '';
 	// Paths are fully interpolated before request(); reject stray brace tokens.
 	if (pathPart.includes('{') || pathPart.includes('}')) {
 		throw new Error(

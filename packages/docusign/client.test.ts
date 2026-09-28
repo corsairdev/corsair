@@ -232,4 +232,34 @@ describe('DocusignClient', () => {
 		);
 		expect(globalThis.fetch).not.toHaveBeenCalled();
 	});
+
+	it('retries safe GETs when a 429 has an empty JSON body', async () => {
+		const fetchMock = globalThis.fetch as jest.Mock;
+		fetchMock
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					new Response('', {
+						status: 429,
+						statusText: 'Too Many Requests',
+						headers: {
+							'Content-Type': 'application/json',
+							'retry-after': '0',
+						},
+					}),
+				),
+			)
+			.mockImplementationOnce(() =>
+				Promise.resolve(jsonResponse({ ok: true })),
+			);
+		const client = makeClient();
+		await client.request('/templates');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('allows long query strings when the path is short', async () => {
+		const client = makeClient();
+		const query = `?email=${'x'.repeat(600)}`;
+		await client.request(`/users${query}`);
+		expect(lastFetchCall().url).toContain(query);
+	});
 });
