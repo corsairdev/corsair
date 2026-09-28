@@ -116,7 +116,7 @@ export async function makeConvexRequest<T>(
 			throw new ConvexAPIError(
 				body?.message ?? body?.error ?? error.message,
 				error.status,
-				body?.code ?? error.body?.code,
+				body?.code,
 				error.retryAfter,
 			);
 		}
