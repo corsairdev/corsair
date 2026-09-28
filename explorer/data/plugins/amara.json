@@ -6,7 +6,7 @@
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 30,
+    "api": 43,
     "webhooks": 0,
     "db": 3
   },
@@ -228,6 +228,169 @@
       }
     },
     {
+      "path": "amara.api.teams.addMember",
+      "shortPath": "teams.addMember",
+      "description": "Add a new member to a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | admin | manager | contributor | proj_lang_manager | limited_contributor"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages_managed",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.createProject",
+      "shortPath": "teams.createProject",
+      "description": "Create a new project in a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guidelines",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guidelines",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workflow_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.deleteProject",
+      "shortPath": "teams.deleteProject",
+      "description": "Delete a project from a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
       "path": "amara.api.teams.getDetails",
       "shortPath": "teams.getDetails",
       "description": "Get team details by slug",
@@ -360,6 +523,194 @@
       }
     },
     {
+      "path": "amara.api.teams.getMember",
+      "shortPath": "teams.getMember",
+      "description": "Get details for a specific team member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages_managed",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.getProject",
+      "shortPath": "teams.getProject",
+      "description": "Get details for a specific team project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guidelines",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workflow_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.getTask",
+      "shortPath": "teams.getTask",
+      "description": "Get details for a specific team task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "path": "amara.api.teams.list",
       "shortPath": "teams.list",
       "description": "List teams",
@@ -393,6 +744,386 @@
             "key": "objects",
             "optional": true,
             "type": "{ name?: string, slug?: string, type?: string | null, description?: string | null, team_visibility?: string | null, video_visibility?: string | null, is_visible?: boolean, membership_policy?: string | null, video_policy?: string | null, activity_uri?: string, members_uri?: string, projects_uri?: string, applications_uri?: string | null, languages_uri?: string | null, tasks_uri?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.listApplications",
+      "shortPath": "teams.listApplications",
+      "description": "List membership applications for a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: number | string, user?: { username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string, status?: string, created?: string | null, message?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.listMembers",
+      "shortPath": "teams.listMembers",
+      "description": "List members of a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ user?: { username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string, role?: string, languages_managed?: string[], resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.listProjects",
+      "shortPath": "teams.listProjects",
+      "description": "List projects within a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ name?: string, slug?: string, description?: string | null, guidelines?: string | null, created?: string | null, modified?: string | null, workflow_enabled?: boolean, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.listTasks",
+      "shortPath": "teams.listTasks",
+      "description": "List tasks within a team with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "open",
+            "optional": true,
+            "type": "string | boolean"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Result offset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ previous?: string | null, next?: string | null, offset?: number, limit?: number, total_count?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ id?: number | string, video_id?: string, language?: string, type?: string, priority?: number, assignee?: { username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string | null, completed?: string | boolean | null, created?: string | null, modified?: string | null, resource_uri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.removeMember",
+      "shortPath": "teams.removeMember",
+      "description": "Remove a member from a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.updateMember",
+      "shortPath": "teams.updateMember",
+      "description": "Update member role in a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "owner | admin | manager | contributor | proj_lang_manager | limited_contributor"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "languages_managed",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "amara.api.teams.updateProject",
+      "shortPath": "teams.updateProject",
+      "description": "Update a team project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guidelines",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guidelines",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workflow_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_uri",
+            "optional": true,
+            "type": "string"
           }
         ]
       }
