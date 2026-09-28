@@ -38,6 +38,19 @@ export const TeamsEndpoints = {
 	list: Teams.list,
 	getDetails: Teams.getDetails,
 	getLanguages: Teams.getLanguages,
+	listProjects: Teams.listProjects,
+	getProject: Teams.getProject,
+	createProject: Teams.createProject,
+	updateProject: Teams.updateProject,
+	deleteProject: Teams.deleteProject,
+	listMembers: Teams.listMembers,
+	getMember: Teams.getMember,
+	addMember: Teams.addMember,
+	updateMember: Teams.updateMember,
+	removeMember: Teams.removeMember,
+	listTasks: Teams.listTasks,
+	getTask: Teams.getTask,
+	listApplications: Teams.listApplications,
 };
 
 export const ActivityEndpoints = {
