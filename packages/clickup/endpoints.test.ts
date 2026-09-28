@@ -27,6 +27,7 @@ const API_PREFIX = '/api/v2';
 type Ctx = Parameters<typeof WorkspacesEndpoints.get>[0];
 
 function makeCtx() {
+	// unknown: fixture only supplies ctx.key; endpoints read nothing else.
 	return { key: TOKEN } as unknown as Ctx;
 }
 
@@ -51,6 +52,7 @@ beforeEach(() => {
 	lastMethod = '';
 	lastBody = undefined;
 	lastAuth = undefined;
+	// unknown: fetch url may be string or URL; mock only records routing side effects.
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		lastUrl = String(url);
 		lastMethod = init?.method ?? 'GET';
@@ -70,10 +72,12 @@ beforeEach(() => {
 			json: async () => RESPONSE_BODY,
 			text: async () => JSON.stringify(RESPONSE_BODY),
 		};
+		// unknown: partial Response stub for jest global override.
 	}) as unknown as typeof global.fetch;
 });
 
 /** [registry path, invocation, method, expected path suffix] */
+// unknown: operation return types differ; routing tests only assert HTTP side effects.
 const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 	['workspaces.get', (c) => WorkspacesEndpoints.get(c, {}), 'GET', '/team'],
 	[

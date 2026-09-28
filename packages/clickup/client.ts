@@ -18,6 +18,7 @@ export async function makeClickupRequest<T>(
 	token: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown: request JSON varies by ClickUp operation; Zod parses at callers.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
