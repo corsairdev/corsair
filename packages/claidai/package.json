@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "if exist dist rmdir /s /q dist && tsc --build --force && tsup",
+    "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
