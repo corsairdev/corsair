@@ -357,6 +357,27 @@ describe('Messages and Models API transport', () => {
 		expect(sent().config.HEADERS['x-api-key']).not.toBe('sk-ant-admin-test');
 	});
 
+	it('prefers tenant-scoped inference_key over factory options', async () => {
+		const tenantCtx = {
+			key: 'sk-ant-admin-test',
+			options: { inferenceKey: 'sk-ant-api-factory' },
+			keys: {
+				get_inference_key: async () => 'sk-ant-api-tenant',
+			},
+			db: {},
+		} as unknown as AnthropicAdministratorContext;
+		const fn = ops().messages?.createMessage;
+		if (!fn) throw new Error('missing endpoint');
+		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
+		await fn(tenantCtx, {
+			model: 'claude-3-5-sonnet-20241022',
+			max_tokens: 10,
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+
+		expect(sent().config.HEADERS['x-api-key']).toBe('sk-ant-api-tenant');
+	});
+
 	it('always sends stream false on createMessage', async () => {
 		mockRequest.mockResolvedValueOnce({ id: 'msg_1', type: 'message' });
 		await call('messages', 'createMessage', {

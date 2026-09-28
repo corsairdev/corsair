@@ -45,14 +45,6 @@ export type AnthropicAdministratorPluginOptions = {
 	>;
 };
 
-export type AnthropicAdministratorContext = CorsairPluginContext<
-	typeof AnthropicAdministratorSchema,
-	AnthropicAdministratorPluginOptions
->;
-
-export type AnthropicAdministratorKeyBuilderContext =
-	KeyBuilderContext<AnthropicAdministratorPluginOptions>;
-
 export type AnthropicAdministratorBoundEndpoints = BindEndpoints<
 	typeof anthropicAdministratorEndpointsNested
 >;
@@ -88,9 +80,25 @@ import { anthropicAdministratorEndpointMeta } from './meta-descriptions';
 const defaultAuthType = 'api_key' as const;
 
 export const anthropicAdministratorAuthConfig = {
-	api_key: {},
-	oauth_2: {},
+	api_key: {
+		account: ['inference_key'] as const,
+	},
+	oauth_2: {
+		account: ['inference_key'] as const,
+	},
 } as const satisfies PluginAuthConfig;
+
+export type AnthropicAdministratorContext = CorsairPluginContext<
+	typeof AnthropicAdministratorSchema,
+	AnthropicAdministratorPluginOptions,
+	undefined,
+	typeof anthropicAdministratorAuthConfig
+>;
+
+export type AnthropicAdministratorKeyBuilderContext = KeyBuilderContext<
+	AnthropicAdministratorPluginOptions,
+	typeof anthropicAdministratorAuthConfig
+>;
 
 export type BaseAnthropicAdministratorPlugin<
 	T extends AnthropicAdministratorPluginOptions,
@@ -100,7 +108,8 @@ export type BaseAnthropicAdministratorPlugin<
 	typeof anthropicAdministratorEndpointsNested,
 	typeof anthropicAdministratorWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof anthropicAdministratorAuthConfig
 >;
 
 export type InternalAnthropicAdministratorPlugin =
@@ -159,19 +168,21 @@ export function anthropicadministrator<
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('anthropicadministrator', 'api_key');
-				}
-				return res;
+				const admin = await ctx.keys.get_api_key();
+				if (admin) return admin;
+				const inference =
+					(await ctx.keys.get_inference_key()) ?? options.inferenceKey;
+				if (inference) return inference;
+				throw new AuthMissingError('anthropicadministrator', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					throw new AuthMissingError('anthropicadministrator', 'oauth_2');
-				}
-				return res;
+				const admin = await ctx.keys.get_access_token();
+				if (admin) return admin;
+				const inference =
+					(await ctx.keys.get_inference_key()) ?? options.inferenceKey;
+				if (inference) return inference;
+				throw new AuthMissingError('anthropicadministrator', 'oauth_2');
 			}
 
 			// Never fall through with an empty credential: an empty key would be

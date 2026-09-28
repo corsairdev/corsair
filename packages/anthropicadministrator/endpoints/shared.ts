@@ -3,13 +3,22 @@ import type { AnthropicAdministratorRequestOptions } from '../client';
 import { makeAnthropicAdministratorRequest } from '../client';
 import type { AnthropicAdministratorContext } from '../index';
 
-/** Standard Anthropic API key (`sk-ant-api…`) for Messages and Models endpoints. */
-export function resolveInferenceKey(
+const INFERENCE_KEY_MISSING =
+	'Standard Anthropic API key (inference_key) is required for Messages and Models endpoints.';
+
+/** Tenant-scoped standard API key (`sk-ant-api…`) for Messages and Models. */
+export async function resolveInferenceKey(
 	ctx: AnthropicAdministratorContext,
-): string {
+): Promise<string> {
+	const fromTenant = ctx.keys ? await ctx.keys.get_inference_key() : null;
+	if (fromTenant) return fromTenant;
 	const key = ctx.options?.inferenceKey;
 	if (key) return key;
-	throw new AuthMissingError('anthropicadministrator', 'api_key');
+	throw new AuthMissingError(
+		'anthropicadministrator',
+		'api_key',
+		INFERENCE_KEY_MISSING,
+	);
 }
 
 /** Entities mirrored into the plugin's local cache. */
@@ -149,7 +158,7 @@ export async function callStandardApi<T>(
 ): Promise<T> {
 	const response = await makeAnthropicAdministratorRequest<T>(
 		path,
-		resolveInferenceKey(ctx),
+		await resolveInferenceKey(ctx),
 		{ ...options, authType: 'api_key' },
 	);
 
