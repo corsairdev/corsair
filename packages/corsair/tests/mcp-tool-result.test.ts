@@ -102,4 +102,33 @@ describe('formatRunScriptError', () => {
 			'"self": "[Circular]"',
 		);
 	});
+
+	it('redacts nested request data from error details', () => {
+		const error = Object.assign(new Error('request failed'), {
+			request: {
+				body: { email: 'member@example.com' },
+				headers: { authorization: 'Bearer secret-token' },
+			},
+		});
+
+		const text = formatRunScriptError(error).content[0]?.text ?? '';
+
+		expect(text).not.toContain('member@example.com');
+		expect(text).not.toContain('secret-token');
+		expect(text).toContain('[REDACTED]');
+	});
+
+	it('returns an MCP error when an error property cannot be read', () => {
+		const error = new Error('request failed');
+		Object.defineProperty(error, 'details', {
+			get() {
+				throw new Error('unreadable details');
+			},
+		});
+
+		expect(() => formatRunScriptError(error)).not.toThrow();
+		expect(formatRunScriptError(error).content[0]?.text).toContain(
+			'[Unreadable property]',
+		);
+	});
 });

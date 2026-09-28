@@ -21,7 +21,8 @@ export function isActionToolError(err: unknown): boolean {
 	return (
 		err instanceof AuthMissingError ||
 		err instanceof PermissionRequiredError ||
-		(err instanceof Error && isAgentFacingActionMessage(err.message))
+		(err instanceof Error &&
+			isAgentFacingActionMessage(safeString(err.message)))
 	);
 }
 
@@ -32,7 +33,32 @@ export function toolErrorResult(message: string): CallToolResult {
 	};
 }
 
-function safeSerialize(value: unknown): string {
+const SENSITIVE_ERROR_FIELDS = new Set([
+	'api_key',
+	'apikey',
+	'authorization',
+	'client_secret',
+	'clientsecret',
+	'cookie',
+	'password',
+	'private_key',
+	'privatekey',
+	'request',
+	'response',
+	'secret',
+	'set-cookie',
+	'token',
+]);
+
+function safeString(value: unknown): string {
+	try {
+		return String(value);
+	} catch {
+		return '[Unserializable value]';
+	}
+}
+
+function safeSerialize(value: unknown, redactSensitiveFields = false): string {
 	const ancestors: object[] = [];
 
 	try {
@@ -48,6 +74,13 @@ function safeSerialize(value: unknown): string {
 						return nestedValue.toString();
 					}
 
+					if (
+						redactSensitiveFields &&
+						SENSITIVE_ERROR_FIELDS.has(_key.toLowerCase())
+					) {
+						return '[REDACTED]';
+					}
+
 					if (typeof nestedValue === 'object' && nestedValue !== null) {
 						if (ancestors.includes(nestedValue)) {
 							return '[Circular]';
@@ -59,15 +92,25 @@ function safeSerialize(value: unknown): string {
 					return nestedValue;
 				},
 				2,
-			) ?? String(value)
+			) ?? safeString(value)
 		);
 	} catch {
+		return safeString(value);
+	}
+}
+
+function serializeError(err: Error): string {
+	const properties: Record<string, unknown> = {};
+
+	for (const key of Object.getOwnPropertyNames(err)) {
 		try {
-			return String(value);
+			properties[key] = err[key as keyof Error];
 		} catch {
-			return '[Unserializable value]';
+			properties[key] = '[Unreadable property]';
 		}
 	}
+
+	return safeSerialize(properties, true);
 }
 
 export function formatRunScriptResult(result: unknown): CallToolResult {
@@ -86,26 +129,17 @@ export function formatRunScriptResult(result: unknown): CallToolResult {
 }
 
 export function formatRunScriptError(err: unknown): CallToolResult {
-	const message = err instanceof Error ? err.message : String(err);
+	const message =
+		err instanceof Error ? safeString(err.message) : safeString(err);
 
 	if (isActionToolError(err)) {
 		return toolErrorResult(message);
 	}
 
-	const extra =
-		err instanceof Error && err.cause ? `\nCause: ${String(err.cause)}` : '';
-	const full = safeSerialize(
-		err instanceof Error
-			? Object.fromEntries(
-					Object.getOwnPropertyNames(err).map((key) => [
-						key,
-						err[key as keyof Error],
-					]),
-				)
-			: err,
-	);
+	const full =
+		err instanceof Error ? serializeError(err) : safeSerialize(err, true);
 
-	return toolErrorResult(`Error running snippet: ${message}${extra}\n${full}`);
+	return toolErrorResult(`Error running snippet: ${message}\n${full}`);
 }
 
 export function callToolResultToText(result: CallToolResult): string {
