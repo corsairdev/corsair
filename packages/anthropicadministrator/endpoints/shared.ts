@@ -1,7 +1,25 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { AnthropicAdministratorRequestOptions } from '../client';
 import { makeAnthropicAdministratorRequest } from '../client';
 import type { AnthropicAdministratorContext } from '../index';
+
+const INFERENCE_KEY_MISSING =
+	'Standard Anthropic API key (inference_key) is required for Messages and Models endpoints.';
+
+/** Tenant-scoped standard API key (`sk-ant-api…`) for Messages and Models. */
+export async function resolveInferenceKey(
+	ctx: AnthropicAdministratorContext,
+): Promise<string> {
+	const fromTenant = ctx.keys ? await ctx.keys.get_inference_key() : null;
+	if (fromTenant) return fromTenant;
+	const key = ctx.options?.inferenceKey;
+	if (key) return key;
+	throw new AuthMissingError(
+		'anthropicadministrator',
+		'api_key',
+		INFERENCE_KEY_MISSING,
+	);
+}
 
 /** Entities mirrored into the plugin's local cache. */
 export type CacheEntity =
@@ -113,6 +131,37 @@ export async function callAdminApi<T>(
 
 	// The remote call already succeeded; a telemetry failure must not turn that
 	// into a thrown error for the caller.
+	try {
+		await logEventFromContext(
+			ctx,
+			`anthropicadministrator.${operation}`,
+			logPayload,
+			'completed',
+		);
+	} catch (error) {
+		console.warn(`[anthropicadministrator] failed to log ${operation}:`, error);
+	}
+
+	return response;
+}
+
+/**
+ * Issues a standard Anthropic API request (Messages, Models). Uses
+ * `options.inferenceKey`, not the Admin API credential on `ctx.key`.
+ */
+export async function callStandardApi<T>(
+	ctx: AnthropicAdministratorContext,
+	operation: string,
+	path: string,
+	options: AnthropicAdministratorRequestOptions = {},
+	logPayload: Record<string, unknown> = {},
+): Promise<T> {
+	const response = await makeAnthropicAdministratorRequest<T>(
+		path,
+		await resolveInferenceKey(ctx),
+		{ ...options, authType: 'api_key' },
+	);
+
 	try {
 		await logEventFromContext(
 			ctx,

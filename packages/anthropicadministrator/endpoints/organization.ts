@@ -1,6 +1,6 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
 import { callAdminApi } from './shared';
-import type { AnthropicAdministratorEndpointOutputs as Outputs } from './types';
+import type { AnthropicAdministratorEndpointOutputs as Outputs } from './types/index';
 
 /** GET /v1/organizations/me */
 export const getOrganization: AnthropicAdministratorEndpoints['getOrganization'] =
