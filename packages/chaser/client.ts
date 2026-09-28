@@ -1,0 +1,83 @@
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export class ChaserAPIError extends Error {
+	constructor(
+		message: string,
+		public readonly status?: number,
+		public readonly code?: string,
+	) {
+		super(message);
+		this.name = 'ChaserAPIError';
+	}
+}
+
+const CHASER_API_BASE = 'https://openapi.chaserhq.com';
+const CREDENTIAL_SEP = '\x1e';
+
+export function packChaserCredentials(
+	apiKey: string,
+	apiSecret: string,
+): string {
+	return `${apiKey}${CREDENTIAL_SEP}${apiSecret}`;
+}
+
+export function unpackChaserCredentials(packed: string): {
+	apiKey: string;
+	apiSecret: string;
+} {
+	const sep = packed.indexOf(CREDENTIAL_SEP);
+	if (sep < 1 || sep === packed.length - 1) {
+		throw new ChaserAPIError('Chaser API key and secret are required');
+	}
+	return {
+		apiKey: packed.slice(0, sep),
+		apiSecret: packed.slice(sep + 1),
+	};
+}
+
+export async function makeChaserRequest<T>(
+	endpoint: string,
+	packedKey: string,
+	options: {
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// unknown is required here because the request body accepts arbitrary
+		// caller-supplied JSON values. It is safe because the body is passed
+		// straight to the typed HTTP layer without any narrowing or casting,
+		// and every endpoint only ever passes its own zod-validated input.
+		body?: Record<string, unknown>;
+		query?: Record<string, string | number | boolean | undefined>;
+	} = {},
+): Promise<T> {
+	const { method = 'GET', body, query } = options;
+	const { apiKey, apiSecret } = unpackChaserCredentials(packedKey);
+	const credentials = Buffer.from(`${apiKey}:${apiSecret}`).toString('base64');
+	const config: OpenAPIConfig = {
+		BASE: CHASER_API_BASE,
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		HEADERS: {
+			'Content-Type': 'application/json',
+			Authorization: `Basic ${credentials}`,
+		},
+	};
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: endpoint,
+		body: method !== 'GET' ? body : undefined,
+		mediaType: 'application/json; charset=utf-8',
+		query: method === 'GET' ? query : undefined,
+	};
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof Error) {
+			throw new ChaserAPIError(error.message);
+		}
+		throw new ChaserAPIError('Unknown Chaser API error');
+	}
+}
