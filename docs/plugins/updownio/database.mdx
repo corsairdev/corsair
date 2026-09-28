@@ -1,0 +1,136 @@
+---
+title: Database
+description: "Updown.io local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Updown.io plugin syncs data locally. Use `corsair.updownio.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Check Domain
+
+Path: `updownio.db.checkDomain.search`
+
+```ts
+const rows = await corsair.updownio.db.checkDomain.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tested_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `remaining_days` | `number` | equals, gt, gte, lt, lte, in |
+| `source` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Checks
+
+Path: `updownio.db.checks.search`
+
+```ts
+const rows = await corsair.updownio.db.checks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `token` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_status` | `number` | equals, gt, gte, lt, lte, in |
+| `uptime` | `number` | equals, gt, gte, lt, lte, in |
+| `down` | `boolean` | equals |
+| `down_since` | `string` | equals, contains, startsWith, endsWith, in |
+| `up_since` | `string` | equals, contains, startsWith, endsWith, in |
+| `error` | `string` | equals, contains, startsWith, endsWith, in |
+| `period` | `number` | equals, gt, gte, lt, lte, in |
+| `apdex_t` | `number` | equals, gt, gte, lt, lte, in |
+| `string_match` | `string` | equals, contains, startsWith, endsWith, in |
+| `enabled` | `boolean` | equals |
+| `published` | `boolean` | equals |
+| `last_check_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `next_check_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `mute_until` | `string` | equals, contains, startsWith, endsWith, in |
+| `favicon_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `http_verb` | `string` | equals, contains, startsWith, endsWith, in |
+| `http_body` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Check Ssl
+
+Path: `updownio.db.checkSsl.search`
+
+```ts
+const rows = await corsair.updownio.db.checkSsl.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `tested_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `valid` | `boolean` | equals |
+| `error` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Nodes
+
+Path: `updownio.db.nodes.search`
+
+```ts
+const rows = await corsair.updownio.db.nodes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip` | `string` | equals, contains, startsWith, endsWith, in |
+| `ip6` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `country_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `lat` | `number` | equals, gt, gte, lt, lte, in |
+| `lng` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
