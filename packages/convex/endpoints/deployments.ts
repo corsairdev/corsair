@@ -67,6 +67,7 @@ export const create: ConvexEndpoints['deploymentCreate'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: create payload fields vary by optional deployment inputs.
 	const body: Record<string, unknown> = { type: input.type };
 	if (input.class !== undefined) body.class = input.class;
 	if (input.region !== undefined) body.region = input.region;
@@ -106,6 +107,7 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	// unknown: PATCH body includes only the fields the caller supplied.
 	const body: Record<string, unknown> = {};
 	if (input.reference !== undefined) body.reference = input.reference;
 	if (input.dashboardEditConfirmation !== undefined) {
@@ -139,7 +141,9 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 					}),
 				);
 			}
-		} catch {}
+		} catch {
+			// Intentionally swallowed — PATCH already succeeded; cache refresh is best-effort.
+		}
 	}
 
 	await logEventFromContext(

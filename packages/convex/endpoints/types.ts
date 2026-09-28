@@ -196,6 +196,7 @@ const DeploymentRegionsListInputSchema = z.object({
 
 const QueryBatchItemSchema = z.object({
 	path: z.string().min(1),
+	// unknown: Convex query args are function-specific; validated at execution time.
 	args: z.record(z.string(), z.unknown()).default({}),
 	format: z.enum(['json']).optional(),
 });
@@ -230,6 +231,7 @@ const ProjectCreateResponseSchema = z
 	})
 	.passthrough();
 
+// unknown: delete endpoints return empty or provider-specific JSON bodies.
 const ProjectDeleteResponseSchema = z
 	.record(z.string(), z.unknown())
 	.optional();
@@ -283,6 +285,7 @@ const DeploymentRegionsListResponseSchema = z
 	})
 	.passthrough();
 
+// unknown: query results carry function-specific values and error payloads.
 export const QueryBatchResultSchema = z
 	.object({
 		status: z.enum(['success', 'error']),

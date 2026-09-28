@@ -91,6 +91,7 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 };
 
 export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
+	// unknown: create payload fields vary by optional provisioning inputs.
 	const body: Record<string, unknown> = { projectName: input.projectName };
 	if (input.deploymentType !== undefined) {
 		body.deploymentType = input.deploymentType;

@@ -47,6 +47,7 @@ function endpointPaths(tree: Record<string, unknown>, prefix = ''): string[] {
 	});
 }
 
+// unknown: test helpers invoke endpoints with partial inputs and untyped results.
 type TestEndpointHandler = (
 	ctx: ConvexContext,
 	input: Record<string, unknown>,
@@ -65,6 +66,7 @@ function getEndpoint(
 	}
 	return handler;
 }
+// unknown: fixture only supplies ctx fields exercised by routing tests.
 const mockCtx = {
 	key: 'test-token',
 	options: {},

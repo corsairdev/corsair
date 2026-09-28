@@ -110,7 +110,7 @@ export type BaseConvexPlugin<T extends ConvexPluginOptions> = CorsairPlugin<
 	'convex',
 	typeof ConvexSchema,
 	typeof convexEndpointsNested,
-	{},
+	Record<string, never>,
 	T,
 	typeof defaultAuthType,
 	typeof convexAuthConfig

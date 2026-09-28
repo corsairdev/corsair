@@ -28,6 +28,7 @@ const CONVEX_MANAGEMENT_API_BASE = 'https://api.convex.dev/v1';
 
 export interface ConvexRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown: request JSON varies by Convex operation; Zod parses at callers.
 	body?: Record<string, unknown> | unknown[];
 	query?: Record<string, string | number | boolean | undefined>;
 	/**
@@ -54,6 +55,7 @@ export interface ConvexRequestOptions {
  * completed and must be reported as such.
  */
 export async function tryCacheWrite(
+	// unknown: cache helpers return entity rows with provider-specific shapes.
 	write: () => Promise<unknown>,
 ): Promise<void> {
 	try {
