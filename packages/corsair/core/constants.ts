@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'anonyflow',
 	'anthropicadministrator',
 	'apaleo',
+	'appveyor',
 	'api2pdf',
 	'apibible',
 	'apify',
@@ -396,6 +397,7 @@ export const ProviderDisplayNames = {
 	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
+	appveyor: 'AppVeyor',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
 	apify: 'Apify',
@@ -751,6 +753,7 @@ export type AllProviders =
 	| 'anonyflow'
 	| 'anthropicadministrator'
 	| 'apaleo'
+	| 'appveyor'
 	| 'api2pdf'
 	| 'apibible'
 	| 'apify'
