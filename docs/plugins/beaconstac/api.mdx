@@ -1,0 +1,1111 @@
+---
+title: API
+description: "API reference for Beaconstac: every `beaconstac.api.*` operation with input and output types."
+---
+
+Every `beaconstac.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### periodOverview
+
+`analytics.periodOverview`
+
+Period overview analytics for a product type
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.analytics.periodOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `number` | Yes | — |
+| `product_type` | `beacon \| nfc \| qr \| geofence` | Yes | — |
+| `from_timestamp` | `number` | Yes | — |
+| `to_timestamp` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `points` | `any[]` | No | — |
+| `columns` | `any[]` | No | — |
+
+
+
+---
+
+### productOverview
+
+`analytics.productOverview`
+
+Product overview analytics for a time interval
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.analytics.productOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `number` | Yes | — |
+| `product_type` | `beacon \| nfc \| qr \| geofence` | Yes | — |
+| `from_timestamp` | `number` | Yes | — |
+| `to_timestamp` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `points` | `any[]` | No | — |
+| `columns` | `any[]` | No | — |
+
+
+
+---
+
+## Bulk Qrcodes
+
+### list
+
+`bulkQrcodes.list`
+
+List bulk QR Code collections
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.bulkQrcodes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `qr_data_type` | `number` | No | — |
+| `name__icontains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  attributes?: any,
+  qr_type?: number,
+  qr_data_type?: number,
+  organization?: number,
+  storage_url?: string,
+  media?: number | null,
+  media_data?: any,
+  maintainer?: number | null,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List organizations accessible to the authenticated account
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  parent?: number | null,
+  reseller_access?: boolean,
+  whitelabel_access?: boolean,
+  custom_domain?: string | null,
+  cname?: string | null,
+  feature_permissions?: any,
+  domains?: any,
+  ga_code?: string | null,
+  fb_pixel_id?: string | null,
+  google_conversion_id?: string | null,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### create
+
+`places.create`
+
+Create a new place for location-based assets
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.places.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `latitude` | `number` | Yes | — |
+| `longitude` | `number` | Yes | — |
+| `organization` | `number` | Yes | — |
+| `place_id` | `string` | No | — |
+| `business_color` | `string` | No | — |
+| `business_icon_url` | `string` | No | — |
+| `business_cover_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `place_id` | `string` | No | — |
+| `address` | `string` | No | — |
+| `beacons` | `any` | No | — |
+| `beacon_count` | `number` | No | — |
+| `default_place` | `boolean` | No | — |
+| `business_icon_url` | `string` | No | — |
+| `business_cover_url` | `string` | No | — |
+| `business_color` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`places.list`
+
+List places with filtering, search, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.places.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `name` | `string` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `name__icontains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  organization?: number,
+  latitude?: number,
+  longitude?: number,
+  place_id?: string,
+  address?: string,
+  beacons?: any,
+  beacon_count?: number,
+  default_place?: boolean,
+  business_icon_url?: string,
+  business_cover_url?: string,
+  business_color?: string,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`places.update`
+
+Update a place name, address, or coordinates
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.places.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `organization` | `number` | Yes | — |
+| `address` | `string` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `business_color` | `string` | No | — |
+| `business_icon_url` | `string` | No | — |
+| `business_cover_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `place_id` | `string` | No | — |
+| `address` | `string` | No | — |
+| `beacons` | `any` | No | — |
+| `beacon_count` | `number` | No | — |
+| `default_place` | `boolean` | No | — |
+| `business_icon_url` | `string` | No | — |
+| `business_cover_url` | `string` | No | — |
+| `business_color` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+## Qrcodes
+
+### delete
+
+`qrcodes.delete`
+
+Delete a QR Code by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.beaconstac.api.qrcodes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`qrcodes.get`
+
+Retrieve a QR Code by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.qrcodes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `qr_type` | `number` | No | — |
+| `url` | `string` | No | — |
+| `state` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `place` | `number` | No | — |
+| `maintainer` | `number` | No | — |
+| `tags` | `number[]` | No | — |
+| `template` | `number` | No | — |
+| `campaign` | `any` | No | — |
+| `attributes` | `any` | No | — |
+| `fields_data` | `any` | No | — |
+| `view_limit` | `number` | No | — |
+| `domain` | `number` | No | — |
+| `location_enabled` | `boolean` | No | — |
+| `password` | `boolean` | No | — |
+| `meta` | `any` | No | — |
+| `additional_params` | `any` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `heartbeat` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`qrcodes.update`
+
+Update a QR Code name, design, tags, or content
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.qrcodes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `qrcode_id` | `number` | Yes | — |
+| `meta` | `object` | No | — |
+| `name` | `string` | No | — |
+| `tags` | `number[]` | No | — |
+| `place` | `number` | No | — |
+| `qr_type` | `number` | No | — |
+| `campaign` | `object` | No | — |
+| `attributes` | `object` | No | — |
+| `fields_data` | `object` | No | — |
+| `organization` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="campaign full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="fields_data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `qr_type` | `number` | No | — |
+| `url` | `string` | No | — |
+| `state` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `place` | `number` | No | — |
+| `maintainer` | `number` | No | — |
+| `tags` | `number[]` | No | — |
+| `template` | `number` | No | — |
+| `campaign` | `any` | No | — |
+| `attributes` | `any` | No | — |
+| `fields_data` | `any` | No | — |
+| `view_limit` | `number` | No | — |
+| `domain` | `number` | No | — |
+| `location_enabled` | `boolean` | No | — |
+| `password` | `boolean` | No | — |
+| `meta` | `any` | No | — |
+| `additional_params` | `any` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `heartbeat` | `string` | No | — |
+
+
+
+---
+
+## Qr Templates
+
+### create
+
+`qrTemplates.create`
+
+Create a reusable QR Code design template
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.qrTemplates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `organization` | `number` | Yes | — |
+| `meta` | `object` | No | — |
+| `margin` | `number` | No | — |
+| `default` | `boolean` | No | — |
+| `dotScale` | `number` | No | — |
+| `colorDark` | `string` | No | — |
+| `frameText` | `string` | No | — |
+| `logoImage` | `string` | No | — |
+| `logoScale` | `number` | No | — |
+| `colorLight` | `string` | No | — |
+| `frameColor` | `string` | No | — |
+| `frameStyle` | `string` | No | — |
+| `dataPattern` | `string` | No | — |
+| `eyeBallColor` | `string` | No | — |
+| `eyeBallShape` | `string` | No | — |
+| `gradientType` | `string` | No | — |
+| `eyeFrameColor` | `string` | No | — |
+| `eyeFrameShape` | `string` | No | — |
+| `frameTextColor` | `string` | No | — |
+| `backgroundColor` | `string` | No | — |
+| `backgroundImage` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `default` | `boolean` | No | — |
+| `organization` | `number` | No | — |
+| `maintainer` | `number` | No | — |
+| `meta` | `any` | No | — |
+| `margin` | `number` | No | — |
+| `dotScale` | `number` | No | — |
+| `dataPattern` | `string` | No | — |
+| `colorDark` | `string` | No | — |
+| `colorLight` | `string` | No | — |
+| `gradientType` | `string` | No | — |
+| `eyeBallShape` | `string` | No | — |
+| `eyeFrameShape` | `string` | No | — |
+| `logoImage` | `string` | No | — |
+| `backgroundImage` | `string` | No | — |
+| `frameStyle` | `string` | No | — |
+| `frameText` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`qrTemplates.delete`
+
+Delete a QR Code template by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.beaconstac.api.qrTemplates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`qrTemplates.list`
+
+List QR Code templates for an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.qrTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `name__icontains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  default?: boolean,
+  organization?: number,
+  maintainer?: number | null,
+  meta?: any,
+  margin?: number,
+  dotScale?: number,
+  dataPattern?: string,
+  colorDark?: string,
+  colorLight?: string,
+  gradientType?: string,
+  eyeBallShape?: string,
+  eyeFrameShape?: string,
+  logoImage?: string,
+  backgroundImage?: string,
+  frameStyle?: string,
+  frameText?: string,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag for organizing QR Codes
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.tags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `organization` | `number` | Yes | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `maintainer` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.beaconstac.api.tags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `ordering` | `string` | No | — |
+| `name__icontains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  color?: string,
+  organization?: number,
+  maintainer?: number | null,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag name or color
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.tags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `maintainer` | `number` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a user under an organization (Reseller+)
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `organization` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `password` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `billing_email` | `string` | No | — |
+| `customer_plan` | `string` | No | — |
+| `profile_picture` | `string` | No | — |
+| `user_group` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `username` | `string` | No | — |
+| `user_group` | `string` | No | — |
+| `customer_plan` | `string` | No | — |
+| `subscription_state` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `stripe_id` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `last_login` | `string` | No | — |
+| `date_joined` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Retrieve a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `username` | `string` | No | — |
+| `user_group` | `string` | No | — |
+| `customer_plan` | `string` | No | — |
+| `subscription_state` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `stripe_id` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `last_login` | `string` | No | — |
+| `date_joined` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users with filtering, search, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.beaconstac.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `search` | `string` | No | — |
+| `ordering` | `string` | No | — |
+| `email__exact` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `customer_plan` | `string` | No | — |
+| `date_joined__gt` | `string` | No | — |
+| `date_joined__lt` | `string` | No | — |
+| `username__exact` | `string` | No | — |
+| `date_joined__gte` | `string` | No | — |
+| `date_joined__lte` | `string` | No | — |
+| `email__icontains` | `string` | No | — |
+| `last_name__exact` | `string` | No | — |
+| `first_name__exact` | `string` | No | — |
+| `subscription_state` | `string` | No | — |
+| `username__icontains` | `string` | No | — |
+| `last_name__icontains` | `string` | No | — |
+| `first_name__icontains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number,
+  first_name?: string,
+  last_name?: string,
+  username?: string,
+  user_group?: string,
+  customer_plan?: string,
+  subscription_state?: string,
+  is_active?: boolean,
+  stripe_id?: string | null,
+  timezone?: string,
+  organization?: number,
+  last_login?: string | null,
+  date_joined?: string,
+  created?: string,
+  updated?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user profile or organization
+
+**Risk:** `write`
+
+```ts
+await corsair.beaconstac.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number` | Yes | — |
+| `last_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `profile_picture` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `username` | `string` | No | — |
+| `user_group` | `string` | No | — |
+| `customer_plan` | `string` | No | — |
+| `subscription_state` | `string` | No | — |
+| `is_active` | `boolean` | No | — |
+| `stripe_id` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `organization` | `number` | No | — |
+| `last_login` | `string` | No | — |
+| `date_joined` | `string` | No | — |
+| `created` | `string` | No | — |
+| `updated` | `string` | No | — |
+
+
+
+---
+

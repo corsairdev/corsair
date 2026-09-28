@@ -1,0 +1,1619 @@
+---
+title: API
+description: "API reference for Synthflow AI: every `synthflowai.api.*` operation with input and output types."
+---
+
+Every `synthflowai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Actions
+
+### attach
+
+`actions.attach`
+
+Attach actions to a Synthflow AI agent
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.actions.attach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+| `actions` | `string[]` | No | — |
+| `action_ids` | `string[]` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### create
+
+`actions.create`
+
+Create a new action in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.actions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `REAL_TIME_BOOKING` | `object` | No | — |
+| `CALCOM` | `object` | No | — |
+| `GHL` | `object` | No | — |
+| `INFORMATION_EXTRACTOR` | `object` | No | — |
+| `LIVE_TRANSFER` | `object` | No | — |
+| `SEND_SMS` | `object` | No | — |
+| `INCALL_SMS` | `object` | No | — |
+| `INCALL_WHATSAPP` | `object` | No | — |
+| `CUSTOM_ACTION` | `object` | No | — |
+| `CUSTOM_EVAL` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="REAL_TIME_BOOKING full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CALCOM full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="GHL full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INFORMATION_EXTRACTOR full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="LIVE_TRANSFER full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="SEND_SMS full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INCALL_SMS full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INCALL_WHATSAPP full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CUSTOM_ACTION full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CUSTOM_EVAL full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### delete
+
+`actions.delete`
+
+Delete an action in Synthflow AI
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.actions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### detach
+
+`actions.detach`
+
+Detach actions from a Synthflow AI agent
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.actions.detach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+| `actions` | `string[]` | No | — |
+| `action_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`actions.get`
+
+Retrieve metadata about a specific action by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.actions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`actions.list`
+
+List all actions in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.actions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### update
+
+`actions.update`
+
+Update an existing action in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.actions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `action_id` | `string` | Yes | — |
+| `REAL_TIME_BOOKING` | `object` | No | — |
+| `CALCOM` | `object` | No | — |
+| `GHL` | `object` | No | — |
+| `INFORMATION_EXTRACTOR` | `object` | No | — |
+| `LIVE_TRANSFER` | `object` | No | — |
+| `SEND_SMS` | `object` | No | — |
+| `INCALL_SMS` | `object` | No | — |
+| `INCALL_WHATSAPP` | `object` | No | — |
+| `CUSTOM_ACTION` | `object` | No | — |
+| `CUSTOM_EVAL` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="REAL_TIME_BOOKING full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CALCOM full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="GHL full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INFORMATION_EXTRACTOR full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="LIVE_TRANSFER full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="SEND_SMS full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INCALL_SMS full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="INCALL_WHATSAPP full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CUSTOM_ACTION full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="CUSTOM_EVAL full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Assistants
+
+### create
+
+`assistants.create`
+
+Create a new Synthflow AI assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.assistants.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `outbound \| inbound \| widget` | Yes | — |
+| `name` | `string` | Yes | — |
+| `agent` | `object` | Yes | — |
+| `description` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `external_webhook_url` | `string` | No | — |
+| `is_recording` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="agent full type">
+
+```ts
+{
+  prompt: string,
+  greeting_message: string,
+  llm: string,
+  language: string,
+  voice_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+| `details` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  model_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  phone?: string,
+  voice?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`assistants.delete`
+
+Delete a Synthflow AI assistant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.assistants.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `assistant_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`assistants.get`
+
+Retrieve details of an existing Synthflow AI assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.assistants.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `assistant_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`assistants.list`
+
+List all Synthflow AI assistants
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.assistants.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  pagination?: {
+    total_records?: number,
+    limit?: number,
+    offset?: number
+  },
+  assistants?: {
+  }[] | {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`assistants.update`
+
+Update a Synthflow AI assistant's settings
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.assistants.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | No | — |
+| `assistant_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `outbound \| inbound \| widget` | No | — |
+| `description` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `external_webhook_url` | `string` | No | — |
+| `is_recording` | `boolean` | No | — |
+| `agent` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agent full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Calls
+
+### create
+
+`calls.create`
+
+Initiate an outbound voice call via Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.calls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+| `phone` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `from_phone_number` | `string` | No | — |
+| `custom_variables` | `object` | No | — |
+| `lead_email` | `string` | No | — |
+| `lead_timezone` | `string` | No | — |
+| `prompt` | `string` | No | — |
+| `greeting` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_variables full type">
+
+```ts
+{
+  key: string,
+  value: string
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+| `eta` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  answer?: string,
+  call_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Retrieve details and transcript of a phone call
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.calls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `call_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List call history logs for a Synthflow AI model
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.calls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `from_date` | `number` | No | — |
+| `to_date` | `number` | No | — |
+| `call_status` | `string` | No | — |
+| `duration_min` | `number` | No | — |
+| `duration_max` | `number` | No | — |
+| `lead_phone_number` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  pagination?: {
+  },
+  calls?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new contact in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `phone_number` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `company` | `string` | No | — |
+| `contact_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact in Synthflow AI
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve details of a contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts in Synthflow AI
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  pagination?: {
+  },
+  contacts?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update contact details in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `email` | `string` | No | — |
+| `contact_metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact_metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Knowledge Bases
+
+### attach
+
+`knowledgeBases.attach`
+
+Attach a knowledge base to an assistant model
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.attach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  body?: any,
+  knowledge_base_id?: string,
+  model_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`knowledgeBases.create`
+
+Create a new knowledge base in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `rag_use_condition` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  body?: string,
+  knowledge_base_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`knowledgeBases.delete`
+
+Delete a knowledge base in Synthflow AI
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### detach
+
+`knowledgeBases.detach`
+
+Detach a knowledge base from an assistant model
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.detach({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`knowledgeBases.get`
+
+Get details of a knowledge base by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### update
+
+`knowledgeBases.update`
+
+Update a knowledge base name or usage conditions
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.knowledgeBases.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `knowledge_base_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `rag_use_condition` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Memory Stores
+
+### attachToAgent
+
+`memoryStores.attachToAgent`
+
+Attach a memory store to an assistant agent
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.memoryStores.attachToAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_store_id` | `string` | Yes | — |
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### create
+
+`memoryStores.create`
+
+Create a new memory store in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.memoryStores.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="response full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`memoryStores.delete`
+
+Delete a memory store in Synthflow AI
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.memoryStores.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_store_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### detachFromAgent
+
+`memoryStores.detachFromAgent`
+
+Detach a memory store from an assistant agent
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.memoryStores.detachFromAgent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_store_id` | `string` | Yes | — |
+| `model_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`memoryStores.get`
+
+Get details of a memory store by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.memoryStores.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_store_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`memoryStores.list`
+
+List memory stores in Synthflow AI
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.memoryStores.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### update
+
+`memoryStores.update`
+
+Update a memory store's title and description
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.memoryStores.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_store_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Phone Books
+
+### create
+
+`phoneBooks.create`
+
+Create a new phone book in Synthflow AI
+
+**Risk:** `write`
+
+```ts
+await corsair.synthflowai.api.phoneBooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### delete
+
+`phoneBooks.delete`
+
+Delete a phone book in Synthflow AI
+
+**Risk:** `destructive`
+
+```ts
+await corsair.synthflowai.api.phoneBooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phone_book_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`phoneBooks.list`
+
+List all phone books in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.phoneBooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+
+## Voices
+
+### list
+
+`voices.list`
+
+List all text-to-speech voices available in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.synthflowai.api.voices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `search` | `string` | No | — |
+| `provider` | `elevenlabs \| deepgram \| synthflow` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `response` | `any` | No | — |
+
+
+
+---
+

@@ -1,0 +1,157 @@
+{
+  "id": "twitter",
+  "displayName": "X (Twitter)",
+  "description": "Social media platform for posts, timelines, users, and public conversation data via X API.",
+  "npmPackageName": "@corsair-dev/twitter",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "for_user_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "twitter.api.tweets.create",
+      "shortPath": "tweets.create",
+      "description": "Post a new tweet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Tweet text content (max 280 weighted characters)"
+          },
+          {
+            "key": "quoteTweetId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the tweet to quote"
+          },
+          {
+            "key": "mediaIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 4 media IDs to attach"
+          },
+          {
+            "key": "replySettings",
+            "optional": true,
+            "type": "following | mentionedUsers | subscribers",
+            "description": "Restricts who can reply to this tweet"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, text: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "twitter.api.tweets.createReply",
+      "shortPath": "tweets.createReply",
+      "description": "Post a reply to an existing tweet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Reply text content (max 280 weighted characters)"
+          },
+          {
+            "key": "inReplyToTweetId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the tweet to reply to"
+          },
+          {
+            "key": "excludeReplyUserIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "User IDs to exclude from @mentioning in the reply"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: string, text: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "twitter.db.tweets.search",
+      "entityName": "tweets",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inReplyToUserId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

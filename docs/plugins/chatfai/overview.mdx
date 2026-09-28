@@ -1,0 +1,128 @@
+---
+title: Overview
+description: "Character chat platform for creating AI personas and interactive fictional conversations."
+---
+
+Use **ChatFAI** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 3 typed API operations
+- 2 synced entities (`characters`, `conversations`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/chatfai
+```
+```bash yarn
+yarn add corsair @corsair-dev/chatfai
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/chatfai
+```
+```bash bun
+bun add corsair @corsair-dev/chatfai
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { chatfai } from '@corsair-dev/chatfai';
+
+export const corsair = createCorsair({
+	plugins: [
+		chatfai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+chatfai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'chatfai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`characters.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chatfai.api.characters.get({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/chatfai/api) reference._
+
+
+See the full list on the [API](/plugins/chatfai/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.chatfai.db.<entity>.search()` and `.list()`: `characters`, `conversations`.
+
+See [Database](/plugins/chatfai/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/chatfai/api">
+    Every `chatfai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/chatfai/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

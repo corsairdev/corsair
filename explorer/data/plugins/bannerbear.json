@@ -1,0 +1,1692 @@
+{
+  "id": "bannerbear",
+  "displayName": "Bannerbear",
+  "description": "Automated image and video generation API for social posts and marketing templates.",
+  "npmPackageName": "@corsair-dev/bannerbear",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 2,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bannerbear.api.account.getAccountInfo",
+      "shortPath": "account.getAccountInfo",
+      "description": "Get account info including plan and quota",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ max: number, current: number, remaining: number }"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.account.getAuth",
+      "shortPath": "account.getAuth",
+      "description": "Verify API authentication against the current account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ max: number, current: number, remaining: number }"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "{ name?: string | null, scopes?: string[], allowed_origins?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.animations.create",
+      "shortPath": "animations.create",
+      "description": "Generate an animation from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modifications",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "formats",
+            "optional": true,
+            "type": "mp4 | mov[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.animations.get",
+      "shortPath": "animations.get",
+      "description": "Get an animation by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.animations.list",
+      "shortPath": "animations.list",
+      "description": "List generated animations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, status: string, template?: string | null, files?: {} | null, progress?: number | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.animationTemplates.create",
+      "shortPath": "animationTemplates.create",
+      "description": "Create an animation template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frame_rate",
+            "optional": true,
+            "type": "24 | 30 | 60"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frame_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.animationTemplates.get",
+      "shortPath": "animationTemplates.get",
+      "description": "Get an animation template by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frame_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.animationTemplates.list",
+      "shortPath": "animationTemplates.list",
+      "description": "List animation templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, name: string, description?: string | null, width?: number | null, height?: number | null, frame_rate?: number | null, duration_seconds?: number | null, preview?: string | null, tags?: string[], created_at?: string | null, self?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.images.create",
+      "shortPath": "images.create",
+      "description": "Generate an image from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modifications",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.images.get",
+      "shortPath": "images.get",
+      "description": "Get an image by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.images.list",
+      "shortPath": "images.list",
+      "description": "List generated images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, status: string, template?: string | null, files?: {} | null, metadata?: string | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.instantUrls.create",
+      "shortPath": "instantUrls.create",
+      "description": "Create an Instant URL for an image template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "encoded | named_params"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "signed | open"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | disabled"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "1 | 2 | 3 | 4"
+          },
+          {
+            "key": "rate_limit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "template_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_renders",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sample_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "security",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signing_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.instantUrls.list",
+      "shortPath": "instantUrls.list",
+      "description": "List Instant URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, name?: string, template?: string | null, base_url?: string, sample_url?: string | null, mode?: string | null, security?: string | null, status?: string | null, signing_key?: string | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.misc.joinPdfs",
+      "shortPath": "misc.joinPdfs",
+      "description": "Merge image or PDF URLs into one PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "joined_pdf_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create an image template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete an image template by UID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get an image template by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.templates.import",
+      "shortPath": "templates.import",
+      "description": "Install a publication as an image template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publication_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List image templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, name: string, description?: string | null, width?: number | null, height?: number | null, preview?: string | null, preview_url?: string | null, created_at?: string | null, updated_at?: string | null, tags?: string[], self?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.webhooksApi.create",
+      "shortPath": "webhooksApi.create",
+      "description": "Create a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "image | batch | tool_job | workflow_run | animation"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "all_events | completed | failed"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | disabled"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "all_templates | specific_templates"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signing_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.webhooksApi.delete",
+      "shortPath": "webhooksApi.delete",
+      "description": "Delete a webhook by UID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.webhooksApi.get",
+      "shortPath": "webhooksApi.get",
+      "description": "Get a webhook by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signing_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.workflows.createWorkflowRun",
+      "shortPath": "workflows.createWorkflowRun",
+      "description": "Run a workflow with inputs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflow",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.workflows.getWorkflow",
+      "shortPath": "workflows.getWorkflow",
+      "description": "Get a workflow by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "ui_write_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_write_access",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.workflows.getWorkflowRun",
+      "shortPath": "workflows.getWorkflowRun",
+      "description": "Get a workflow run by UID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "outputs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bannerbear.api.workflows.listWorkflowRuns",
+      "shortPath": "workflows.listWorkflowRuns",
+      "description": "List workflow runs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, status: string, workflow?: string | null, progress?: number | null, inputs?: {} | null, outputs?: {} | null, steps?: {}[] | null, error?: string | null, self?: string | null, created_at?: string | null, completed_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bannerbear.api.workflows.listWorkflows",
+      "shortPath": "workflows.listWorkflows",
+      "description": "List workflows in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uid: string, name: string, description?: string | null, tags?: string[], inputs?: {} | null, steps?: {}[] | null, ui_write_access?: string | null, api_write_access?: string | null, created_at?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "bannerbear.webhooks.animation.animationCompleted",
+      "shortPath": "animation.animationCompleted",
+      "description": "Fires when a Bannerbear animation finishes rendering",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ uid: string, status: completed, template?: string, files?: {}, progress?: number, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
+      "usageExample": "bannerbear({\n    webhookHooks: {\n        animation: {\n            animationCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "bannerbear.webhooks.image.imageCompleted",
+      "shortPath": "image.imageCompleted",
+      "description": "Fires when a Bannerbear image finishes rendering",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "self",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ uid: string, status: completed, template?: string, files?: {}, metadata?: string, self?: string, created_at?: string, completed_at?: string }",
+      "usageExample": "bannerbear({\n    webhookHooks: {\n        image: {\n            imageCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

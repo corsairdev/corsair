@@ -1,0 +1,752 @@
+{
+  "id": "boxhero",
+  "displayName": "BoxHero",
+  "description": "Inventory management app for tracking stock, barcodes, and warehouse item movements.",
+  "npmPackageName": "@corsair-dev/boxhero",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "boxhero.api.itemAttributes.get",
+      "shortPath": "itemAttributes.get",
+      "description": "Get an item attribute spec",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attr_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: number, attr_type: text | date | number | barcode, attr_name: string, rank: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.itemAttributes.list",
+      "shortPath": "itemAttributes.list",
+      "description": "List item attribute specs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, attr_type: text | date | number | barcode, attr_name: string, rank: number }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete an inventory item",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "boxhero.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get an inventory item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "location_ids",
+            "optional": true,
+            "type": "number | number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url?: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.items.list",
+      "shortPath": "items.list",
+      "description": "List inventory items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "item_ids",
+            "optional": true,
+            "type": "number | number[]"
+          },
+          {
+            "key": "location_ids",
+            "optional": true,
+            "type": "number | number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, sku: string, barcode: string, photo_url?: string | null, attrs: { id: number, type: text | date | number | barcode, name: string, value: string | number }[], cost: string, price: string, quantity: number, quantities: { location_id: number, quantity: number }[] }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.locations.delete",
+      "shortPath": "locations.delete",
+      "description": "Delete a warehouse location",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "boxhero.api.locations.get",
+      "shortPath": "locations.get",
+      "description": "Get a warehouse location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: number, name: string, quantity: number, memo: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List active warehouse locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, quantity: number, memo: string }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get a team member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ id: number, name: string, role: admin | member | viewer }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.members.list",
+      "shortPath": "members.list",
+      "description": "List team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, role: admin | member | viewer }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.partners.list",
+      "shortPath": "partners.list",
+      "description": "List partners (suppliers and customers)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, type: 0 | 1, name: string, phone: string, email: string, address: string, memo: string }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.teams.getInfo",
+      "shortPath": "teams.getInfo",
+      "description": "Get the team linked to the API token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "0 | 1 | 2"
+          },
+          {
+            "key": "currency_symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_decimal_places",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.transactions.listBasic",
+      "shortPath": "transactions.listBasic",
+      "description": "List inventory transactions without line items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "in | out | move | adjust"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "({ id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: in, to_location: { id: number, name: string, deleted: boolean }, partner?: { id: number, name: string, deleted: boolean } | null } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: out, to_location: { id: number, name: string, deleted: boolean }, partner?: { id: number, name: string, deleted: boolean } | null } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: move, from_location: { id: number, name: string, deleted: boolean }, to_location: { id: number, name: string, deleted: boolean } } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: adjust, to_location: { id: number, name: string, deleted: boolean } })[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "boxhero.api.transactions.listLocation",
+      "shortPath": "transactions.listLocation",
+      "description": "List location-mode inventory transactions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "in | out | move | adjust"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "({ id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: in, to_location: { id: number, name: string, deleted: boolean }, partner?: { id: number, name: string, deleted: boolean } | null } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: out, to_location: { id: number, name: string, deleted: boolean }, partner?: { id: number, name: string, deleted: boolean } | null } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: move, from_location: { id: number, name: string, deleted: boolean }, to_location: { id: number, name: string, deleted: boolean } } | { id: number, transaction_time: string, created_at: string, created_by: { id: number, name: string, deleted: boolean }, count_of_items: number, total_quantity: number, url: string, memo: string, revision: number, type: adjust, to_location: { id: number, name: string, deleted: boolean } })[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "boxhero.db.attr.search",
+      "entityName": "attr",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "attr_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rank",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.item.search",
+      "entityName": "item",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "barcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "photo_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.location.search",
+      "entityName": "location",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "memo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.member.search",
+      "entityName": "member",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.partner.search",
+      "entityName": "partner",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.team.search",
+      "entityName": "team",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_decimal_places",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "memo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "boxhero.db.transaction.search",
+      "entityName": "transaction",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

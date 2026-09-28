@@ -1,0 +1,2671 @@
+{
+  "id": "stripe",
+  "displayName": "Stripe",
+  "description": "Payment infrastructure for accepting charges, subscriptions, invoices, and online checkout flows.",
+  "npmPackageName": "@corsair-dev/stripe",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 11,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_id"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "account_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "stripe.api.balance.get",
+      "shortPath": "balance.get",
+      "description": "Retrieve the current account balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "balance"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "available",
+            "optional": true,
+            "type": "{ amount: number, currency: string }[]"
+          },
+          {
+            "key": "pending",
+            "optional": true,
+            "type": "{ amount: number, currency: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.charges.create",
+      "shortPath": "charges.create",
+      "description": "Create a new Stripe charge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "charge"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_intent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.charges.get",
+      "shortPath": "charges.get",
+      "description": "Retrieve a Stripe charge by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "charge"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_intent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.charges.list",
+      "shortPath": "charges.list",
+      "description": "List Stripe charges with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_intent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.charges.update",
+      "shortPath": "charges.update",
+      "description": "Update a Stripe charge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "receipt_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shipping",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "charge"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "refunded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_intent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failure_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.coupons.create",
+      "shortPath": "coupons.create",
+      "description": "Create a new Stripe coupon",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount_off",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "percent_off",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "forever | once | repeating"
+          },
+          {
+            "key": "duration_in_months",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_redemptions",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "coupon"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount_off",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "percent_off",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration_in_months",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_redemptions",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "times_redeemed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.coupons.list",
+      "shortPath": "coupons.list",
+      "description": "List Stripe coupons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a new Stripe customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a Stripe customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Retrieve a Stripe customer by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "customer"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List Stripe customers with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.paymentIntents.create",
+      "shortPath": "paymentIntents.create",
+      "description": "Create a new Stripe payment intent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirm",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "payment_intent"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canceled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellation_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.paymentIntents.get",
+      "shortPath": "paymentIntents.get",
+      "description": "Retrieve a Stripe payment intent by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "payment_intent"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canceled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellation_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.paymentIntents.list",
+      "shortPath": "paymentIntents.list",
+      "description": "List Stripe payment intents with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.paymentIntents.update",
+      "shortPath": "paymentIntents.update",
+      "description": "Update a Stripe payment intent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "payment_intent"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_method",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canceled_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellation_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.prices.create",
+      "shortPath": "prices.create",
+      "description": "Create a new Stripe price",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product_data",
+            "optional": true,
+            "type": "{ name: string }"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "{ interval: day | week | month | year, interval_count?: number }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "price"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unit_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recurring",
+            "optional": true,
+            "type": "{ interval: string, interval_count: number }"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.prices.list",
+      "shortPath": "prices.list",
+      "description": "List Stripe prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "product",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "one_time | recurring"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ending_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": false,
+            "type": "list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, object: price, active?: boolean, currency?: string, unit_amount?: number | null, nickname?: string | null, product?: string, type?: string, recurring?: { interval: string, interval_count: number } | null, created?: number, livemode?: boolean, metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.sources.create",
+      "shortPath": "sources.create",
+      "description": "Create a new Stripe source",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "redirect",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "source"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.sources.get",
+      "shortPath": "sources.get",
+      "description": "Retrieve a Stripe source by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "source"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stripe.api.tokens.create",
+      "shortPath": "tokens.create",
+      "description": "Create a Stripe token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "card",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "bank_account",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pii",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "token"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "stripe.webhooks.charge.failed",
+      "shortPath": "charge.failed",
+      "description": "A charge attempt failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "charge.failed"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.charge.refunded",
+      "shortPath": "charge.refunded",
+      "description": "A charge was refunded",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "charge.refunded"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.refunded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            refunded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.charge.succeeded",
+      "shortPath": "charge.succeeded",
+      "description": "A charge was successfully completed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "charge.succeeded"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: charge.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: charge, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, paid?: boolean, refunded?: boolean, created?: number, payment_intent?: string | null, failure_code?: string | null, failure_message?: string | null, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        charge: {\n            succeeded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.coupon.created",
+      "shortPath": "coupon.created",
+      "description": "A coupon was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "coupon.created"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        coupon: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.coupon.deleted",
+      "shortPath": "coupon.deleted",
+      "description": "A coupon was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "coupon.deleted"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: coupon.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: coupon, name?: string | null, amount_off?: number | null, percent_off?: number | null, currency?: string | null, duration?: string, duration_in_months?: number | null, max_redemptions?: number | null, times_redeemed?: number, valid?: boolean, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        coupon: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.customer.created",
+      "shortPath": "customer.created",
+      "description": "A new customer was created",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "customer.created"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.created, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.customer.deleted",
+      "shortPath": "customer.deleted",
+      "description": "A customer was deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "customer.deleted"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.deleted, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.customer.updated",
+      "shortPath": "customer.updated",
+      "description": "A customer was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "customer.updated"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: customer.updated, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: customer, email?: string | null, name?: string | null, phone?: string | null, description?: string | null, currency?: string | null, balance?: number, created?: number, livemode?: boolean, metadata?: {} } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        customer: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.paymentIntent.failed",
+      "shortPath": "paymentIntent.failed",
+      "description": "A payment intent payment failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "payment_intent.payment_failed"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.payment_failed, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        paymentIntent: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.paymentIntent.succeeded",
+      "shortPath": "paymentIntent.succeeded",
+      "description": "A payment intent succeeded",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "payment_intent.succeeded"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: payment_intent.succeeded, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: { id: string, object: payment_intent, amount: number, currency: string, status: string, customer?: string | null, description?: string | null, created?: number, payment_method?: string | null, client_secret?: string | null, canceled_at?: number | null, cancellation_reason?: string | null, metadata?: {}, last_payment_error?: { code?: string, message?: string, type?: string } | null } } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        paymentIntent: {\n            succeeded: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stripe.webhooks.ping.ping",
+      "shortPath": "ping.ping",
+      "description": "Stripe webhook endpoint connectivity test",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": false,
+            "type": "event"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "livemode",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "v2.core.event_destination.ping"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ id?: string | null, idempotency_key?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, object: event, api_version?: string | null, created: number, livemode: boolean, type: v2.core.event_destination.ping, request?: { id?: string | null, idempotency_key?: string | null } | null, data: { object: {} } }",
+      "usageExample": "stripe({\n    webhookHooks: {\n        ping: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "stripe.db.balance.search",
+      "entityName": "balance",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "livemode",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.charges.search",
+      "entityName": "charges",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "refunded",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "payment_intent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "failure_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "failure_message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.coupons.search",
+      "entityName": "coupons",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount_off",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "percent_off",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "duration_in_months",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "max_redemptions",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "times_redeemed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "valid",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "livemode",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "livemode",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.paymentIntents.search",
+      "entityName": "paymentIntents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "payment_method",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_secret",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "canceled_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cancellation_reason",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.prices.search",
+      "entityName": "prices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "livemode",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "stripe.db.sources.search",
+      "entityName": "sources",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "livemode",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

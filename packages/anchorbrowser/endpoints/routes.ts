@@ -68,7 +68,7 @@ export const anchorBrowserRoutes = [
 		key: 'createProfile',
 		group: 'profiles',
 		name: 'createProfile',
-		// Anchor API persists session state to a new profile via POST /profiles (Composio-mapped).
+		// Anchor API persists session state to a new profile via POST /profiles.
 		method: 'POST',
 		path: '/profiles',
 		description:

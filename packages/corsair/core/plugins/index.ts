@@ -762,8 +762,13 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	multiTenancy?: boolean;
 	/** Root-level error handlers that apply when plugin-specific handlers are not defined */
 	errorHandlers?: CorsairErrorHandler;
-	/** Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt Data Encryption Keys (DEK) stored in the database. */
-	kek: string;
+	/**
+	 * Key Encryption Key (KEK) for envelope encryption. Used to encrypt/decrypt
+	 * Data Encryption Keys (DEK) stored in the database. Required alongside
+	 * `database` to use integration-level `keys`; omit both to get a proxy that
+	 * throws a clear error on first access. Not used in cloud mode (`ck_cloud_`).
+	 */
+	kek?: string;
 	/**
 	 * Global permissions configuration — approval timeouts and sync/async blocking.
 	 * Pair with per-plugin `permissions: { mode, overrides }` on each plugin.
@@ -771,7 +776,11 @@ export type CorsairIntegration<Plugins extends readonly CorsairPlugin[]> = {
 	permissions?: CorsairPermissionsOptions;
 	/** Self-hosted connect and/or permission review configuration. Can coexist with `hub`. */
 	manual?: CorsairManualConfig;
-	/** Corsair Hub configuration for hosted OAuth connect flows. */
+	/**
+	 * Corsair Hub configuration for hosted OAuth connect flows.
+	 * Omit entirely to disable Hub. When provided, `projectApiKey` and
+	 * `signingSecret` are required and validated at init.
+	 */
 	hub?: HubConfigInput;
 } & CorsairDeprecatedApprovalConfig;
 

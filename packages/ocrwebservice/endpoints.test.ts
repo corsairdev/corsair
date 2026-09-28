@@ -270,7 +270,7 @@ describe('OCR Web Service outputformat validation', () => {
 });
 
 describe('OCR Web Service plugin registration', () => {
-	it('maps the four Composio ops', () => {
+	it('maps the four OCR Web Service ops', () => {
 		const plugin = ocrwebservice();
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toEqual([
 			'account.getCredentials',

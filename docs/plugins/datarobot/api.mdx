@@ -1,0 +1,2979 @@
+---
+title: API
+description: "API reference for DataRobot: every `datarobot.api.*` operation with input and output types."
+---
+
+Every `datarobot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batch Predictions
+
+### batchPredictionsCreate
+
+`batchPredictions.batchPredictionsCreate`
+
+Creates a new Batch Prediction job
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### batchPredictionsDelete
+
+`batchPredictions.batchPredictionsDelete`
+
+Cancel a Batch Prediction job by prediction job ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionJobId` | `string` | Yes | — |
+| `partNumber` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### batchPredictionsFromExistingCreate
+
+`batchPredictions.batchPredictionsFromExistingCreate`
+
+Create a new a Batch Prediction job based
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsFromExistingCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### batchPredictionsFromJobDefinitionCreate
+
+`batchPredictions.batchPredictionsFromJobDefinitionCreate`
+
+Launch a Batch Prediction job
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsFromJobDefinitionCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### batchPredictionsList
+
+`batchPredictions.batchPredictionsList`
+
+List batch prediction jobs
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `status` | `string` | No | — |
+| `source` | `string` | No | — |
+| `deploymentId` | `string` | No | — |
+| `modelId` | `string` | No | — |
+| `jobId` | `string` | No | — |
+| `orderBy` | `created \| -created \| status \| -status` | No | — |
+| `allJobs` | `boolean` | No | — |
+| `cutoffHours` | `number` | No | — |
+| `startDateTime` | `string` | No | — |
+| `endDateTime` | `string` | No | — |
+| `batchPredictionJobDefinitionId` | `string` | No | — |
+| `hostname` | `string` | No | — |
+| `intakeType` | `string` | No | — |
+| `outputType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### batchPredictionsRetrieve
+
+`batchPredictions.batchPredictionsRetrieve`
+
+Retrieve Batch Prediction job by prediction job ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.batchPredictions.batchPredictionsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionJobId` | `string` | Yes | — |
+| `partNumber` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Catalog Items
+
+### catalogItemsList
+
+`catalogItems.catalogItemsList`
+
+List all catalog items accessible by the user.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.catalogItems.catalogItemsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `initialCacheSize` | `number` | No | — |
+| `useCache` | `false \| False \| true \| True` | No | — |
+| `orderBy` | `originalName \| -originalName \| catalogName \| -catalogName \| description \| -description \| created \| -created \| relevance \| -relevance` | No | — |
+| `searchFor` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `accessType` | `owner \| shared \| any \| created` | No | — |
+| `datasourceType` | `string` | No | — |
+| `category` | `string` | No | — |
+| `filterFailed` | `false \| False \| true \| True` | No | — |
+| `ownerUserId` | `string` | No | — |
+| `ownerUsername` | `string` | No | — |
+| `type` | `dataset \| snapshot_dataset \| remote_dataset \| user_blueprint \| files` | No | — |
+| `isUxrPreviewable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### catalogItemsRetrieve
+
+`catalogItems.catalogItemsRetrieve`
+
+Retrieves latest version information, by ID by catalog ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.catalogItems.catalogItemsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `catalogId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Credentials
+
+### credentialsCreate
+
+`credentials.credentialsCreate`
+
+Store a new set of credentials which can be used
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.credentials.credentialsCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### credentialsDelete
+
+`credentials.credentialsDelete`
+
+Delete the credentials set by credential ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.credentials.credentialsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### credentialsList
+
+`credentials.credentialsList`
+
+List credentials.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.credentials.credentialsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `types` | `string` | No | — |
+| `orderBy` | `creationDate \| -creationDate` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### credentialsRetrieve
+
+`credentials.credentialsRetrieve`
+
+Retrieve the credentials set by credential ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.credentials.credentialsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Custom Models
+
+### customModelsCreate
+
+`customModels.customModelsCreate`
+
+Create custom model.
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.customModels.customModelsCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### customModelsDelete
+
+`customModels.customModelsDelete`
+
+Delete custom model by custom model ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.customModels.customModelsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customModelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### customModelsList
+
+`customModels.customModelsList`
+
+List custom models.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.customModels.customModelsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `customModelType` | `training \| inference` | No | — |
+| `targetType` | `Binary \| Regression \| Multiclass \| Anomaly \| Transform \| TextGeneration \| GeoPoint \| Unstructured \| VectorDatabase \| AgenticWorkflow \| MCP \| Multilabel` | No | — |
+| `isDeployed` | `false \| False \| true \| True` | No | — |
+| `orderBy` | `created \| -created \| updated \| -updated` | No | — |
+| `searchFor` | `string` | No | — |
+| `tagKeys` | `string` | No | — |
+| `tagValues` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### customModelsRetrieve
+
+`customModels.customModelsRetrieve`
+
+Get custom model by custom model ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.customModels.customModelsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customModelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### customModelsVersionsCreate
+
+`customModels.customModelsVersionsCreate`
+
+Create custom model version by custom model ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.customModels.customModelsVersionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customModelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### customModelsVersionsList
+
+`customModels.customModelsVersionsList`
+
+List custom model versions by custom model ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.customModels.customModelsVersionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customModelId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `mainBranchCommitSha` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Datasets
+
+### datasetsAllFeaturesDetailsList
+
+`datasets.datasetsAllFeaturesDetailsList`
+
+Get dataset features by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsAllFeaturesDetailsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `orderBy` | `featureType \| name \| id \| unique \| missing \| stddev \| mean \| median \| min \| max \| dataQualityIssues \| -featureType \| -name \| -id \| -unique \| -missing \| -stddev \| -mean \| -median \| -min \| -max \| -dataQualityIssues` | No | — |
+| `includePlot` | `false \| False \| true \| True` | No | — |
+| `searchFor` | `string` | No | — |
+| `featurelistId` | `string` | No | — |
+| `includeDataQuality` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsDelete
+
+`datasets.datasetsDelete`
+
+Delete dataset by dataset ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.datasets.datasetsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsFeaturelistsList
+
+`datasets.datasetsFeaturelistsList`
+
+Retrieve dataset featurelists by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsFeaturelistsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `orderBy` | `name \| description \| featuresNumber \| creationDate \| userCreated \| -name \| -description \| -featuresNumber \| -creationDate \| -userCreated` | No | — |
+| `searchFor` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsFileList
+
+`datasets.datasetsFileList`
+
+Retrieve original dataset data by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsFileList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsFromDataSourceCreate
+
+`datasets.datasetsFromDataSourceCreate`
+
+Create a dataset from a data source
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsFromDataSourceCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsFromFileCreate
+
+`datasets.datasetsFromFileCreate`
+
+Create a dataset from a file
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsFromFileCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsFromURLCreate
+
+`datasets.datasetsFromURLCreate`
+
+Create a dataset from an URL
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsFromURLCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsList
+
+`datasets.datasetsList`
+
+List datasets
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `TRAINING \| PREDICTION \| SAMPLE` | No | — |
+| `orderBy` | `created \| -created` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filterFailed` | `false \| False \| true \| True` | No | — |
+| `datasetVersionIds` | `string` | No | — |
+| `useCaseIds` | `string` | No | — |
+| `vectorDatabaseEligibleOnly` | `false \| False \| true \| True` | No | — |
+| `vectorDatabaseMetadataEligibleOnly` | `false \| False \| true \| True` | No | — |
+| `isDeleted` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### datasetsPatch
+
+`datasets.datasetsPatch`
+
+Modify dataset by dataset ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsProjectsList
+
+`datasets.datasetsProjectsList`
+
+Get dataset projects by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsProjectsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsRetrieve
+
+`datasets.datasetsRetrieve`
+
+Get dataset details by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsVersionsDelete
+
+`datasets.datasetsVersionsDelete`
+
+Delete dataset version by dataset ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.datasets.datasetsVersionsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `datasetVersionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsVersionsFromFileCreate
+
+`datasets.datasetsVersionsFromFileCreate`
+
+Create a version from a file
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsVersionsFromFileCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsVersionsFromURLCreate
+
+`datasets.datasetsVersionsFromURLCreate`
+
+Create a version from an URL
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsVersionsFromURLCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsVersionsList
+
+`datasets.datasetsVersionsList`
+
+List dataset versions by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsVersionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `category` | `TRAINING \| PREDICTION \| SAMPLE` | No | — |
+| `orderBy` | `created \| -created` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filterFailed` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### datasetsVersionsRetrieve
+
+`datasets.datasetsVersionsRetrieve`
+
+Get dataset details by version by dataset ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.datasets.datasetsVersionsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `string` | Yes | — |
+| `datasetVersionId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Deployments
+
+### deploymentsAccuracyList
+
+`deployments.deploymentsAccuracyList`
+
+Retrieve accuracy metric by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsAccuracyList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `modelId` | `string` | No | — |
+| `batchId` | `string` | No | — |
+| `segmentAttribute` | `string` | No | — |
+| `segmentValue` | `string` | No | — |
+| `targetClass` | `string` | No | — |
+| `metric` | `AUC \| Accuracy \| Balanced Accuracy \| F1 \| FPR \| FVE Binomial \| FVE Gamma \| FVE Multinomial \| FVE Poisson \| FVE Tweedie \| Gamma Deviance \| Gini Norm \| Kolmogorov-Smirnov \| LogLoss \| MAE \| MAPE \| MCC \| NPV \| PPV \| Poisson Deviance \| R Squared \| RMSE \| RMSLE \| Rate@Top10% \| Rate@Top5% \| TNR \| TPR \| Tweedie Deviance \| WGS84 MAE \| WGS84 RMSE` | No | — |
+| `baselineModelId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsAccuracyOverTimeList
+
+`deployments.deploymentsAccuracyOverTimeList`
+
+Retrieve accuracy over time by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsAccuracyOverTimeList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `bucketSize` | `string` | No | — |
+| `modelId` | `string` | No | — |
+| `metric` | `AUC \| Accuracy \| Balanced Accuracy \| F1 \| FPR \| FVE Binomial \| FVE Gamma \| FVE Multinomial \| FVE Poisson \| FVE Tweedie \| Gamma Deviance \| Gini Norm \| Kolmogorov-Smirnov \| LogLoss \| MAD \| MAE \| MAPE \| MCC \| NPV \| PPV \| Poisson Deviance \| R Squared \| RMSE \| RMSLE \| Rate@Top10% \| Rate@Top5% \| TNR \| TPR \| Tweedie Deviance \| WGS84 MAE \| WGS84 RMSE` | No | — |
+| `segmentAttribute` | `string` | No | — |
+| `segmentValue` | `string` | No | — |
+| `targetClass` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsCapabilitiesList
+
+`deployments.deploymentsCapabilitiesList`
+
+Retrieve capabilities by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsCapabilitiesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsDelete
+
+`deployments.deploymentsDelete`
+
+Delete deployment by deployment ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `ignoreManagementAgent` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsFeaturesList
+
+`deployments.deploymentsFeaturesList`
+
+Get deployment features by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsFeaturesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `includeNonPredictionFeatures` | `false \| False \| true \| True` | No | — |
+| `forSegmentedAnalysis` | `false \| False \| true \| True` | No | — |
+| `search` | `string` | No | — |
+| `orderBy` | `name \| -name \| importance \| -importance` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsFromLearningModelCreate
+
+`deployments.deploymentsFromLearningModelCreate`
+
+Create deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsFromLearningModelCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsFromModelPackageCreate
+
+`deployments.deploymentsFromModelPackageCreate`
+
+Create a deployment from a model package
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsFromModelPackageCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsList
+
+`deployments.deploymentsList`
+
+List deployments
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `orderBy` | `label \| -label \| serviceHealth \| -serviceHealth \| modelHealth \| -modelHealth \| accuracyHealth \| -accuracyHealth \| recentPredictions \| -recentPredictions \| lastPredictionTimestamp \| -lastPredictionTimestamp \| currentModelDeployedTimestamp \| -currentModelDeployedTimestamp \| createdAtTimestamp \| -createdAtTimestamp \| importance \| -importance \| fairnessHealth \| -fairnessHealth \| customMetricsHealth \| -customMetricsHealth \| actualsTimelinessHealth \| -actualsTimelinessHealth \| predictionsTimelinessHealth \| -predictionsTimelinessHealth` | No | — |
+| `search` | `string` | No | — |
+| `serviceHealth` | `(string \| number)[]` | No | — |
+| `modelHealth` | `(string \| number)[]` | No | — |
+| `accuracyHealth` | `(string \| number)[]` | No | — |
+| `role` | `OWNER \| USER` | No | — |
+| `status` | `(string \| number)[]` | No | — |
+| `importance` | `(string \| number)[]` | No | — |
+| `lastPredictionTimestampStart` | `string` | No | — |
+| `lastPredictionTimestampEnd` | `string` | No | — |
+| `predictionUsageDailyAvgGreaterThan` | `number` | No | — |
+| `predictionUsageDailyAvgLessThan` | `number` | No | — |
+| `defaultPredictionServerId` | `(string \| number)[]` | No | — |
+| `buildEnvironmentType` | `(string \| number)[]` | No | — |
+| `executionEnvironmentType` | `(string \| number)[]` | No | — |
+| `predictionEnvironmentPlatform` | `(string \| number)[]` | No | — |
+| `createdByMe` | `false \| False \| true \| True` | No | — |
+| `createdBy` | `string` | No | — |
+| `championModelExecutionType` | `custom_inference_model \| external \| dedicated` | No | — |
+| `championModelTargetType` | `string` | No | — |
+| `tagKeys` | `string` | No | — |
+| `tagValues` | `string` | No | — |
+| `isA2AAgent` | `false \| False \| true \| True` | No | — |
+| `predictionEnvironmentTagKeys` | `string` | No | — |
+| `predictionEnvironmentTagValues` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### deploymentsModelHistoryList
+
+`deployments.deploymentsModelHistoryList`
+
+Retrieve champion model history of deployment by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsModelHistoryList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsModelPatchMany
+
+`deployments.deploymentsModelPatchMany`
+
+Model Replacement by deployment ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsModelPatchMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsPatch
+
+`deployments.deploymentsPatch`
+
+Update deployment by deployment ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsPredictionsOverTimeList
+
+`deployments.deploymentsPredictionsOverTimeList`
+
+Retrieve metrics about predictions over time by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsPredictionsOverTimeList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `bucketSize` | `PT1H \| P1D \| P7D \| P1M` | No | — |
+| `segmentAttribute` | `string` | No | — |
+| `segmentValue` | `string` | No | — |
+| `modelId` | `string` | No | — |
+| `targetClass` | `string` | No | — |
+| `includePercentiles` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsRetrieve
+
+`deployments.deploymentsRetrieve`
+
+Retrieve deployment by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsServiceStatsList
+
+`deployments.deploymentsServiceStatsList`
+
+Retrieve service stats by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsServiceStatsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `executionTimeQuantile` | `number` | No | — |
+| `responseTimeQuantile` | `number` | No | — |
+| `slowRequestsThreshold` | `number` | No | — |
+| `segmentAttribute` | `DataRobot-Consumer \| DataRobot-Remote-IP \| DataRobot-Host-IP` | No | — |
+| `segmentValue` | `string` | No | — |
+| `modelId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsSettingsList
+
+`deployments.deploymentsSettingsList`
+
+Retrieve deployment settings by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsSettingsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsSettingsPatchMany
+
+`deployments.deploymentsSettingsPatchMany`
+
+Update deployment settings by deployment ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsSettingsPatchMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deploymentsSharedRolesList
+
+`deployments.deploymentsSharedRolesList`
+
+Get the model deployment access control list by deployment ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.deployments.deploymentsSharedRolesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `name` | `string` | No | — |
+| `shareRecipientType` | `user \| group \| organization \| externalApplication` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Model Packages
+
+### modelPackagesFeaturesList
+
+`modelPackages.modelPackagesFeaturesList`
+
+Retrieve feature list by model package ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.modelPackages.modelPackagesFeaturesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPackageId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `includeNonPredictionFeatures` | `false \| False \| true \| True` | No | — |
+| `forSegmentedAnalysis` | `false \| False \| true \| True` | No | — |
+| `search` | `string` | No | — |
+| `orderBy` | `name \| importance \| -name \| -importance` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### modelPackagesFromLeaderboardCreate
+
+`modelPackages.modelPackagesFromLeaderboardCreate`
+
+Create model package
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.modelPackages.modelPackagesFromLeaderboardCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### modelPackagesList
+
+`modelPackages.modelPackagesList`
+
+List model packages
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.modelPackages.modelPackagesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `modelId` | `string` | No | — |
+| `similarTo` | `string` | No | — |
+| `forChallenger` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `predictionThreshold` | `number` | No | — |
+| `imported` | `boolean` | No | — |
+| `predictionEnvironmentId` | `string` | No | — |
+| `modelKind` | `string` | No | — |
+| `buildStatus` | `inProgress \| complete \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### modelPackagesRetrieve
+
+`modelPackages.modelPackagesRetrieve`
+
+Retrieve info about a model package by model package ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.modelPackages.modelPackagesRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelPackageId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Prediction Servers
+
+### predictionServersList
+
+`predictionServers.predictionServersList`
+
+List prediction servers.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.predictionServers.predictionServersList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+## Projects
+
+### configureAndStartAutopilot
+
+`projects.configureAndStartAutopilot`
+
+Start modeling by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.configureAndStartAutopilot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsAccessControlList
+
+`projects.projectsAccessControlList`
+
+Get the project access control list by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsAccessControlList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `username` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsAutopilotCreate
+
+`projects.projectsAutopilotCreate`
+
+Pause by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsAutopilotCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsAutopilotsCreate
+
+`projects.projectsAutopilotsCreate`
+
+Start autopilot by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsAutopilotsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsBlueprintsList
+
+`projects.projectsBlueprintsList`
+
+List blueprints by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsBlueprintsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsBlueprintsRetrieve
+
+`projects.projectsBlueprintsRetrieve`
+
+Retrieve a blueprint by its ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsBlueprintsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `blueprintId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsCreate
+
+`projects.projectsCreate`
+
+Create a project.
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsDatetimeModelsList
+
+`projects.projectsDatetimeModelsList`
+
+List datetime partitioned project models by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsDatetimeModelsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `bulkOperationId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsDelete
+
+`projects.projectsDelete`
+
+Delete a project by project ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.projects.projectsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsDeploymentReadyModelsCreate
+
+`projects.projectsDeploymentReadyModelsCreate`
+
+Prepare a model by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsDeploymentReadyModelsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturelistsCreate
+
+`projects.projectsFeaturelistsCreate`
+
+Create a new featurelist by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturelistsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturelistsDelete
+
+`projects.projectsFeaturelistsDelete`
+
+Delete a specified featurelist by project ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturelistsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `featurelistId` | `string` | Yes | — |
+| `dryRun` | `false \| False \| true \| True` | No | — |
+| `deleteDependencies` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturelistsList
+
+`projects.projectsFeaturelistsList`
+
+List featurelists by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturelistsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `sortBy` | `name \| description \| features \| numModels \| created \| isUserCreated \| -name \| -description \| -features \| -numModels \| -created \| -isUserCreated` | No | — |
+| `searchFor` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturelistsPatch
+
+`projects.projectsFeaturelistsPatch`
+
+Update an existing featurelist by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturelistsPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `featurelistId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturelistsRetrieve
+
+`projects.projectsFeaturelistsRetrieve`
+
+Retrieve a feature list by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturelistsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `featurelistId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturesList
+
+`projects.projectsFeaturesList`
+
+List project features by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `sortBy` | `name \| id \| importance \| featureType \| uniqueCount \| naCount \| mean \| stdDev \| median \| min \| max \| -name \| -id \| -importance \| -featureType \| -uniqueCount \| -naCount \| -mean \| -stdDev \| -median \| -min \| -max` | No | — |
+| `searchFor` | `string` | No | — |
+| `featurelistId` | `string` | No | — |
+| `forSegmentedAnalysis` | `false \| False \| true \| True` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsFeaturesRetrieve
+
+`projects.projectsFeaturesRetrieve`
+
+Get a project feature by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsFeaturesRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `featureName` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsJobsDelete
+
+`projects.projectsJobsDelete`
+
+Cancel a job by project ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.projects.projectsJobsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsJobsList
+
+`projects.projectsJobsList`
+
+List project jobs by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsJobsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `status` | `queue \| inprogress \| error` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsJobsRetrieve
+
+`projects.projectsJobsRetrieve`
+
+Get a job by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsJobsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsList
+
+`projects.projectsList`
+
+List projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `orderBy` | `projectName \| -projectName` | No | — |
+| `featureDiscovery` | `false \| False \| true \| True` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### projectsModelingFeaturelistsCreate
+
+`projects.projectsModelingFeaturelistsCreate`
+
+Create a new modeling featurelist by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelingFeaturelistsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelingFeaturelistsList
+
+`projects.projectsModelingFeaturelistsList`
+
+List all modeling featurelists by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelingFeaturelistsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `sortBy` | `name \| description \| features \| numModels \| created \| isUserCreated \| -name \| -description \| -features \| -numModels \| -created \| -isUserCreated` | No | — |
+| `searchFor` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelsCreate
+
+`projects.projectsModelsCreate`
+
+Train a new model by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelsDelete
+
+`projects.projectsModelsDelete`
+
+Delete a model by project ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.projects.projectsModelsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `modelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelsFromModelCreate
+
+`projects.projectsModelsFromModelCreate`
+
+Retrain a model by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelsFromModelCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelsList
+
+`projects.projectsModelsList`
+
+List project models by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `withMetric` | `string` | No | — |
+| `showInSampleScores` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `samplePct` | `number` | No | — |
+| `isStarred` | `false \| False \| true \| True` | No | — |
+| `orderBy` | `metric \| -metric \| samplePct \| -samplePct` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsModelsRetrieve
+
+`projects.projectsModelsRetrieve`
+
+Get model by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsModelsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `modelId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPatch
+
+`projects.projectsPatch`
+
+Update a project by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionDatasetsDelete
+
+`projects.projectsPredictionDatasetsDelete`
+
+Delete a dataset that was uploaded by project ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionDatasetsDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionDatasetsList
+
+`projects.projectsPredictionDatasetsList`
+
+List prediction datasets uploaded by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionDatasetsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionDatasetsRetrieve
+
+`projects.projectsPredictionDatasetsRetrieve`
+
+Get the metadata of a specific dataset by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionDatasetsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionsCreate
+
+`projects.projectsPredictionsCreate`
+
+Make new predictions by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionsList
+
+`projects.projectsPredictionsList`
+
+Get the list of prediction records by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `datasetId` | `string` | No | — |
+| `modelId` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsPredictionsRetrieve
+
+`projects.projectsPredictionsRetrieve`
+
+Get a completed set of predictions by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsPredictionsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionId` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsRecommendedModelsList
+
+`projects.projectsRecommendedModelsList`
+
+List recommended models by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsRecommendedModelsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsRetrieve
+
+`projects.projectsRetrieve`
+
+Get project by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsStatusList
+
+`projects.projectsStatusList`
+
+Check project status by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.projectsStatusList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### projectsTrainingPredictionsCreate
+
+`projects.projectsTrainingPredictionsCreate`
+
+Submits a job by project ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.projects.projectsTrainingPredictionsCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trainingPredictionsList
+
+`projects.trainingPredictionsList`
+
+List training prediction jobs by project ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.projects.trainingPredictionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Status
+
+### statusList
+
+`status.statusList`
+
+List tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.status.statusList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### statusRetrieve
+
+`status.statusRetrieve`
+
+Get task status by status ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.status.statusRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statusId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Use Cases
+
+### useCasesCreate
+
+`useCases.useCasesCreate`
+
+Get a use case.
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesCreate({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesDatasetsList
+
+`useCases.useCasesDatasetsList`
+
+Get the list of the datasets associated by use case ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesDatasetsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `sort` | `-columnCount \| -createdAt \| -createdBy \| -dataSourceType \| -datasetSize \| -datasetSourceType \| -lastActivity \| -modifiedAt \| -modifiedBy \| -name \| -rowCount \| columnCount \| createdAt \| createdBy \| dataSourceType \| datasetSize \| datasetSourceType \| lastActivity \| modifiedAt \| modifiedBy \| name \| rowCount` | No | — |
+| `orderBy` | `-columnCount \| -createdAt \| -createdBy \| -dataSourceType \| -datasetSize \| -datasetSourceType \| -lastActivity \| -modifiedAt \| -modifiedBy \| -name \| -rowCount \| columnCount \| createdAt \| createdBy \| dataSourceType \| datasetSize \| datasetSourceType \| lastActivity \| modifiedAt \| modifiedBy \| name \| rowCount` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesDelete
+
+`useCases.useCasesDelete`
+
+Delete a Use Case by use case ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datarobot.api.useCases.useCasesDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesDeploymentsList
+
+`useCases.useCasesDeploymentsList`
+
+Get the deployments associated by use case ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesDeploymentsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `orderBy` | `-createdAt \| -createdBy \| -lastActivity \| -name \| -updatedAt \| -updatedBy \| createdAt \| createdBy \| lastActivity \| name \| updatedAt \| updatedBy` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesList
+
+`useCases.useCasesList`
+
+Retrieve the list of use cases.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `applicationId` | `string` | No | — |
+| `entityId` | `string` | No | — |
+| `entityType` | `project \| dataset \| file \| notebook \| application \| recipe \| playground \| vectorDatabase \| syftrSearchInstance \| embeddingModelValidation \| customModelVersion \| registeredModelVersion \| deployment \| customApplication \| customJob` | No | — |
+| `sort` | `-applicationsCount \| -createdAt \| -createdBy \| -customApplicationsCount \| -datasetsCount \| -description \| -filesCount \| -id \| -name \| -notebooksCount \| -playgroundsCount \| -potentialValue \| -projectsCount \| -riskLevel \| -stage \| -updatedAt \| -updatedBy \| -vectorDatabasesCount \| applicationsCount \| createdAt \| createdBy \| customApplicationsCount \| datasetsCount \| description \| filesCount \| id \| name \| notebooksCount \| playgroundsCount \| potentialValue \| projectsCount \| riskLevel \| stage \| updatedAt \| updatedBy \| vectorDatabasesCount` | No | — |
+| `orderBy` | `-applicationsCount \| -createdAt \| -createdBy \| -customApplicationsCount \| -datasetsCount \| -description \| -filesCount \| -id \| -name \| -notebooksCount \| -playgroundsCount \| -potentialValue \| -projectsCount \| -riskLevel \| -stage \| -updatedAt \| -updatedBy \| -vectorDatabasesCount \| applicationsCount \| createdAt \| createdBy \| customApplicationsCount \| datasetsCount \| description \| filesCount \| id \| name \| notebooksCount \| playgroundsCount \| potentialValue \| projectsCount \| riskLevel \| stage \| updatedAt \| updatedBy \| vectorDatabasesCount` | No | — |
+| `usecaseType` | `all \| general \| walkthrough` | No | — |
+| `riskLevel` | `string` | No | — |
+| `stage` | `string` | No | — |
+| `createdBy` | `string` | No | — |
+| `showOrgUseCases` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+
+### useCasesPatch
+
+`useCases.useCasesPatch`
+
+Update a Use Case by use case ID
+
+**Risk:** `write`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesPatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesProjectsList
+
+`useCases.useCasesProjectsList`
+
+Get the list of the projects associated by use case ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesProjectsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `search` | `string` | No | — |
+| `sort` | `-createdAt \| -createdBy \| -dataset \| -featureCount \| -fullName \| -lastActivity \| -models \| -name \| -projectId \| -rowCount \| -target \| -targetType \| -timeAware \| -updatedAt \| -updatedBy \| createdAt \| createdBy \| dataset \| featureCount \| fullName \| lastActivity \| models \| name \| projectId \| rowCount \| target \| targetType \| timeAware \| updatedAt \| updatedBy` | No | — |
+| `orderBy` | `-createdAt \| -createdBy \| -dataset \| -featureCount \| -fullName \| -lastActivity \| -models \| -name \| -projectId \| -rowCount \| -target \| -targetType \| -timeAware \| -updatedAt \| -updatedBy \| createdAt \| createdBy \| dataset \| featureCount \| fullName \| lastActivity \| models \| name \| projectId \| rowCount \| target \| targetType \| timeAware \| updatedAt \| updatedBy` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### useCasesRetrieve
+
+`useCases.useCasesRetrieve`
+
+Get a use case by use case ID
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.useCases.useCasesRetrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `useCaseId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Version
+
+### versionList
+
+`version.versionList`
+
+Retrieve version information.
+
+**Risk:** `read`
+
+```ts
+await corsair.datarobot.api.version.versionList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `data` | `any[]` | No | — |
+
+
+
+---
+

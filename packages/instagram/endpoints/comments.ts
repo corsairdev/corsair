@@ -10,6 +10,8 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 		method: 'GET',
 		query: {
 			fields: input.q,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -154,6 +156,31 @@ export const remove: InstagramEndpoints['DeleteComment'] = async (
 	await logEventFromContext(
 		ctx,
 		'instagram.comments.delete',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const getReplies: InstagramEndpoints['GetIgCommentReplies'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetIgCommentReplies']
+	>(`/${input.comment_id}/replies`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+			after: input.after,
+			before: input.before,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.comments.getReplies',
 		{ ...input },
 		'completed',
 	);

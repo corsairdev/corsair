@@ -1,0 +1,4102 @@
+---
+title: API
+description: "API reference for Flutterwave: every `flutterwave.api.*` operation with input and output types."
+---
+
+Every `flutterwave.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Banks
+
+### getBranches
+
+`banks.getBranches`
+
+Get branches for a bank.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.banks.getBranches({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  branch_name?: string,
+  branch_code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByCountry
+
+`banks.getByCountry`
+
+Get banks by country.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.banks.getByCountry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string \| number` | Yes | — |
+| `include_provider_type` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  code?: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resolveAccount
+
+`banks.resolveAccount`
+
+Resolve bank account details.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.banks.resolveAccount({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_number: string,
+  account_bank: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    account_number: string,
+    account_bank: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  account_number?: string,
+  account_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Beneficiaries
+
+### create
+
+`beneficiaries.create`
+
+Create a transfer beneficiary.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.beneficiaries.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  body: {
+    account_number: string,
+    account_bank: string,
+    beneficiary_name: string
+  },
+  query?: {
+  }
+} | {
+  account_number: string,
+  account_bank: string,
+  beneficiary_name: string,
+  query?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  bank_name?: string,
+  full_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`beneficiaries.delete`
+
+Delete a beneficiary by ID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.flutterwave.api.beneficiaries.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`beneficiaries.get`
+
+Fetch a beneficiary by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.beneficiaries.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  bank_name?: string,
+  full_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`beneficiaries.list`
+
+List all beneficiaries.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.beneficiaries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  bank_name?: string,
+  full_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bills
+
+### getCategories
+
+`bills.getCategories`
+
+Get bill categories.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bills.getCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBillers
+
+`bills.listBillers`
+
+List billers in a category.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bills.listBillers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `string \| number` | Yes | — |
+| `country` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string,
+  biller_code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProducts
+
+`bills.listProducts`
+
+List biller products.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bills.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `biller_code` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  item_code?: string,
+  name?: string,
+  amount?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRecurring
+
+`bills.listRecurring`
+
+List recurring bill payments.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bills.listRecurring({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `any` | No | — |
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `reference` | `any` | No | — |
+| `category` | `any` | No | — |
+| `country` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateItem
+
+`bills.validateItem`
+
+Validate a bill item before payment.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bills.validateItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_code` | `string \| number` | Yes | — |
+| `customer` | `object` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  email: string,
+  name?: string,
+  phonenumber?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  response_code?: string,
+  response_message?: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Tokenized Charges
+
+### create
+
+`bulkTokenizedCharges.create`
+
+Create a bulk tokenized charge batch.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.bulkTokenizedCharges.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  title: string,
+  bulk_data: {
+  }[],
+  retry_strategy?: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    title: string,
+    bulk_data: {
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bulkTokenizedCharges.get`
+
+Get status of bulk tokenized charges.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bulkTokenizedCharges.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bulk_id` | `number` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string,
+  pending?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Virtual Accounts
+
+### create
+
+`bulkVirtualAccounts.create`
+
+Create bulk virtual account numbers.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.bulkVirtualAccounts.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  body: {
+    batch_ref: string,
+    bulk_data: {
+      firstname: string,
+      lastname: string,
+      email: string,
+      bvn?: string,
+      nin?: string
+    }[],
+    is_permanent?: boolean
+  },
+  query?: {
+  }
+} | {
+  batch_ref: string,
+  bulk_data: {
+    firstname: string,
+    lastname: string,
+    email: string,
+    bvn?: string,
+    nin?: string
+  }[],
+  is_permanent?: boolean,
+  query?: {
+  },
+  body?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  batch_id?: string,
+  response_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bulkVirtualAccounts.get`
+
+Get details for a bulk virtual account batch.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.bulkVirtualAccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch_id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  batch_id?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cards
+
+### resolveBin
+
+`cards.resolveBin`
+
+Resolve card BIN details.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.cards.resolveBin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bin` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  issuing_country?: string,
+  bin?: string,
+  card_type?: string,
+  issuer?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chargebacks
+
+### list
+
+`chargebacks.list`
+
+List chargebacks.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.chargebacks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `status` | `any` | No | — |
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `flw_ref` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Charges
+
+### initiateMobileMoneyTanzania
+
+`charges.initiateMobileMoneyTanzania`
+
+Initiate mobile money charge in Tanzania.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.charges.initiateMobileMoneyTanzania({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  type: string,
+  tx_ref: string,
+  amount: string | number,
+  currency: string,
+  email: string,
+  phone_number: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  type: string,
+  query?: {
+  },
+  body: {
+    tx_ref: string,
+    amount: string | number,
+    currency: string,
+    email: string,
+    phone_number: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  tx_ref?: string,
+  flw_ref?: string,
+  status?: string,
+  amount?: string | number,
+  currency?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payment Links
+
+### create
+
+`paymentLinks.create`
+
+Create a hosted payment link.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.paymentLinks.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  tx_ref: string,
+  amount: string | number,
+  customer: {
+    email: string,
+    name?: string,
+    phonenumber?: string
+  } | string,
+  currency?: string,
+  redirect_url?: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    tx_ref: string,
+    amount: string | number,
+    customer: {
+      email: string,
+      name?: string,
+      phonenumber?: string
+    } | string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`paymentLinks.disable`
+
+Disable an existing payment link.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.paymentLinks.disable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payment Plans
+
+### cancel
+
+`paymentPlans.cancel`
+
+Cancel a Flutterwave payment plan by ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.paymentPlans.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  amount?: string | number,
+  interval?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`paymentPlans.create`
+
+Create a payment plan.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.paymentPlans.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  amount: string | number,
+  name: string,
+  interval: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    amount: string | number,
+    name: string,
+    interval: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  amount?: string | number,
+  interval?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`paymentPlans.get`
+
+Get a payment plan by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.paymentPlans.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  amount?: string | number,
+  interval?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`paymentPlans.list`
+
+List payment plans.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.paymentPlans.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `page` | `number` | No | — |
+| `amount` | `string \| number` | No | — |
+| `currency` | `string` | No | — |
+| `interval` | `string` | No | — |
+| `status` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  amount?: string | number,
+  interval?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`paymentPlans.update`
+
+Update a payment plan.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.paymentPlans.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  name?: string,
+  amount?: string | number,
+  interval?: string,
+  status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payout Subaccounts
+
+### list
+
+`payoutSubaccounts.list`
+
+List payout subaccounts.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.payoutSubaccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next_cursor` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_reference?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRefunds
+
+`payoutSubaccounts.listRefunds`
+
+List payout subaccount refunds.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.payoutSubaccounts.listRefunds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `reference` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string,
+  tx_id?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Refunds
+
+### create
+
+`refunds.create`
+
+Create a refund for a transaction.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.refunds.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `amount` | `string \| number` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string,
+  tx_id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`refunds.get`
+
+Get refund details by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.refunds.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string,
+  tx_id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`refunds.list`
+
+List refund transactions with filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.refunds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `status` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `flw_ref` | `any` | No | — |
+| `id` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string,
+  tx_id?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Settlements
+
+### list
+
+`settlements.list`
+
+List settlements.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.settlements.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `subaccount_id` | `any` | No | — |
+| `disburse_ref` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subaccounts
+
+### create
+
+`subaccounts.create`
+
+Create a subaccount.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.subaccounts.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  account_bank: string,
+  account_number: string,
+  business_name: string,
+  split_value: number,
+  country: string,
+  business_mobile: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    account_bank: string,
+    account_number: string,
+    business_name: string,
+    split_value: number,
+    country: string,
+    business_mobile: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  business_name?: string,
+  split_value?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`subaccounts.delete`
+
+Delete a subaccount by ID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.flutterwave.api.subaccounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subaccounts.get`
+
+Fetch a subaccount by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.subaccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  business_name?: string,
+  split_value?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subaccounts.list`
+
+List all subaccounts.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.subaccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_bank` | `string` | No | — |
+| `account_number` | `string` | No | — |
+| `bank_name` | `any` | No | — |
+| `page` | `number` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  business_name?: string,
+  split_value?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subaccounts.update`
+
+Update a subaccount.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.subaccounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `business_name` | `string` | No | — |
+| `split_value` | `number` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  account_number?: string,
+  business_name?: string,
+  split_value?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### list
+
+`subscriptions.list`
+
+Get all subscriptions, including cancelled.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.subscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `transaction_id` | `any` | No | — |
+| `plan` | `any` | No | — |
+| `subscribed_from` | `any` | No | — |
+| `subscribed_to` | `any` | No | — |
+| `next_due_from` | `any` | No | — |
+| `next_due_to` | `any` | No | — |
+| `page` | `number` | No | — |
+| `status` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  status?: string,
+  customer?: any,
+  plan?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### generateReference
+
+`transactions.generateReference`
+
+Generate a unique transaction reference.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.generateReference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prefix` | `string` | No | — |
+| `length` | `number` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  tx_ref?: string,
+  reference?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`transactions.get`
+
+Get a transaction by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  tx_ref?: string,
+  flw_ref?: string,
+  status?: string,
+  amount?: string | number,
+  currency?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFee
+
+`transactions.getFee`
+
+Get transaction fee estimate.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.getFee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string \| number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `payment_type` | `any` | No | — |
+| `card_first6digits` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  charge_amount?: string | number,
+  fee?: string | number,
+  merchant_fee?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+Retrieve all transactions.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `status` | `any` | No | — |
+| `tx_ref` | `string` | No | — |
+| `customer_email` | `any` | No | — |
+| `currency` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  tx_ref?: string,
+  flw_ref?: string,
+  status?: string,
+  amount?: string | number,
+  currency?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verifyByReference
+
+`transactions.verifyByReference`
+
+Verify a transaction by tx_ref.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.verifyByReference({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tx_ref` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  tx_ref?: string,
+  flw_ref?: string,
+  status?: string,
+  amount?: string | number,
+  currency?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### viewTimeline
+
+`transactions.viewTimeline`
+
+View transaction timeline.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transactions.viewTimeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  note?: string,
+  action?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transfers
+
+### getFee
+
+`transfers.getFee`
+
+Get transfer fee estimate.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transfers.getFee({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string \| number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  fee?: string | number,
+  currency?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRates
+
+`transfers.getRates`
+
+Get transfer exchange rates.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transfers.getRates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `string \| number` | Yes | — |
+| `destination_currency` | `string` | Yes | — |
+| `source_currency` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  rate?: string | number,
+  source?: any,
+  destination?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transfers.list`
+
+List transfers.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.transfers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reference` | `any` | No | — |
+| `page` | `number` | No | — |
+| `status` | `any` | No | — |
+| `from` | `any` | No | — |
+| `to` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number,
+  amount?: string | number,
+  status?: string,
+  reference?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Verification
+
+### initiateBvn
+
+`verification.initiateBvn`
+
+Initiate BVN verification.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.verification.initiateBvn({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  bvn: string,
+  firstname: string,
+  lastname: string,
+  redirect_url?: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    bvn: string,
+    firstname: string,
+    lastname: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  url?: string,
+  reference?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Virtual Accounts
+
+### create
+
+`virtualAccounts.create`
+
+Create a virtual account number.
+
+**Risk:** `write`
+
+```ts
+await corsair.flutterwave.api.virtualAccounts.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  email: string,
+  firstname: string,
+  lastname: string,
+  tx_ref?: string,
+  amount?: string | number,
+  narration?: string,
+  query?: {
+  },
+  body?: {
+  }
+} | {
+  query?: {
+  },
+  body: {
+    email: string,
+    firstname: string,
+    lastname: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  account_number?: string,
+  bank_name?: string,
+  order_ref?: string,
+  flw_ref?: string,
+  amount?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`virtualAccounts.get`
+
+Get virtual account number details by order reference.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.virtualAccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_ref` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  account_number?: string,
+  bank_name?: string,
+  order_ref?: string,
+  flw_ref?: string,
+  amount?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallets
+
+### getBalanceByCurrency
+
+`wallets.getBalanceByCurrency`
+
+Get wallet balance by currency.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.wallets.getBalanceByCurrency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string \| number` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  currency?: string,
+  available_balance?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatement
+
+`wallets.getStatement`
+
+Get wallet statement.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.wallets.getStatement({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `type` | `string` | No | — |
+| `page` | `any` | No | — |
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  amount?: string | number,
+  currency?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBalances
+
+`wallets.listBalances`
+
+Get wallet balances across currencies.
+
+**Risk:** `read`
+
+```ts
+await corsair.flutterwave.api.wallets.listBalances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  currency?: string,
+  available_balance?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

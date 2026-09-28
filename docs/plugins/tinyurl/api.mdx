@@ -1,0 +1,132 @@
+---
+title: API
+description: "API reference for TinyURL: every `tinyurl.api.*` operation with input and output types."
+---
+
+Every `tinyurl.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Urls
+
+### create
+
+`urls.create`
+
+Shorten a URL using TinyURL
+
+**Risk:** `write`
+
+```ts
+await corsair.tinyurl.api.urls.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The long URL to be shortened |
+| `domain` | `string` | No | Domain to use for the shortened URL (e.g. tinyurl.com) |
+| `alias` | `string` | No | Optional custom alias for the shortened URL |
+| `tags` | `string \| string[]` | No | Optional tags; official body uses a comma-separated string |
+| `expires_at` | `string` | No | Optional expiration in YYYY-MM-DD HH:MM:SS |
+| `description` | `string` | No | Optional description for the link |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `alias` | `string` | Yes | — |
+| `deleted` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `analytics` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `tiny_url` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="analytics full type">
+
+```ts
+{
+  enabled?: boolean,
+  public?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`urls.list`
+
+List available or archived TinyURLs
+
+**Risk:** `read`
+
+```ts
+await corsair.tinyurl.api.urls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `available \| archived` | Yes | URL list type for GET /urls/{type} |
+| `page` | `number` | No | Page number for pagination |
+| `limit` | `number` | No | Results per page (1-100) |
+| `from` | `string` | No | Start of time period filter |
+| `to` | `string` | No | End of time period filter |
+| `alias` | `string` | No | Filter by alias |
+| `tag` | `string` | No | Filter by tag |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `code` | `number` | No | — |
+| `errors` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain: string,
+  alias: string,
+  deleted?: boolean,
+  archived?: boolean,
+  analytics?: {
+    enabled?: boolean,
+    public?: boolean
+  },
+  tags?: string[],
+  created_at?: string,
+  expires_at?: string | null,
+  tiny_url: string,
+  url?: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

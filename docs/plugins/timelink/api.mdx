@@ -1,0 +1,55 @@
+---
+title: API
+description: "API reference for Timelink: every `timelink.api.*` operation with input and output types."
+---
+
+Every `timelink.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Delete Person
+
+### delete
+
+`deletePerson.delete`
+
+Delete a person record by their unique identifier.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.timelink.api.deletePerson.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

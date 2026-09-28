@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -24,6 +25,7 @@ import {
 	ImageEndpoints,
 	MediaEndpoints,
 	MessagesEndpoints,
+	MessengerEndpoints,
 	ProfileEndpoints,
 	PublishEndpoints,
 	ReelEndpoints,
@@ -37,6 +39,7 @@ import {
 	InstagramEndpointInputSchemas,
 	InstagramEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { InstagramCredentials } from './schema';
 import { InstagramSchema } from './schema';
 import { InstagramWebhooks } from './webhooks/index';
@@ -117,12 +120,30 @@ export type InstagramEndpoints = {
 	GetCommentsDetails: InstagramEndpoint<'GetCommentsDetails'>;
 	UpdateComments: InstagramEndpoint<'UpdateComments'>;
 	DeleteComment: InstagramEndpoint<'DeleteComment'>;
+	DeleteMessengerProfile: InstagramEndpoint<'DeleteMessengerProfile'>;
+	GetConversation: InstagramEndpoint<'GetConversation'>;
+	GetIgCommentReplies: InstagramEndpoint<'GetIgCommentReplies'>;
+	GetIgMediaChildren: InstagramEndpoint<'GetIgMediaChildren'>;
+	GetIgUserContentPublishingLimit: InstagramEndpoint<'GetIgUserContentPublishingLimit'>;
+	GetIgUserLiveMedia: InstagramEndpoint<'GetIgUserLiveMedia'>;
+	GetIgUserStories: InstagramEndpoint<'GetIgUserStories'>;
+	GetIgUserTags: InstagramEndpoint<'GetIgUserTags'>;
+	GetMessengerProfile: InstagramEndpoint<'GetMessengerProfile'>;
+	MarkSeen: InstagramEndpoint<'MarkSeen'>;
+	ReplyToIgUserMentions: InstagramEndpoint<'ReplyToIgUserMentions'>;
+	SendImage: InstagramEndpoint<'SendImage'>;
+	UpdateMessengerProfile: InstagramEndpoint<'UpdateMessengerProfile'>;
 };
 
 export const InstagramEndpointsNested = {
 	profile: {
 		get: ProfileEndpoints.get,
 		insights: ProfileEndpoints.insights,
+		contentPublishingLimit: ProfileEndpoints.contentPublishingLimit,
+		liveMedia: ProfileEndpoints.liveMedia,
+		stories: ProfileEndpoints.stories,
+		tags: ProfileEndpoints.tags,
+		replyMentions: ProfileEndpoints.replyMentions,
 	},
 
 	media: {
@@ -130,6 +151,7 @@ export const InstagramEndpointsNested = {
 		get: MediaEndpoints.get,
 		status: MediaEndpoints.status,
 		insights: MediaEndpoints.insights,
+		children: MediaEndpoints.children,
 	},
 
 	image: {
@@ -157,11 +179,14 @@ export const InstagramEndpointsNested = {
 	conversations: {
 		list: ConversationsEndpoints.list,
 		get: ConversationsEndpoints.get,
+		getConversation: ConversationsEndpoints.getConversation,
 	},
 
 	messages: {
 		get: MessagesEndpoints.get,
 		send: MessagesEndpoints.send,
+		markSeen: MessagesEndpoints.markSeen,
+		sendImage: MessagesEndpoints.sendImage,
 	},
 
 	comments: {
@@ -171,6 +196,13 @@ export const InstagramEndpointsNested = {
 		get: CommentsEndpoints.get,
 		update: CommentsEndpoints.update,
 		remove: CommentsEndpoints.remove,
+		getReplies: CommentsEndpoints.getReplies,
+	},
+
+	messenger: {
+		getProfile: MessengerEndpoints.getProfile,
+		updateProfile: MessengerEndpoints.updateProfile,
+		deleteProfile: MessengerEndpoints.deleteProfile,
 	},
 } as const;
 
@@ -187,6 +219,26 @@ export const InstagramEndpointSchemas = {
 		input: InstagramEndpointInputSchemas.GetAccountInsights,
 		output: InstagramEndpointOutputSchemas.GetAccountInsights,
 	},
+	'profile.contentPublishingLimit': {
+		input: InstagramEndpointInputSchemas.GetIgUserContentPublishingLimit,
+		output: InstagramEndpointOutputSchemas.GetIgUserContentPublishingLimit,
+	},
+	'profile.liveMedia': {
+		input: InstagramEndpointInputSchemas.GetIgUserLiveMedia,
+		output: InstagramEndpointOutputSchemas.GetIgUserLiveMedia,
+	},
+	'profile.stories': {
+		input: InstagramEndpointInputSchemas.GetIgUserStories,
+		output: InstagramEndpointOutputSchemas.GetIgUserStories,
+	},
+	'profile.tags': {
+		input: InstagramEndpointInputSchemas.GetIgUserTags,
+		output: InstagramEndpointOutputSchemas.GetIgUserTags,
+	},
+	'profile.replyMentions': {
+		input: InstagramEndpointInputSchemas.ReplyToIgUserMentions,
+		output: InstagramEndpointOutputSchemas.ReplyToIgUserMentions,
+	},
 	'media.list': {
 		input: InstagramEndpointInputSchemas.GetInstagramMediaList,
 		output: InstagramEndpointOutputSchemas.GetInstagramMediaList,
@@ -202,6 +254,10 @@ export const InstagramEndpointSchemas = {
 	'media.insights': {
 		input: InstagramEndpointInputSchemas.GetMediaInsights,
 		output: InstagramEndpointOutputSchemas.GetMediaInsights,
+	},
+	'media.children': {
+		input: InstagramEndpointInputSchemas.GetIgMediaChildren,
+		output: InstagramEndpointOutputSchemas.GetIgMediaChildren,
 	},
 	'image.post': {
 		input: InstagramEndpointInputSchemas.CreateImageContainer,
@@ -239,6 +295,10 @@ export const InstagramEndpointSchemas = {
 		input: InstagramEndpointInputSchemas.GetConversationMessages,
 		output: InstagramEndpointOutputSchemas.GetConversationMessages,
 	},
+	'conversations.getConversation': {
+		input: InstagramEndpointInputSchemas.GetConversation,
+		output: InstagramEndpointOutputSchemas.GetConversation,
+	},
 	'messages.get': {
 		input: InstagramEndpointInputSchemas.GetMessage,
 		output: InstagramEndpointOutputSchemas.GetMessage,
@@ -247,7 +307,14 @@ export const InstagramEndpointSchemas = {
 		input: InstagramEndpointInputSchemas.SendMessage,
 		output: InstagramEndpointOutputSchemas.SendMessage,
 	},
-
+	'messages.markSeen': {
+		input: InstagramEndpointInputSchemas.MarkSeen,
+		output: InstagramEndpointOutputSchemas.MarkSeen,
+	},
+	'messages.sendImage': {
+		input: InstagramEndpointInputSchemas.SendImage,
+		output: InstagramEndpointOutputSchemas.SendImage,
+	},
 	'comments.list': {
 		input: InstagramEndpointInputSchemas.GetComments,
 		output: InstagramEndpointOutputSchemas.GetComments,
@@ -272,6 +339,22 @@ export const InstagramEndpointSchemas = {
 		input: InstagramEndpointInputSchemas.DeleteComment,
 		output: InstagramEndpointOutputSchemas.DeleteComment,
 	},
+	'comments.getReplies': {
+		input: InstagramEndpointInputSchemas.GetIgCommentReplies,
+		output: InstagramEndpointOutputSchemas.GetIgCommentReplies,
+	},
+	'messenger.getProfile': {
+		input: InstagramEndpointInputSchemas.GetMessengerProfile,
+		output: InstagramEndpointOutputSchemas.GetMessengerProfile,
+	},
+	'messenger.updateProfile': {
+		input: InstagramEndpointInputSchemas.UpdateMessengerProfile,
+		output: InstagramEndpointOutputSchemas.UpdateMessengerProfile,
+	},
+	'messenger.deleteProfile': {
+		input: InstagramEndpointInputSchemas.DeleteMessengerProfile,
+		output: InstagramEndpointOutputSchemas.DeleteMessengerProfile,
+	},
 };
 
 const instagramEndpointMeta = {
@@ -279,37 +362,47 @@ const instagramEndpointMeta = {
 		riskLevel: 'read',
 		description: 'read the user instagram profile.',
 	},
-
 	'profile.insights': {
 		riskLevel: 'read',
 		description: 'get insights for the instagram business account.',
+	},
+	'profile.contentPublishingLimit': {
+		riskLevel: 'read',
+		description: 'get user content publishing limit.',
+	},
+	'profile.liveMedia': {
+		riskLevel: 'read',
+		description: 'get user live media.',
+	},
+	'profile.stories': { riskLevel: 'read', description: 'get user stories.' },
+	'profile.tags': { riskLevel: 'read', description: 'get user tags.' },
+	'profile.replyMentions': {
+		riskLevel: 'write',
+		description: 'reply to mentions.',
 	},
 
 	'media.list': {
 		riskLevel: 'read',
 		description: 'list media objects on the instagram account.',
 	},
-
 	'media.get': {
 		riskLevel: 'read',
 		description: 'get details about a specific media object.',
 	},
-
 	'media.status': {
 		riskLevel: 'read',
 		description: 'get the status of a media container.',
 	},
-
 	'media.insights': {
 		riskLevel: 'read',
 		description: 'get insights for a specific media object.',
 	},
+	'media.children': { riskLevel: 'read', description: 'get children media.' },
 
 	'image.post': {
 		riskLevel: 'write',
 		description: 'create an image container for publishing on instagram.',
 	},
-
 	'image.story': {
 		riskLevel: 'write',
 		description: 'create an image story container for publishing on instagram.',
@@ -324,7 +417,6 @@ const instagramEndpointMeta = {
 		riskLevel: 'write',
 		description: 'create a video story container for publishing on instagram.',
 	},
-
 	'video.container': {
 		riskLevel: 'write',
 		description:
@@ -340,56 +432,77 @@ const instagramEndpointMeta = {
 		riskLevel: 'write',
 		description: 'publish media on instagram.',
 	},
-
 	'conversations.list': {
 		riskLevel: 'read',
 		description: 'list conversations on instagram messaging.',
 	},
-
 	'conversations.get': {
 		riskLevel: 'read',
 		description: 'get messages in a conversation on instagram messaging.',
+	},
+	'conversations.getConversation': {
+		riskLevel: 'read',
+		description: 'get conversation details.',
 	},
 
 	'messages.get': {
 		riskLevel: 'read',
 		description: 'get details about a specific message on instagram messaging.',
 	},
-
 	'messages.send': {
 		riskLevel: 'write',
 		description: 'send a message in instagram messaging.',
+	},
+	'messages.markSeen': {
+		riskLevel: 'write',
+		description: 'mark messages as seen.',
+	},
+	'messages.sendImage': {
+		riskLevel: 'write',
+		description: 'send image via DM.',
 	},
 
 	'comments.list': {
 		riskLevel: 'read',
 		description: 'list comments on an instagram media object.',
 	},
-
 	'comments.reply': {
 		riskLevel: 'write',
 		description: 'reply to a comment on an instagram media object.',
 	},
-
 	'comments.send': {
 		riskLevel: 'write',
 		description: 'send a comment on an instagram media object.',
 	},
-
 	'comments.get': {
 		riskLevel: 'read',
 		description:
 			'get details about a specific comment on an instagram media object.',
 	},
-
 	'comments.update': {
 		riskLevel: 'write',
 		description: 'update a comment on an instagram media object.',
 	},
-
 	'comments.remove': {
 		riskLevel: 'write',
 		description: 'delete a comment on an instagram media object.',
+	},
+	'comments.getReplies': {
+		riskLevel: 'read',
+		description: 'get comment replies.',
+	},
+
+	'messenger.getProfile': {
+		riskLevel: 'read',
+		description: 'get messenger profile.',
+	},
+	'messenger.updateProfile': {
+		riskLevel: 'write',
+		description: 'update messenger profile.',
+	},
+	'messenger.deleteProfile': {
+		riskLevel: 'write',
+		description: 'delete messenger profile.',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof InstagramEndpointsNested>;
 
@@ -423,6 +536,7 @@ export type InstagramPluginOptions = {
 	webhookVerifyToken?: string;
 	hooks?: InternalInstagramPlugin['hooks'];
 	webhookHooks?: InternalInstagramPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof InstagramEndpointsNested>;
 };
 
@@ -499,6 +613,10 @@ export function instagram<const T extends InstagramPluginOptions>(
 
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		endpoints: InstagramEndpointsNested,
 		webhooks: InstagramWebhooksNested,
 		endpointSchemas: InstagramEndpointSchemas,

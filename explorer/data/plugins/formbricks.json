@@ -1,0 +1,3025 @@
+{
+  "id": "formbricks",
+  "displayName": "Formbricks",
+  "description": "Open-source experience management platform for in-app surveys and user feedback collection.",
+  "npmPackageName": "@corsair-dev/formbricks",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 47,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "formbricks.api.actionClasses.create",
+      "shortPath": "actionClasses.create",
+      "description": "Create an action class",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "code | noCode"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noCodeConfig",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noCodeConfig",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.actionClasses.list",
+      "shortPath": "actionClasses.list",
+      "description": "List the action classes that can trigger a survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, description?: string | null, type?: string | null, key?: string | null, workspaceId?: string | null, noCodeConfig?: any, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.client.contactsState",
+      "shortPath": "client.contactsState",
+      "description": "Read a respondent's state, creating the contact if the userId is new",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ data?: any, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.client.createDisplay",
+      "shortPath": "client.createDisplay",
+      "description": "Record that a survey was displayed to someone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.client.createUser",
+      "shortPath": "client.createUser",
+      "description": "Create a client user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ data?: any, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.client.environment",
+      "shortPath": "client.environment",
+      "description": "Read the client environment bundle for a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.client.identifyUser",
+      "shortPath": "client.identifyUser",
+      "description": "Create or identify a client user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ data?: any, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.create",
+      "shortPath": "contactAttributeKeys.create",
+      "description": "Create a contact attribute key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isUnique",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.delete",
+      "shortPath": "contactAttributeKeys.delete",
+      "description": "Delete a contact attribute key",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactAttributeKeyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.get",
+      "shortPath": "contactAttributeKeys.get",
+      "description": "Get a single contact attribute key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactAttributeKeyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isUnique",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.getClass",
+      "shortPath": "contactAttributeKeys.getClass",
+      "description": "Get an attribute key under the catalog's former \"attribute class\" name - same route as contactAttributeKeys.get",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactAttributeKeyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isUnique",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.list",
+      "shortPath": "contactAttributeKeys.list",
+      "description": "List the contact attribute keys a workspace defines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, key?: string | null, name?: string | null, description?: string | null, type?: string | null, dataType?: string | null, isUnique?: boolean | null, workspaceId?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.listClasses",
+      "shortPath": "contactAttributeKeys.listClasses",
+      "description": "List attribute keys under the catalog's former \"attribute class\" name - same route as contactAttributeKeys.list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, key?: string | null, name?: string | null, description?: string | null, type?: string | null, dataType?: string | null, isUnique?: boolean | null, workspaceId?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributeKeys.update",
+      "shortPath": "contactAttributeKeys.update",
+      "description": "Update a contact attribute key's definition - not any contact's values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactAttributeKeyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isUnique",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contactAttributes.list",
+      "shortPath": "contactAttributes.list",
+      "description": "List contact attribute values across contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, attributeKeyId?: string | null, contactId?: string | null, value?: string | null, valueNumber?: number | null, valueDate?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact, removing a respondent's identity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a single contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.getPerson",
+      "shortPath": "contacts.getPerson",
+      "description": "Get a contact under the catalog's former \"person\" name - same route as contacts.get",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List the contacts in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, workspaceId?: string | null, attributes?: any, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.listPeople",
+      "shortPath": "contacts.listPeople",
+      "description": "List contacts under the catalog's former \"people\" name - same route as contacts.list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, workspaceId?: string | null, attributes?: any, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.updateAttributes",
+      "shortPath": "contacts.updateAttributes",
+      "description": "Set a contact's attribute values by userId, creating the contact if it is new",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "{ data?: any, expiresAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.contacts.uploadBulk",
+      "shortPath": "contacts.uploadBulk",
+      "description": "Create many contacts in one request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ attributes: { attributeKey: { key: string, name?: string }, value: string }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.health.check",
+      "shortPath": "health.check",
+      "description": "Check service health",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "main_database",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "cache_database",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.health.list",
+      "shortPath": "health.list",
+      "description": "Read service health status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "main_database",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "cache_database",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.me.get",
+      "shortPath": "me.get",
+      "description": "Get the API key's identity, workspaces and organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspacePermissions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "environmentPermissions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "organizationAccess",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.me.getAccountInfo",
+      "shortPath": "me.getAccountInfo",
+      "description": "Get account information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appSetupCompleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.me.getManagement",
+      "shortPath": "me.getManagement",
+      "description": "Get the v1 account payload, for a workspace-scoped key only",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appSetupCompleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.responses.create",
+      "shortPath": "responses.create",
+      "description": "Record a survey response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "finished",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ttc",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "endingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "ttc",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "contactAttributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "singleUseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.responses.delete",
+      "shortPath": "responses.delete",
+      "description": "Delete a survey response, erasing a respondent's submitted answers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.responses.list",
+      "shortPath": "responses.list",
+      "description": "List survey responses, optionally for one survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "surveyId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, surveyId?: string | null, finished?: boolean | null, endingId?: string | null, data?: any, meta?: any, ttc?: any, variables?: any, contactAttributes?: any, contact?: any, singleUseId?: string | null, language?: string | null, displayId?: string | null, tags?: any[] | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.responses.update",
+      "shortPath": "responses.update",
+      "description": "Update a survey response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "responseId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "finished",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "endingId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "ttc",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "contactAttributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "singleUseId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "List the organization roles a member can hold",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "formbricks.api.storage.uploadPrivate",
+      "shortPath": "storage.uploadPrivate",
+      "description": "Request an upload for a private respondent file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "surveyId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signedUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presignedFields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "fileUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.storage.uploadPublic",
+      "shortPath": "storage.uploadPublic",
+      "description": "Request an upload for a public file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signedUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presignedFields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "fileUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.surveys.create",
+      "shortPath": "surveys.create",
+      "description": "Create a survey",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "welcomeCard",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "endings",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishOn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closeOn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "welcomeCard",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "endings",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "hiddenFields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "styling",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "surveyClosedMessage",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "displayOption",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recontactDays",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoClose",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoComplete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isVerifyEmailEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSingleResponsePerEmailEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBackButtonHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isAutoProgressingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCaptureIpEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showLanguageSwitch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirectUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singleUse",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recaptcha",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "customHeadScripts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customHeadScriptsMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceOverwrites",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "projectOverwrites",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "segment",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "followUps",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.surveys.delete",
+      "shortPath": "surveys.delete",
+      "description": "Delete a survey and the responses collected against it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.surveys.list",
+      "shortPath": "surveys.list",
+      "description": "List the surveys in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, type?: string | null, status?: string | null, workspaceId?: string | null, createdBy?: string | null, slug?: string | null, createdAt?: string | null, updatedAt?: string | null, publishOn?: string | null, closeOn?: string | null, archivedAt?: string | null, welcomeCard?: any, questions?: any[] | null, blocks?: any, endings?: any[] | null, hiddenFields?: any, variables?: any[] | null, styling?: any, languages?: any[] | null, surveyClosedMessage?: any, metadata?: any, displayOption?: string | null, recontactDays?: number | null, displayLimit?: number | null, displayPercentage?: number | null, autoClose?: number | null, delay?: number | null, autoComplete?: number | null, isVerifyEmailEnabled?: boolean | null, isSingleResponsePerEmailEnabled?: boolean | null, isBackButtonHidden?: boolean | null, isAutoProgressingEnabled?: boolean | null, isCaptureIpEnabled?: boolean | null, showLanguageSwitch?: boolean | null, redirectUrl?: string | null, pin?: string | null, singleUse?: any, recaptcha?: any, customHeadScripts?: string | null, customHeadScriptsMode?: string | null, workspaceOverwrites?: any, projectOverwrites?: any, triggers?: any[] | null, segment?: any, followUps?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.surveys.update",
+      "shortPath": "surveys.update",
+      "description": "Update a survey",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "surveyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "welcomeCard",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "endings",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishOn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closeOn",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archivedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "welcomeCard",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "endings",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "hiddenFields",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "styling",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "surveyClosedMessage",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "displayOption",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recontactDays",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoClose",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "autoComplete",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isVerifyEmailEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isSingleResponsePerEmailEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isBackButtonHidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isAutoProgressingEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCaptureIpEnabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showLanguageSwitch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "redirectUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "singleUse",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recaptcha",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "customHeadScripts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customHeadScriptsMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceOverwrites",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "projectOverwrites",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "segment",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "followUps",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team, removing the workspace access it granted",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, organizationId?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.teams.listWorkspaceTeams",
+      "shortPath": "teams.listWorkspaceTeams",
+      "description": "List which teams have access to which workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ teamId?: string | null, workspaceId?: string | null, permission?: string | null, projectId?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook and receive its signing secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "user | zapier | make | n8n"
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "responseFinished | responseCreated | responseUpdated[]"
+          },
+          {
+            "key": "surveyIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "surveyIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook, invalidating its signing secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a single webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "surveyIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "formbricks.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks on a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, url?: string | null, source?: string | null, workspaceId?: string | null, triggers?: string[] | null, surveyIds?: string[] | null, secret?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "formbricks.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": false,
+            "type": "user | zapier | make | n8n"
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "responseFinished | responseCreated | responseUpdated[]"
+          },
+          {
+            "key": "surveyIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspaceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "triggers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "surveyIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "formbricks.db.actionClasses.search",
+      "entityName": "actionClasses",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "formbricks.db.contactAttributeKeys.search",
+      "entityName": "contactAttributeKeys",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dataType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isUnique",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "formbricks.db.surveys.search",
+      "entityName": "surveys",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdBy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closeOn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archivedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayOption",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recontactDays",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "displayLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "displayPercentage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "autoClose",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "delay",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "autoComplete",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isVerifyEmailEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isSingleResponsePerEmailEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isBackButtonHidden",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isAutoProgressingEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isCaptureIpEnabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "showLanguageSwitch",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "redirectUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customHeadScripts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customHeadScriptsMode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "formbricks.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organizationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "formbricks.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workspaceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secret",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

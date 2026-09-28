@@ -224,4 +224,53 @@ describe('output schemas — live Amara shapes', () => {
 			AmaraEndpointOutputSchemas.videosDeleteUrl.parse({ ok: true }).ok,
 		).toBe(true);
 	});
+
+	it('parses team projects, members, tasks, and applications', () => {
+		const project = AmaraEndpointOutputSchemas.teamsGetProject.parse({
+			name: 'Community Subtitles',
+			slug: 'community-subtitles',
+			description: 'Open translation project',
+			guidelines: 'Follow style guide',
+			created: '2023-01-01T00:00:00Z',
+			modified: '2023-01-02T00:00:00Z',
+			workflow_enabled: true,
+			resource_uri: '/api/teams/ability/projects/community-subtitles/',
+		});
+		expect(project.slug).toBe('community-subtitles');
+		expect(project.workflow_enabled).toBe(true);
+
+		const member = AmaraEndpointOutputSchemas.teamsGetMember.parse({
+			user: {
+				username: 'johndoe',
+				id: 'usr123',
+			},
+			role: 'manager',
+			languages_managed: ['en', 'es'],
+		});
+		expect(member.role).toBe('manager');
+
+		const task = AmaraEndpointOutputSchemas.teamsGetTask.parse({
+			id: 101,
+			video_id: 'vid456',
+			language: 'es',
+			type: 'Translate',
+			priority: 1,
+			completed: false,
+		});
+		expect(task.id).toBe(101);
+		expect(task.type).toBe('Translate');
+
+		const app = AmaraEndpointOutputSchemas.teamsListApplications.parse({
+			meta: { total_count: 1 },
+			objects: [
+				{
+					id: 501,
+					status: 'pending',
+					message: 'I want to help with French subtitles',
+				},
+			],
+		});
+		expect(app.meta?.total_count).toBe(1);
+		expect(app.objects?.[0]?.status).toBe('pending');
+	});
 });

@@ -1,0 +1,1827 @@
+---
+title: API
+description: "API reference for GIPHY: every `giphy.api.*` operation with input and output types."
+---
+
+Every `giphy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### register
+
+`analytics.register`
+
+Register a GIF view, click, or send via its analytics pingback URL
+
+**Risk:** `write`
+
+```ts
+await corsair.giphy.api.analytics.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pingback_url` | `string` | Yes | Tracking URL from a GIF analytics object (onload, onclick, or onsent) |
+| `customer_id` | `string` | Yes | Identifier assigned to a user in your platform |
+| `ts` | `number` | No | UNIX timestamp in milliseconds of when the action occurred. Default: now |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Categories
+
+### getById
+
+`categories.getById`
+
+Get subcategories of a specific GIPHY category by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.categories.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `string` | Yes | Category identifier (name_encoded value from categories.list, e.g. "actions") |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  name_encoded?: string,
+  subcategories?: {
+    name: string,
+    name_encoded?: string
+  }[],
+  gif?: {
+    type?: string,
+    id: string,
+    url?: string,
+    slug?: string,
+    bitly_gif_url?: string,
+    bitly_url?: string,
+    embed_url?: string,
+    username?: string,
+    source?: string,
+    title?: string,
+    rating?: string,
+    content_url?: string,
+    source_tld?: string,
+    source_post_url?: string,
+    is_sticker?: number,
+    import_datetime?: string,
+    trending_datetime?: string,
+    images?: {
+    },
+    user?: {
+      avatar_url?: string,
+      banner_image?: string,
+      banner_url?: string,
+      profile_url?: string,
+      username?: string,
+      display_name?: string,
+      description?: string,
+      instagram_url?: string,
+      website_url?: string,
+      is_verified?: boolean
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### gifs
+
+`categories.gifs`
+
+Fetch GIFs associated with a specific GIPHY category
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.categories.gifs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `string` | Yes | Category identifier (name_encoded value from categories.list, e.g. "actions") |
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List all categories and subcategories on GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string,
+  name_encoded?: string,
+  subcategories?: {
+    name: string,
+    name_encoded?: string
+  }[],
+  gif?: {
+    type?: string,
+    id: string,
+    url?: string,
+    slug?: string,
+    bitly_gif_url?: string,
+    bitly_url?: string,
+    embed_url?: string,
+    username?: string,
+    source?: string,
+    title?: string,
+    rating?: string,
+    content_url?: string,
+    source_tld?: string,
+    source_post_url?: string,
+    is_sticker?: number,
+    import_datetime?: string,
+    trending_datetime?: string,
+    images?: {
+    },
+    user?: {
+      avatar_url?: string,
+      banner_image?: string,
+      banner_url?: string,
+      profile_url?: string,
+      username?: string,
+      display_name?: string,
+      description?: string,
+      instagram_url?: string,
+      website_url?: string,
+      is_verified?: boolean
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### search
+
+`channels.search`
+
+Search GIPHY channels matching a query term
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.channels.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Term to search through GIPHY channels |
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25, maximum: 50 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  slug?: string,
+  display_name?: string,
+  content_type?: string,
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Emoji
+
+### get
+
+`emoji.get`
+
+Fetch animated emojis from GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.emoji.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variations
+
+`emoji.variations`
+
+Get variations of a specific GIPHY emoji by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.emoji.variations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gif_id` | `string` | Yes | GIPHY Emoji GIF ID to get variations for |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gifs
+
+### getById
+
+`gifs.getById`
+
+Get details and renditions of a specific GIF by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.getById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gif_id` | `string` | Yes | GIPHY GIF ID |
+| `rating` | `g \| pg \| pg-13 \| r` | No | If the GIF rating exceeds this, the API returns an empty error response |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByIds
+
+`gifs.getByIds`
+
+Get details and renditions for multiple GIFs by their IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.getByIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[] \| string` | Yes | Array of GIF IDs or comma-separated string |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### random
+
+`gifs.random`
+
+Fetch a random GIF from GIPHY optionally filtered by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.random({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | No | Filters results by specified tag |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `random_id` | `string` | No | Deprecated alias for customer_id, kept for backwards compatibility |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`gifs.search`
+
+Search all GIPHY GIFs for a word or phrase
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query term or phrase |
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `lang` | `string` | No | Specify default language for regional content |
+| `random_id` | `string` | No | Deprecated alias for customer_id, kept for backwards compatibility |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+| `channel_ids` | `string` | No | Filters results by specified channel IDs, separated by commas. Maximum: 5 |
+| `bundle` | `string` | No | Returns upload or clips data |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translate
+
+`gifs.translate`
+
+Translate a word or phrase into a GIF using GIPHY translate endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.translate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `s` | `string` | Yes | Search term to translate into a GIF |
+| `weirdness` | `number` | No | Value from 0-10 on the weirdness scale |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trending
+
+`gifs.trending`
+
+Fetch currently trending GIFs from GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.gifs.trending({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `random_id` | `string` | No | Deprecated alias for customer_id, kept for backwards compatibility |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+| `bundle` | `string` | No | Returns upload or clips data |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`gifs.upload`
+
+Upload an animated GIF or video to GIPHY from a file or a public URL
+
+**Risk:** `write`
+
+```ts
+await corsair.giphy.api.gifs.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_base64` | `string` | No | Animated GIF or video file content as base64. Required when source_image_url is omitted |
+| `file_name` | `string` | No | Filename for the multipart upload part. Default: upload.gif |
+| `source_image_url` | `string` | No | Public URL of the image or video to upload. Required when file_base64 is omitted |
+| `tags` | `string` | No | Comma-delimited list of tags applied to the upload |
+| `source_post_url` | `string` | No | URL of the source of the asset |
+| `username` | `string` | No | Assigned username (approved production apps only) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Random Id
+
+### get
+
+`randomId.get`
+
+Generate a privacy-safe random ID to use as customer_id on other endpoints
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.randomId.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  random_id: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stickers
+
+### random
+
+`stickers.random`
+
+Fetch a random sticker from GIPHY optionally filtered by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.stickers.random({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | No | Filters results by specified tag |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`stickers.search`
+
+Search GIPHY animated stickers for a word or phrase
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.stickers.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query term or phrase |
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `lang` | `string` | No | Specify default language for regional content |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### translate
+
+`stickers.translate`
+
+Translate a word or phrase into a sticker
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.stickers.translate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `s` | `string` | Yes | Search term to translate into a sticker |
+| `weirdness` | `number` | No | Value from 0-10 on the weirdness scale |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trending
+
+`stickers.trending`
+
+Fetch currently trending stickers from GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.stickers.trending({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | The maximum number of objects to return. Default: 25 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `rating` | `g \| pg \| pg-13 \| r` | No | Filters results by specified rating |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id: string,
+  url?: string,
+  slug?: string,
+  bitly_gif_url?: string,
+  bitly_url?: string,
+  embed_url?: string,
+  username?: string,
+  source?: string,
+  title?: string,
+  rating?: string,
+  content_url?: string,
+  source_tld?: string,
+  source_post_url?: string,
+  is_sticker?: number,
+  import_datetime?: string,
+  trending_datetime?: string,
+  images?: {
+  },
+  user?: {
+    avatar_url?: string,
+    banner_image?: string,
+    banner_url?: string,
+    profile_url?: string,
+    username?: string,
+    display_name?: string,
+    description?: string,
+    instagram_url?: string,
+    website_url?: string,
+    is_verified?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total_count?: number,
+  count?: number,
+  offset?: number
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### autocomplete
+
+`tags.autocomplete`
+
+Autocomplete a tag term on the GIPHY network
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.tags.autocomplete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Tag term to autocomplete |
+| `limit` | `number` | No | The maximum number of objects to return. Default: 5 |
+| `offset` | `number` | No | Specifies the starting position of the results. Default: 0 |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### related
+
+`tags.related`
+
+List tag terms related to the given tag on GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.tags.related({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `term` | `string` | Yes | Tag term to find related tags for |
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trending
+
+`tags.trending`
+
+List the most popular trending search terms on GIPHY
+
+**Risk:** `read`
+
+```ts
+await corsair.giphy.api.tags.trending({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `string` | No | Identifier assigned to a user in your platform |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  status?: number,
+  msg?: string,
+  response_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
