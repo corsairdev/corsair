@@ -1,0 +1,2712 @@
+{
+  "id": "zoominfo",
+  "displayName": "ZoomInfo",
+  "description": "B2B contact database for sales intelligence, company data, and prospecting workflows.",
+  "npmPackageName": "@corsair-dev/zoominfo",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 17,
+    "webhooks": 2,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": [
+        "client_id",
+        "client_secret",
+        "redirect_url",
+        "zoominfo_username",
+        "zoominfo_password",
+        "zoominfo_client_id",
+        "zoominfo_private_key"
+      ],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zoominfo.api.zoominfo.enrichCompany",
+      "shortPath": "zoominfo.enrichCompany",
+      "description": "Enrich up to 25 companies from partial identifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matchCompanyInput",
+            "optional": false,
+            "type": "{ companyId?: number | string, companyName?: string, companyWebsite?: string, companyTicker?: string, companyPhone?: string, companyFax?: string, companyStreet?: string, companyCity?: string, companyState?: string, companyZipCode?: string, companyCountry?: string, ipAddress?: string }[]"
+          },
+          {
+            "key": "outputFields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ outputFields?: string[][], result: { input?: {}, data: { id?: number, name?: string, website?: string, ticker?: string, domainList?: string[], logo?: string, revenue?: number, employeeCount?: number, phone?: string, street?: string, city?: string, state?: string, zipCode?: string, country?: string, companyStatus?: string }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichContact",
+      "shortPath": "zoominfo.enrichContact",
+      "description": "Enrich up to 25 contacts from partial identifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matchPersonInput",
+            "optional": false,
+            "type": "{ personId?: number | string, firstName?: string, lastName?: string, fullName?: string, emailAddress?: string, hashedEmail?: string, phone?: string, jobTitle?: string, companyId?: number | string, companyName?: string, companyWebsite?: string }[]"
+          },
+          {
+            "key": "outputFields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ outputFields?: string[][], result: { input?: {}, data: { id?: number, firstName?: string, middleName?: string, lastName?: string, email?: string, phone?: string, mobilePhone?: string, jobTitle?: string, contactAccuracyScore?: number, lastUpdatedDate?: string, validDate?: string, companyId?: number, companyName?: string, companyWebsite?: string }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichIntent",
+      "shortPath": "zoominfo.enrichIntent",
+      "description": "Fetch intent signals for one company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signalStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signalEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signalScoreMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signalScoreMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "audienceStrengthMin",
+            "optional": true,
+            "type": "A | B | C | D | E"
+          },
+          {
+            "key": "audienceStrengthMax",
+            "optional": true,
+            "type": "A | B | C | D | E"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, category?: string, topic?: string, signalScore?: number, audienceStrength?: string, newSignal?: boolean, signalDate?: string, trend?: number, recommendedContacts?: { id?: number, firstName?: string, lastName?: string, jobTitle?: string, jobFunction?: { name?: string, department?: string }[] }[], company?: { id?: number, name?: string, website?: string, hasOtherTopicConsumption?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichLocation",
+      "shortPath": "zoominfo.enrichLocation",
+      "description": "Fetch every known office location for one company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ phone?: string, fax?: string, street?: string, city?: string, state?: string, zipCode?: string, country?: string, company?: { id?: number, name?: string, addressStatus?: string, subUnitType?: string, locationName?: string, locationEmployeeCount?: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichNews",
+      "shortPath": "zoominfo.enrichNews",
+      "description": "Fetch news articles for one company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageDateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageDateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain?: string, title?: string, url?: string, imageUrl?: string, pageDate?: string, description?: string, categories?: string[], company?: { id?: number, name?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichScoop",
+      "shortPath": "zoominfo.enrichScoop",
+      "description": "Fetch Scoops for one company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scoopType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scoopTopic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedSinceCreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, publishedDate?: string, originalPublishedDate?: string, linkText?: string, link?: string, description?: string, updateText?: string, topics?: any[], types?: { id?: number, type?: string }[], contacts?: any[], company?: { id?: number, name?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.enrichTechnology",
+      "shortPath": "zoominfo.enrichTechnology",
+      "description": "Fetch the technologies detected in one company's stack",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ tag?: string, categoryParent?: string, category?: string, vendor?: string, product?: string, attribute?: string, website?: string, logo?: string, domain?: string, createdTime?: string, modifiedTime?: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.getCompanySearchInputFields",
+      "shortPath": "zoominfo.getCompanySearchInputFields",
+      "description": "List the company search filters this account may use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fieldName: string, fieldType?: string, description?: string, accessGranted?: string }[]"
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.getContactSearchInputFields",
+      "shortPath": "zoominfo.getContactSearchInputFields",
+      "description": "List the contact search filters this account may use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fieldName: string, fieldType?: string, description?: string, accessGranted?: string }[]"
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.getIntentSearchInputFields",
+      "shortPath": "zoominfo.getIntentSearchInputFields",
+      "description": "List the intent search filters this account may use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fieldName: string, fieldType?: string, description?: string, accessGranted?: string }[]"
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.getNewsSearchInputFields",
+      "shortPath": "zoominfo.getNewsSearchInputFields",
+      "description": "List the news search filters this account may use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fieldName: string, fieldType?: string, description?: string, accessGranted?: string }[]"
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.getScoopSearchInputFields",
+      "shortPath": "zoominfo.getScoopSearchInputFields",
+      "description": "List the scoop search filters this account may use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fieldName: string, fieldType?: string, description?: string, accessGranted?: string }[]"
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.searchCompanies",
+      "shortPath": "zoominfo.searchCompanies",
+      "description": "Search companies by firmographics, location and technology",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyRanking",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyStructureIncludedSubUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metroRegion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludedRegions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCodeRadiusMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationSearchType",
+            "optional": true,
+            "type": "PersonOrHQ | PersonAndHQ | Person | HQ | PersonThenHQ"
+          },
+          {
+            "key": "hashTagString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "techAttributeTagList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryIndustriesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "industryCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industryKeywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sicCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "naicsCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenueMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "revenueMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employeeCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingAmountMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingAmountMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ultimateParentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyTicker",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "certified",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "excludeDefunctCompanies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "businessModel",
+            "optional": true,
+            "type": "B2C | B2B | B2G[]"
+          },
+          {
+            "key": "engagementStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagementEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagementType",
+            "optional": true,
+            "type": "email | phone | online meeting[]"
+          },
+          {
+            "key": "marketingDepartmentBudgetMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "marketingDepartmentBudgetMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "financeDepartmentBudgetMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "financeDepartmentBudgetMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itDepartmentBudgetMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itDepartmentBudgetMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hrDepartmentBudgetMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hrDepartmentBudgetMax",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.searchContacts",
+      "shortPath": "zoominfo.searchContacts",
+      "description": "Search contacts by name, title, seniority and company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyRanking",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyStructureIncludedSubUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metroRegion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludedRegions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCodeRadiusMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationSearchType",
+            "optional": true,
+            "type": "PersonOrHQ | PersonAndHQ | Person | HQ | PersonThenHQ"
+          },
+          {
+            "key": "hashTagString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "techAttributeTagList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryIndustriesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "industryCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industryKeywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sicCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "naicsCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenueMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "revenueMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employeeCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingAmountMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingAmountMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ultimateParentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashedEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middleInitial",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeJobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "managementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeManagementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobFunction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardMember",
+            "optional": true,
+            "type": "include | exclude | only"
+          },
+          {
+            "key": "hasBeenNotified",
+            "optional": true,
+            "type": "include | exclude | only"
+          },
+          {
+            "key": "companyPastOrPresent",
+            "optional": true,
+            "type": "present | past | pastAndPresent"
+          },
+          {
+            "key": "excludePartialProfiles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "executivesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requiredFields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactAccuracyScoreMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactAccuracyScoreMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastUpdatedInMonths",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "degree",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationCompanyId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "companyTicker",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exactJobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "yearsOfExperience",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "supplementalEmail",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "webReferences",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "techSkills",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "buyingGroup",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "lastUpdatedDateAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "validDateAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "positionStartDateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "positionStartDateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagementStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagementEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagementType",
+            "optional": true,
+            "type": "email | phone | online meeting[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, firstName?: string, middleName?: string, lastName?: string, validDate?: string, lastUpdatedDate?: string, jobTitle?: string, contactAccuracyScore?: number, hasEmail?: boolean, hasSupplementalEmail?: boolean, hasDirectPhone?: boolean, hasMobilePhone?: boolean, hasCompanyIndustry?: boolean, hasCompanyPhone?: boolean, hasCompanyStreet?: boolean, hasCompanyState?: boolean, hasCompanyZipCode?: boolean, hasCompanyCountry?: boolean, hasCompanyRevenue?: boolean, hasCompanyEmployeeCount?: boolean, company?: { id?: number, name?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.searchIntent",
+      "shortPath": "zoominfo.searchIntent",
+      "description": "Search companies showing buying intent on given topics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyRanking",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyStructureIncludedSubUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metroRegion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludedRegions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCodeRadiusMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationSearchType",
+            "optional": true,
+            "type": "PersonOrHQ | PersonAndHQ | Person | HQ | PersonThenHQ"
+          },
+          {
+            "key": "hashTagString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "techAttributeTagList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryIndustriesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "industryCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industryKeywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sicCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "naicsCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenueMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "revenueMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employeeCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingAmountMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingAmountMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signalStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signalEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signalScoreMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "signalScoreMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "audienceStrengthMin",
+            "optional": true,
+            "type": "A | B | C | D | E"
+          },
+          {
+            "key": "audienceStrengthMax",
+            "optional": true,
+            "type": "A | B | C | D | E"
+          },
+          {
+            "key": "certified",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "excludeDefunctCompanies",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, category?: string, topic?: string, signalScore?: number, audienceStrength?: string, newSignal?: boolean, signalDate?: string, trend?: number, recommendedContacts?: { id?: number, firstName?: string, lastName?: string, jobTitle?: string, jobFunction?: { name?: string, department?: string }[] }[], company?: { id?: number, name?: string, website?: string, hasOtherTopicConsumption?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.searchNews",
+      "shortPath": "zoominfo.searchNews",
+      "description": "Search news articles by category and publish date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "pageDateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageDateMax",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain?: string, title?: string, url?: string, imageUrl?: string, pageDate?: string, description?: string, categories?: string[], company?: { id?: number, name?: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zoominfo.api.zoominfo.searchScoops",
+      "shortPath": "zoominfo.searchScoops",
+      "description": "Search Scoops, ZoomInfo research notes about companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rpp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | ascending | desc | descending",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "companyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyRanking",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyStructureIncludedSubUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subUnitTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "street",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "continent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metroRegion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludedRegions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zipCodeRadiusMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationSearchType",
+            "optional": true,
+            "type": "PersonOrHQ | PersonAndHQ | Person | HQ | PersonThenHQ"
+          },
+          {
+            "key": "hashTagString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "techAttributeTagList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "primaryIndustriesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "industryCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industryKeywords",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sicCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "naicsCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenueMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "revenueMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "employeeCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employeeRangeMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingAmountMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingAmountMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fundingStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fundingEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oneYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "twoYearEmployeeGrowthRateMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zoominfoContactsMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyWebsite",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ultimateParentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hashedEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middleInitial",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeJobTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "managementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "excludeManagementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobFunction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardMember",
+            "optional": true,
+            "type": "include | exclude | only"
+          },
+          {
+            "key": "hasBeenNotified",
+            "optional": true,
+            "type": "include | exclude | only"
+          },
+          {
+            "key": "companyPastOrPresent",
+            "optional": true,
+            "type": "present | past | pastAndPresent"
+          },
+          {
+            "key": "excludePartialProfiles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "executivesOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requiredFields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactAccuracyScoreMin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactAccuracyScoreMax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastUpdatedInMonths",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "degree",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationCompanyId",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "scoopId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scoopType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scoopTopic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedStartDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publishedEndDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedSinceCreation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "certified",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "excludeDefunctCompanies",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, publishedDate?: string, originalPublishedDate?: string, linkText?: string, link?: string, description?: string, updateText?: string, topics?: any[], types?: { id?: number, type?: string }[], contacts?: any[], company?: { id?: number, name?: string } }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "zoominfo.webhooks.zoominfo.companyUpdate",
+      "shortPath": "zoominfo.companyUpdate",
+      "description": "A company you have enriched was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookDetails",
+            "optional": false,
+            "type": "{ id: string, title?: string, objectType: string, eventType: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, name?: string, website?: string, changedAttributes?: string[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ webhookDetails: { id: string, title?: string, objectType: string, eventType: string }, data: { id: string | number, name?: string, website?: string, changedAttributes?: string[] }[] }",
+      "usageExample": "zoominfo({\n    webhookHooks: {\n        zoominfo: {\n            companyUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "zoominfo.webhooks.zoominfo.contactUpdate",
+      "shortPath": "zoominfo.contactUpdate",
+      "description": "A contact you have enriched was updated",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookDetails",
+            "optional": false,
+            "type": "{ id: string, title?: string, objectType: string, eventType: string }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string | number, firstName?: string, lastName?: string, email?: string, changedAttributes?: string[] }[]"
+          }
+        ]
+      },
+      "responseType": "{ webhookDetails: { id: string, title?: string, objectType: string, eventType: string }, data: { id: string | number, firstName?: string, lastName?: string, email?: string, changedAttributes?: string[] }[] }",
+      "usageExample": "zoominfo({\n    webhookHooks: {\n        zoominfo: {\n            contactUpdate: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "zoominfo.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticker",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revenue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "employeeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numberOfContactsInZoomInfo",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "street",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zipCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "middleName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactAccuracyScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "hasEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasSupplementalEmail",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasDirectPhone",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "hasMobilePhone",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "validDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "lastUpdatedDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.intentSignals.search",
+      "entityName": "intentSignals",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topic",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signalScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "audienceStrength",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "newSignal",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "signalDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "trend",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.locations.search",
+      "entityName": "locations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "street",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zipCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fax",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "addressStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subUnitType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationEmployeeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.newsArticles.search",
+      "entityName": "newsArticles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.scoops.search",
+      "entityName": "scoops",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updateText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publishedDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "originalPublishedDate",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zoominfo.db.technologies.search",
+      "entityName": "technologies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "vendor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryParent",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

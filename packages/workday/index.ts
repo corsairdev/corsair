@@ -907,13 +907,6 @@ export function workday<const T extends WorkdayPluginOptions>(
 		? normalizeWorkdayHost(options.host)
 		: undefined;
 
-	if (options.authType === 'oauth_2' && !tenant) {
-		throw new Error('[workday] options.tenant is required for oauth_2');
-	}
-	if (options.authType === 'oauth_2' && !host) {
-		throw new Error('[workday] options.host is required for oauth_2');
-	}
-
 	const oauthUrls =
 		tenant != null && host != null ? workdayOAuthUrls({ host, tenant }) : null;
 

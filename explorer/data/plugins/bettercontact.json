@@ -1,0 +1,313 @@
+{
+  "id": "bettercontact",
+  "displayName": "BetterContact",
+  "description": "Waterfall enrichment API for finding verified B2B emails and mobile phone numbers.",
+  "npmPackageName": "@corsair-dev/bettercontact",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bettercontact.api.credits.get",
+      "shortPath": "credits.get",
+      "description": "Check remaining API credits balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "credits_left",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bettercontact.api.enrichment.enrich",
+      "shortPath": "enrichment.enrich",
+      "description": "Submit lead enrichment request for work emails and phone numbers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ first_name?: string, last_name?: string, company?: string, company_domain?: string, linkedin_url?: string, custom_fields?: {} }[]"
+          },
+          {
+            "key": "enrich_email_address",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enrich_phone_number",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enrich_profile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "verify_catch_all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push_contact_individually",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contact_webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "process_flow",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout_seconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bettercontact.api.enrichment.getResults",
+      "shortPath": "enrichment.getResults",
+      "description": "Retrieve results for a submitted enrichment request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_started | processing | on_hold | terminated | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bettercontact.api.leadFinder.create",
+      "shortPath": "leadFinder.create",
+      "description": "Create a new Lead Finder search to discover leads based on criteria",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ company?: { include?: string[], exclude?: string[] }, company_linkedin_url?: { include?: string[], exclude?: string[] }, company_industry?: { include?: string[], exclude?: string[] }, company_hq_location?: { include?: string[], exclude?: string[] }, company_technologies?: { include?: string[], exclude?: string[] }, company_keywords?: { include?: string[], exclude?: string[] }, company_description?: { include?: string[], exclude?: string[] }, company_headcount_min?: number, company_headcount_max?: number, revenue_ranges?: { include?: string[], exclude?: string[] }, last_funding_round_names?: { include?: string[], exclude?: string[] }, last_funding_date_range?: { gte?: string, lte?: string }, last_amount_raised_usd?: { gte?: number, lte?: number }, total_amount_raised_usd?: { gte?: number, lte?: number }, is_b2b?: boolean, is_b2c?: boolean, is_public?: boolean, job_post_titles?: { include?: string[] }, job_posting_countries?: { include?: string[] }, job_posting_locations?: { include?: string[] }, limit_per_company?: number, lead_fullname?: { include?: string[], exclude?: string[] }, lead_linkedin_url?: { include?: string[], exclude?: string[] }, lead_job_title?: { include?: string[], exclude?: string[], exact_match?: boolean }, lead_seniority?: { include?: string[], exclude?: string[] }, lead_department?: { include?: string[], exclude?: string[] }, lead_function?: { include?: string[], exclude?: string[] }, lead_skills?: { include?: string[], exclude?: string[] }, lead_location?: { include?: string[], exclude?: string[] } }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_leads",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enrich_email_address",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enrich_phone_number",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bettercontact.api.leadFinder.getResults",
+      "shortPath": "leadFinder.getResults",
+      "description": "Retrieve results from a submitted Lead Finder search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "not_started | processing | on_hold | terminated | string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credits_consumed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "credits_left",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

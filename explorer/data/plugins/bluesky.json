@@ -1,0 +1,232 @@
+{
+  "id": "bluesky",
+  "displayName": "Bluesky",
+  "description": "Decentralized social network for posting feeds, follows, and public conversations.",
+  "npmPackageName": "@corsair-dev/bluesky",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "handle", "did"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bluesky.api.feeds.getTimeline",
+      "shortPath": "feeds.getTimeline",
+      "description": "Get the home timeline feed of the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string",
+            "description": "Algorithm to use for the feed"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return (1-100)"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feed",
+            "optional": false,
+            "type": "{ post: { uri: string, cid: string, author: { did: string, handle: string, displayName?: string, avatar?: string }, record: { text: string, createdAt: string }, replyCount?: number, repostCount?: number, likeCount?: number } }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bluesky.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create/publish a new post (skeet) on Bluesky",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The text content of the post (max 300 characters)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bluesky.api.posts.deleteRecord",
+      "shortPath": "posts.deleteRecord",
+      "description": "Delete a post on Bluesky",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string",
+            "description": "The AT Protocol URI (at://did:plc:...) of the post to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bluesky.api.profiles.get",
+      "shortPath": "profiles.get",
+      "description": "Get profile information for a Bluesky actor/user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "string",
+            "description": "The handle or DID of the user profile to fetch"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "did",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "banner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "followersCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "followsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "postsCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bluesky.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorDid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

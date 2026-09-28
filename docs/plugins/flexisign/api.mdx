@@ -1,0 +1,69 @@
+---
+title: API
+description: "API reference for Flexisign: every `flexisign.api.*` operation with input and output types."
+---
+
+Every `flexisign.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## List
+
+### templates
+
+`list.templates`
+
+List all available document templates in FlexiSign
+
+**Risk:** `read`
+
+```ts
+await corsair.flexisign.api.list.templates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `code` | `number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  list: {
+    _id: string,
+    name: string
+  }[],
+  meta: {
+    total: number,
+    limit: number,
+    page: number,
+    pages: number,
+    previousPage?: number | null,
+    nextPage?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

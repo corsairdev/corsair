@@ -1,0 +1,5 @@
+displayName: Google Analytics
+description: Google Analytics 4 plugin for Corsair
+overviewNote: |
+  GA4 Admin API, Data API, and Measurement Protocol. Listing measurement
+  protocol secrets returns stream api_secret values and counts as a write.

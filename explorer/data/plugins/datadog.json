@@ -1,0 +1,2629 @@
+{
+  "id": "datadog",
+  "displayName": "Datadog",
+  "description": "Monitoring and observability platform for metrics, logs, traces, and infrastructure alerts.",
+  "npmPackageName": "@corsair-dev/datadog",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 45,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "app_key", "site"]
+    }
+  ],
+  "api": [
+    {
+      "path": "datadog.api.apiKeys.list",
+      "shortPath": "apiKeys.list",
+      "description": "List API key metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.aws.list",
+      "shortPath": "aws.list",
+      "description": "List AWS integration accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "{ account_id?: string | null, role_name?: string | null, filter_tags?: string[], host_tags?: string[], metrics_collection_enabled?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.dashboards.create",
+      "shortPath": "dashboards.create",
+      "description": "Create a dashboard",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "widgets",
+            "optional": false,
+            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+          },
+          {
+            "key": "layoutType",
+            "optional": false,
+            "type": "ordered | free"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notifyList",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "layout_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_read_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widgets",
+            "optional": true,
+            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+          },
+          {
+            "key": "template_variables",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "notify_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.dashboards.delete",
+      "shortPath": "dashboards.delete",
+      "description": "Delete a dashboard [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_dashboard_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.dashboards.get",
+      "shortPath": "dashboards.get",
+      "description": "Get a dashboard with its widgets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "layout_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_read_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widgets",
+            "optional": true,
+            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+          },
+          {
+            "key": "template_variables",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "notify_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.dashboards.list",
+      "shortPath": "dashboards.list",
+      "description": "List dashboards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterShared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filterDeleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboards",
+            "optional": true,
+            "type": "{ id?: string, title?: string, description?: string | null, layout_type?: string, url?: string, author_handle?: string, is_read_only?: boolean, created_at?: string, modified_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.dashboards.update",
+      "shortPath": "dashboards.update",
+      "description": "Update a dashboard",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "widgets",
+            "optional": false,
+            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+          },
+          {
+            "key": "layoutType",
+            "optional": false,
+            "type": "ordered | free"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notifyList",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "dashboardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "layout_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_read_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "widgets",
+            "optional": true,
+            "type": "{ id?: number, definition: {}, layout?: { x: number, y: number, width: number, height: number } }[]"
+          },
+          {
+            "key": "template_variables",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "notify_list",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.downtimes.create",
+      "shortPath": "downtimes.create",
+      "description": "Schedule a downtime (suppresses monitor alerts)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scope",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitorId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: {}, schedule?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.downtimes.list",
+      "shortPath": "downtimes.list",
+      "description": "List downtimes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currentOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pageOffset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageLimit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data?: { id?: string, type?: string, attributes?: { scope?: string, status?: string, message?: string | null, created?: string, modified?: string, monitor_identifier?: {}, schedule?: {} } }[] } & { page?: { total_count?: number, total_filtered_count?: number, after?: string } }"
+      }
+    },
+    {
+      "path": "datadog.api.events.create",
+      "shortPath": "events.create",
+      "description": "Post an event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "alertType",
+            "optional": true,
+            "type": "error | warning | info | success | user_update | recommendation | snapshot"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "normal | low"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "aggregationKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceTypeName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "{ id?: number, title?: string, text?: string, date_happened?: number, priority?: string | null, tags?: string[] | null, alert_type?: string, source?: string, host?: string | null, url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events in a time window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "end",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "normal | low"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ id?: number, title?: string, text?: string, date_happened?: number, priority?: string | null, tags?: string[] | null, alert_type?: string, source?: string, host?: string | null, url?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.hosts.list",
+      "shortPath": "hosts.list",
+      "description": "List infrastructure hosts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortDir",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host_list",
+            "optional": true,
+            "type": "{ name?: string, host_name?: string, id?: number, aliases?: string[], apps?: string[], is_muted?: boolean, last_reported_time?: number, up?: boolean, sources?: string[], tags_by_source?: {} }[]"
+          },
+          {
+            "key": "total_matching",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_returned",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.hosts.totals",
+      "shortPath": "hosts.totals",
+      "description": "Get host totals (active/up)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_active",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_up",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.incidents.list",
+      "shortPath": "incidents.list",
+      "description": "List incidents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageOffset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.logs.aggregate",
+      "shortPath": "logs.aggregate",
+      "description": "Aggregate log analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.logs.listIndexes",
+      "shortPath": "logs.listIndexes",
+      "description": "List log indexes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "indexes",
+            "optional": true,
+            "type": "{ name?: string, filter?: {}, is_rate_limited?: boolean, daily_limit?: number | null, num_retention_days?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.logs.search",
+      "shortPath": "logs.search",
+      "description": "Search logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "indexes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "timestamp | -timestamp"
+          },
+          {
+            "key": "pageLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ page?: { total_count?: number, total_filtered_count?: number, after?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.metrics.listActive",
+      "shortPath": "metrics.listActive",
+      "description": "List actively reporting metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagFilter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.metrics.query",
+      "shortPath": "metrics.query",
+      "description": "Query timeseries points",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "{ metric?: string, display_name?: string, pointlist?: number | null[][], scope?: string, unit?: {} | null[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.metrics.submit",
+      "shortPath": "metrics.submit",
+      "description": "Submit metric series points",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "series",
+            "optional": false,
+            "type": "{ metric: string, points: tuple[], type?: gauge | count | rate, host?: string, tags?: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overall_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string, handle?: string }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.delete",
+      "shortPath": "monitors.delete",
+      "description": "Delete a monitor [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_monitor_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.get",
+      "shortPath": "monitors.get",
+      "description": "Get a monitor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "groupStates",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overall_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string, handle?: string }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "List monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitorTags",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupStates",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: {} }[]"
+      }
+    },
+    {
+      "path": "datadog.api.monitors.mute",
+      "shortPath": "monitors.mute",
+      "description": "Mute a monitor (suppresses alerting)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overall_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string, handle?: string }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.search",
+      "shortPath": "monitors.search",
+      "description": "Search monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitors",
+            "optional": true,
+            "type": "{ id?: number, name?: string, type?: string, query?: string, message?: string, tags?: string[], priority?: number | null, overall_state?: string, created?: string, modified?: string, creator?: { name?: string | null, email?: string, handle?: string }, options?: {} }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ total_count?: number, page?: number, page_count?: number, per_page?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.unmute",
+      "shortPath": "monitors.unmute",
+      "description": "Unmute a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allScopes",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overall_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string, handle?: string }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Update a monitor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "monitorId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "overall_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string, handle?: string }"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.roles.list",
+      "shortPath": "roles.list",
+      "description": "List roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.services.listDefinitions",
+      "shortPath": "services.listDefinitions",
+      "description": "List APM service definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, id?: string, attributes?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.slos.create",
+      "shortPath": "slos.create",
+      "description": "Create an SLO",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "metric | monitor"
+          },
+          {
+            "key": "thresholds",
+            "optional": false,
+            "type": "{ timeframe: string, target: number, warning?: number }[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ numerator: string, denominator: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: string, description?: string | null, tags?: string[], thresholds?: { timeframe: string, target: number, warning?: number }[], monitor_ids?: number[], query?: { numerator?: string, denominator?: string }, created_at?: number, modified_at?: number }[]"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.slos.list",
+      "shortPath": "slos.list",
+      "description": "List SLOs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagsQuery",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, name?: string, type?: string, description?: string | null, tags?: string[], thresholds?: { timeframe: string, target: number, warning?: number }[], monitor_ids?: number[], query?: { numerator?: string, denominator?: string }, created_at?: number, modified_at?: number }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ page?: { total_count?: number, total_filtered_count?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.spans.aggregate",
+      "shortPath": "spans.aggregate",
+      "description": "Aggregate APM span analytics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aggregation",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, attributes?: {} } | {}[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.spans.search",
+      "shortPath": "spans.search",
+      "description": "Search APM spans",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageCursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data?: { id?: string, type?: string, attributes?: {} }[], meta?: { page?: { total_count?: number, total_filtered_count?: number, after?: string } } } & { links?: {} }"
+      }
+    },
+    {
+      "path": "datadog.api.synthetics.createApiTest",
+      "shortPath": "synthetics.createApiTest",
+      "description": "Create a synthetic API test",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "options",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.synthetics.getApiTest",
+      "shortPath": "synthetics.getApiTest",
+      "description": "Get a synthetic API test",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publicId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.synthetics.listLocations",
+      "shortPath": "synthetics.listLocations",
+      "description": "List synthetic test locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ id?: string, name?: string, display_name?: string, region?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.synthetics.listTests",
+      "shortPath": "synthetics.listTests",
+      "description": "List synthetic tests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "{ public_id?: string, name?: string, type?: string, subtype?: string, status?: string, tags?: string[], locations?: string[], config?: {}, options?: {}, message?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.tags.getHost",
+      "shortPath": "tags.getHost",
+      "description": "Get tags for a host",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List host tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.tags.updateHost",
+      "shortPath": "tags.updateHost",
+      "description": "Replace tags for a host",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.usage.getSummary",
+      "shortPath": "usage.getSummary",
+      "description": "Get usage summary across products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startMonth",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "endMonth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeOrgDetails",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.users.list",
+      "shortPath": "users.list",
+      "description": "List organization users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, type?: string, attributes?: {}, relationships?: {} }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customHeaders",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "encodeAs",
+            "optional": true,
+            "type": "json | form"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_headers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "encode_as",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "datadog.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook integration by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_headers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "encode_as",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "datadog.db.dashboards.search",
+      "entityName": "dashboards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "layoutType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorHandle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "datadog.db.incidents.search",
+      "entityName": "incidents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "datadog.db.monitors.search",
+      "entityName": "monitors",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "overallState",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "datadog.db.slos.search",
+      "entityName": "slos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

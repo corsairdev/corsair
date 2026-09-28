@@ -214,7 +214,7 @@ const cloudflareEndpointMeta = {
 	},
 	'zones.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Cloudflare zone [DESTRUCTIVE]',
+		description: 'Delete a Cloudflare zone',
 	},
 	'dns.list': {
 		riskLevel: 'read',
@@ -234,7 +234,7 @@ const cloudflareEndpointMeta = {
 	},
 	'dns.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a DNS record [DESTRUCTIVE]',
+		description: 'Delete a DNS record',
 	},
 	'workers.scripts.list': {
 		riskLevel: 'read',
@@ -250,7 +250,7 @@ const cloudflareEndpointMeta = {
 	},
 	'workers.scripts.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Workers script [DESTRUCTIVE]',
+		description: 'Delete a Workers script',
 	},
 	'workers.routes.list': {
 		riskLevel: 'read',
@@ -270,7 +270,7 @@ const cloudflareEndpointMeta = {
 	},
 	'workers.routes.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a Workers route [DESTRUCTIVE]',
+		description: 'Delete a Workers route',
 	},
 	'rulesets.list': {
 		riskLevel: 'read',
@@ -290,7 +290,7 @@ const cloudflareEndpointMeta = {
 	},
 	'rulesets.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a ruleset [DESTRUCTIVE]',
+		description: 'Delete a ruleset',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof cloudflareEndpointsNested

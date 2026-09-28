@@ -1,0 +1,142 @@
+{
+  "id": "accrediblecertificates",
+  "displayName": "Accredible",
+  "description": "Digital certificate and badge platform for courses, events, and professional credentials.",
+  "npmPackageName": "@corsair-dev/accrediblecertificates",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "accrediblecertificates.api.credentials.get",
+      "shortPath": "credentials.get",
+      "description": "Get an credential resource by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential",
+            "optional": false,
+            "type": "{ id: string | number, name?: string | null, description?: string | null, approve?: boolean | null, grade?: any | null, complete?: boolean | null, issued_on?: string | null, expired_on?: string | null, course_link?: string | null, custom_attributes?: {} | null, group_name?: string | null, group_id?: string | number | null, url?: string | null, encoded_id?: string | null, private?: boolean | null, seo_image?: string | null, certificate?: { image?: { preview?: string | null } | null } | null, badge?: { image?: { preview?: string | null } | null } | null, evidence_items?: { id?: string | number | null, description?: string | null, preview_image_url?: string | null, link_url?: string | null, type?: string | null, string_object?: any | null, supplemental?: boolean | null, position?: number | null }[] | null, references?: { id?: string | number | null, description?: string | null, relationship?: string | null, supplemental?: boolean | null, approve?: boolean | null, referee?: { name?: string | null, email?: string | null, avatar?: string | null } | null }[] | null, recipient?: { id?: string | number | null, name?: string | null, email?: string | null, phone_number?: string | null, meta_data?: any | null } | null, issuer?: { id?: string | number | null, name?: string | null, description?: string | null, url?: string | null } | null, meta_data?: any | null, skills?: { id?: string | number | null, name?: string | null, identifier?: string | null, description?: string | null, url?: string | null, breadcrumbs?: any | null }[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "accrediblecertificates.db.credentials.search",
+      "entityName": "credentials",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "group_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issued_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "expired_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "complete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "approve",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "encoded_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "course_link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "seo_image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recipient_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recipient_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "issuer_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

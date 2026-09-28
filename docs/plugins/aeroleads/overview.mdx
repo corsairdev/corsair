@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Aeroleads plugin for Corsair"
+description: "B2B lead generation tool for finding business emails and prospect contact data."
 ---
 
-Use **Aeroleads** through Corsair: one client, typed API calls, local DB sync.
+Use **AeroLeads** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -45,8 +45,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```

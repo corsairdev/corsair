@@ -1,0 +1,1870 @@
+{
+  "id": "bestbuy",
+  "displayName": "Best Buy Remix API",
+  "description": "Best Buy Remix API plugin for Corsair",
+  "npmPackageName": "@corsair-dev/bestbuy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bestbuy.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Retrieve detailed information about a category by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the category to retrieve"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-delimited list of fields to include"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "subCategories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List or filter Best Buy product categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by category ID(s), pipe- or comma-separated"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by category name(s), pipe- or comma-separated"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number to retrieve (1-based)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of categories per page (1-100)"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to include in each category"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort order, e.g. 'name.asc' or 'id.dsc'"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canonicalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, url?: string | null, path?: { id?: string | null, name?: string | null }[] | null, subCategories?: { id?: string | null, name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.products.get",
+      "shortPath": "products.get",
+      "description": "Retrieve detailed information about a product by SKU",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": false,
+            "type": "string | number",
+            "description": "The SKU of the product to retrieve"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated attributes to include, or all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longDescriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortDescriptionHtml",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerReviewAverage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerReviewCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerTopRated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "digital",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preowned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "quantityLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "releaseDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warrantyLabor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warrantyParts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accessories",
+            "optional": true,
+            "type": "{ sku?: string | number | null }[]"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "{ name?: string | null, value?: string | null }[]"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "{ feature?: string | null }[]"
+          },
+          {
+            "key": "includedItemList",
+            "optional": true,
+            "type": "{ includedItem?: string | null }[]"
+          },
+          {
+            "key": "productVariations",
+            "optional": true,
+            "type": "{ sku?: string | number | null }[]"
+          },
+          {
+            "key": "proposition65WarningMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "proposition65WarningType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dollarSavings",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lowPriceGuarantee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onSale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "percentSavings",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priceRestriction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priceUpdateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "regularPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "salePrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "contracts",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "priceWithPlan",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "friendsAndFamilyPickup",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "homeDelivery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inStoreAvailability",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "inStoreAvailabilityUpdateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inStorePickup",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onlineAvailability",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "onlineAvailabilityUpdateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orderable",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "specialOrder",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "freeShipping",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "freeShippingEligible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "shippingCost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingLevelsOfService",
+            "optional": true,
+            "type": "{ serviceLevelId?: number | null, serviceLevelName?: string | null, unitShippingPrice?: number | null }[]"
+          },
+          {
+            "key": "accessoriesImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alternateViewsImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "angleImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backViewImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "energyGuideImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "largeFrontImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "largeImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leftViewImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mediumImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remoteControlImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rightViewImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spin360Url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnailImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topViewImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addToCartUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliateAddToCartUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "affiliateUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "classId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subclass",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subclassId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryPath",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ endDate?: string | null, listId?: string | null, startDate?: string | null }[]"
+          },
+          {
+            "key": "offers",
+            "optional": true,
+            "type": "{ endDate?: string | null, id?: string | null, startDate?: string | null, text?: string | null, type?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "activeUpdateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bundledIn",
+            "optional": true,
+            "type": "{ sku?: string | number | null }[]"
+          },
+          {
+            "key": "itemUpdateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ sku?: string | number | null }[]"
+          },
+          {
+            "key": "new",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "secondaryMarket",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.products.list",
+      "shortPath": "products.list",
+      "description": "Retrieve products with optional SKU, UPC, name, salePrice, and categoryPath.id filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | number",
+            "description": "Filter for a specific SKU"
+          },
+          {
+            "key": "upc",
+            "optional": true,
+            "type": "string",
+            "description": "Filter for a specific UPC"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by product name with wildcard, e.g. iPad*"
+          },
+          {
+            "key": "salePrice",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by sale price, e.g. 'salePrice>100' or '>100'"
+          },
+          {
+            "key": "categoryPathId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter products by categoryPath.id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number to retrieve (1-based)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of products per page (1-100)"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated attributes to include, or all"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort format, e.g. 'name.asc' or 'salePrice.dsc'"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canonicalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ sku?: string | number | null, name?: string | null, upc?: string | null, manufacturer?: string | null, modelNumber?: string | null, color?: string | null, condition?: string | null, description?: string | null, longDescription?: string | null, longDescriptionHtml?: string | null, shortDescription?: string | null, shortDescriptionHtml?: string | null, customerReviewAverage?: number | null, customerReviewCount?: number | null, customerTopRated?: boolean | null, depth?: string | null, height?: string | null, width?: string | null, weight?: string | null, digital?: boolean | null, format?: string | null, preowned?: boolean | null, quantityLimit?: number | null, releaseDate?: string | null, warrantyLabor?: string | null, warrantyParts?: string | null, accessories?: { sku?: string | number | null }[] | null, details?: { name?: string | null, value?: string | null }[] | null, features?: { feature?: string | null }[] | null, includedItemList?: { includedItem?: string | null }[] | null, productVariations?: { sku?: string | number | null }[] | null, proposition65WarningMessage?: string | null, proposition65WarningType?: string | null, dollarSavings?: number | null, lowPriceGuarantee?: boolean | null, onSale?: boolean | null, percentSavings?: string | null, priceRestriction?: string | null, priceUpdateDate?: string | null, regularPrice?: number | null, salePrice?: number | null, contracts?: {}[] | null, priceWithPlan?: {} | null, friendsAndFamilyPickup?: boolean | null, homeDelivery?: boolean | null, inStoreAvailability?: boolean | null, inStoreAvailabilityUpdateDate?: string | null, inStorePickup?: boolean | null, onlineAvailability?: boolean | null, onlineAvailabilityUpdateDate?: string | null, orderable?: string | null, specialOrder?: boolean | null, freeShipping?: boolean | null, freeShippingEligible?: boolean | null, shippingCost?: number | null, shippingWeight?: number | null, shippingLevelsOfService?: { serviceLevelId?: number | null, serviceLevelName?: string | null, unitShippingPrice?: number | null }[] | null, accessoriesImage?: string | null, alternateViewsImage?: string | null, angleImage?: string | null, backViewImage?: string | null, energyGuideImage?: string | null, image?: string | null, largeFrontImage?: string | null, largeImage?: string | null, leftViewImage?: string | null, mediumImage?: string | null, remoteControlImage?: string | null, rightViewImage?: string | null, spin360Url?: string | null, thumbnailImage?: string | null, topViewImage?: string | null, addToCartUrl?: string | null, url?: string | null, affiliateAddToCartUrl?: string | null, affiliateUrl?: string | null, class?: string | null, classId?: number | null, department?: string | null, departmentId?: number | null, subclass?: string | null, subclassId?: number | null, categoryPath?: { id?: string | null, name?: string | null }[] | null, lists?: { endDate?: string | null, listId?: string | null, startDate?: string | null }[] | null, offers?: { endDate?: string | null, id?: string | null, startDate?: string | null, text?: string | null, type?: string | null, url?: string | null }[] | null, active?: boolean | null, activeUpdateDate?: string | null, bundledIn?: { sku?: string | number | null }[] | null, itemUpdateDate?: string | null, members?: { sku?: string | number | null }[] | null, new?: boolean | null, secondaryMarket?: boolean | null, startDate?: string | null, type?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.reviews.get",
+      "shortPath": "reviews.get",
+      "description": "Retrieve a single review by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The unique identifier of the review to retrieve"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to include"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "submissionTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recommended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "qualityRating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "valueRating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "easeOfUseRating",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reviewer",
+            "optional": true,
+            "type": "{ name?: string | null } | { name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.reviews.list",
+      "shortPath": "reviews.list",
+      "description": "Retrieve product reviews with optional SKU, reviewer, and score filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string | number",
+            "description": "Filter reviews by product SKU"
+          },
+          {
+            "key": "reviewer",
+            "optional": true,
+            "type": "string",
+            "description": "Filter reviews by reviewer name"
+          },
+          {
+            "key": "minScore",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum rating score (1-5)"
+          },
+          {
+            "key": "maxScore",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rating score (1-5)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of reviews per page (1-100)"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to include"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort expression, e.g. 'submissionTime.dsc'"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canonicalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | number | null, sku?: string | number | null, title?: string | null, comment?: string | null, rating?: number | null, submissionTime?: string | null, recommended?: boolean | null, qualityRating?: number | null, valueRating?: number | null, easeOfUseRating?: number | null, reviewer?: { name?: string | null } | { name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.stores.get",
+      "shortPath": "stores.get",
+      "description": "Retrieve detailed information about a store by store ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for the Best Buy store"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to include, or all for detailedHours"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullPostalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locationType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "storeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hoursAmPm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gmtOffset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "detailedHours",
+            "optional": true,
+            "type": "{ day?: string | null, date?: string | null, open?: string | null, close?: string | null }[]"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "{ service?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bestbuy.api.stores.list",
+      "shortPath": "stores.list",
+      "description": "List Best Buy stores with optional city, region, postalCode, or area() geo search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geo",
+            "optional": true,
+            "type": "{ postalCode?: string, lat?: number, lng?: number, distance?: number }",
+            "description": "Remix area(location,distance): postalCode or lat+lng; distance defaults to 10 miles"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "Filter stores by city name"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter state code (maps to region)"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Filter stores by region / state"
+          },
+          {
+            "key": "storeId",
+            "optional": true,
+            "type": "number",
+            "description": "Specific store ID"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string",
+            "description": "Filter stores by postal code"
+          },
+          {
+            "key": "storeType",
+            "optional": true,
+            "type": "string",
+            "description": "Filter stores by store type"
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by services.service, comma-separated"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number to retrieve (must be > 0)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results per page (1-100)"
+          },
+          {
+            "key": "show",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated store fields to include"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Sort directive, e.g. 'city.asc' or 'name.dsc'"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "queryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "partial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "canonicalUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stores",
+            "optional": false,
+            "type": "{ storeId?: number | null, name?: string | null, longName?: string | null, address?: string | null, address2?: string | null, city?: string | null, region?: string | null, postalCode?: string | null, fullPostalCode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, distance?: number | null, location?: string | null, locationType?: string | null, storeType?: string | null, phone?: string | null, hours?: string | null, hoursAmPm?: string | null, gmtOffset?: number | null, detailedHours?: { day?: string | null, date?: string | null, open?: string | null, close?: string | null }[] | null, services?: { service?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bestbuy.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bestbuy.db.products.search",
+      "entityName": "products",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "manufacturer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modelNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "condition",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "longDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "longDescriptionHtml",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortDescriptionHtml",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerReviewAverage",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "customerReviewCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "customerTopRated",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "depth",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "height",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "weight",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "digital",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "preowned",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "quantityLimit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "releaseDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "warrantyLabor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "warrantyParts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proposition65WarningMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "proposition65WarningType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dollarSavings",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lowPriceGuarantee",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "onSale",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "percentSavings",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priceRestriction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priceUpdateDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "regularPrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "salePrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "friendsAndFamilyPickup",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "homeDelivery",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inStoreAvailability",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "inStoreAvailabilityUpdateDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "inStorePickup",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "onlineAvailability",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "onlineAvailabilityUpdateDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "orderable",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "specialOrder",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "freeShipping",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "freeShippingEligible",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "shippingCost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "shippingWeight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "accessoriesImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alternateViewsImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "angleImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backViewImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "energyGuideImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "largeFrontImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "largeImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leftViewImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mediumImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "remoteControlImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rightViewImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "spin360Url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnailImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "topViewImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "addToCartUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "affiliateAddToCartUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "affiliateUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "class",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "departmentId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subclass",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subclassId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "activeUpdateDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "itemUpdateDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "new",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "secondaryMarket",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bestbuy.db.reviews.search",
+      "entityName": "reviews",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "submissionTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recommended",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "qualityRating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "valueRating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "easeOfUseRating",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bestbuy.db.stores.search",
+      "entityName": "stores",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "storeId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "longName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullPostalCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lat",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lng",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "distance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locationType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "storeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hours",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hoursAmPm",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gmtOffset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

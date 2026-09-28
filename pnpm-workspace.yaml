@@ -1,5 +1,6 @@
 packages:
   - packages/**
+  - adapters/*
   - docs
   - demo/*
   - www

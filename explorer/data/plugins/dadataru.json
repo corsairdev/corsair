@@ -1,0 +1,2162 @@
+{
+  "id": "dadataru",
+  "displayName": "Dadataru",
+  "description": "Dadataru plugin for Corsair",
+  "npmPackageName": "@corsair-dev/dadataru",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 63,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "secret_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dadataru.api.clean.address",
+      "shortPath": "clean.address",
+      "description": "Clean and standardize Russian addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.birthdate",
+      "shortPath": "clean.birthdate",
+      "description": "Clean and standardize birthdates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.email",
+      "shortPath": "clean.email",
+      "description": "Clean and standardize email addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.name",
+      "shortPath": "clean.name",
+      "description": "Clean and parse full names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.passport",
+      "shortPath": "clean.passport",
+      "description": "Clean and validate Russian passport numbers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.phone",
+      "shortPath": "clean.phone",
+      "description": "Clean and standardize phone numbers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.record",
+      "shortPath": "clean.record",
+      "description": "Clean composite multi-field records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string[][]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.clean.vehicle",
+      "shortPath": "clean.vehicle",
+      "description": "Clean and recognize vehicle models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.address",
+      "shortPath": "find.address",
+      "description": "Find address details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.bank",
+      "shortPath": "find.bank",
+      "description": "Find bank details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.carBrand",
+      "shortPath": "find.carBrand",
+      "description": "Find car brand details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.companyByEmail",
+      "shortPath": "find.companyByEmail",
+      "description": "Find companies by email domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.country",
+      "shortPath": "find.country",
+      "description": "Find country metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.courtById",
+      "shortPath": "find.courtById",
+      "description": "Find court details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.currency",
+      "shortPath": "find.currency",
+      "description": "Find currency details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.delivery",
+      "shortPath": "find.delivery",
+      "description": "Find delivery city mapping IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.fiasById",
+      "shortPath": "find.fiasById",
+      "description": "Find address by FIAS ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.fmsUnit",
+      "shortPath": "find.fmsUnit",
+      "description": "Find passport issuing authority (FMS)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.fnsUnit",
+      "shortPath": "find.fnsUnit",
+      "description": "Find tax office (FNS) details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.ftsUnit",
+      "shortPath": "find.ftsUnit",
+      "description": "Find customs office (FTS) details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.medicalPositionById",
+      "shortPath": "find.medicalPositionById",
+      "description": "Find medical positions by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.mktu",
+      "shortPath": "find.mktu",
+      "description": "Find MKTU trademark classification items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.okpd2ById",
+      "shortPath": "find.okpd2ById",
+      "description": "Find OKPD2 classifications by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.okpdtrPosition",
+      "shortPath": "find.okpdtrPosition",
+      "description": "Find OKPDTR job positions by code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.okpdtrProfession",
+      "shortPath": "find.okpdtrProfession",
+      "description": "Find OKPDTR worker professions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.oktmoById",
+      "shortPath": "find.oktmoById",
+      "description": "Find territory details by OKTMO code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.okved2",
+      "shortPath": "find.okved2",
+      "description": "Find OKVED2 economic activities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.party",
+      "shortPath": "find.party",
+      "description": "Find Russian party/company details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.partyBy",
+      "shortPath": "find.partyBy",
+      "description": "Find Belarus party by UNP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.partyKz",
+      "shortPath": "find.partyKz",
+      "description": "Find Kazakhstan company details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.postalOffice",
+      "shortPath": "find.postalOffice",
+      "description": "Find postal office details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.find.postalUnitById",
+      "shortPath": "find.postalUnitById",
+      "description": "Find postal unit details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.geolocate.address",
+      "shortPath": "geolocate.address",
+      "description": "Find addresses near coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "radius_meters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.geolocate.postalUnit",
+      "shortPath": "geolocate.postalUnit",
+      "description": "Find postal units near coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lat",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lon",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "radius_meters",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.ipLocate.address",
+      "shortPath": "ipLocate.address",
+      "description": "Geolocate address by IP",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.profile.balance",
+      "shortPath": "profile.balance",
+      "description": "Get current account balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.profile.statistics",
+      "shortPath": "profile.statistics",
+      "description": "Get usage statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "dadataru.api.profile.versions",
+      "shortPath": "profile.versions",
+      "description": "Get reference database update versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.address",
+      "shortPath": "suggest.address",
+      "description": "Autocomplete and suggest addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.bank",
+      "shortPath": "suggest.bank",
+      "description": "Autocomplete and suggest banks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.carBrand",
+      "shortPath": "suggest.carBrand",
+      "description": "Autocomplete and suggest car brands",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.country",
+      "shortPath": "suggest.country",
+      "description": "Autocomplete and suggest countries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.court",
+      "shortPath": "suggest.court",
+      "description": "Autocomplete and suggest courts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.currency",
+      "shortPath": "suggest.currency",
+      "description": "Autocomplete and suggest currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.email",
+      "shortPath": "suggest.email",
+      "description": "Autocomplete and suggest emails",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.fias",
+      "shortPath": "suggest.fias",
+      "description": "Autocomplete and suggest FIAS addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.fmsUnit",
+      "shortPath": "suggest.fmsUnit",
+      "description": "Suggest passport issuing departments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.fnsUnit",
+      "shortPath": "suggest.fnsUnit",
+      "description": "Suggest tax inspection (FNS) offices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.ftsUnit",
+      "shortPath": "suggest.ftsUnit",
+      "description": "Suggest customs (FTS) offices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.medicalPosition",
+      "shortPath": "suggest.medicalPosition",
+      "description": "Suggest medical positions/specialties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.metro",
+      "shortPath": "suggest.metro",
+      "description": "Suggest metro stations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.mktu",
+      "shortPath": "suggest.mktu",
+      "description": "Suggest MKTU trademark classifications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.name",
+      "shortPath": "suggest.name",
+      "description": "Autocomplete and suggest names (FIO)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.okpd2",
+      "shortPath": "suggest.okpd2",
+      "description": "Suggest product classification (OKPD2) codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.okpdtrPosition",
+      "shortPath": "suggest.okpdtrPosition",
+      "description": "Suggest job positions from OKPDTR classifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.okpdtrProfession",
+      "shortPath": "suggest.okpdtrProfession",
+      "description": "Suggest worker professions from OKPDTR",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.oktmo",
+      "shortPath": "suggest.oktmo",
+      "description": "Suggest municipal territories (OKTMO)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.okved2",
+      "shortPath": "suggest.okved2",
+      "description": "Suggest economic activities (OKVED2)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.party",
+      "shortPath": "suggest.party",
+      "description": "Suggest Russian parties/companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.partyBy",
+      "shortPath": "suggest.partyBy",
+      "description": "Suggest Belarus parties/companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.partyKz",
+      "shortPath": "suggest.partyKz",
+      "description": "Suggest Kazakhstan parties/companies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.postalOffice",
+      "shortPath": "suggest.postalOffice",
+      "description": "Suggest postal offices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dadataru.api.suggest.postalUnit",
+      "shortPath": "suggest.postalUnit",
+      "description": "Suggest postal units",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kpp",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": false,
+            "type": "{ value: string, unrestricted_value: string, data: {} }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

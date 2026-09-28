@@ -1,0 +1,1669 @@
+{
+  "id": "jigsawstack",
+  "displayName": "JigsawStack",
+  "description": "AI utility API collection for OCR, translation, sentiment, and common ML microservices.",
+  "npmPackageName": "@corsair-dev/jigsawstack",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "jigsawstack.api.ai.imageGeneration",
+      "shortPath": "ai.imageGeneration",
+      "description": "Generate an image from a text prompt",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "png | svg"
+          },
+          {
+            "key": "return_type",
+            "optional": true,
+            "type": "url | binary | base64"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "advance_config",
+            "optional": true,
+            "type": "{ negative_prompt?: string, guidance?: number, seed?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean, content_type: string, base64: string } | { success: boolean, _usage?: { input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }, log_id?: string, url?: string, base64?: string }"
+      }
+    },
+    {
+      "path": "jigsawstack.api.ai.prediction",
+      "shortPath": "ai.prediction",
+      "description": "Forecast a time series from dated values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ value: number | string, date: string }[]"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prediction",
+            "optional": true,
+            "type": "{ value?: number | string, date?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.ai.sentiment",
+      "shortPath": "ai.sentiment",
+      "description": "Analyze sentiment and emotion in text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentiment",
+            "optional": true,
+            "type": "{ emotion?: string, sentiment?: string, score?: number, sentences?: { text?: string, emotion?: string, sentiment?: string, score?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.ai.summary",
+      "shortPath": "ai.summary",
+      "description": "Summarize text or a PDF as a paragraph or bullet points",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "text | points"
+          },
+          {
+            "key": "max_points",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_characters",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.ai.translate",
+      "shortPath": "ai.translate",
+      "description": "Translate text into a target language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string | string[]"
+          },
+          {
+            "key": "target_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current_language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "translated_text",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.audio.createVoiceClone",
+      "shortPath": "audio.createVoiceClone",
+      "description": "Clone a voice from an audio sample for later TTS",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.audio.speechToText",
+      "shortPath": "audio.speechToText",
+      "description": "Transcribe audio or video to text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "translate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "by_speaker",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "batch_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "chunk_duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "word_timestamps",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language_detected",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.audio.textToSpeech",
+      "shortPath": "audio.textToSpeech",
+      "description": "Convert text to speech audio",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voice_clone_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speaker_clone_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "speaker_clone_file_store_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.classification.classify",
+      "shortPath": "classification.classify",
+      "description": "Classify text or images with custom labels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ type: text | image, value: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "{ key?: string, type: text | image, value: string }[]"
+          },
+          {
+            "key": "multiple_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "predictions",
+            "optional": true,
+            "type": "(string | string[])[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.embedding.createV2",
+      "shortPath": "embedding.createV2",
+      "description": "Create v2 embeddings from text, image, audio, or PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | text-other | image | audio | pdf"
+          },
+          {
+            "key": "token_overflow_mode",
+            "optional": true,
+            "type": "truncate | error"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "speaker_fingerprint",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "embeddings",
+            "optional": true,
+            "type": "number[][]"
+          },
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "speaker_embeddings",
+            "optional": true,
+            "type": "number[][]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.promptEngine.create",
+      "shortPath": "promptEngine.create",
+      "description": "Create a reusable Prompt Engine template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "return_prompt",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "inputs",
+            "optional": true,
+            "type": "{ key: string, optional?: boolean, initial_value?: string }[]"
+          },
+          {
+            "key": "use_internet",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "optimize_prompt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prompt_guard",
+            "optional": true,
+            "type": "defamation | specialized_advice | privacy | intellectual_property | indiscriminate_weapons | hate | sexual_content | elections | code_interpreter_abuse[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt_engine_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.promptEngine.list",
+      "shortPath": "promptEngine.list",
+      "description": "List Prompt Engine templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt_engines",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.promptEngine.run",
+      "shortPath": "promptEngine.run",
+      "description": "Run a stored Prompt Engine by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input_values",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.validate.nsfw",
+      "shortPath": "validate.nsfw",
+      "description": "Detect NSFW content in an image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nsfw",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nudity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "gore",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nsfw_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nudity_score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gore_score",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.validate.profanity",
+      "shortPath": "validate.profanity",
+      "description": "Check text for profanity and return a cleaned copy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "censor_replacement",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "clean_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profanities_found",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "profanities",
+            "optional": true,
+            "type": "{ profanity?: string | null, startIndex?: number, endIndex?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.validate.spamCheck",
+      "shortPath": "validate.spamCheck",
+      "description": "Score text for spam likelihood",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "check",
+            "optional": true,
+            "type": "{ is_spam?: boolean, score?: number } | { is_spam?: boolean, score?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.validate.spellCheck",
+      "shortPath": "validate.spellCheck",
+      "description": "Detect and auto-correct spelling mistakes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "misspellings_found",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_correct_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "misspellings",
+            "optional": true,
+            "type": "{ word?: string | null, startIndex?: number, endIndex?: number, expected?: string[], auto_corrected?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.vision.detectObjects",
+      "shortPath": "vision.detectObjects",
+      "description": "Detect objects and GUI elements in an image",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompts",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "enhance_prompts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "object | gui[]"
+          },
+          {
+            "key": "annotated_image",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_type",
+            "optional": true,
+            "type": "url | base64"
+          },
+          {
+            "key": "return_masks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_tags",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "annotated_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gui_elements",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.vision.vocr",
+      "shortPath": "vision.vocr",
+      "description": "Extract text and fields from an image or PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_store_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string | string[] | {}"
+          },
+          {
+            "key": "page_range",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "fine_grained",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_bounds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "has_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.web.htmlToAny",
+      "shortPath": "web.htmlToAny",
+      "description": "Convert HTML or a URL to PNG, JPEG, WEBP, or PDF",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "pdf | png | jpeg | webp"
+          },
+          {
+            "key": "full_page",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "return_type",
+            "optional": true,
+            "type": "url | binary | base64"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_mobile",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dark_mode",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "size_preset",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ success: boolean, content_type: string, base64: string } | { success: boolean, _usage?: { input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }, log_id?: string, url?: string, base64?: string }"
+      }
+    },
+    {
+      "path": "jigsawstack.api.web.scrape",
+      "shortPath": "web.scrape",
+      "description": "Scrape a page into structured data with AI prompts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "element_prompts",
+            "optional": true,
+            "type": "string[] | {}"
+          },
+          {
+            "key": "selectors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "root_element_selector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scroll",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page_position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "meta | link[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "page_position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_position_length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "selectors",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web with optional AI overview",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "spell_check",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "safe_search",
+            "optional": true,
+            "type": "strict | moderate | off"
+          },
+          {
+            "key": "ai_overview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_scrape",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "byo_urls",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ai_overview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spell_fixed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_safe",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "image_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "geo_results",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "jigsawstack.api.web.searchSuggestions",
+      "shortPath": "web.searchSuggestions",
+      "description": "Get search autocomplete suggestions for a query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "_usage",
+            "optional": true,
+            "type": "{ input_tokens?: number, output_tokens?: number, inference_time_tokens?: number, total_tokens?: number }"
+          },
+          {
+            "key": "log_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suggestions",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "jigsawstack.db.prompts.search",
+      "entityName": "prompts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "prompt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jigsawstack.db.summaries.search",
+      "entityName": "summaries",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "jigsawstack.db.transcriptions.search",
+      "entityName": "transcriptions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

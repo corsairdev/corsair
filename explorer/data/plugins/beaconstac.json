@@ -1,0 +1,2448 @@
+{
+  "id": "beaconstac",
+  "displayName": "Beaconstac",
+  "description": "QR code and digital signage platform for contactless marketing and asset tracking.",
+  "npmPackageName": "@corsair-dev/beaconstac",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "organization_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "beaconstac.api.analytics.periodOverview",
+      "shortPath": "analytics.periodOverview",
+      "description": "Period overview analytics for a product type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_type",
+            "optional": false,
+            "type": "beacon | nfc | qr | geofence"
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "to_timestamp",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "points",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.analytics.productOverview",
+      "shortPath": "analytics.productOverview",
+      "description": "Product overview analytics for a time interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "product_type",
+            "optional": false,
+            "type": "beacon | nfc | qr | geofence"
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "to_timestamp",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "points",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.bulkQrcodes.list",
+      "shortPath": "bulkQrcodes.list",
+      "description": "List bulk QR Code collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qr_data_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name__icontains",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, name?: string, attributes?: any, qr_type?: number, qr_data_type?: number, organization?: number, storage_url?: string, media?: number | null, media_data?: any, maintainer?: number | null, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations accessible to the authenticated account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, name?: string, parent?: number | null, reseller_access?: boolean, whitelabel_access?: boolean, custom_domain?: string | null, cname?: string | null, feature_permissions?: any, domains?: any, ga_code?: string | null, fb_pixel_id?: string | null, google_conversion_id?: string | null, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.places.create",
+      "shortPath": "places.create",
+      "description": "Create a new place for location-based assets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_cover_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beacons",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "beacon_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_place",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "business_icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_cover_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.places.list",
+      "shortPath": "places.list",
+      "description": "List places with filtering, search, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name__icontains",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, name?: string, organization?: number, latitude?: number, longitude?: number, place_id?: string, address?: string, beacons?: any, beacon_count?: number, default_place?: boolean, business_icon_url?: string, business_cover_url?: string, business_color?: string, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.places.update",
+      "shortPath": "places.update",
+      "description": "Update a place name, address, or coordinates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "place_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "business_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_cover_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "place_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "beacons",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "beacon_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_place",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "business_icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_cover_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "business_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrcodes.delete",
+      "shortPath": "qrcodes.delete",
+      "description": "Delete a QR Code by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrcodes.get",
+      "shortPath": "qrcodes.get",
+      "description": "Retrieve a QR Code by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qr_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "place",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maintainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "fields_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "view_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "additional_params",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "heartbeat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrcodes.update",
+      "shortPath": "qrcodes.update",
+      "description": "Update a QR Code name, design, tags, or content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "qrcode_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "place",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "qr_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "fields_data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qr_type",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "place",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maintainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "fields_data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "view_limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "additional_params",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "heartbeat",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrTemplates.create",
+      "shortPath": "qrTemplates.create",
+      "description": "Create a reusable QR Code design template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dotScale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "colorDark",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoScale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "colorLight",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameStyle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeBallColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeBallShape",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gradientType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeFrameColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeFrameShape",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameTextColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundColor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundImage",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maintainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "margin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dotScale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dataPattern",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorDark",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "colorLight",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gradientType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeBallShape",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eyeFrameShape",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "backgroundImage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameStyle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frameText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrTemplates.delete",
+      "shortPath": "qrTemplates.delete",
+      "description": "Delete a QR Code template by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.qrTemplates.list",
+      "shortPath": "qrTemplates.list",
+      "description": "List QR Code templates for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name__icontains",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, name?: string, default?: boolean, organization?: number, maintainer?: number | null, meta?: any, margin?: number, dotScale?: number, dataPattern?: string, colorDark?: string, colorLight?: string, gradientType?: string, eyeBallShape?: string, eyeFrameShape?: string, logoImage?: string, backgroundImage?: string, frameStyle?: string, frameText?: string, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag for organizing QR Codes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maintainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags with optional filtering and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name__icontains",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, name?: string, color?: string, organization?: number, maintainer?: number | null, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Update a tag name or color",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maintainer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user under an organization (Reseller+)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billing_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile_picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscription_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stripe_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.users.get",
+      "shortPath": "users.get",
+      "description": "Retrieve a user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscription_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stripe_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users with filtering, search, and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email__exact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined__gt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined__lt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username__exact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined__gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined__lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email__icontains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name__exact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name__exact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscription_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username__icontains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name__icontains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name__icontains",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number, first_name?: string, last_name?: string, username?: string, user_group?: string, customer_plan?: string, subscription_state?: string, is_active?: boolean, stripe_id?: string | null, timezone?: string, organization?: number, last_login?: string | null, date_joined?: string, created?: string, updated?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "beaconstac.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user profile or organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "profile_picture",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_group",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscription_state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stripe_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_login",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_joined",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "beaconstac.db.bulkQrcodes.search",
+      "entityName": "bulkQrcodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qr_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "qr_data_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "storage_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "media",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maintainer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "reseller_access",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "whitelabel_access",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "custom_domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ga_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fb_pixel_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "google_conversion_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.places.search",
+      "entityName": "places",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "latitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "longitude",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "place_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "beacon_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "default_place",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "business_icon_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "business_cover_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "business_color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.qrcodes.search",
+      "entityName": "qrcodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qr_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "place",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maintainer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "template",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "view_limit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "location_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "password",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "heartbeat",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.qrTemplates.search",
+      "entityName": "qrTemplates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maintainer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "margin",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dotScale",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "dataPattern",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "colorDark",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "colorLight",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gradientType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eyeBallShape",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "eyeFrameShape",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logoImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "backgroundImage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "frameStyle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "frameText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maintainer",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "beaconstac.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_group",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_plan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscription_state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "stripe_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "timezone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "last_login",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date_joined",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

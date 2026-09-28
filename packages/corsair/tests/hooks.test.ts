@@ -61,7 +61,7 @@ describe('Endpoint Hooks', () => {
 			const modifiedText = 'Modified by before hook';
 
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -109,7 +109,7 @@ describe('Endpoint Hooks', () => {
 			const modifiedText = 'Modified text';
 
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -157,7 +157,7 @@ describe('Endpoint Hooks', () => {
 
 		it('should allow before hook to add new properties to args', async () => {
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -224,7 +224,7 @@ describe('Endpoint Hooks', () => {
 				null;
 
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -295,7 +295,7 @@ describe('Endpoint Hooks', () => {
 			);
 
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -369,7 +369,7 @@ describe('Endpoint Hooks', () => {
 			const executionOrder: string[] = [];
 
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -446,7 +446,7 @@ describe('Endpoint Hooks', () => {
 
 		it('should allow both hooks to modify their respective data', async () => {
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
@@ -507,7 +507,7 @@ describe('Endpoint Hooks', () => {
 	describe('Nested Endpoint Hooks', () => {
 		it('should work with nested endpoint paths', async () => {
 			const corsair = createCorsair({
-				kek: '',
+				kek: 'test-kek',
 				plugins: [
 					slack({
 						authType: 'api_key',
