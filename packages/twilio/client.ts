@@ -37,6 +37,11 @@ export function parseTwilioCredentials(key: string): TwilioCredentials {
 	};
 }
 
+/**
+ * Send an authenticated request to the Twilio REST API.
+ *
+ * Auth uses HTTP Basic with `base64(accountSid:authToken)`.
+ */
 export async function makeTwilioRequest<T>(
 	endpoint: string,
 	accountSid: string,
