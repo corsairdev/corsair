@@ -70,7 +70,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -143,7 +147,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -2349,6 +2356,14 @@
                   "plugins/retailed/overview",
                   "plugins/retailed/api",
                   "plugins/retailed/database"
+                ]
+              },
+              {
+                "group": "RevAI",
+                "pages": [
+                  "plugins/revai/overview",
+                  "plugins/revai/api",
+                  "plugins/revai/database"
                 ]
               },
               {
