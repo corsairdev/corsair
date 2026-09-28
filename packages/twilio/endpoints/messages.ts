@@ -1,15 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeTwilioRequest } from '../client';
+import { makeTwilioRequest, parseTwilioCredentials } from '../client';
 import type { TwilioEndpoints } from '../index';
 import type { TwilioEndpointOutputs } from './types';
 
 export const send: TwilioEndpoints['messagesSend'] = async (ctx, input) => {
+	const { accountSid: keyAccountSid, authToken } = parseTwilioCredentials(
+		ctx.key,
+	);
 	const accountSid =
 		ctx.options.accountSid ??
 		(await ctx.keys.get_accountSid()) ??
-		ctx.key.split(':')[0] ??
-		'';
-	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
+		keyAccountSid;
 
 	const response = await makeTwilioRequest<
 		TwilioEndpointOutputs['messagesSend']
@@ -47,12 +48,13 @@ export const send: TwilioEndpoints['messagesSend'] = async (ctx, input) => {
 };
 
 export const get: TwilioEndpoints['messagesGet'] = async (ctx, input) => {
+	const { accountSid: keyAccountSid, authToken } = parseTwilioCredentials(
+		ctx.key,
+	);
 	const accountSid =
 		ctx.options.accountSid ??
 		(await ctx.keys.get_accountSid()) ??
-		ctx.key.split(':')[0] ??
-		'';
-	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
+		keyAccountSid;
 
 	const response = await makeTwilioRequest<
 		TwilioEndpointOutputs['messagesGet']
@@ -73,12 +75,13 @@ export const get: TwilioEndpoints['messagesGet'] = async (ctx, input) => {
 };
 
 export const list: TwilioEndpoints['messagesList'] = async (ctx, input) => {
+	const { accountSid: keyAccountSid, authToken } = parseTwilioCredentials(
+		ctx.key,
+	);
 	const accountSid =
 		ctx.options.accountSid ??
 		(await ctx.keys.get_accountSid()) ??
-		ctx.key.split(':')[0] ??
-		'';
-	const authToken = ctx.key.includes(':') ? ctx.key.split(':')[1]! : ctx.key;
+		keyAccountSid;
 
 	const response = await makeTwilioRequest<
 		TwilioEndpointOutputs['messagesList']
