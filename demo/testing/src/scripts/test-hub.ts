@@ -1,11 +1,11 @@
 import 'dotenv/config';
 
+import { setupCorsair } from 'corsair';
 import {
 	getHubConfig,
 	processManagedOAuthDelivery,
-	setupCorsair,
-} from 'corsair';
-import { resolveHubDeliveryUrl } from 'corsair/hub';
+	resolveHubDeliveryUrl,
+} from 'corsair/hub';
 
 import { sqlite } from '@/db';
 import { corsair } from '@/server/corsair';
