@@ -159,11 +159,11 @@ If you need to see what API and DB operations are available, install the Corsair
 ```bash
 npm install @corsair-dev/cli
 
-npm corsair list # for api operations
+npx corsair list # for api operations
 
-npm corsair list --type=db # for db operations
+npx corsair list --type=db # for db operations
 
-npm corsair schema <endpoint> # to get input / output schema of any operation
+npx corsair schema <endpoint> # to get input / output schema of any operation
 ```
 
 ## Providers: managed vs bring-your-own
