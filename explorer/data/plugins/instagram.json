@@ -6,7 +6,7 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 23,
+    "api": 36,
     "webhooks": 3,
     "db": 5
   },
@@ -195,6 +195,57 @@
       }
     },
     {
+      "path": "instagram.api.comments.getReplies",
+      "shortPath": "comments.getReplies",
+      "description": "get comment replies.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Comment ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, text?: string, timestamp?: string, username?: string }[]",
+            "description": "The replies."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }"
+          }
+        ]
+      }
+    },
+    {
       "path": "instagram.api.comments.list",
       "shortPath": "comments.list",
       "description": "list comments on an instagram media object.",
@@ -213,6 +264,18 @@
             "optional": true,
             "type": "string",
             "description": "Optional search query used to filter comments by text, username, or other supported criteria."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
           }
         ]
       },
@@ -383,6 +446,18 @@
             "optional": true,
             "type": "string",
             "description": "Optional search query used to filter messages within the conversation."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
           }
         ]
       },
@@ -394,6 +469,64 @@
             "optional": false,
             "type": "{ id: string, message?: string, created_time?: string, from?: { id?: string, username?: string }, attachments?: { data?: { id?: string, mime_type?: string, name?: string, image_data?: {}, video_data?: {}, file_url?: string }[] } }[]",
             "description": "The list of messages contained within the specified conversation."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.conversations.getConversation",
+      "shortPath": "conversations.getConversation",
+      "description": "get conversation details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string",
+            "description": "The DM conversation ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The DM conversation ID."
+          },
+          {
+            "key": "updated_time",
+            "optional": true,
+            "type": "string",
+            "description": "Last updated timestamp."
+          },
+          {
+            "key": "message_count",
+            "optional": true,
+            "type": "number",
+            "description": "Total message count."
+          },
+          {
+            "key": "unread_count",
+            "optional": true,
+            "type": "number",
+            "description": "Unread message count."
           }
         ]
       }
@@ -417,6 +550,18 @@
             "optional": true,
             "type": "string",
             "description": "Optional search query used to filter conversations by participant, message content, or other supported criteria."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
           }
         ]
       },
@@ -543,6 +688,57 @@
       }
     },
     {
+      "path": "instagram.api.media.children",
+      "shortPath": "media.children",
+      "description": "get children media.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram Media ID (parent carousel/album)."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, media_type?: IMAGE | VIDEO, media_url?: string }[]",
+            "description": "Media children items."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }"
+          }
+        ]
+      }
+    },
+    {
       "path": "instagram.api.media.get",
       "shortPath": "media.get",
       "description": "get details about a specific media object.",
@@ -581,7 +777,7 @@
           },
           {
             "key": "media_type",
-            "optional": false,
+            "optional": true,
             "type": "IMAGE | VIDEO | CAROUSEL_ALBUM",
             "description": "The type of Instagram media, such as IMAGE, VIDEO, REELS, STORY, or CAROUSEL_ALBUM."
           },
@@ -599,19 +795,19 @@
           },
           {
             "key": "permalink",
-            "optional": false,
+            "optional": true,
             "type": "string",
             "description": "The permanent public URL to view the media on Instagram."
           },
           {
             "key": "timestamp",
-            "optional": false,
+            "optional": true,
             "type": "string",
             "description": "The ISO 8601 timestamp indicating when the media was created."
           },
           {
             "key": "username",
-            "optional": false,
+            "optional": true,
             "type": "string",
             "description": "The Instagram username that published the media."
           },
@@ -629,7 +825,7 @@
           },
           {
             "key": "is_comment_enabled",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Indicates whether commenting is enabled for the media."
           },
@@ -688,7 +884,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]",
+            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | {}, end_time?: string }[] }[]",
             "description": "A collection of insight metrics and values returned for the requested Instagram media."
           }
         ]
@@ -713,6 +909,18 @@
             "optional": true,
             "type": "string",
             "description": "Optional search keyword or filter to narrow the media results."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
           }
         ]
       },
@@ -722,7 +930,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, caption?: string, media_type: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink: string, timestamp: string, username: string, like_count: number, comments_count: number, is_comment_enabled: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
+            "type": "{ id: string, caption?: string, media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink?: string, timestamp?: string, username?: string, like_count: number, comments_count: number, is_comment_enabled?: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
             "description": "The list of Instagram media objects returned by the request."
           },
           {
@@ -762,8 +970,8 @@
           {
             "key": "status_code",
             "optional": false,
-            "type": "IN_PROGRESS | FINISHED | ERROR | EXPIRED",
-            "description": "The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid."
+            "type": "IN_PROGRESS | FINISHED | ERROR | EXPIRED | PUBLISHED",
+            "description": "The current processing status of the media container. IN_PROGRESS indicates processing is ongoing, FINISHED indicates the media is ready to publish, PUBLISHED indicates it was already published, ERROR indicates processing failed, and EXPIRED indicates the container is no longer valid."
           }
         ]
       }
@@ -833,6 +1041,40 @@
       }
     },
     {
+      "path": "instagram.api.messages.markSeen",
+      "shortPath": "messages.markSeen",
+      "description": "mark messages as seen.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient user ID to mark messages as seen."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether action succeeded."
+          }
+        ]
+      }
+    },
+    {
       "path": "instagram.api.messages.send",
       "shortPath": "messages.send",
       "description": "send a message in instagram messaging.",
@@ -892,6 +1134,181 @@
             "optional": true,
             "type": "number",
             "description": "The Unix timestamp indicating when the message was sent."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messages.sendImage",
+      "shortPath": "messages.sendImage",
+      "description": "send image via DM.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient ID."
+          },
+          {
+            "key": "image_url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the image to send via DM."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string",
+            "description": "The message ID."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messenger.deleteProfile",
+      "shortPath": "messenger.deleteProfile",
+      "description": "delete messenger profile.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "persistent_menu | ice_breakers[]",
+            "description": "The Instagram Messenger Profile fields to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string",
+            "description": "The API status response, typically \"success\"."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messenger.getProfile",
+      "shortPath": "messenger.getProfile",
+      "description": "get messenger profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "persistent_menu | ice_breakers[]",
+            "description": "Instagram Messenger Profile fields to query."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ persistent_menu?: { locale: string, composer_input_disabled?: boolean, call_to_actions?: { type: string, title: string, url?: string, payload?: string }[] }[], ice_breakers?: { question: string, payload: string }[] }[]",
+            "description": "Messenger Profile options."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.messenger.updateProfile",
+      "shortPath": "messenger.updateProfile",
+      "description": "update messenger profile.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Facebook Page ID."
+          },
+          {
+            "key": "persistent_menu",
+            "optional": true,
+            "type": "{ locale: string, composer_input_disabled?: boolean, call_to_actions?: { type: string, title: string, url?: string, payload?: string }[] }[]",
+            "description": "Persistent menu configuration."
+          },
+          {
+            "key": "ice_breakers",
+            "optional": true,
+            "type": "{ question: string, payload: string }[]",
+            "description": "Ice breaker configuration."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "string",
+            "description": "The API response result, typically \"success\"."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.contentPublishingLimit",
+      "shortPath": "profile.contentPublishingLimit",
+      "description": "get user content publishing limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID (Instagram Business Account ID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ quota_usage?: number, config?: { quota_total: number, quota_duration: number } }[]"
           }
         ]
       }
@@ -1048,8 +1465,195 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}[]",
+            "type": "{ name: string, period?: string, title?: string, description?: string, id?: string, values?: { value: number | string | {}, end_time?: string }[] }[]",
             "description": "A collection of insight metrics and values returned for the requested Instagram media."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.liveMedia",
+      "shortPath": "profile.liveMedia",
+      "description": "get user live media.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, caption?: string, media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink?: string, timestamp?: string, username?: string, like_count: number, comments_count: number, is_comment_enabled?: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
+            "description": "Live media items."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.replyMentions",
+      "shortPath": "profile.replyMentions",
+      "description": "reply to mentions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mention_id",
+            "optional": false,
+            "type": "string",
+            "description": "The mention ID (media or comment ID)."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The text of the reply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The created comment reply ID."
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.stories",
+      "shortPath": "profile.stories",
+      "description": "get user stories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, caption?: string, media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink?: string, timestamp?: string, username?: string, like_count: number, comments_count: number, is_comment_enabled?: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
+            "description": "Stories list."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "instagram.api.profile.tags",
+      "shortPath": "profile.tags",
+      "description": "get user tags.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ig_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Instagram User ID."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to query."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the next page of results."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor for the previous page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, caption?: string, media_type?: IMAGE | VIDEO | CAROUSEL_ALBUM, media_url?: string | null, thumbnail_url?: string | null, permalink?: string, timestamp?: string, username?: string, like_count: number, comments_count: number, is_comment_enabled?: boolean, children?: { data: { id: string, media_type: IMAGE | VIDEO, media_url: string }[] }, createdAt?: Date | null, updatedAt?: Date | null }[]",
+            "description": "Tagged media list."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string, after?: string }, next?: string }"
           }
         ]
       }

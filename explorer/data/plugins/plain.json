@@ -1,0 +1,1117 @@
+{
+  "id": "plain",
+  "displayName": "Plain",
+  "description": "Plain plugin for Corsair",
+  "npmPackageName": "@corsair-dev/plain",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "plain.api.companies.fetch",
+      "shortPath": "companies.fetch",
+      "description": "Fetch a company by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Create or update a company by ID or domain.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "{ companyId?: string, companyDomainName?: string }"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contractValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accountOwnerUserId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "CREATED | UPDATED | NOOP"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ id: string, name: string, domainName: string, contractValue?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customerGroups.addCustomer",
+      "shortPath": "customerGroups.addCustomer",
+      "description": "Add a customer to one or more customer groups.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerGroupIdentifiers",
+            "optional": false,
+            "type": "{ customerGroupId?: string, customerGroupKey?: string, externalId?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerGroupMemberships",
+            "optional": false,
+            "type": "{ customerId: string, customerGroup: { id: string, name: string, key: string, color: string, externalId?: string | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customerGroups.create",
+      "shortPath": "customerGroups.create",
+      "description": "Create a customer group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerGroup",
+            "optional": false,
+            "type": "{ id: string, name: string, key: string, color: string, externalId?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customerGroups.list",
+      "shortPath": "customerGroups.list",
+      "description": "List customer groups with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ externalIds?: string[] }"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerGroups",
+            "optional": false,
+            "type": "{ id: string, name: string, key: string, color: string, externalId?: string | null }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customerGroups.removeCustomer",
+      "shortPath": "customerGroups.removeCustomer",
+      "description": "Remove a customer from one or more customer groups.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerGroupIdentifiers",
+            "optional": false,
+            "type": "{ customerGroupId?: string, customerGroupKey?: string, externalId?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer asynchronously.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customers.getByEmail",
+      "shortPath": "customers.getByEmail",
+      "description": "Fetch a customer by email address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customers.getById",
+      "shortPath": "customers.getById",
+      "description": "Fetch a customer by Plain customer ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with optional filters and cursor pagination (first/after or last/before).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ isMarkedAsSpam?: boolean, customerGroupIds?: string[], customerGroupKeys?: string[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], slackChannelId?: string }"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "{ field: FULL_NAME, direction: ASC | DESC }"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.customers.upsert",
+      "shortPath": "customers.upsert",
+      "description": "Create or update a customer by identifier.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "{ externalId?: string, emailAddress?: string, customerId?: string }"
+          },
+          {
+            "key": "onCreate",
+            "optional": false,
+            "type": "{ externalId?: string, fullName: string, shortName?: string, email: { email: string, isVerified: boolean }, customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[] }"
+          },
+          {
+            "key": "onUpdate",
+            "optional": false,
+            "type": "{ externalId?: { value?: string | null }, fullName?: { value: string }, shortName?: { value?: string | null }, email?: { email: string, isVerified: boolean } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "CREATED | UPDATED | NOOP"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ id: string, externalId?: string | null, fullName: string, shortName?: string | null, email: { email: string, isVerified: boolean } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.graphql.run",
+      "shortPath": "graphql.run",
+      "description": "Run an arbitrary GraphQL query or mutation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "operationName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "lazy"
+      }
+    },
+    {
+      "path": "plain.api.threads.create",
+      "shortPath": "threads.create",
+      "description": "Create a thread for a customer.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerIdentifier",
+            "optional": false,
+            "type": "{ externalId?: string, emailAddress?: string, customerId?: string }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labelTypeIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "threadFields",
+            "optional": true,
+            "type": "{ key: string, type: STRING | BOOL | ENUM | NUMBER | CURRENCY | DATE, stringValue?: string, booleanValue?: boolean, numberValue?: number, dateValue?: string }[]"
+          },
+          {
+            "key": "assignedTo",
+            "optional": true,
+            "type": "{ userId?: string, machineUserId?: string }"
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tenantIdentifier",
+            "optional": true,
+            "type": "{ tenantId?: string, externalId?: string }"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "API | EMAIL | SLACK | MS_TEAMS | CHAT | INTERNAL | DISCORD | IMPORT"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.fetchIssues",
+      "shortPath": "threads.fetchIssues",
+      "description": "Fetch external thread links for a customer and flatten as issue records.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "threadFirst",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threadAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadLast",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "threadBefore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkFirst",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": false,
+            "type": "{ threadId: string, threadRef: string, threadTitle: string, link: { id: string, sourceId: string, sourceType: string, title: string, description?: string | null, url: string, status: string, linkType: string } }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          },
+          {
+            "key": "totalThreads",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.getById",
+      "shortPath": "threads.getById",
+      "description": "Fetch a thread by Plain thread ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.listDeprecated",
+      "shortPath": "threads.listDeprecated",
+      "description": "Deprecated threads listing operation; use threads.query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[], participantIds?: string[], broadcastIds?: string[], statuses?: TODO | SNOOZED | DONE[] }"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "{ field: STATUS_CHANGED_AT | CREATED_AT | CLOSEST_TO_BREACH_SLA | LAST_INBOUND_MESSAGE_AT | PRIORITY | THREAD_FIELD, direction: ASC | DESC, threadFieldKey?: string }"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threads",
+            "optional": false,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.query",
+      "shortPath": "threads.query",
+      "description": "List threads with filters, sort, and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ threadIds?: string[], refs?: string[], labelTypeIds?: string[], priorities?: number[], customerIds?: string[], isAssigned?: boolean, assignedToUser?: string[], isMarkedAsSpam?: boolean, supportEmailAddresses?: string[], customerGroupIdentifiers?: { customerGroupId?: string, customerGroupKey?: string, externalId?: string }[], tierIdentifiers?: { tierId?: string, externalId?: string }[], companyIdentifiers?: { companyId?: string, companyDomainName?: string }[], tenantIdentifiers?: { tenantId?: string, externalId?: string }[], messageSource?: CHAT | EMAIL | API | SLACK | MS_TEAMS | DISCORD | INTERNAL[], participantIds?: string[], broadcastIds?: string[], statuses?: TODO | SNOOZED | DONE[] }"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "{ field: STATUS_CHANGED_AT | CREATED_AT | CLOSEST_TO_BREACH_SLA | LAST_INBOUND_MESSAGE_AT | PRIORITY | THREAD_FIELD, direction: ASC | DESC, threadFieldKey?: string }"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threads",
+            "optional": false,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          },
+          {
+            "key": "totalCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.sendMessage",
+      "shortPath": "threads.sendMessage",
+      "description": "Reply to a thread via Plain routing.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textContent",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markdownContent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachmentIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "impersonation",
+            "optional": true,
+            "type": "{ asCustomer: { customerIdentifier: { externalId?: string, emailAddress?: string, customerId?: string } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.threads.update",
+      "shortPath": "threads.update",
+      "description": "Update a thread title.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread",
+            "optional": true,
+            "type": "{ id: string, ref: string, title: string, status: string, priority: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.tiers.fetch",
+      "shortPath": "tiers.fetch",
+      "description": "Fetch a tier by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tierId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tier",
+            "optional": true,
+            "type": "{ id: string, name: string, externalId?: string | null, color?: string, isDefault?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.tiers.list",
+      "shortPath": "tiers.list",
+      "description": "List tiers with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tiers",
+            "optional": false,
+            "type": "{ id: string, name: string, externalId?: string | null, color?: string, isDefault?: boolean }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a workspace user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "plain.api.users.getById",
+      "shortPath": "users.getById",
+      "description": "Fetch a workspace user by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, fullName: string, publicName: string, email: string, isDeleted?: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "plain.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domainName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contractValue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "plain.db.customer_groups.search",
+      "entityName": "customer_groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "plain.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "externalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "plain.db.threads.search",
+      "entityName": "threads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ref",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "plain.db.tiers.search",
+      "entityName": "tiers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -18,6 +18,8 @@ export type PrScope =
 export type PrScopeFilters = {
 	lane: PrScope['lane'];
 	turboFilter: string;
+	/** Extra Turbo `--filter` flag so the full lane also builds/tests adapters/*. */
+	adaptersFilter: string;
 	skipHeavy: boolean;
 	includeWww: boolean;
 	wwwInstallFilter: string;
@@ -154,6 +156,7 @@ export function filtersForScope(
 			return {
 				lane: 'plugin',
 				turboFilter: `${name}...`,
+				adaptersFilter: '',
 				skipHeavy: false,
 				includeWww: false,
 				wwwInstallFilter: '',
@@ -164,6 +167,7 @@ export function filtersForScope(
 			return {
 				lane: 'www',
 				turboFilter: '@corsair/www',
+				adaptersFilter: '',
 				skipHeavy: false,
 				includeWww: false,
 				wwwInstallFilter: '',
@@ -173,6 +177,7 @@ export function filtersForScope(
 			return {
 				lane: 'full',
 				turboFilter: './packages/*',
+				adaptersFilter: '--filter=./adapters/*',
 				skipHeavy: false,
 				includeWww: scope.includeWww,
 				wwwInstallFilter: scope.includeWww ? '--filter=@corsair/www...' : '',
@@ -182,6 +187,7 @@ export function filtersForScope(
 			return {
 				lane: 'skip-heavy',
 				turboFilter: '',
+				adaptersFilter: '',
 				skipHeavy: true,
 				includeWww: false,
 				wwwInstallFilter: '',

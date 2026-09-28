@@ -93,6 +93,20 @@ type InstagramRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
+// Graph IDs go into the path. The shared OpenAPI client then runs /{(.*?)}/g
+// on that string — CodeQL flags user-controlled braces as ReDoS. Reject them
+// here so request.ts never sees `{` from plugin input.
+function graphPath(endpoint: string): string {
+	const leading = endpoint.startsWith('/') ? '/' : '';
+	const segments = endpoint.replace(/^\//, '').split('/');
+	if (
+		segments.some((segment) => segment.includes('{') || segment.includes('}'))
+	) {
+		throw new InstagramAPIError('Invalid Graph path segment');
+	}
+	return `${leading}${segments.map(encodeURIComponent).join('/')}`;
+}
+
 export async function makeInstagramRequest<T>(
 	endpoint: string,
 	credentials: string,
@@ -113,10 +127,10 @@ export async function makeInstagramRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
-		body: method === 'POST' ? body : undefined,
+		url: graphPath(endpoint),
+		body: method === 'POST' || method === 'DELETE' ? body : undefined,
 		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

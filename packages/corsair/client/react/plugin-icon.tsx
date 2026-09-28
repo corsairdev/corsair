@@ -51,6 +51,7 @@ const DOMAIN_OVERRIDES: Record<string, string> = {
 	firecrawl: 'firecrawl.dev',
 	fireflies: 'fireflies.ai',
 	googlecalendar: 'calendar.google.com',
+	googledocs: 'docs.google.com',
 	googledrive: 'drive.google.com',
 	googlemeet: 'meet.google.com',
 	googlesheets: 'docs.google.com',
@@ -100,6 +101,12 @@ const LOGO_OVERRIDES: Record<string, string> = {
 	'docs.google.com': 'https://svgl.app/library/google-sheets.svg',
 };
 
+/** Docs and Sheets share docs.google.com — use product marks by plugin id. */
+const PLUGIN_ID_LOGO_OVERRIDES: Record<string, string> = {
+	googledocs:
+		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
+};
+
 /** Resolve a plugin id to a brand domain. */
 export function pluginToDomain(pluginId: string): string {
 	const id = pluginId.toLowerCase().replace(/_/g, '');
@@ -112,6 +119,13 @@ export function resolveIconUrl(domain: string): string {
 		.replace(/^(https?:\/\/)|(www\.)/g, '')
 		.replace(/\/$/, '');
 	return LOGO_OVERRIDES[clean] ?? `https://twenty-icons.com/${clean}`;
+}
+
+/** Icon URL for a plugin — prefers per-id overrides (e.g. Google Docs vs Sheets). */
+export function resolvePluginLogoUrl(pluginId: string): string {
+	const id = pluginId.toLowerCase().replace(/_/g, '');
+	if (PLUGIN_ID_LOGO_OVERRIDES[id]) return PLUGIN_ID_LOGO_OVERRIDES[id];
+	return resolveIconUrl(pluginToDomain(pluginId));
 }
 
 /** Title-case a plugin id for display: `google_sheets` → `Google Sheets`. */
@@ -128,15 +142,21 @@ export function titleCasePlugin(pluginId: string): string {
  */
 export function PluginIcon({
 	domain,
+	pluginId,
 	label,
 	size = 24,
 	radius,
 }: {
 	domain: string;
+	/** When set, uses {@link resolvePluginLogoUrl} (Docs vs Sheets on docs.google.com). */
+	pluginId?: string;
 	label: string;
 	size?: number;
 	radius?: number;
 }): ReactElement {
+	const iconUrl = pluginId
+		? resolvePluginLogoUrl(pluginId)
+		: resolveIconUrl(domain);
 	const [src, setSrc] = useState<string | null>(null);
 	useEffect(() => {
 		let live = true;
@@ -148,11 +168,11 @@ export function PluginIcon({
 		img.onload = () => {
 			if (live && img.naturalWidth > 0) setSrc(img.src);
 		};
-		img.src = resolveIconUrl(domain);
+		img.src = iconUrl;
 		return () => {
 			live = false;
 		};
-	}, [domain]);
+	}, [iconUrl]);
 
 	const box: CSSProperties = {
 		width: size,

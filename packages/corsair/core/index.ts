@@ -9,6 +9,7 @@ import {
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
+import { buildCloudCorsair, hasCloudBaseUrl } from './cloud';
 import { resolveRootPermissionsConfig } from './config/resolve-root-permissions';
 import { buildManagementNamespace } from './management';
 import { buildPermissionsNamespace } from './permissions';
@@ -69,11 +70,21 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	config: CorsairIntegration<Plugins>,
 ): CorsairSingleTenantClient<Plugins> | CorsairTenantWrapper<Plugins> {
+	if (
+		config.hub?.projectApiKey?.startsWith('ck_cloud_') &&
+		hasCloudBaseUrl(config.hub)
+	) {
+		return buildCloudCorsair(config);
+	}
+
 	const resolvedDatabase = config.database
 		? createCorsairDatabase(config.database)
 		: undefined;
 
-	const kek = config.kek;
+	// Empty kek is tolerated at construction (plugin-only clients, env-less build
+	// steps); it's rejected where used — key access via createMissingConfigProxy,
+	// OAuth state signing/verification in core/auth/state.ts.
+	const kek = config.kek ?? '';
 
 	// Build integration-level keys when database + KEK are configured;
 	// otherwise a proxy throws a clear error on first key access.
@@ -186,6 +197,52 @@ const activeTunnels: Set<string> = ((
 	}
 ).__corsairTunnels ??= new Set<string>());
 
+const TUNNEL_RESTART_MIN_MS = 1_000;
+const TUNNEL_RESTART_MAX_MS = 30_000;
+
+/**
+ * Keep a dev tunnel alive. frpc has no supervisor — a death (laptop sleep,
+ * network blip, frps restart) leaves the tunnel down until the app process
+ * restarts, and the Hub keeps delivering to the dead URL. Restart on death with
+ * capped exponential backoff; a healthy start resets the backoff. The
+ * Hub-owned slug is sticky, so a restart re-registers the same public URL.
+ * Extracted from the spawn so the restart wiring is unit-testable.
+ */
+export function superviseTunnel(opts: {
+	start: (onClose: () => void) => Promise<unknown>;
+	schedule?: (fn: () => void, ms: number) => void;
+	minDelayMs?: number;
+	maxDelayMs?: number;
+}): void {
+	const schedule =
+		opts.schedule ?? ((fn, ms) => void setTimeout(fn, ms).unref?.());
+	const min = opts.minDelayMs ?? TUNNEL_RESTART_MIN_MS;
+	const max = opts.maxDelayMs ?? TUNNEL_RESTART_MAX_MS;
+	let delay = min;
+	const run = (): void => {
+		// One restart per attempt, latched per attempt (not globally). A dead
+		// attempt can signal twice — runTunnel's fail() rejects the promise and
+		// kills the child, whose exit later fires onClose, possibly *after* the
+		// next attempt already started. onClose is bound to this attempt's
+		// `restart`, so a superseded attempt's late signal no-ops here instead of
+		// spawning an overlapping frpc process.
+		let ended = false;
+		const restart = (): void => {
+			if (ended) return;
+			ended = true;
+			schedule(run, delay);
+			delay = Math.min(delay * 2, max);
+		};
+		void opts
+			.start(restart)
+			.then(() => {
+				delay = min;
+			})
+			.catch(restart);
+	};
+	run();
+}
+
 function maybeStartTunnel(
 	_instance: unknown,
 	hub: HubConfig | undefined,
@@ -206,25 +263,28 @@ function maybeStartTunnel(
 	const cfg = typeof hub!.tunnel === 'object' ? hub!.tunnel : {};
 	const shareHost =
 		process.env.CORSAIR_FRP_HOST ?? cfg.shareHost ?? CORSAIR_TUNNEL_ZONE;
-	void import('../hub/tunnel/run-tunnel')
-		.then((m) =>
-			m.runTunnel({
-				port,
-				apiUrl: hub!.apiUrl,
-				apiKey: key,
-				shareHost,
-				onClose: () => activeTunnels.delete(key),
-			}),
-		)
-		.then(({ url }) => {
-			console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
-		})
-		.catch((err: unknown) => {
-			activeTunnels.delete(key);
-			console.warn(
-				`[corsair] tunnel failed to start: ${err instanceof Error ? err.message : String(err)}. Run \`corsair setup\` to enable your dev tunnel.`,
-			);
-		});
+	superviseTunnel({
+		start: (onClose) =>
+			import('../hub/tunnel/run-tunnel')
+				.then((m) =>
+					m.runTunnel({
+						port,
+						apiUrl: hub!.apiUrl,
+						apiKey: key,
+						shareHost,
+						onClose,
+					}),
+				)
+				.then(({ url }) => {
+					console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
+				})
+				.catch((err: unknown) => {
+					console.warn(
+						`[corsair] tunnel down: ${err instanceof Error ? err.message : String(err)}. Retrying — run \`corsair setup\` if it doesn't recover.`,
+					);
+					throw err;
+				}),
+	});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -282,6 +342,13 @@ export type {
 	CorsairSingleTenantClient,
 	CorsairTenantWrapper,
 } from './client';
+export type {
+	CorsairCloudConfig,
+	CorsairCloudInstance,
+	CorsairCloudRegistry,
+} from './cloud';
+// Cloud surface (corsairCloud)
+export { corsairCloud } from './cloud';
 // Connect link utilities
 export type { ResolveConnectLinkResult } from './connect';
 export { resolveConnectLink } from './connect';

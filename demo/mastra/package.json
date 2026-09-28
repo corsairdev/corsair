@@ -1,0 +1,24 @@
+{
+  "name": "corsair-mastra-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "mastra dev"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.43",
+    "@corsair-dev/mastra": "workspace:*",
+    "@corsair-dev/slack": "workspace:^",
+    "@mastra/core": "^1.64.0",
+    "better-sqlite3": "^11.0.0",
+    "corsair": "workspace:*",
+    "dotenv": "^16.4.0",
+    "mastra": "^1.27.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
+  }
+}
