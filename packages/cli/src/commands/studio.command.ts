@@ -45,7 +45,7 @@ export default class StudioCommand extends BaseCommand {
 		try {
 			const { createRequire } = await import('node:module');
 			const { pathToFileURL } = await import('node:url');
-			const req = createRequire(path.join(cwd, 'package.json'));
+			const req = createRequire(import.meta.url);
 			const resolvedPath = req.resolve('@corsair-dev/studio/server');
 			const mod = (await import(pathToFileURL(resolvedPath).href)) as {
 				start?: StartStudio;
