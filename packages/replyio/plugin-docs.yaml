@@ -1,0 +1,14 @@
+displayName: Reply.io
+description: AI-powered sales engagement platform for contacts, multichannel sequences, email accounts, and sending schedules.
+recommendedAuth: api_key
+examples:
+  read:
+    path: sequences.list
+    title: List sequences
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      email: prospect@example.com
+      firstName: Ada
+      lastName: Lovelace
