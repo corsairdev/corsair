@@ -43,7 +43,7 @@ type EntityClient = {
  */
 export async function cacheEntities(
 	ctx: AbyssaleContext,
-	entity: 'projects' | 'designs' | 'fonts',
+	entity: 'projects' | 'designs' | 'fonts' | 'banners',
 	items: ReadonlyArray<{ id?: string }>,
 ): Promise<void> {
 	const db = ctx.db as unknown as

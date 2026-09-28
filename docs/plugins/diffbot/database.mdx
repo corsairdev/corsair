@@ -1,0 +1,528 @@
+---
+title: Database
+description: "Diffbot local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Diffbot plugin syncs data locally. Use `corsair.diffbot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `diffbot.db.accounts.search`
+
+```ts
+const rows = await corsair.diffbot.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `token` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan` | `string` | equals, contains, startsWith, endsWith, in |
+| `planStart` | `string` | equals, contains, startsWith, endsWith, in |
+| `planCalls` | `number` | equals, gt, gte, lt, lte, in |
+| `apiCalls` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Articles
+
+Path: `diffbot.db.articles.search`
+
+```ts
+const rows = await corsair.diffbot.db.articles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `estimatedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `authorUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `siteName` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `numPages` | `number` | equals, gt, gte, lt, lte, in |
+| `nextPage` | `string` | equals, contains, startsWith, endsWith, in |
+| `publisherRegion` | `string` | equals, contains, startsWith, endsWith, in |
+| `publisherCountry` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentiment` | `number` | equals, gt, gte, lt, lte, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Bulk Jobs
+
+Path: `diffbot.db.bulkJobs.search`
+
+```ts
+const rows = await corsair.diffbot.db.bulkJobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `bulkjobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `completed` | `number` | equals, gt, gte, lt, lte, in |
+| `failed` | `number` | equals, gt, gte, lt, lte, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `apiUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `urls` | `string` | equals, contains, startsWith, endsWith, in |
+| `downloadUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Crawl Jobs
+
+Path: `diffbot.db.crawlJobs.search`
+
+```ts
+const rows = await corsair.diffbot.db.crawlJobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `sentToCrawler` | `number` | equals, gt, gte, lt, lte, in |
+| `objectsHarvested` | `number` | equals, gt, gte, lt, lte, in |
+| `urlsHarvested` | `number` | equals, gt, gte, lt, lte, in |
+| `pageRounds` | `number` | equals, gt, gte, lt, lte, in |
+| `maxRounds` | `number` | equals, gt, gte, lt, lte, in |
+| `maxHops` | `number` | equals, gt, gte, lt, lte, in |
+| `pause` | `number` | equals, gt, gte, lt, lte, in |
+| `roundProxy` | `number` | equals, gt, gte, lt, lte, in |
+| `seeds` | `string` | equals, contains, startsWith, endsWith, in |
+| `apiUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `downloadUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `maxTags` | `number` | equals, gt, gte, lt, lte, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Custom Apis
+
+Path: `diffbot.db.customApis.search`
+
+```ts
+const rows = await corsair.diffbot.db.customApis.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `api` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `pattern` | `string` | equals, contains, startsWith, endsWith, in |
+| `testUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Discussions
+
+Path: `diffbot.db.discussions.search`
+
+```ts
+const rows = await corsair.diffbot.db.discussions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `numPosts` | `number` | equals, gt, gte, lt, lte, in |
+| `numParticipants` | `number` | equals, gt, gte, lt, lte, in |
+| `rssUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Events
+
+Path: `diffbot.db.events.search`
+
+```ts
+const rows = await corsair.diffbot.db.events.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `startDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `endDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `organizer` | `string` | equals, contains, startsWith, endsWith, in |
+| `ticketUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Images
+
+Path: `diffbot.db.images.search`
+
+```ts
+const rows = await corsair.diffbot.db.images.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `naturalHeight` | `number` | equals, gt, gte, lt, lte, in |
+| `naturalWidth` | `number` | equals, gt, gte, lt, lte, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `primary` | `boolean` | equals |
+| `xpath` | `string` | equals, contains, startsWith, endsWith, in |
+| `attrTitle` | `string` | equals, contains, startsWith, endsWith, in |
+| `attrAlt` | `string` | equals, contains, startsWith, endsWith, in |
+| `caption` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Jobs
+
+Path: `diffbot.db.jobs.search`
+
+```ts
+const rows = await corsair.diffbot.db.jobs.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `employmentType` | `string` | equals, contains, startsWith, endsWith, in |
+| `postedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Lists
+
+Path: `diffbot.db.lists.search`
+
+```ts
+const rows = await corsair.diffbot.db.lists.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `numItems` | `number` | equals, gt, gte, lt, lte, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `diffbot.db.organizations.search`
+
+```ts
+const rows = await corsair.diffbot.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `homepageUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `logo` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `nbEmployees` | `number` | equals, gt, gte, lt, lte, in |
+| `nbEmployeesMin` | `number` | equals, gt, gte, lt, lte, in |
+| `nbEmployeesMax` | `number` | equals, gt, gte, lt, lte, in |
+| `revenue` | `number` | equals, gt, gte, lt, lte, in |
+| `isPublic` | `boolean` | equals |
+| `isNonProfit` | `boolean` | equals |
+| `isAcquired` | `boolean` | equals |
+| `isDissolved` | `boolean` | equals |
+| `totalInvestment` | `number` | equals, gt, gte, lt, lte, in |
+| `linkedInUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitterUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `facebookUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `githubUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `wikipediaUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `crunchbaseUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `angellistUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `naicsClassification` | `string` | equals, contains, startsWith, endsWith, in |
+| `sicClassification` | `string` | equals, contains, startsWith, endsWith, in |
+| `naceClassification` | `string` | equals, contains, startsWith, endsWith, in |
+| `crawlTimestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## People
+
+Path: `diffbot.db.people.search`
+
+```ts
+const rows = await corsair.diffbot.db.people.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `summary` | `string` | equals, contains, startsWith, endsWith, in |
+| `image` | `string` | equals, contains, startsWith, endsWith, in |
+| `gender` | `string` | equals, contains, startsWith, endsWith, in |
+| `birthDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `deathDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `linkedInUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `twitterUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `facebookUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `githubUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `wikipediaUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `crunchbaseUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `angellistUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `homepageUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `crawlTimestamp` | `number` | equals, gt, gte, lt, lte, in |
+| `importance` | `number` | equals, gt, gte, lt, lte, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Products
+
+Path: `diffbot.db.products.search`
+
+```ts
+const rows = await corsair.diffbot.db.products.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `brand` | `string` | equals, contains, startsWith, endsWith, in |
+| `offerPrice` | `string` | equals, contains, startsWith, endsWith, in |
+| `regularPrice` | `string` | equals, contains, startsWith, endsWith, in |
+| `saveAmount` | `string` | equals, contains, startsWith, endsWith, in |
+| `shippingAmount` | `string` | equals, contains, startsWith, endsWith, in |
+| `availability` | `boolean` | equals |
+| `sku` | `string` | equals, contains, startsWith, endsWith, in |
+| `mpn` | `string` | equals, contains, startsWith, endsWith, in |
+| `upc` | `string` | equals, contains, startsWith, endsWith, in |
+| `isbn` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Videos
+
+Path: `diffbot.db.videos.search`
+
+```ts
+const rows = await corsair.diffbot.db.videos.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `pageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `resolvedPageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `naturalHeight` | `number` | equals, gt, gte, lt, lte, in |
+| `naturalWidth` | `number` | equals, gt, gte, lt, lte, in |
+| `duration` | `number` | equals, gt, gte, lt, lte, in |
+| `viewCount` | `number` | equals, gt, gte, lt, lte, in |
+| `uploadDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `author` | `string` | equals, contains, startsWith, endsWith, in |
+| `embedUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `html` | `string` | equals, contains, startsWith, endsWith, in |
+| `humanLanguage` | `string` | equals, contains, startsWith, endsWith, in |
+| `diffbotUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `extractedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

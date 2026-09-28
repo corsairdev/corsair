@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Abyssale plugin for Corsair"
+---
+
+Use **Abyssale** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 7 typed API operations
+- 4 synced entities (`banners`, `designs`, `fonts`, `projects`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/abyssale
+```
+```bash yarn
+yarn add corsair @corsair-dev/abyssale
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/abyssale
+```
+```bash bun
+bun add corsair @corsair-dev/abyssale
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { abyssale } from '@corsair-dev/abyssale';
+
+export const corsair = createCorsair({
+	plugins: [
+		abyssale(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+abyssale()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'abyssale',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`auth.test`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.auth.test({});
+```
+
+
+**`generation.batch`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.abyssale.api.generation.batch({});
+```
+
+
+See the full list on the [API](/plugins/abyssale/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.abyssale.db.<entity>.search()` and `.list()`: `banners`, `designs`, `fonts`, `projects`.
+
+See [Database](/plugins/abyssale/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/abyssale/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/abyssale/api">
+    Every `abyssale.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/abyssale/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/abyssale/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

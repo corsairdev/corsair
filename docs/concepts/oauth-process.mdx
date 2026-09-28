@@ -1,18 +1,18 @@
 ---
-title: OAuth Process
-description: A production-ready OAuth implementation with security best practices for Corsair.
+title: OAuth process
+description: A production OAuth implementation with security best practices for Corsair.
 ---
 
-OAuth lets your users connect their own accounts to your app. Corsair handles state signing, token exchange, and encrypted storage — you wire up the connect flow.
+OAuth lets your users connect their own accounts to your app. Corsair handles state signing, token exchange, and encrypted storage. You wire up the connect flow.
 
 Corsair supports two connect modes:
 
 | Mode | Config | What you build |
 | ---- | ------ | -------------- |
-| **Hub** | `hub: { ... }` | Mint a link, redirect to Corsair Hub — see [Connect / OAuth](/management/connect) |
+| **Hub** | `hub: { ... }` | Mint a link, redirect to Corsair Hub. See [Connect / OAuth](/management/connect) |
 | **Manual** | `manual: { baseUrl, redirectUri }` | Connect page + OAuth callback (this guide) |
 
-This page covers **manual mode** in production. The flow uses `client.connect.createLink()` — one API for minting connect URLs.
+This page covers **manual mode** in production. The flow uses `client.connect.createLink()`, one API for minting connect URLs.
 
 ```mermaid
 sequenceDiagram
@@ -33,8 +33,6 @@ sequenceDiagram
 ```
 
 Corsair handles CSRF protection via HMAC-signed state, token encryption, and automatic refresh before API calls.
-
----
 
 <Steps>
 
@@ -84,7 +82,7 @@ OAuth is supported by plugins like Gmail, Google Calendar, Notion, Spotify, Drop
 
 ## Create the connect link
 
-When a user clicks "Connect", call `createLink` on your **authenticated** backend. Read `tenantId` from your session — never from the request body alone in production.
+When a user clicks "Connect", call `createLink` on your **authenticated** backend. Read `tenantId` from your session, never from the request body alone in production.
 
 <Warning>
 **This step must be authenticated.** If left open, anyone could mint connect links for arbitrary tenants. Always resolve `tenantId` from your session before calling `createLink`.
@@ -255,7 +253,7 @@ export async function connectPageHandler(req: Request, res: Response) {
 After the user approves, the provider redirects to `manual.redirectUri` with `?code=` and `?state=`. Exchange the code for tokens and store them encrypted for the tenant.
 
 <Warning>
-Corsair re-verifies the HMAC-signed `state` inside `oauthCallback`. The `tenantId` and `plugin` are extracted from state — do not trust query parameters for tenant identity.
+Corsair re-verifies the HMAC-signed `state` inside `oauthCallback`. The `tenantId` and `plugin` are extracted from state. Do not trust query parameters for tenant identity.
 </Warning>
 
 <Tabs>
@@ -363,42 +361,34 @@ export async function oauthCallbackHandler(req: Request, res: Response) {
 
 </Steps>
 
----
-
 ## Environment variables
 
 | Variable | Description |
 |---|---|
-| `CORSAIR_KEK` | Key-encryption key — generate with `openssl rand -hex 32`. Never rotate without re-encrypting stored DEKs. |
+| `CORSAIR_KEK` | Key-encryption key. Generate with `openssl rand -hex 32`. Never rotate without re-encrypting stored DEKs. |
 | `APP_URL` | Your app's public base URL (e.g. `https://myapp.com`). Used to build `manual.baseUrl` and `manual.redirectUri`. |
 | `NODE_ENV` | Set to `production` to enable HTTPS-only cookies and other hardening elsewhere in your app. |
 
----
-
 ## Security checklist
 
-<Check>`createLink` is behind authentication — `tenantId` comes from your session, not user input</Check>
+<Check>`createLink` is behind authentication. `tenantId` comes from your session, not user input</Check>
 <Check>`manual.baseUrl` and `manual.redirectUri` use your HTTPS domain in production</Check>
-<Check>The connect page calls `resolve(state)` — Corsair verifies the HMAC before returning the OAuth URL</Check>
-<Check>The callback calls `oauthCallback({ code, state })` — Corsair re-verifies state and exchanges the code</Check>
+<Check>The connect page calls `resolve(state)`, and Corsair verifies the HMAC before returning the OAuth URL</Check>
+<Check>The callback calls `oauthCallback({ code, state })`, and Corsair re-verifies state and exchanges the code</Check>
 <Check>All user-controlled values are HTML-escaped before rendering error pages</Check>
 <Check>OAuth redirect URI registered with the provider matches `manual.redirectUri` exactly</Check>
 
----
-
 ## Hub mode
 
-If you prefer Corsair to host the connect UI, use `hub: { ... }` instead of `manual`. You only mint a link and mount a delivery endpoint — no connect page or callback route needed. Hub stores none of your credentials; tokens still land in your database.
+If you prefer Corsair to host the connect UI, use `hub: { ... }` instead of `manual`. You only mint a link and mount a delivery endpoint, with no connect page or callback route needed. Hub stores none of your credentials; tokens still land in your database.
 
 See [Hub overview](/hub/overview) for the model, [Manual or Hub](/hub/manual-vs-hub) for a side-by-side, and [Connect / OAuth](/management/connect) for the API.
-
----
 
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="Connect / OAuth" href="/management/connect">
-    Unified createLink API — hub and manual modes.
+    Unified createLink API for hub and manual modes.
   </Card>
   <Card title="OAuth 2.0 Concepts" href="/concepts/oauth">
     How Corsair encrypts and stores tokens, and handles automatic refresh.
@@ -407,6 +397,6 @@ See [Hub overview](/hub/overview) for the model, [Manual or Hub](/hub/manual-vs-
     Scoping every API call and database query per user with withTenant().
   </Card>
   <Card title="Gmail Plugin" href="/plugins/gmail/overview">
-    Set up Gmail OAuth — a common starting point.
+    Set up Gmail OAuth, a common starting point.
   </Card>
 </CardGroup>

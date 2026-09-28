@@ -4,7 +4,7 @@ sidebarTitle: API Key
 description: Use static API keys and tokens with Corsair plugins.
 ---
 
-API key authentication is the simplest auth type in Corsair. You provide a static credential — an API key, personal access token, or bot token — and Corsair stores it encrypted in your database, then injects it into every request automatically.
+API key authentication is the simplest auth type in Corsair. You provide a static credential, such as an API key, personal access token, or bot token, and Corsair stores it encrypted in your database, then injects it into every request automatically.
 
 ## How it works
 
@@ -28,11 +28,9 @@ pnpm corsair setup --plugin=linear api_key=your-api-key
 
 Every `corsair.linear.api.*` call will use the stored key automatically.
 
----
-
 ## Solo setup
 
-Solo mode means one API key shared across your entire application. This is the default — no extra configuration needed.
+Solo mode means one API key shared across your entire application. This is the default, no extra configuration needed.
 
 ```ts corsair.ts
 export const corsair = createCorsair({
@@ -55,8 +53,6 @@ All API calls use this key:
 const issues = await corsair.linear.api.issues.list({ teamId: "team-id" });
 ```
 
----
-
 ## Multi-tenant setup
 
 In multi-tenant mode, each user supplies their own API key. Keys are stored and encrypted separately per tenant.
@@ -69,7 +65,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Store each tenant's key — for example, after collecting it during onboarding:
+Store each tenant's key, for example after collecting it during onboarding:
 
 ```ts onboarding.ts
 await corsair
@@ -93,8 +89,6 @@ const issues = await tenant.linear.api.issues.list({ teamId: "team-id" });
 ```
 
 Each tenant's key is independently encrypted. Compromising one does not expose others.
-
----
 
 ## Bring Your Own Key
 

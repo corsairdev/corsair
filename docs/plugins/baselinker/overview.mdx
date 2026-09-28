@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "BaseLinker plugin for Corsair"
+---
+
+Use **BaseLinker** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 106 typed API operations
+- 16 synced entities (`categories`, `connectIntegrations`, `couriers`, `externalStorages`, `inventories`, `inventoryExtraFields`, and 10 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/baselinker
+```
+```bash yarn
+yarn add corsair @corsair-dev/baselinker
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/baselinker
+```
+```bash bun
+bun add corsair @corsair-dev/baselinker
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { baselinker } from '@corsair-dev/baselinker';
+
+export const corsair = createCorsair({
+	plugins: [
+		baselinker(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+baselinker()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'baselinker',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`connect.getConnectIntegrationContractors`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.connect.getConnectIntegrationContractors({});
+```
+
+
+**`couriers.createPackageManual`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.baselinker.api.couriers.createPackageManual({});
+```
+
+
+See the full list on the [API](/plugins/baselinker/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.baselinker.db.<entity>.search()` and `.list()`: `categories`, `connectIntegrations`, `couriers`, `externalStorages`, `inventories`, `inventoryExtraFields`, `manufacturers`, `orderStatuses`, `payers`, `priceGroups`, `returnProductStatuses`, `returnReasons`, `returnStatuses`, `suppliers`, `tags`, `warehouses`.
+
+See [Database](/plugins/baselinker/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/baselinker/api">
+    Every `baselinker.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/baselinker/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,111 @@
+---
+title: Database
+description: "CrowTerminal local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The CrowTerminal plugin syncs data locally. Use `corsair.crowterminal.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Data Points
+
+Path: `crowterminal.db.dataPoints.search`
+
+```ts
+const rows = await corsair.crowterminal.db.dataPoints.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Incidents
+
+Path: `crowterminal.db.incidents.search`
+
+```ts
+const rows = await corsair.crowterminal.db.incidents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Skills
+
+Path: `crowterminal.db.skills.search`
+
+```ts
+const rows = await corsair.crowterminal.db.skills.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `clientName` | `string` | equals, contains, startsWith, endsWith, in |
+| `version` | `number` | equals, gt, gte, lt, lte, in |
+| `primaryNiche` | `string` | equals, contains, startsWith, endsWith, in |
+| `contentStyle` | `string` | equals, contains, startsWith, endsWith, in |
+| `signatureStyle` | `string` | equals, contains, startsWith, endsWith, in |
+| `avgEngagement` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhooks
+
+Path: `crowterminal.db.webhooks.search`
+
+```ts
+const rows = await corsair.crowterminal.db.webhooks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `isActive` | `boolean` | equals |
+| `createdAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -3,12 +3,12 @@ title: Overview
 description: "DodoPayments plugin for Corsair"
 ---
 
-Use **Dodo Payments** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Dodo Payments** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 9 typed API operations
-- 4 database entities synced for fast `.search()` / `.list()` queries
+- 4 synced entities (`customers`, `payments`, `refunds`, `subscriptions`) for fast `.search()` / `.list()`
 - 5 incoming webhook event types
 
 ## Setup
@@ -16,134 +16,126 @@ Use **Dodo Payments** through Corsair: one client, typed API calls, optional loc
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/dodopayments
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/dodopayments
 ```
+```bash yarn
+yarn add corsair @corsair-dev/dodopayments
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/dodopayments
+```
+```bash bun
+bun add corsair @corsair-dev/dodopayments
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { dodopayments } from '@corsair-dev/dodopayments';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [dodopayments()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { dodopayments } from '@corsair-dev/dodopayments';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [dodopayments()],
+	plugins: [
+		dodopayments(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/dodopayments/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=dodopayments
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/dodopayments/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=dodopayments --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
-
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 dodopayments()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=dodopayments` (see [Get Credentials](/plugins/dodopayments/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **5** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/dodopayments/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'dodopayments',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.dodopayments.db.<entity>.search()` and `.list()`. See [Database](/plugins/dodopayments/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `customers.get`
+**`customers.get`**
 
 ```ts
-await corsair.dodopayments.api.customers.get({});
+const tenant = corsair.withTenant('acme');
+await tenant.dodopayments.api.customers.get({});
 ```
 
 
-**Write-style (write):** `customers.create`
+**`customers.create`**
 
 ```ts
-await corsair.dodopayments.api.customers.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.dodopayments.api.customers.create({});
 ```
 
 
-See the full list on the [API](/plugins/dodopayments/api) page. Use `pnpm corsair list --plugin=dodopayments` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/dodopayments/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.dodopayments.db.<entity>.search()` and `.list()`: `customers`, `payments`, `refunds`, `subscriptions`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/dodopayments/webhooks) page for payload types.
+See [Database](/plugins/dodopayments/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **5** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/dodopayments/api) |
-| Database | [Database](/plugins/dodopayments/database) |
-| Webhooks | [Webhooks](/plugins/dodopayments/webhooks) |
-| Credentials | [Get credentials](/plugins/dodopayments/get-credentials) |
+See [Webhooks](/plugins/dodopayments/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/dodopayments/api">
+    Every `dodopayments.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/dodopayments/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/dodopayments/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

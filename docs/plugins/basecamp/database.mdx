@@ -1,0 +1,211 @@
+---
+title: Database
+description: "Basecamp OAuth local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Basecamp OAuth plugin syncs data locally. Use `corsair.basecamp.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Campfires
+
+Path: `basecamp.db.campfires.search`
+
+```ts
+const rows = await corsair.basecamp.db.campfires.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `topic` | `string` | equals, contains, startsWith, endsWith, in |
+| `visible_to_clients` | `boolean` | equals |
+| `inherits_status` | `boolean` | equals |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `bookmark_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscription_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `lines_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Chatbots
+
+Path: `basecamp.db.chatbots.search`
+
+```ts
+const rows = await corsair.basecamp.db.chatbots.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `service_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `command_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `lines_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Message Types
+
+Path: `basecamp.db.messageTypes.search`
+
+```ts
+const rows = await corsair.basecamp.db.messageTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## People
+
+Path: `basecamp.db.people.search`
+
+```ts
+const rows = await corsair.basecamp.db.people.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `attachable_sgid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `personable_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `bio` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `admin` | `boolean` | equals |
+| `owner` | `boolean` | equals |
+| `client` | `boolean` | equals |
+| `employee` | `boolean` | equals |
+| `time_zone` | `string` | equals, contains, startsWith, endsWith, in |
+| `avatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `can_ping` | `boolean` | equals |
+| `can_manage_projects` | `boolean` | equals |
+| `can_manage_people` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `basecamp.db.projects.search`
+
+```ts
+const rows = await corsair.basecamp.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `purpose` | `string` | equals, contains, startsWith, endsWith, in |
+| `clients_enabled` | `boolean` | equals |
+| `timesheet_enabled` | `boolean` | equals |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_needle_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_needle_position` | `number` | equals, gt, gte, lt, lte, in |
+| `previous_needle_position` | `number` | equals, gt, gte, lt, lte, in |
+| `bookmark_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `star_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `all_access` | `boolean` | equals |
+| `bookmarked` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Templates
+
+Path: `basecamp.db.templates.search`
+
+```ts
+const rows = await corsair.basecamp.db.templates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `app_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

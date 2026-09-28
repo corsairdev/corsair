@@ -1,0 +1,388 @@
+---
+title: Database
+description: "Harvest local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Harvest plugin syncs data locally. Use `corsair.harvest.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Clients
+
+Path: `harvest.db.clients.search`
+
+```ts
+const rows = await corsair.harvest.db.clients.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_active` | `boolean` | equals |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `statement_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Company
+
+Path: `harvest.db.company.search`
+
+```ts
+const rows = await corsair.harvest.db.company.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `full_domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `base_uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_active` | `boolean` | equals |
+| `week_start_day` | `string` | equals, contains, startsWith, endsWith, in |
+| `wants_timestamp_timers` | `boolean` | equals |
+| `time_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `plan_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `clock` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_code_display` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency_symbol_display` | `string` | equals, contains, startsWith, endsWith, in |
+| `decimal_symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `thousands_separator` | `string` | equals, contains, startsWith, endsWith, in |
+| `color_scheme` | `string` | equals, contains, startsWith, endsWith, in |
+| `weekly_capacity` | `number` | equals, gt, gte, lt, lte, in |
+| `expense_feature` | `boolean` | equals |
+| `invoice_feature` | `boolean` | equals |
+| `estimate_feature` | `boolean` | equals |
+| `approval_feature` | `boolean` | equals |
+| `team_feature` | `boolean` | equals |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `saml_sign_in_required` | `boolean` | equals |
+| `day_entry_notes_required` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Contacts
+
+Path: `harvest.db.contacts.search`
+
+```ts
+const rows = await corsair.harvest.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_office` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_mobile` | `string` | equals, contains, startsWith, endsWith, in |
+| `fax` | `string` | equals, contains, startsWith, endsWith, in |
+| `invoice_recipient_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Estimates
+
+Path: `harvest.db.estimates.search`
+
+```ts
+const rows = await corsair.harvest.db.estimates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `client_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `string` | equals, contains, startsWith, endsWith, in |
+| `purchase_order` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `tax` | `number` | equals, gt, gte, lt, lte, in |
+| `tax_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `tax2` | `number` | equals, gt, gte, lt, lte, in |
+| `tax2_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `discount` | `number` | equals, gt, gte, lt, lte, in |
+| `discount_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `issue_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `sent_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `accepted_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `declined_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Expense Categories
+
+Path: `harvest.db.expenseCategories.search`
+
+```ts
+const rows = await corsair.harvest.db.expenseCategories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `unit_price` | `number` | equals, gt, gte, lt, lte, in |
+| `is_active` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoice Item Categories
+
+Path: `harvest.db.invoiceItemCategories.search`
+
+```ts
+const rows = await corsair.harvest.db.invoiceItemCategories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `use_as_service` | `boolean` | equals |
+| `use_as_expense` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoices
+
+Path: `harvest.db.invoices.search`
+
+```ts
+const rows = await corsair.harvest.db.invoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `client_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `number` | `string` | equals, contains, startsWith, endsWith, in |
+| `purchase_order` | `string` | equals, contains, startsWith, endsWith, in |
+| `amount` | `number` | equals, gt, gte, lt, lte, in |
+| `due_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `tax` | `number` | equals, gt, gte, lt, lte, in |
+| `tax_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `tax2` | `number` | equals, gt, gte, lt, lte, in |
+| `tax2_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `discount` | `number` | equals, gt, gte, lt, lte, in |
+| `discount_amount` | `number` | equals, gt, gte, lt, lte, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_start` | `string` | equals, contains, startsWith, endsWith, in |
+| `period_end` | `string` | equals, contains, startsWith, endsWith, in |
+| `issue_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `due_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `payment_term` | `string` | equals, contains, startsWith, endsWith, in |
+| `sent_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `paid_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `paid_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `closed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `recurring_invoice_id` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `harvest.db.projects.search`
+
+```ts
+const rows = await corsair.harvest.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_active` | `boolean` | equals |
+| `is_billable` | `boolean` | equals |
+| `is_fixed_fee` | `boolean` | equals |
+| `bill_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `hourly_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `budget_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `budget_is_monthly` | `boolean` | equals |
+| `budget` | `number` | equals, gt, gte, lt, lte, in |
+| `cost_budget` | `number` | equals, gt, gte, lt, lte, in |
+| `cost_budget_include_expenses` | `boolean` | equals |
+| `notify_when_over_budget` | `boolean` | equals |
+| `over_budget_notification_percentage` | `number` | equals, gt, gte, lt, lte, in |
+| `over_budget_notification_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `show_budget_to_all` | `boolean` | equals |
+| `fee` | `number` | equals, gt, gte, lt, lte, in |
+| `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `starts_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `ends_on` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tasks
+
+Path: `harvest.db.tasks.search`
+
+```ts
+const rows = await corsair.harvest.db.tasks.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `billable_by_default` | `boolean` | equals |
+| `default_hourly_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `is_default` | `boolean` | equals |
+| `is_active` | `boolean` | equals |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `harvest.db.users.search`
+
+```ts
+const rows = await corsair.harvest.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `telephone` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `has_access_to_all_future_projects` | `boolean` | equals |
+| `is_contractor` | `boolean` | equals |
+| `is_active` | `boolean` | equals |
+| `saml_exempt` | `boolean` | equals |
+| `weekly_capacity` | `number` | equals, gt, gte, lt, lte, in |
+| `default_hourly_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `cost_rate` | `number` | equals, gt, gte, lt, lte, in |
+| `avatar_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `employee_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `calendar_integration_enabled` | `boolean` | equals |
+| `calendar_integration_source` | `string` | equals, contains, startsWith, endsWith, in |
+| `can_create_projects` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

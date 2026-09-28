@@ -1,0 +1,147 @@
+---
+title: API
+description: "API reference for AmbientWeather: every `ambientweather.api.*` operation with input and output types."
+---
+
+Every `ambientweather.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Devices
+
+### getData
+
+`devices.getData`
+
+Fetch historical weather data for a specific Ambient Weather device
+
+**Risk:** `read`
+
+```ts
+await corsair.ambientweather.api.devices.getData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `macAddress` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `endDate` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  dateutc: number,
+  date?: string,
+  tz?: string,
+  winddir?: number,
+  windspeedmph?: number,
+  windgustmph?: number,
+  maxdailygust?: number,
+  windgustdir?: number,
+  winddir_avg2m?: number,
+  windspdmph_avg2m?: number,
+  winddir_avg10m?: number,
+  windspdmph_avg10m?: number,
+  tempf?: number,
+  humidity?: number,
+  baromrelin?: number,
+  baromabsin?: number,
+  tempinf?: number,
+  humidityin?: number,
+  hourlyrainin?: number,
+  dailyrainin?: number,
+  weeklyrainin?: number,
+  monthlyrainin?: number,
+  yearlyrainin?: number,
+  eventrainin?: number,
+  totalrainin?: number,
+  uv?: number,
+  solarradiation?: number,
+  feelsLike?: number,
+  dewPoint?: number,
+  lastRain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`devices.list`
+
+List all Ambient Weather devices for the connected account with their latest readings
+
+**Risk:** `read`
+
+```ts
+await corsair.ambientweather.api.devices.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  macAddress: string,
+  info: {
+    name: string,
+    location?: string
+  },
+  lastData: {
+    dateutc: number,
+    date?: string,
+    tz?: string,
+    winddir?: number,
+    windspeedmph?: number,
+    windgustmph?: number,
+    maxdailygust?: number,
+    windgustdir?: number,
+    winddir_avg2m?: number,
+    windspdmph_avg2m?: number,
+    winddir_avg10m?: number,
+    windspdmph_avg10m?: number,
+    tempf?: number,
+    humidity?: number,
+    baromrelin?: number,
+    baromabsin?: number,
+    tempinf?: number,
+    humidityin?: number,
+    hourlyrainin?: number,
+    dailyrainin?: number,
+    weeklyrainin?: number,
+    monthlyrainin?: number,
+    yearlyrainin?: number,
+    eventrainin?: number,
+    totalrainin?: number,
+    uv?: number,
+    solarradiation?: number,
+    feelsLike?: number,
+    dewPoint?: number,
+    lastRain?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

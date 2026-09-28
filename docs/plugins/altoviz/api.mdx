@@ -1,0 +1,5948 @@
+---
+title: API
+description: "API reference for Altoviz: every `altoviz.api.*` operation with input and output types."
+---
+
+Every `altoviz.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getClassifications
+
+`account.getClassifications`
+
+List accounting classifications, optionally filtered by type (Sale | Expense | Other)
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.getClassifications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Sale \| Expense \| Other` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  label?: string | null,
+  description?: string | null,
+  type?: string | null,
+  accountNumber?: string | null,
+  isProduct?: boolean | null,
+  isService?: boolean | null,
+  defaultVat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  microBusinessDeclarationType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCurrentUser
+
+`account.getCurrentUser`
+
+Get the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.getCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `displayName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `profile` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### getSettings
+
+`account.getSettings`
+
+Get accounting, company, emailing, sales, social and VAT settings
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.getSettings({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUnits
+
+`account.getUnits`
+
+List measurement units - reference data, mirrored
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.getUnits({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  code?: string | null,
+  name?: string | null,
+  type?: string | null,
+  conversion?: number | null,
+  decimals?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getVats
+
+`account.getVats`
+
+List VAT rates - reference data, mirrored
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.getVats({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  default?: boolean | null,
+  id: number,
+  label?: string | null,
+  rate?: number | null,
+  region?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### testApiKey
+
+`account.testApiKey`
+
+Verify the API key and get the account identity - takes no parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.account.testApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apiKeyName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `message` | `string` | No | — |
+| `serverTimestamp` | `string` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+
+## Colleagues
+
+### delete
+
+`colleagues.delete`
+
+Delete a colleague [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.colleagues.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `colleagueId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`colleagues.get`
+
+Get a colleague by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.colleagues.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `colleagueId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `isPartner` | `boolean` | No | — |
+| `initialPartnerBalance` | `number` | No | — |
+| `homecareServiceNumber` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `metadatas` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadatas full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`colleagues.list`
+
+List colleagues, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.colleagues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  firstName?: string | null,
+  lastName?: string | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  title?: string | null,
+  number?: string | null,
+  internalId?: string | null,
+  isPartner?: boolean | null,
+  initialPartnerBalance?: number | null,
+  homecareServiceNumber?: string | null,
+  userId?: string | null,
+  metadatas?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`colleagues.update`
+
+Update a colleague. Read-modify-write internally - a partial body is a 500 on this route, not just a clearing PUT.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.colleagues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `colleagueId` | `number` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `isPartner` | `boolean` | No | — |
+| `initialPartnerBalance` | `number` | No | — |
+| `homecareServiceNumber` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `metadatas` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadatas full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `isPartner` | `boolean` | No | — |
+| `initialPartnerBalance` | `number` | No | — |
+| `homecareServiceNumber` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `metadatas` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadatas full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a standalone contact. There is no customerId field on this route - it cannot be attached to a customer here.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `function` | `string` | No | — |
+| `service` | `string` | No | — |
+| `title` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `invertedDisplayName` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `displayName` | `string` | No | — |
+| `invertedDisplayName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `function` | `string` | No | — |
+| `service` | `string` | No | — |
+| `title` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `isMain` | `boolean` | No | — |
+
+
+
+---
+
+### find
+
+`contacts.find`
+
+Find contacts by email or internalId - returns an array, possibly empty
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.contacts.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  displayName?: string | null,
+  invertedDisplayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  function?: string | null,
+  service?: string | null,
+  title?: string | null,
+  internalId?: string | null,
+  isMain?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a contact by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `displayName` | `string` | No | — |
+| `invertedDisplayName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `function` | `string` | No | — |
+| `service` | `string` | No | — |
+| `title` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `isMain` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts, paged. Includes shadow contacts auto-created by customer/supplier/colleague writes.
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  displayName?: string | null,
+  invertedDisplayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  function?: string | null,
+  service?: string | null,
+  title?: string | null,
+  internalId?: string | null,
+  isMain?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Customer Families
+
+### create
+
+`customerFamilies.create`
+
+Create a customer family (segment)
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.customerFamilies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`customerFamilies.delete`
+
+Delete a customer family [DESTRUCTIVE]. Refused with a conflict if it still has members - it does not cascade.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.customerFamilies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `familyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`customerFamilies.get`
+
+Get a customer family by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customerFamilies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `familyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`customerFamilies.list`
+
+List customer families, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customerFamilies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  label?: string | null,
+  number?: string | null,
+  internalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer. type is Business | Consumer | Government - NOT the Company/Individual the catalog description documents.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Business \| Consumer \| Government` | Yes | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `familyId` | `number` | No | — |
+| `internalNotes` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  zipCode?: string,
+  city?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  zipCode?: string,
+  city?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `family` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.customers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### find
+
+`customers.find`
+
+Find customers by email, internalId or number - returns an array, possibly empty
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customers.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `number` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  companyName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  title?: string | null,
+  number?: string | null,
+  internalId?: string | null,
+  internalNotes?: string | null,
+  active?: boolean | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingOptions?: {
+  } | null,
+  companyInformations?: {
+  } | null,
+  family?: {
+    id?: number | null,
+    label?: string | null,
+    number?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`customers.get`
+
+Get a customer by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `family` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByInternalId
+
+`customers.getByInternalId`
+
+Get a customer by the caller-supplied internalId
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customers.getByInternalId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `family` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContacts
+
+`customers.getContacts`
+
+List a customer's contacts, including the one auto-created when the customer was created
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customers.getContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  displayName?: string | null,
+  invertedDisplayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  function?: string | null,
+  service?: string | null,
+  title?: string | null,
+  internalId?: string | null,
+  isMain?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, paged (PageIndex is 1-based)
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  companyName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  title?: string | null,
+  number?: string | null,
+  internalId?: string | null,
+  internalNotes?: string | null,
+  active?: boolean | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingOptions?: {
+  } | null,
+  companyInformations?: {
+  } | null,
+  family?: {
+    id?: number | null,
+    label?: string | null,
+    number?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer. Read-modify-write internally, because Altoviz PUT clears any field the caller omits.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.customers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+| `type` | `Business \| Consumer \| Government` | No | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `familyId` | `number` | No | — |
+| `internalNotes` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  zipCode?: string,
+  city?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  zipCode?: string,
+  city?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingOptions` | `object` | No | — |
+| `companyInformations` | `object` | No | — |
+| `family` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingOptions full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Families
+
+### create
+
+`productFamilies.create`
+
+Create a product family
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.productFamilies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | `string` | Yes | — |
+| `number` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `number` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`productFamilies.delete`
+
+Delete a product family [DESTRUCTIVE]. Refused with a conflict if it still has members.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.productFamilies.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `familyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`productFamilies.get`
+
+Get a product family by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.productFamilies.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `familyId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `label` | `string` | No | — |
+| `number` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`productFamilies.list`
+
+List product families, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.productFamilies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  label?: string | null,
+  number?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product. unit/vat/family are resolved from an id to their value form before the request is sent.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.products.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `number` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `Product \| Service \| Text` | Yes | — |
+| `unitPrice` | `number` | No | — |
+| `purchasePrice` | `number` | No | — |
+| `isUnitPriceTaxIncluded` | `boolean` | No | — |
+| `defaultQuantity` | `number` | No | — |
+| `unitId` | `number` | No | — |
+| `vatId` | `number` | No | — |
+| `familyId` | `number` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `number` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `unitPrice` | `number` | No | — |
+| `purchasePrice` | `number` | No | — |
+| `isUnitPriceTaxIncluded` | `boolean` | No | — |
+| `defaultQuantity` | `number` | No | — |
+| `unit` | `object` | No | — |
+| `vat` | `object` | No | — |
+| `family` | `object` | No | — |
+| `imageUrl` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="unit full type">
+
+```ts
+{
+  code?: string | null,
+  conversion?: number | null,
+  decimals?: number | null,
+  id?: number | null,
+  name?: string | null,
+  type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="vat full type">
+
+```ts
+{
+  default?: boolean | null,
+  id?: number | null,
+  label?: string | null,
+  rate?: number | null,
+  region?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.products.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### find
+
+`products.find`
+
+Find a product by number - returns an array
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.products.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  number?: string | null,
+  description?: string | null,
+  type?: string | null,
+  unitPrice?: number | null,
+  purchasePrice?: number | null,
+  isUnitPriceTaxIncluded?: boolean | null,
+  defaultQuantity?: number | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  family?: {
+    id?: number | null,
+    label?: string | null,
+    number?: string | null
+  } | null,
+  imageUrl?: string | null,
+  internalId?: string | null,
+  internalNotes?: string | null,
+  active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### findByNumberOrId
+
+`products.findByNumberOrId`
+
+Find a product by number or internalId - same route as products.find, superset of parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.products.findByNumberOrId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  number?: string | null,
+  description?: string | null,
+  type?: string | null,
+  unitPrice?: number | null,
+  purchasePrice?: number | null,
+  isUnitPriceTaxIncluded?: boolean | null,
+  defaultQuantity?: number | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  family?: {
+    id?: number | null,
+    label?: string | null,
+    number?: string | null
+  } | null,
+  imageUrl?: string | null,
+  internalId?: string | null,
+  internalNotes?: string | null,
+  active?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`products.get`
+
+Get a product by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `number` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `unitPrice` | `number` | No | — |
+| `purchasePrice` | `number` | No | — |
+| `isUnitPriceTaxIncluded` | `boolean` | No | — |
+| `defaultQuantity` | `number` | No | — |
+| `unit` | `object` | No | — |
+| `vat` | `object` | No | — |
+| `family` | `object` | No | — |
+| `imageUrl` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="unit full type">
+
+```ts
+{
+  code?: string | null,
+  conversion?: number | null,
+  decimals?: number | null,
+  id?: number | null,
+  name?: string | null,
+  type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="vat full type">
+
+```ts
+{
+  default?: boolean | null,
+  id?: number | null,
+  label?: string | null,
+  rate?: number | null,
+  region?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="family full type">
+
+```ts
+{
+  id?: number | null,
+  label?: string | null,
+  number?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Purchase Invoices
+
+### download
+
+`purchaseInvoices.download`
+
+Download a purchase invoice as PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.purchaseInvoices.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purchaseInvoiceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | No | — |
+| `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
+
+
+
+---
+
+### upload
+
+`purchaseInvoices.upload`
+
+Upload a purchase invoice file (PDF or image). There is no delete for this anywhere in the API - only the Altoviz UI can remove it.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.purchaseInvoices.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileBase64` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `mimeType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `date` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `region` | `string` | No | — |
+| `status` | `string` | No | — |
+| `supplier` | `any` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `pdfUrl` | `string` | No | — |
+
+
+
+---
+
+## Receipts
+
+### create
+
+`receipts.create`
+
+Create a receipt. links to a draft document are refused - the document must be finalized first, which is outside this plugin.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.receipts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+| `paymentMethod` | `Transfer \| Order \| Check \| Cash \| Card \| Bill \| Usec \| Other` | Yes | — |
+| `status` | `Success \| Pending \| Failed` | No | — |
+| `reference` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerInternalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `internalId` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type: Commitment | Invoice | Credit,
+  id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `amount` | `number` | No | — |
+| `date` | `string` | No | — |
+| `paymentMethod` | `string` | No | — |
+| `status` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerInternalId` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`receipts.delete`
+
+Delete a receipt [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.receipts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receiptId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### find
+
+`receipts.find`
+
+Find receipts by the receipt's own internalId - returns an array
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.receipts.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  amount?: number | null,
+  date?: string | null,
+  paymentMethod?: string | null,
+  status?: string | null,
+  reference?: string | null,
+  notes?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerInternalId?: string | null,
+  internalId?: string | null,
+  links?: {
+  }[] | null,
+  metadata?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`receipts.get`
+
+Get a receipt by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.receipts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receiptId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `amount` | `number` | No | — |
+| `date` | `string` | No | — |
+| `paymentMethod` | `string` | No | — |
+| `status` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerInternalId` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`receipts.list`
+
+List receipts, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.receipts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  amount?: number | null,
+  date?: string | null,
+  paymentMethod?: string | null,
+  status?: string | null,
+  reference?: string | null,
+  notes?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerInternalId?: string | null,
+  internalId?: string | null,
+  links?: {
+  }[] | null,
+  metadata?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`receipts.update`
+
+Update a receipt. Read-modify-write internally; a customer reference is required even on update.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.receipts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receiptId` | `number` | Yes | — |
+| `amount` | `number` | No | — |
+| `date` | `string` | No | — |
+| `paymentMethod` | `Transfer \| Order \| Check \| Cash \| Card \| Bill \| Usec \| Other` | No | — |
+| `status` | `Success \| Pending \| Failed` | No | — |
+| `reference` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type: Commitment | Invoice | Credit,
+  id: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `amount` | `number` | No | — |
+| `date` | `string` | No | — |
+| `paymentMethod` | `string` | No | — |
+| `status` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerInternalId` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sale Credits
+
+### create
+
+`saleCredits.create`
+
+Create a draft credit note (avoir)
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.saleCredits.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+| `cancelledInvoicetId` | `number` | No | — |
+| `cancelledInvoicetNumber` | `string` | No | — |
+| `date` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `lines` | `object[]` | Yes | — |
+| `globalDiscount` | `object` | No | — |
+| `vatMode` | `Auto \| Debit \| Collection` | No | — |
+| `region` | `FR \| EU \| IE \| DOM \| Corse \| Monaco` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `internalId` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="lines full type">
+
+```ts
+{
+  type: Empty | Product | Service | Subtotal | Text | NewPage,
+  productId?: number,
+  description?: string,
+  quantity?: number,
+  taxExcludedPrice?: number,
+  unitId?: number,
+  vatId?: number,
+  classificationId?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type: Percent | Fixed,
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerType` | `string` | No | — |
+| `customerElectronicAddress` | `string` | No | — |
+| `customerOrderReference` | `string` | No | — |
+| `customerSiret` | `string` | No | — |
+| `customerVatNumber` | `string` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingContact` | `object` | No | — |
+| `shippingContact` | `object` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `lines` | `object[]` | No | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `shippingVat` | `any` | No | — |
+| `balance` | `number` | No | — |
+| `grossTaxExcludedAmount` | `number` | No | — |
+| `taxAmount` | `number` | No | — |
+| `taxExcludedAmount` | `number` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatMode` | `string` | No | — |
+| `vatNote` | `string` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `vats` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+| `pdfUrl` | `string` | No | — |
+| `publicLink` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `commitments` | `object[]` | No | — |
+| `overdue` | `number` | No | — |
+| `vendorReference` | `string` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isPaid` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `cancelledInvoicetId` | `number` | No | — |
+| `cancelledInvoicetNumber` | `string` | No | — |
+| `cancellationInvoiceId` | `number` | No | — |
+| `cancellationInvoiceNumber` | `string` | No | — |
+| `replacedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="lines full type">
+
+```ts
+{
+  classificationId?: number | null,
+  date?: string | null,
+  description?: string | null,
+  discount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  id?: number | null,
+  marginAmount?: number | null,
+  marginRate?: number | null,
+  product?: {
+    active?: boolean | null,
+    defaultQuantity?: number | null,
+    description?: string | null,
+    family?: {
+      id?: number | null,
+      label?: string | null,
+      number?: string | null
+    } | null,
+    id?: number | null,
+    imageUrl?: string | null,
+    internalId?: string | null,
+    internalNotes?: string | null,
+    isUnitPriceTaxIncluded?: boolean | null,
+    name?: string | null,
+    number?: string | null,
+    purchasePrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    unitPrice?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  } | null,
+  productId?: number | null,
+  productInternalId?: string | null,
+  productNumber?: string | null,
+  purchasePrice?: number | null,
+  quantity?: number | null,
+  taxExcludedAmount?: number | null,
+  taxExcludedPrice?: number | null,
+  taxIncludedAmount?: number | null,
+  taxIncludedPrice?: number | null,
+  type?: string | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type?: string | null,
+  value?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="vats full type">
+
+```ts
+{
+  taxExcludedAmount?: number | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  vatAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="commitments full type">
+
+```ts
+{
+  amount?: number | null,
+  date?: string | null,
+  dueAmount?: number | null,
+  id?: number | null,
+  thirdId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`saleCredits.delete`
+
+Delete a draft sale credit [DESTRUCTIVE]. Drafts only.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.saleCredits.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creditId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### download
+
+`saleCredits.download`
+
+Download a sale credit as PDF. May not be byte-exact - see the core text-decoding note.
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleCredits.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creditId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | No | — |
+| `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
+
+
+
+---
+
+### find
+
+`saleCredits.find`
+
+Find sale credits by internalId - returns an array
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleCredits.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  isDraft?: boolean | null,
+  isPaid?: boolean | null,
+  isCancelled?: boolean | null,
+  cancelledInvoicetId?: number | null,
+  cancelledInvoicetNumber?: string | null,
+  cancellationInvoiceId?: number | null,
+  cancellationInvoiceNumber?: string | null,
+  replacedBy?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`saleCredits.get`
+
+Get a sale credit by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleCredits.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creditId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerType` | `string` | No | — |
+| `customerElectronicAddress` | `string` | No | — |
+| `customerOrderReference` | `string` | No | — |
+| `customerSiret` | `string` | No | — |
+| `customerVatNumber` | `string` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingContact` | `object` | No | — |
+| `shippingContact` | `object` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `lines` | `object[]` | No | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `shippingVat` | `any` | No | — |
+| `balance` | `number` | No | — |
+| `grossTaxExcludedAmount` | `number` | No | — |
+| `taxAmount` | `number` | No | — |
+| `taxExcludedAmount` | `number` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatMode` | `string` | No | — |
+| `vatNote` | `string` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `vats` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+| `pdfUrl` | `string` | No | — |
+| `publicLink` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `commitments` | `object[]` | No | — |
+| `overdue` | `number` | No | — |
+| `vendorReference` | `string` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isPaid` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `cancelledInvoicetId` | `number` | No | — |
+| `cancelledInvoicetNumber` | `string` | No | — |
+| `cancellationInvoiceId` | `number` | No | — |
+| `cancellationInvoiceNumber` | `string` | No | — |
+| `replacedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="lines full type">
+
+```ts
+{
+  classificationId?: number | null,
+  date?: string | null,
+  description?: string | null,
+  discount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  id?: number | null,
+  marginAmount?: number | null,
+  marginRate?: number | null,
+  product?: {
+    active?: boolean | null,
+    defaultQuantity?: number | null,
+    description?: string | null,
+    family?: {
+      id?: number | null,
+      label?: string | null,
+      number?: string | null
+    } | null,
+    id?: number | null,
+    imageUrl?: string | null,
+    internalId?: string | null,
+    internalNotes?: string | null,
+    isUnitPriceTaxIncluded?: boolean | null,
+    name?: string | null,
+    number?: string | null,
+    purchasePrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    unitPrice?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  } | null,
+  productId?: number | null,
+  productInternalId?: string | null,
+  productNumber?: string | null,
+  purchasePrice?: number | null,
+  quantity?: number | null,
+  taxExcludedAmount?: number | null,
+  taxExcludedPrice?: number | null,
+  taxIncludedAmount?: number | null,
+  taxIncludedPrice?: number | null,
+  type?: string | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type?: string | null,
+  value?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="vats full type">
+
+```ts
+{
+  taxExcludedAmount?: number | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  vatAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="commitments full type">
+
+```ts
+{
+  amount?: number | null,
+  date?: string | null,
+  dueAmount?: number | null,
+  id?: number | null,
+  thirdId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`saleCredits.list`
+
+List sale credits, paged, filterable by date range and customer
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleCredits.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `customerId` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  isDraft?: boolean | null,
+  isPaid?: boolean | null,
+  isCancelled?: boolean | null,
+  cancelledInvoicetId?: number | null,
+  cancelledInvoicetNumber?: string | null,
+  cancellationInvoiceId?: number | null,
+  cancellationInvoiceNumber?: string | null,
+  replacedBy?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`saleCredits.update`
+
+Update a draft credit note. Drafts only; lines must be resent in full or the credit is emptied.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.saleCredits.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creditId` | `number` | Yes | — |
+| `customerId` | `number` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `lines` | `object[]` | Yes | — |
+| `isDraft` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="lines full type">
+
+```ts
+{
+  type: Empty | Product | Service | Subtotal | Text | NewPage,
+  productId?: number,
+  description?: string,
+  quantity?: number,
+  taxExcludedPrice?: number,
+  unitId?: number,
+  vatId?: number,
+  classificationId?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerType` | `string` | No | — |
+| `customerElectronicAddress` | `string` | No | — |
+| `customerOrderReference` | `string` | No | — |
+| `customerSiret` | `string` | No | — |
+| `customerVatNumber` | `string` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingContact` | `object` | No | — |
+| `shippingContact` | `object` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `lines` | `object[]` | No | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `shippingVat` | `any` | No | — |
+| `balance` | `number` | No | — |
+| `grossTaxExcludedAmount` | `number` | No | — |
+| `taxAmount` | `number` | No | — |
+| `taxExcludedAmount` | `number` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatMode` | `string` | No | — |
+| `vatNote` | `string` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `vats` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+| `pdfUrl` | `string` | No | — |
+| `publicLink` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `commitments` | `object[]` | No | — |
+| `overdue` | `number` | No | — |
+| `vendorReference` | `string` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isPaid` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `cancelledInvoicetId` | `number` | No | — |
+| `cancelledInvoicetNumber` | `string` | No | — |
+| `cancellationInvoiceId` | `number` | No | — |
+| `cancellationInvoiceNumber` | `string` | No | — |
+| `replacedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="lines full type">
+
+```ts
+{
+  classificationId?: number | null,
+  date?: string | null,
+  description?: string | null,
+  discount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  id?: number | null,
+  marginAmount?: number | null,
+  marginRate?: number | null,
+  product?: {
+    active?: boolean | null,
+    defaultQuantity?: number | null,
+    description?: string | null,
+    family?: {
+      id?: number | null,
+      label?: string | null,
+      number?: string | null
+    } | null,
+    id?: number | null,
+    imageUrl?: string | null,
+    internalId?: string | null,
+    internalNotes?: string | null,
+    isUnitPriceTaxIncluded?: boolean | null,
+    name?: string | null,
+    number?: string | null,
+    purchasePrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    unitPrice?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  } | null,
+  productId?: number | null,
+  productInternalId?: string | null,
+  productNumber?: string | null,
+  purchasePrice?: number | null,
+  quantity?: number | null,
+  taxExcludedAmount?: number | null,
+  taxExcludedPrice?: number | null,
+  taxIncludedAmount?: number | null,
+  taxIncludedPrice?: number | null,
+  type?: string | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type?: string | null,
+  value?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="vats full type">
+
+```ts
+{
+  taxExcludedAmount?: number | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  vatAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="commitments full type">
+
+```ts
+{
+  amount?: number | null,
+  date?: string | null,
+  dueAmount?: number | null,
+  id?: number | null,
+  thirdId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sale Invoices
+
+### create
+
+`saleInvoices.create`
+
+Create a draft sale invoice. Lines use taxExcludedPrice, never unitPrice - unitPrice is silently ignored and prices the line at zero.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.saleInvoices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerId` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `lines` | `object[]` | Yes | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `vatMode` | `Auto \| Debit \| Collection` | No | — |
+| `region` | `FR \| EU \| IE \| DOM \| Corse \| Monaco` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `internalId` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="lines full type">
+
+```ts
+{
+  type: Empty | Product | Service | Subtotal | Text | NewPage,
+  productId?: number,
+  description?: string,
+  quantity?: number,
+  taxExcludedPrice?: number,
+  unitId?: number,
+  vatId?: number,
+  classificationId?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type: Percent | Fixed,
+  value: number
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerType` | `string` | No | — |
+| `customerElectronicAddress` | `string` | No | — |
+| `customerOrderReference` | `string` | No | — |
+| `customerSiret` | `string` | No | — |
+| `customerVatNumber` | `string` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingContact` | `object` | No | — |
+| `shippingContact` | `object` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `lines` | `object[]` | No | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `shippingVat` | `any` | No | — |
+| `balance` | `number` | No | — |
+| `grossTaxExcludedAmount` | `number` | No | — |
+| `taxAmount` | `number` | No | — |
+| `taxExcludedAmount` | `number` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatMode` | `string` | No | — |
+| `vatNote` | `string` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `vats` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+| `pdfUrl` | `string` | No | — |
+| `publicLink` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `commitments` | `object[]` | No | — |
+| `overdue` | `number` | No | — |
+| `vendorReference` | `string` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isPaid` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `isProforma` | `boolean` | No | — |
+| `cancellationCreditId` | `number` | No | — |
+| `cancellationCreditNumber` | `string` | No | — |
+| `cancelledCreditId` | `any` | No | — |
+| `cancelledCreditNumber` | `any` | No | — |
+| `eInvoicingInvoiceId` | `any` | No | — |
+| `eInvoicingProviderId` | `any` | No | — |
+| `eInvoicingStatus` | `any` | No | — |
+| `replacedBy` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="lines full type">
+
+```ts
+{
+  classificationId?: number | null,
+  date?: string | null,
+  description?: string | null,
+  discount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  id?: number | null,
+  marginAmount?: number | null,
+  marginRate?: number | null,
+  product?: {
+    active?: boolean | null,
+    defaultQuantity?: number | null,
+    description?: string | null,
+    family?: {
+      id?: number | null,
+      label?: string | null,
+      number?: string | null
+    } | null,
+    id?: number | null,
+    imageUrl?: string | null,
+    internalId?: string | null,
+    internalNotes?: string | null,
+    isUnitPriceTaxIncluded?: boolean | null,
+    name?: string | null,
+    number?: string | null,
+    purchasePrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    unitPrice?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  } | null,
+  productId?: number | null,
+  productInternalId?: string | null,
+  productNumber?: string | null,
+  purchasePrice?: number | null,
+  quantity?: number | null,
+  taxExcludedAmount?: number | null,
+  taxExcludedPrice?: number | null,
+  taxIncludedAmount?: number | null,
+  taxIncludedPrice?: number | null,
+  type?: string | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type?: string | null,
+  value?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="vats full type">
+
+```ts
+{
+  taxExcludedAmount?: number | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  vatAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="commitments full type">
+
+```ts
+{
+  amount?: number | null,
+  date?: string | null,
+  dueAmount?: number | null,
+  id?: number | null,
+  thirdId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`saleInvoices.delete`
+
+Delete a draft sale invoice [DESTRUCTIVE]. Drafts only.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.saleInvoices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoiceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### download
+
+`saleInvoices.download`
+
+Download a sale invoice as PDF. May not be byte-exact - see the core text-decoding note.
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleInvoices.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoiceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | No | — |
+| `body` | `string` | Yes | PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts. |
+
+
+
+---
+
+### find
+
+`saleInvoices.find`
+
+Find sale invoices by internalId - returns an array
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleInvoices.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  isDraft?: boolean | null,
+  isPaid?: boolean | null,
+  isCancelled?: boolean | null,
+  isProforma?: boolean | null,
+  cancellationCreditId?: number | null,
+  cancellationCreditNumber?: string | null,
+  cancelledCreditId?: any | null,
+  cancelledCreditNumber?: any | null,
+  eInvoicingInvoiceId?: any | null,
+  eInvoicingProviderId?: any | null,
+  eInvoicingStatus?: any | null,
+  replacedBy?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`saleInvoices.get`
+
+Get a sale invoice by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleInvoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoiceId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `customerName` | `string` | No | — |
+| `customerNumber` | `string` | No | — |
+| `customerType` | `string` | No | — |
+| `customerElectronicAddress` | `string` | No | — |
+| `customerOrderReference` | `string` | No | — |
+| `customerSiret` | `string` | No | — |
+| `customerVatNumber` | `string` | No | — |
+| `billingAddress` | `object` | No | — |
+| `shippingAddress` | `object` | No | — |
+| `billingContact` | `object` | No | — |
+| `shippingContact` | `object` | No | — |
+| `headerNotes` | `string` | No | — |
+| `footerNotes` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `lines` | `object[]` | No | — |
+| `globalDiscount` | `object` | No | — |
+| `shippingAmount` | `number` | No | — |
+| `shippingVat` | `any` | No | — |
+| `balance` | `number` | No | — |
+| `grossTaxExcludedAmount` | `number` | No | — |
+| `taxAmount` | `number` | No | — |
+| `taxExcludedAmount` | `number` | No | — |
+| `taxIncludedAmount` | `number` | No | — |
+| `useTaxIncludedPrices` | `boolean` | No | — |
+| `liableToVat` | `boolean` | No | — |
+| `vatMode` | `string` | No | — |
+| `vatNote` | `string` | No | — |
+| `vatReverseCharge` | `boolean` | No | — |
+| `region` | `string` | No | — |
+| `vats` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+| `pdfUrl` | `string` | No | — |
+| `publicLink` | `string` | No | — |
+| `sentAt` | `string` | No | — |
+| `commitments` | `object[]` | No | — |
+| `overdue` | `number` | No | — |
+| `vendorReference` | `string` | No | — |
+| `isDraft` | `boolean` | No | — |
+| `isPaid` | `boolean` | No | — |
+| `isCancelled` | `boolean` | No | — |
+| `isProforma` | `boolean` | No | — |
+| `cancellationCreditId` | `number` | No | — |
+| `cancellationCreditNumber` | `string` | No | — |
+| `cancelledCreditId` | `any` | No | — |
+| `cancelledCreditNumber` | `any` | No | — |
+| `eInvoicingInvoiceId` | `any` | No | — |
+| `eInvoicingProviderId` | `any` | No | — |
+| `eInvoicingStatus` | `any` | No | — |
+| `replacedBy` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="billingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingAddress full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="billingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="shippingContact full type">
+
+```ts
+{
+  cellPhone?: string | null,
+  companyName?: string | null,
+  displayName?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  function?: string | null,
+  invertedDisplayName?: string | null,
+  lastName?: string | null,
+  phone?: string | null,
+  service?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="lines full type">
+
+```ts
+{
+  classificationId?: number | null,
+  date?: string | null,
+  description?: string | null,
+  discount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  id?: number | null,
+  marginAmount?: number | null,
+  marginRate?: number | null,
+  product?: {
+    active?: boolean | null,
+    defaultQuantity?: number | null,
+    description?: string | null,
+    family?: {
+      id?: number | null,
+      label?: string | null,
+      number?: string | null
+    } | null,
+    id?: number | null,
+    imageUrl?: string | null,
+    internalId?: string | null,
+    internalNotes?: string | null,
+    isUnitPriceTaxIncluded?: boolean | null,
+    name?: string | null,
+    number?: string | null,
+    purchasePrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    unitPrice?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  } | null,
+  productId?: number | null,
+  productInternalId?: string | null,
+  productNumber?: string | null,
+  purchasePrice?: number | null,
+  quantity?: number | null,
+  taxExcludedAmount?: number | null,
+  taxExcludedPrice?: number | null,
+  taxIncludedAmount?: number | null,
+  taxIncludedPrice?: number | null,
+  type?: string | null,
+  unit?: {
+    code?: string | null,
+    conversion?: number | null,
+    decimals?: number | null,
+    id?: number | null,
+    name?: string | null,
+    type?: string | null
+  } | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="globalDiscount full type">
+
+```ts
+{
+  type?: string | null,
+  value?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="vats full type">
+
+```ts
+{
+  taxExcludedAmount?: number | null,
+  vat?: {
+    default?: boolean | null,
+    id?: number | null,
+    label?: string | null,
+    rate?: number | null,
+    region?: string | null
+  } | null,
+  vatAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="commitments full type">
+
+```ts
+{
+  amount?: number | null,
+  date?: string | null,
+  dueAmount?: number | null,
+  id?: number | null,
+  thirdId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`saleInvoices.list`
+
+List sale invoices, paged, filterable by date range, customer and status
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleInvoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `customerId` | `number` | No | — |
+| `status` | `Draft \| Incoming \| Expired \| Paid \| ToSend` | No | — |
+| `includeCancelled` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  isDraft?: boolean | null,
+  isPaid?: boolean | null,
+  isCancelled?: boolean | null,
+  isProforma?: boolean | null,
+  cancellationCreditId?: number | null,
+  cancellationCreditNumber?: string | null,
+  cancelledCreditId?: any | null,
+  cancelledCreditNumber?: any | null,
+  eInvoicingInvoiceId?: any | null,
+  eInvoicingProviderId?: any | null,
+  eInvoicingStatus?: any | null,
+  replacedBy?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sale Quotes
+
+### delete
+
+`saleQuotes.delete`
+
+Delete a sale quote [DESTRUCTIVE]. Deleting a quote that does not exist also returns 200.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.saleQuotes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quoteId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### find
+
+`saleQuotes.find`
+
+Find sale quotes by internalId - returns an array
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleQuotes.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `internalId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  status?: string | null,
+  validityDate?: string | null,
+  deposit?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  acceptedAt?: string | null,
+  refusedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`saleQuotes.list`
+
+List sale quotes, paged, filterable by date range and customer. No working status filter - the spec one is a generator artefact.
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.saleQuotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `customerId` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  number?: string | null,
+  internalId?: string | null,
+  date?: string | null,
+  subject?: string | null,
+  customerId?: number | null,
+  customerName?: string | null,
+  customerNumber?: string | null,
+  customerType?: string | null,
+  customerElectronicAddress?: string | null,
+  customerOrderReference?: string | null,
+  customerSiret?: string | null,
+  customerVatNumber?: string | null,
+  billingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  shippingAddress?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  billingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  shippingContact?: {
+    cellPhone?: string | null,
+    companyName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    function?: string | null,
+    invertedDisplayName?: string | null,
+    lastName?: string | null,
+    phone?: string | null,
+    service?: string | null,
+    title?: string | null
+  } | null,
+  headerNotes?: string | null,
+  footerNotes?: string | null,
+  internalNotes?: string | null,
+  lines?: {
+    classificationId?: number | null,
+    date?: string | null,
+    description?: string | null,
+    discount?: {
+      type?: string | null,
+      value?: number | null
+    } | null,
+    id?: number | null,
+    marginAmount?: number | null,
+    marginRate?: number | null,
+    product?: {
+      active?: boolean | null,
+      defaultQuantity?: number | null,
+      description?: string | null,
+      family?: {
+        id?: number | null,
+        label?: string | null,
+        number?: string | null
+      } | null,
+      id?: number | null,
+      imageUrl?: string | null,
+      internalId?: string | null,
+      internalNotes?: string | null,
+      isUnitPriceTaxIncluded?: boolean | null,
+      name?: string | null,
+      number?: string | null,
+      purchasePrice?: number | null,
+      type?: string | null,
+      unit?: {
+        code?: string | null,
+        conversion?: number | null,
+        decimals?: number | null,
+        id?: number | null,
+        name?: string | null,
+        type?: string | null
+      } | null,
+      unitPrice?: number | null,
+      vat?: {
+        default?: boolean | null,
+        id?: number | null,
+        label?: string | null,
+        rate?: number | null,
+        region?: string | null
+      } | null
+    } | null,
+    productId?: number | null,
+    productInternalId?: string | null,
+    productNumber?: string | null,
+    purchasePrice?: number | null,
+    quantity?: number | null,
+    taxExcludedAmount?: number | null,
+    taxExcludedPrice?: number | null,
+    taxIncludedAmount?: number | null,
+    taxIncludedPrice?: number | null,
+    type?: string | null,
+    unit?: {
+      code?: string | null,
+      conversion?: number | null,
+      decimals?: number | null,
+      id?: number | null,
+      name?: string | null,
+      type?: string | null
+    } | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null
+  }[] | null,
+  globalDiscount?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  shippingAmount?: number | null,
+  shippingVat?: any | null,
+  balance?: number | null,
+  grossTaxExcludedAmount?: number | null,
+  taxAmount?: number | null,
+  taxExcludedAmount?: number | null,
+  taxIncludedAmount?: number | null,
+  useTaxIncludedPrices?: boolean | null,
+  liableToVat?: boolean | null,
+  vatMode?: string | null,
+  vatNote?: string | null,
+  vatReverseCharge?: boolean | null,
+  region?: string | null,
+  vats?: {
+    taxExcludedAmount?: number | null,
+    vat?: {
+      default?: boolean | null,
+      id?: number | null,
+      label?: string | null,
+      rate?: number | null,
+      region?: string | null
+    } | null,
+    vatAmount?: number | null
+  }[] | null,
+  metadata?: {
+  } | null,
+  pdfUrl?: string | null,
+  publicLink?: string | null,
+  sentAt?: string | null,
+  commitments?: {
+    amount?: number | null,
+    date?: string | null,
+    dueAmount?: number | null,
+    id?: number | null,
+    thirdId?: number | null
+  }[] | null,
+  overdue?: number | null,
+  vendorReference?: string | null,
+  status?: string | null,
+  validityDate?: string | null,
+  deposit?: {
+    type?: string | null,
+    value?: number | null
+  } | null,
+  acceptedAt?: string | null,
+  refusedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Suppliers
+
+### delete
+
+`suppliers.delete`
+
+Delete a supplier [DESTRUCTIVE]. Evicts the auto-created contact from the mirror if one is cached.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.suppliers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`suppliers.get`
+
+Get a supplier by id
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.suppliers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `address` | `object` | No | — |
+| `defaultPaymentMethod` | `string` | No | — |
+| `companyInformations` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdById` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedById` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContacts
+
+`suppliers.getContacts`
+
+List a supplier's contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.suppliers.getContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `number` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  displayName?: string | null,
+  invertedDisplayName?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  function?: string | null,
+  service?: string | null,
+  title?: string | null,
+  internalId?: string | null,
+  isMain?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`suppliers.list`
+
+List suppliers, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.suppliers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageIndex` | `number` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `orderBy` | `string` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  cellPhone?: string | null,
+  title?: string | null,
+  number?: string | null,
+  internalId?: string | null,
+  internalNotes?: string | null,
+  active?: boolean | null,
+  address?: {
+    city?: string | null,
+    countryIso?: string | null,
+    countryName?: string | null,
+    formattedAddress?: string | null,
+    inlineAddress?: string | null,
+    street?: string | null,
+    zipcode?: string | null
+  } | null,
+  defaultPaymentMethod?: string | null,
+  companyInformations?: {
+  } | null,
+  createdAt?: string | null,
+  createdById?: string | null,
+  updatedAt?: string | null,
+  updatedById?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`suppliers.update`
+
+Update a supplier. Read-modify-write internally, same clearing-PUT behaviour as customers.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.suppliers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `supplierId` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `address` | `object` | No | — |
+| `defaultPaymentMethod` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  line1?: string,
+  line2?: string,
+  zipCode?: string,
+  city?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `cellPhone` | `string` | No | — |
+| `title` | `string` | No | — |
+| `number` | `string` | No | — |
+| `internalId` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `address` | `object` | No | — |
+| `defaultPaymentMethod` | `string` | No | — |
+| `companyInformations` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `createdById` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `updatedById` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  city?: string | null,
+  countryIso?: string | null,
+  countryName?: string | null,
+  formattedAddress?: string | null,
+  inlineAddress?: string | null,
+  street?: string | null,
+  zipcode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="companyInformations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Subscriptions
+
+### list
+
+`webhookSubscriptions.list`
+
+List registered webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.altoviz.api.webhookSubscriptions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  url?: string | null,
+  types?: string[] | null,
+  secretKey?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### register
+
+`webhookSubscriptions.register`
+
+Register a webhook subscription. The response id is 0 - list immediately after to get the real id.
+
+**Risk:** `write`
+
+```ts
+await corsair.altoviz.api.webhookSubscriptions.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `types` | `CustomerCreated \| CustomerUpdated \| CustomerDeleted \| ContactCreated \| ContactUpdated \| ContactDeleted \| ProductCreated \| ProductUpdated \| ProductDeleted \| InvoiceCreated \| InvoiceUpdated \| InvoiceDeleted \| QuoteCreated \| QuoteUpdated \| QuoteDeleted[]` | Yes | — |
+| `secretKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `types` | `string[]` | No | — |
+| `secretKey` | `string` | No | — |
+
+
+
+---
+
+### unregister
+
+`webhookSubscriptions.unregister`
+
+Unregister a webhook subscription by id or url [DESTRUCTIVE]. Exactly one of the two is required.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.altoviz.api.webhookSubscriptions.unregister({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | No | — |
+| `url` | `string` | No | — |
+
+
+
+---
+

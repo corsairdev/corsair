@@ -1,5 +1,6 @@
 ---
 title: Cursor
+icon: "/icons/cursor.svg"
 description: Connect Corsair to Cursor via MCP or use the CLI directly.
 ---
 
@@ -59,7 +60,7 @@ If your credentials aren't loaded from a `.env` file, pass them via `env`:
 }
 ```
 
-Restart Cursor after adding the config. You can verify the server is connected in **Settings → Cursor Settings → MCP** — `corsair` should appear with a green indicator.
+Restart Cursor after adding the config. You can verify the server is connected in **Settings, Cursor Settings, MCP**. `corsair` should appear with a green indicator.
 
 ## Usage
 
@@ -69,7 +70,7 @@ Once connected, use Corsair tools in Cursor's agent (Cmd+I or the chat panel):
 Setup corsair, then list all GitHub issues assigned to me.
 ```
 
-The agent calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
+The agent calls `list_operations` to discover available endpoints, `get_schema` to inspect parameters, then `run_script` to execute.
 
 </Tab>
 

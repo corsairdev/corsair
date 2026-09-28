@@ -1463,3 +1463,33 @@ await corsair.googledrive.api.sharedDrives.update({});
 
 ---
 
+## Storage
+
+### getQuota
+
+`storage.getQuota`
+
+Get the user's Google Drive storage quota and usage
+
+**Risk:** `read`
+
+```ts
+await corsair.googledrive.api.storage.getQuota({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `string` | No | — |
+| `usage` | `string` | Yes | — |
+| `usageInDrive` | `string` | Yes | — |
+| `usageInDriveTrash` | `string` | Yes | — |
+
+
+
+---
+

@@ -1,0 +1,292 @@
+---
+title: API
+description: "API reference for DevinMcp: every `devinmcp.api.*` operation with input and output types."
+---
+
+Every `devinmcp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Session
+
+### create
+
+`session.create`
+
+Create a new Devin session to start working on a task
+
+**Risk:** `write`
+
+```ts
+await corsair.devinmcp.api.session.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `create_as_user_id` | `string` | No | — |
+| `playbook_id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `knowledge_ids` | `string[]` | No | — |
+| `max_acu_limit` | `number` | No | — |
+| `snapshot_id` | `string` | No | — |
+| `idempotent` | `boolean` | No | — |
+| `unlisted` | `boolean` | No | — |
+| `structured_output_schema` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="structured_output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `org_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `updated_at` | `number` | Yes | — |
+| `acus_consumed` | `number` | Yes | — |
+| `pull_requests` | `object[]` | Yes | — |
+| `title` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `status_detail` | `string` | No | — |
+| `structured_output` | `object` | No | — |
+| `playbook_id` | `string` | No | — |
+| `parent_session_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pull_requests full type">
+
+```ts
+{
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="structured_output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`session.get`
+
+Get details and status of an existing Devin session
+
+**Risk:** `read`
+
+```ts
+await corsair.devinmcp.api.session.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `org_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `updated_at` | `number` | Yes | — |
+| `acus_consumed` | `number` | Yes | — |
+| `pull_requests` | `object[]` | Yes | — |
+| `title` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `status_detail` | `string` | No | — |
+| `structured_output` | `object` | No | — |
+| `playbook_id` | `string` | No | — |
+| `parent_session_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pull_requests full type">
+
+```ts
+{
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="structured_output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`session.list`
+
+List Devin sessions
+
+**Risk:** `read`
+
+```ts
+await corsair.devinmcp.api.session.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `first` | `number` | No | — |
+| `after` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `user_ids` | `string[]` | No | — |
+| `session_ids` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `end_cursor` | `string` | No | — |
+| `has_next_page` | `boolean` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  session_id: string,
+  url: string,
+  status: string,
+  tags: string[],
+  org_id: string,
+  created_at: number,
+  updated_at: number,
+  acus_consumed: number,
+  pull_requests: {
+    url?: string
+  }[],
+  title?: string | null,
+  user_id?: string | null,
+  status_detail?: string | null,
+  structured_output?: {
+  } | null,
+  playbook_id?: string | null,
+  parent_session_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendMessage
+
+`session.sendMessage`
+
+Send a follow-up message to an existing Devin session
+
+**Risk:** `write`
+
+```ts
+await corsair.devinmcp.api.session.sendMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `session_id` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `org_id` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `updated_at` | `number` | Yes | — |
+| `acus_consumed` | `number` | Yes | — |
+| `pull_requests` | `object[]` | Yes | — |
+| `title` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `status_detail` | `string` | No | — |
+| `structured_output` | `object` | No | — |
+| `playbook_id` | `string` | No | — |
+| `parent_session_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="pull_requests full type">
+
+```ts
+{
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="structured_output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

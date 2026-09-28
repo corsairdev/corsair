@@ -1,0 +1,517 @@
+---
+title: API
+description: "API reference for Beeminder: every `beeminder.api.*` operation with input and output types."
+---
+
+Every `beeminder.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Charges
+
+### create
+
+`charges.create`
+
+Create a charge against a Beeminder user. Use dryrun to preview.
+
+**Risk:** `write`
+
+```ts
+await corsair.beeminder.api.charges.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `dryrun` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `note` | `string` | No | — |
+| `username` | `string` | Yes | — |
+
+
+
+---
+
+## Goals
+
+### list
+
+`goals.list`
+
+Get all active goals for the user
+
+**Risk:** `read`
+
+```ts
+await corsair.beeminder.api.goals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emaciated` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  slug: string,
+  title?: string | null,
+  fineprint?: string | null,
+  yaxis?: string | null,
+  goaldate?: number | null,
+  goalval?: number | null,
+  rate?: number | null,
+  runits?: string | null,
+  svg_url?: string | null,
+  graph_url?: string | null,
+  thumb_url?: string | null,
+  autodata?: string | null,
+  goal_type?: string | null,
+  losedate?: number | null,
+  urgencykey?: string | null,
+  queued?: boolean | null,
+  secret?: boolean | null,
+  datapublic?: boolean | null,
+  datapoints?: {
+    id?: string | null,
+    timestamp?: number | null,
+    daystamp?: string | null,
+    value?: number | null,
+    comment?: string | null,
+    updated_at?: number | null,
+    requestid?: string | null,
+    origin?: string | null,
+    creator?: string | null,
+    is_dummy?: boolean | null,
+    is_initial?: boolean | null,
+    created_at?: string | number | null
+  }[] | null,
+  numpts?: number | null,
+  pledge?: number | null,
+  initday?: number | null,
+  initval?: number | null,
+  curday?: number | null,
+  curval?: number | null,
+  currate?: number | null,
+  lastday?: number | null,
+  yaw?: number | null,
+  dir?: number | null,
+  lane?: number | null,
+  mathishard?: tuple | null,
+  headsum?: string | null,
+  limsum?: string | null,
+  kyoom?: boolean | null,
+  odom?: boolean | null,
+  aggday?: string | null,
+  steppy?: boolean | null,
+  rosy?: boolean | null,
+  movingav?: boolean | null,
+  aura?: boolean | null,
+  frozen?: boolean | null,
+  won?: boolean | null,
+  lost?: boolean | null,
+  maxflux?: number | null,
+  contract?: {
+    amount?: number | null,
+    stepdown_at?: number | null
+  } | null,
+  road?: (
+    tuple | tuple | tuple
+  )[] | null,
+  roadall?: (
+    tuple | tuple | tuple | tuple
+  )[] | null,
+  fullroad?: tuple[] | null,
+  rah?: number | null,
+  delta?: number | null,
+  delta_text?: string | null,
+  safebuf?: number | null,
+  colorkey?: string | null,
+  colorhex?: string | null,
+  safebump?: number | null,
+  autoratchet?: number | null,
+  callback_url?: string | null,
+  description?: string | null,
+  graphsum?: string | null,
+  lanewidth?: number | null,
+  deadline?: number | null,
+  leadtime?: number | null,
+  alertstart?: number | null,
+  plotall?: boolean | null,
+  last_datapoint?: {
+    id?: string | null,
+    timestamp?: number | null,
+    daystamp?: string | null,
+    value?: number | null,
+    comment?: string | null,
+    updated_at?: number | null,
+    requestid?: string | null,
+    origin?: string | null,
+    creator?: string | null,
+    is_dummy?: boolean | null,
+    is_initial?: boolean | null,
+    created_at?: string | number | null
+  } | null,
+  integery?: boolean | null,
+  gunits?: string | null,
+  timey?: boolean | null,
+  hhmmformat?: boolean | null,
+  todayta?: boolean | null,
+  weekends_off?: boolean | null,
+  tmin?: string | null,
+  tmax?: string | null,
+  tags?: string[] | null,
+  archivedate?: number | null,
+  burner?: string | null,
+  updated_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listArchived
+
+`goals.listArchived`
+
+Get all archived goals for the user
+
+**Risk:** `read`
+
+```ts
+await corsair.beeminder.api.goals.listArchived({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emaciated` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  slug: string,
+  title?: string | null,
+  fineprint?: string | null,
+  yaxis?: string | null,
+  goaldate?: number | null,
+  goalval?: number | null,
+  rate?: number | null,
+  runits?: string | null,
+  svg_url?: string | null,
+  graph_url?: string | null,
+  thumb_url?: string | null,
+  autodata?: string | null,
+  goal_type?: string | null,
+  losedate?: number | null,
+  urgencykey?: string | null,
+  queued?: boolean | null,
+  secret?: boolean | null,
+  datapublic?: boolean | null,
+  datapoints?: {
+    id?: string | null,
+    timestamp?: number | null,
+    daystamp?: string | null,
+    value?: number | null,
+    comment?: string | null,
+    updated_at?: number | null,
+    requestid?: string | null,
+    origin?: string | null,
+    creator?: string | null,
+    is_dummy?: boolean | null,
+    is_initial?: boolean | null,
+    created_at?: string | number | null
+  }[] | null,
+  numpts?: number | null,
+  pledge?: number | null,
+  initday?: number | null,
+  initval?: number | null,
+  curday?: number | null,
+  curval?: number | null,
+  currate?: number | null,
+  lastday?: number | null,
+  yaw?: number | null,
+  dir?: number | null,
+  lane?: number | null,
+  mathishard?: tuple | null,
+  headsum?: string | null,
+  limsum?: string | null,
+  kyoom?: boolean | null,
+  odom?: boolean | null,
+  aggday?: string | null,
+  steppy?: boolean | null,
+  rosy?: boolean | null,
+  movingav?: boolean | null,
+  aura?: boolean | null,
+  frozen?: boolean | null,
+  won?: boolean | null,
+  lost?: boolean | null,
+  maxflux?: number | null,
+  contract?: {
+    amount?: number | null,
+    stepdown_at?: number | null
+  } | null,
+  road?: (
+    tuple | tuple | tuple
+  )[] | null,
+  roadall?: (
+    tuple | tuple | tuple | tuple
+  )[] | null,
+  fullroad?: tuple[] | null,
+  rah?: number | null,
+  delta?: number | null,
+  delta_text?: string | null,
+  safebuf?: number | null,
+  colorkey?: string | null,
+  colorhex?: string | null,
+  safebump?: number | null,
+  autoratchet?: number | null,
+  callback_url?: string | null,
+  description?: string | null,
+  graphsum?: string | null,
+  lanewidth?: number | null,
+  deadline?: number | null,
+  leadtime?: number | null,
+  alertstart?: number | null,
+  plotall?: boolean | null,
+  last_datapoint?: {
+    id?: string | null,
+    timestamp?: number | null,
+    daystamp?: string | null,
+    value?: number | null,
+    comment?: string | null,
+    updated_at?: number | null,
+    requestid?: string | null,
+    origin?: string | null,
+    creator?: string | null,
+    is_dummy?: boolean | null,
+    is_initial?: boolean | null,
+    created_at?: string | number | null
+  } | null,
+  integery?: boolean | null,
+  gunits?: string | null,
+  timey?: boolean | null,
+  hhmmformat?: boolean | null,
+  todayta?: boolean | null,
+  weekends_off?: boolean | null,
+  tmin?: string | null,
+  tmax?: string | null,
+  tags?: string[] | null,
+  archivedate?: number | null,
+  burner?: string | null,
+  updated_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Get information about the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.beeminder.api.user.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `associations` | `boolean` | No | — |
+| `diff_since` | `number` | No | — |
+| `skinny` | `boolean` | No | — |
+| `emaciated` | `boolean` | No | — |
+| `datapoints_count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `timezone` | `string` | No | — |
+| `updated_at` | `number` | No | — |
+| `goals` | `object[]` | No | — |
+| `deleted_goals` | `object[]` | No | — |
+| `deadbeat` | `boolean` | No | — |
+| `urgency_load` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="goals full type">
+
+```ts
+(
+  string | {
+    id?: string | null,
+    slug: string,
+    title?: string | null,
+    fineprint?: string | null,
+    yaxis?: string | null,
+    goaldate?: number | null,
+    goalval?: number | null,
+    rate?: number | null,
+    runits?: string | null,
+    svg_url?: string | null,
+    graph_url?: string | null,
+    thumb_url?: string | null,
+    autodata?: string | null,
+    goal_type?: string | null,
+    losedate?: number | null,
+    urgencykey?: string | null,
+    queued?: boolean | null,
+    secret?: boolean | null,
+    datapublic?: boolean | null,
+    datapoints?: {
+      id?: string | null,
+      timestamp?: number | null,
+      daystamp?: string | null,
+      value?: number | null,
+      comment?: string | null,
+      updated_at?: number | null,
+      requestid?: string | null,
+      origin?: string | null,
+      creator?: string | null,
+      is_dummy?: boolean | null,
+      is_initial?: boolean | null,
+      created_at?: string | number | null
+    }[] | null,
+    numpts?: number | null,
+    pledge?: number | null,
+    initday?: number | null,
+    initval?: number | null,
+    curday?: number | null,
+    curval?: number | null,
+    currate?: number | null,
+    lastday?: number | null,
+    yaw?: number | null,
+    dir?: number | null,
+    lane?: number | null,
+    mathishard?: tuple | null,
+    headsum?: string | null,
+    limsum?: string | null,
+    kyoom?: boolean | null,
+    odom?: boolean | null,
+    aggday?: string | null,
+    steppy?: boolean | null,
+    rosy?: boolean | null,
+    movingav?: boolean | null,
+    aura?: boolean | null,
+    frozen?: boolean | null,
+    won?: boolean | null,
+    lost?: boolean | null,
+    maxflux?: number | null,
+    contract?: {
+      amount?: number | null,
+      stepdown_at?: number | null
+    } | null,
+    road?: (
+      tuple | tuple | tuple
+    )[] | null,
+    roadall?: (
+      tuple | tuple | tuple | tuple
+    )[] | null,
+    fullroad?: tuple[] | null,
+    rah?: number | null,
+    delta?: number | null,
+    delta_text?: string | null,
+    safebuf?: number | null,
+    colorkey?: string | null,
+    colorhex?: string | null,
+    safebump?: number | null,
+    autoratchet?: number | null,
+    callback_url?: string | null,
+    description?: string | null,
+    graphsum?: string | null,
+    lanewidth?: number | null,
+    deadline?: number | null,
+    leadtime?: number | null,
+    alertstart?: number | null,
+    plotall?: boolean | null,
+    last_datapoint?: {
+      id?: string | null,
+      timestamp?: number | null,
+      daystamp?: string | null,
+      value?: number | null,
+      comment?: string | null,
+      updated_at?: number | null,
+      requestid?: string | null,
+      origin?: string | null,
+      creator?: string | null,
+      is_dummy?: boolean | null,
+      is_initial?: boolean | null,
+      created_at?: string | number | null
+    } | null,
+    integery?: boolean | null,
+    gunits?: string | null,
+    timey?: boolean | null,
+    hhmmformat?: boolean | null,
+    todayta?: boolean | null,
+    weekends_off?: boolean | null,
+    tmin?: string | null,
+    tmax?: string | null,
+    tags?: string[] | null,
+    archivedate?: number | null,
+    burner?: string | null,
+    updated_at?: number | null
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="deleted_goals full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

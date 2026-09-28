@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Beeminder plugin for Corsair"
+---
+
+Use **Beeminder** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 4 typed API operations
+- 3 synced entities (`charges`, `goals`, `user`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/beeminder
+```
+```bash yarn
+yarn add corsair @corsair-dev/beeminder
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/beeminder
+```
+```bash bun
+bun add corsair @corsair-dev/beeminder
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { beeminder } from '@corsair-dev/beeminder';
+
+export const corsair = createCorsair({
+	plugins: [
+		beeminder(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+beeminder()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Beeminder OAuth app.
+
+```ts
+beeminder({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'beeminder',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`goals.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.beeminder.api.goals.list({});
+```
+
+
+**`charges.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.beeminder.api.charges.create({});
+```
+
+
+See the full list on the [API](/plugins/beeminder/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.beeminder.db.<entity>.search()` and `.list()`: `charges`, `goals`, `user`.
+
+See [Database](/plugins/beeminder/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/beeminder/api">
+    Every `beeminder.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/beeminder/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

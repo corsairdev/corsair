@@ -1,0 +1,133 @@
+---
+title: API
+description: "API reference for AsticaAi: every `asticaai.api.*` operation with input and output types."
+---
+
+Every `asticaai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analyze Audio
+
+### analyze
+
+`analyzeAudio.analyze`
+
+Transcribe audio using Astica speech-to-text.
+
+**Risk:** `read`
+
+```ts
+await corsair.asticaai.api.analyzeAudio.analyze({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `modelVersion` | `string` | Yes | — |
+| `doStream` | `0 \| 1` | Yes | — |
+| `low_priority` | `0 \| 1` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `error` | `string` | No | — |
+| `text` | `string` | No | — |
+| `resultURI` | `string` | No | — |
+
+
+
+---
+
+## Read Text
+
+### read
+
+`readText.read`
+
+Extract text from an image using Astica OCR.
+
+**Risk:** `read`
+
+```ts
+await corsair.asticaai.api.readText.read({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `modelVersion` | `2.5_full \| 2.1_full \| 2.0_full \| 1.0_full` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `error` | `string` | No | — |
+| `readResult` | `object` | No | — |
+| `astica` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="readResult full type">
+
+```ts
+{
+  stringIndexType?: string,
+  content?: string,
+  pages?: {
+    pageNumber?: number,
+    height?: number,
+    width?: number,
+    angle?: number,
+    words?: {
+      text: string,
+      boundingBox?: number[],
+      confidence?: number,
+      span?: {
+        offset: number,
+        length: number
+      }
+    }[],
+    lines?: {
+      text: string,
+      boundingBox?: number[],
+      spans?: {
+        offset: number,
+        length: number
+      }[]
+    }[],
+    spans?: {
+      offset: number,
+      length: number
+    }[]
+  }[],
+  styles?: any[]
+}
+```
+</Accordion>
+
+<Accordion title="astica full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

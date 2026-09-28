@@ -3,12 +3,12 @@ title: Overview
 description: "Use Xquik from Corsair to search tweets, inspect users, manage webhooks, upload media, and run connected-account X actions."
 ---
 
-Use **Xquik** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+Use **Xquik** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
 - 26 typed API operations
-- 5 database entities synced for fast `.search()` / `.list()` queries
+- 5 synced entities (`deliveries`, `events`, `tweets`, `users`, `webhooks`) for fast `.search()` / `.list()`
 - 2 incoming webhook event types
 
 ## Setup
@@ -16,134 +16,131 @@ Use **Xquik** through Corsair: one client, typed API calls, optional local DB sy
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/xquik
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/xquik
 ```
+```bash yarn
+yarn add corsair @corsair-dev/xquik
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/xquik
+```
+```bash bun
+bun add corsair @corsair-dev/xquik
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { xquik } from '@corsair-dev/xquik';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [xquik()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { xquik } from '@corsair-dev/xquik';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [xquik()],
+	plugins: [
+		xquik(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/xquik/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=xquik
-```
+<Tab title="API Key (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/xquik/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=xquik --tenant=<tenantId>
-```
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/xquik/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="API Key (Default)">
-
-```ts corsair.ts
+```ts
 xquik()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=xquik` (see [Get Credentials](/plugins/xquik/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
 </Tab>
 </Tabs>
 
-## Webhooks
+</Step>
 
-This plugin registers **2** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-See [Webhooks](/plugins/xquik/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'xquik',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
 
-## Query synced data
-
-Synced entities support `corsair.xquik.db.<entity>.search()` and `.list()`. See [Database](/plugins/xquik/database) for filters and operators.
-
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `media.download`
+**`media.download`**
 
 ```ts
-await corsair.xquik.api.media.download({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.media.download({});
 ```
 
 
-**Write-style (write):** `media.uploadFromUrl`
+**`media.uploadFromUrl`**
 
 ```ts
-await corsair.xquik.api.media.uploadFromUrl({});
+const tenant = corsair.withTenant('acme');
+await tenant.xquik.api.media.uploadFromUrl({});
 ```
 
 
-See the full list on the [API](/plugins/xquik/api) page. Use `pnpm corsair list --plugin=xquik` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/xquik/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.xquik.db.<entity>.search()` and `.list()`: `deliveries`, `events`, `tweets`, `users`, `webhooks`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/xquik/webhooks) page for payload types.
+See [Database](/plugins/xquik/database) for filters and operators.
 
----
+## Webhooks
 
-## Reference
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
 
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/xquik/api) |
-| Database | [Database](/plugins/xquik/database) |
-| Webhooks | [Webhooks](/plugins/xquik/webhooks) |
-| Credentials | [Get credentials](/plugins/xquik/get-credentials) |
+See [Webhooks](/plugins/xquik/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/xquik/api">
+    Every `xquik.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/xquik/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/xquik/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/xquik/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

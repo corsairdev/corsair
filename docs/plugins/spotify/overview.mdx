@@ -3,152 +3,166 @@ title: Overview
 description: "Spotify plugin for Corsair"
 ---
 
-Use **Spotify** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Spotify** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 30 typed API operations
-- 6 database entities synced for fast `.search()` / `.list()` queries
+- 6 synced entities (`albums`, `artists`, `playlistItems`, `playlists`, `tracks`, `users`) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/spotify
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/spotify
 ```
+```bash yarn
+yarn add corsair @corsair-dev/spotify
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/spotify
+```
+```bash bun
+bun add corsair @corsair-dev/spotify
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { spotify } from '@corsair-dev/spotify';
+
+export const corsair = createCorsair({
+	plugins: [
+		spotify({
+			authType: 'managed',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { spotify } from '@corsair-dev/spotify';
+<Tab title="Managed OAuth (Recommended)">
 
-export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [spotify()],
-});
+No setup required. Corsair hosts the OAuth app for **Spotify** — your tenants connect through Hub when they sign in.
+
+Provider walkthrough: [Get Credentials](/plugins/spotify/get-credentials).
+
+```ts
+spotify({
+	authType: 'managed',
+})
 ```
+
+More: [Managed OAuth](/concepts/auth#managed)
+
 </Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { spotify } from '@corsair-dev/spotify';
+<Tab title="API Key">
 
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [spotify()],
-});
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provider walkthrough: [Get Credentials](/plugins/spotify/get-credentials).
+
+```ts
+spotify({
+	authType: 'api_key',
+})
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Spotify OAuth app.
+
+Provider walkthrough: [Get Credentials](/plugins/spotify/get-credentials).
+
+```ts
+spotify()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/spotify/get-credentials) if you need help getting keys.
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-</Step>
-
-<Step title="Store credentials">
-<Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=spotify
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'spotify',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
 ```
-
-Use the key names documented in [Get Credentials](/plugins/spotify/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=spotify --tenant=<tenantId>
-```
-
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
 
 </Step>
 
 </Steps>
 
-## Authentication
+## Example API calls
 
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+**`albums.get`**
 
-<Tabs>
-<Tab title="OAuth 2.0 (Default)">
-
-```ts corsair.ts
-spotify()
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.albums.get({});
 ```
 
-Store credentials with `pnpm corsair setup --plugin=spotify` (see [Get Credentials](/plugins/spotify/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-More: [OAuth 2.0](/concepts/oauth)
+**`player.addToQueue`**
 
-</Tab>
-<Tab title="API Key">
-
-```ts corsair.ts
-spotify({
-    authType: 'api_key',
-})
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.spotify.api.player.addToQueue({});
 ```
 
-Store credentials with `pnpm corsair setup --plugin=spotify` (see [Get Credentials](/plugins/spotify/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
-More: [API Key](/concepts/api-key)
-
-</Tab>
-</Tabs>
-
+See the full list on the [API](/plugins/spotify/api) page.
 
 ## Query synced data
 
-Synced entities support `corsair.spotify.db.<entity>.search()` and `.list()`. See [Database](/plugins/spotify/database) for filters and operators.
+Synced entities support `tenant.spotify.db.<entity>.search()` and `.list()`: `albums`, `artists`, `playlistItems`, `playlists`, `tracks`, `users`.
 
+See [Database](/plugins/spotify/database) for filters and operators.
 
-## Example API calls
+## What's next
 
-**Read-style (read):** `albums.get`
-
-```ts
-await corsair.spotify.api.albums.get({});
-```
-
-
-**Write-style (write):** `player.addToQueue`
-
-```ts
-await corsair.spotify.api.player.addToQueue({});
-```
-
-
-See the full list on the [API](/plugins/spotify/api) page. Use `pnpm corsair list --plugin=spotify` and `pnpm corsair schema <path>` locally to inspect schemas.
-
----
-
-## Hooks
-
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
-
----
-
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/spotify/api) |
-| Database | [Database](/plugins/spotify/database) |
-| Credentials | [Get credentials](/plugins/spotify/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/spotify/api">
+    Every `spotify.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/spotify/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/spotify/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

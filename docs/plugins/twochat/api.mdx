@@ -1,0 +1,335 @@
+---
+title: API
+description: "API reference for TwoChat: every `twochat.api.*` operation with input and output types."
+---
+
+Every `twochat.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getApiUsageInfo
+
+`account.getApiUsageInfo`
+
+Retrieve current API usage and account information. Use when you need to monitor your remaining quotas before sending more requests.
+
+**Risk:** `read`
+
+```ts
+await corsair.twochat.api.account.getApiUsageInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `account` | `object` | No | — |
+| `limits` | `object` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string,
+  on_trial?: boolean,
+  blocked?: boolean,
+  created_at?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="limits full type">
+
+```ts
+{
+  requests_per_minute?: number
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  api_request_count?: number,
+  max_api_request_count?: number,
+  number_check_count?: number,
+  max_number_check_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testApiKey
+
+`account.testApiKey`
+
+Validate your API key and retrieve account info. Use when confirming credentials before performing other operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.twochat.api.account.testApiKey({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `account` | `object` | No | — |
+| `limits` | `object` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string,
+  on_trial?: boolean,
+  blocked?: boolean,
+  created_at?: string,
+  expires_at?: string
+}
+```
+</Accordion>
+
+<Accordion title="limits full type">
+
+```ts
+{
+  requests_per_minute?: number
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  api_request_count?: number,
+  max_api_request_count?: number,
+  number_check_count?: number,
+  max_number_check_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### createContact
+
+`contacts.createContact`
+
+Create a new contact in your 2Chat account. Use after gathering and verifying first name and at least one contact detail (email, phone, or address).
+
+**Risk:** `write`
+
+```ts
+await corsair.twochat.api.contacts.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | Yes | First name of the new contact |
+| `last_name` | `string` | No | Last name of the new contact |
+| `profile_pic_url` | `string` | No | Publicly accessible URL to the contact profile picture |
+| `channel_uuid` | `string` | No | UUID of a WhatsApp channel — if provided the contact is also created on that WhatsApp account |
+| `contact_details` | `object[]` | Yes | At least one contact detail (email, phone, or address). Required. |
+
+<AccordionGroup>
+<Accordion title="contact_details full type">
+
+```ts
+{
+  type: E | A | PH | WAPH,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  uuid: string,
+  first_name: string,
+  last_name?: string,
+  name?: string,
+  channel_uuid?: string | null,
+  profile_pic_url?: string | null,
+  details?: {
+    type: E | A | PH | WAPH,
+    value: string,
+    id?: number,
+    created_at?: string | number,
+    updated_at?: string | number
+  }[],
+  contact_details?: {
+    type: E | A | PH | WAPH,
+    value: string,
+    id?: number,
+    created_at?: string | number,
+    updated_at?: string | number
+  }[],
+  last_updated?: string,
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listContacts
+
+`contacts.listContacts`
+
+List all contacts in your 2Chat account. Use when you need to retrieve your contact list after confirming your account connection.
+
+**Risk:** `read`
+
+```ts
+await corsair.twochat.api.contacts.listContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | Yes | Zero-based page number for pagination |
+| `results_per_page` | `number` | Yes | Number of contacts per page (1–100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `page` | `number` | Yes | — |
+| `count` | `number` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  uuid: string,
+  first_name: string,
+  last_name?: string,
+  name?: string,
+  channel_uuid?: string | null,
+  profile_pic_url?: string | null,
+  details?: {
+    type: E | A | PH | WAPH,
+    value: string,
+    id?: number,
+    created_at?: string | number,
+    updated_at?: string | number
+  }[],
+  contact_details?: {
+    type: E | A | PH | WAPH,
+    value: string,
+    id?: number,
+    created_at?: string | number,
+    updated_at?: string | number
+  }[],
+  last_updated?: string,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Subscriptions
+
+### listWebhooks
+
+`webhookSubscriptions.listWebhooks`
+
+List all configured webhook subscriptions for WhatsApp and phone call events. Returns details including webhook UUID, event type, channel UUID, callback URL, and creation timestamp.
+
+**Risk:** `read`
+
+```ts
+await corsair.twochat.api.webhookSubscriptions.listWebhooks({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  uuid: string,
+  event_name: string,
+  channel_uuid?: string,
+  hook_url: string,
+  hook_params?: {
+  },
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

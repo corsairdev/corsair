@@ -5,7 +5,8 @@
   "favicon": "/favicon.ico",
   "logo": {
     "light": "/images/logo-light.svg",
-    "dark": "/images/logo-dark.svg"
+    "dark": "/images/logo-dark.svg",
+    "href": "https://corsair.dev"
   },
   "colors": {
     "primary": "#2d7387",
@@ -28,41 +29,73 @@
           {
             "group": "Get Started",
             "pages": [
-              "getting-started/introduction",
-              "getting-started/quick-start",
-              "getting-started/set-up-with-your-agent"
+              "introduction",
+              "quick-start",
+              {
+                "group": "Use cases",
+                "pages": [
+                  "use-cases/overview",
+                  "use-cases/dashboards",
+                  "use-cases/agents",
+                  "use-cases/knowledge-base",
+                  "use-cases/workflows"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Frameworks",
+            "pages": [
+              {
+                "group": "Full-stack",
+                "pages": [
+                  "frameworks/next",
+                  "frameworks/nuxt",
+                  "frameworks/sveltekit",
+                  "frameworks/remix",
+                  "frameworks/astro",
+                  "frameworks/tanstack"
+                ]
+              },
+              {
+                "group": "Backend",
+                "pages": [
+                  "frameworks/node",
+                  "frameworks/express",
+                  "frameworks/fastify",
+                  "frameworks/hono",
+                  "frameworks/nestjs"
+                ]
+              }
             ]
           },
           {
             "group": "Adapters",
             "pages": [
-              "adapters/handlers",
-              "adapters/client",
-              "adapters/react",
               {
-                "group": "AI agents",
+                "group": "AI SDKs",
                 "expanded": false,
                 "pages": [
-                  "mcp-adapters/mcp-adapters",
                   "mcp-adapters/anthropic-sdk",
                   "mcp-adapters/claude-sdk",
-                  "mcp-adapters/openai-agents",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
                   "mcp-adapters/openai"
                 ]
               },
               {
-                "group": "Coding agents",
+                "group": "Harnesses",
                 "expanded": false,
                 "pages": [
-                  "mcp-adapters/coding-agents",
                   "mcp-adapters/claude-code",
-                  "mcp-adapters/cursor"
+                  "mcp-adapters/cursor",
+                  "mcp-adapters/codex",
+                  "mcp-adapters/opencode",
+                  "mcp-adapters/hermes"
                 ]
               },
               {
-                "group": "Workflow engines",
+                "group": "Workflow Engines",
                 "expanded": false,
                 "pages": [
                   "guides/inngest",
@@ -74,73 +107,26 @@
             ]
           },
           {
-            "group": "Hub",
+            "group": "Workflows (beta)",
             "pages": [
+              "workflows/overview",
+              "workflows/triggering",
+              "workflows/execution"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "concepts/api",
+              "concepts/auth",
+              "concepts/provisioning",
+              "concepts/database",
+              "concepts/hooks",
               "hub/overview",
-              "hub/setup",
-              {
-                "group": "Configure",
-                "expanded": false,
-                "pages": [
-                  "hub/environments",
-                  "hub/delivery-urls",
-                  "hub/dashboard"
-                ]
-              },
-              {
-                "group": "Reference",
-                "expanded": false,
-                "pages": [
-                  "hub/manual-vs-hub",
-                  "hub/permissions",
-                  "hub/rest-api"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              {
-                "group": "Core",
-                "expanded": false,
-                "pages": [
-                  "concepts/integrations",
-                  "concepts/database",
-                  "concepts/api",
-                  "concepts/typescript",
-                  "concepts/error-handling"
-                ]
-              },
-              {
-                "group": "Authentication",
-                "expanded": false,
-                "pages": [
-                  "concepts/auth",
-                  "concepts/api-key",
-                  "concepts/oauth",
-                  "concepts/oauth-process"
-                ]
-              },
-              {
-                "group": "Building",
-                "expanded": false,
-                "pages": [
-                  "concepts/permissions",
-                  "concepts/multi-tenancy",
-                  "concepts/provisioning",
-                  "concepts/webhooks",
-                  "concepts/hooks"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Management API",
-            "pages": [
-              "management/overview",
-              "management/handler",
-              "management/connect"
+              "concepts/integrations",
+              "concepts/multi-tenancy",
+              "concepts/permissions",
+              "concepts/webhooks"
             ]
           }
         ]
@@ -156,11 +142,52 @@
             "group": "Plugins",
             "pages": [
               {
+                "group": "Ably",
+                "pages": [
+                  "plugins/ably/overview",
+                  "plugins/ably/api",
+                  "plugins/ably/database"
+                ]
+              },
+              {
                 "group": "Abstract",
                 "pages": [
                   "plugins/abstract/overview",
                   "plugins/abstract/api",
                   "plugins/abstract/database"
+                ]
+              },
+              {
+                "group": "AbuseIPDB",
+                "pages": [
+                  "plugins/abuseipdb/overview",
+                  "plugins/abuseipdb/api",
+                  "plugins/abuseipdb/database"
+                ]
+              },
+              {
+                "group": "Abyssale",
+                "pages": [
+                  "plugins/abyssale/overview",
+                  "plugins/abyssale/api",
+                  "plugins/abyssale/database",
+                  "plugins/abyssale/webhooks"
+                ]
+              },
+              {
+                "group": "AccredibleCertificates",
+                "pages": [
+                  "plugins/accrediblecertificates/overview",
+                  "plugins/accrediblecertificates/api",
+                  "plugins/accrediblecertificates/database"
+                ]
+              },
+              {
+                "group": "ActiveCampaign",
+                "pages": [
+                  "plugins/activecampaign/overview",
+                  "plugins/activecampaign/api",
+                  "plugins/activecampaign/database"
                 ]
               },
               {
@@ -177,6 +204,30 @@
                   "plugins/addresszen/overview",
                   "plugins/addresszen/api",
                   "plugins/addresszen/database"
+                ]
+              },
+              {
+                "group": "Aeroleads",
+                "pages": [
+                  "plugins/aeroleads/overview",
+                  "plugins/aeroleads/api",
+                  "plugins/aeroleads/database"
+                ]
+              },
+              {
+                "group": "Affinda",
+                "pages": [
+                  "plugins/affinda/overview",
+                  "plugins/affinda/api",
+                  "plugins/affinda/database"
+                ]
+              },
+              {
+                "group": "AgencyZoom",
+                "pages": [
+                  "plugins/agencyzoom/overview",
+                  "plugins/agencyzoom/api",
+                  "plugins/agencyzoom/database"
                 ]
               },
               {
@@ -197,12 +248,36 @@
                 ]
               },
               {
+                "group": "Agenty",
+                "pages": [
+                  "plugins/agenty/overview",
+                  "plugins/agenty/api",
+                  "plugins/agenty/database"
+                ]
+              },
+              {
+                "group": "Agility CMS",
+                "pages": [
+                  "plugins/agilitycms/overview",
+                  "plugins/agilitycms/api",
+                  "plugins/agilitycms/database"
+                ]
+              },
+              {
                 "group": "Ahrefs",
                 "pages": [
                   "plugins/ahrefs/overview",
                   "plugins/ahrefs/get-credentials",
                   "plugins/ahrefs/api",
                   "plugins/ahrefs/database"
+                ]
+              },
+              {
+                "group": "AimlApi",
+                "pages": [
+                  "plugins/aimlapi/overview",
+                  "plugins/aimlapi/api",
+                  "plugins/aimlapi/database"
                 ]
               },
               {
@@ -216,11 +291,91 @@
                 ]
               },
               {
+                "group": "AiVOOV text-to-speech",
+                "pages": [
+                  "plugins/aivoov/overview",
+                  "plugins/aivoov/api",
+                  "plugins/aivoov/database"
+                ]
+              },
+              {
+                "group": "Alchemy",
+                "pages": [
+                  "plugins/alchemy/overview",
+                  "plugins/alchemy/api",
+                  "plugins/alchemy/database"
+                ]
+              },
+              {
                 "group": "Algolia",
                 "pages": [
                   "plugins/algolia/overview",
                   "plugins/algolia/api",
                   "plugins/algolia/database"
+                ]
+              },
+              {
+                "group": "All Images AI",
+                "pages": [
+                  "plugins/allimagesai/overview",
+                  "plugins/allimagesai/api",
+                  "plugins/allimagesai/database"
+                ]
+              },
+              {
+                "group": "Alpha Vantage",
+                "pages": [
+                  "plugins/alphavantage/overview",
+                  "plugins/alphavantage/api",
+                  "plugins/alphavantage/database"
+                ]
+              },
+              {
+                "group": "Altoviz",
+                "pages": [
+                  "plugins/altoviz/overview",
+                  "plugins/altoviz/api",
+                  "plugins/altoviz/database"
+                ]
+              },
+              {
+                "group": "AltText.ai",
+                "pages": [
+                  "plugins/alttextai/overview",
+                  "plugins/alttextai/api",
+                  "plugins/alttextai/database"
+                ]
+              },
+              {
+                "group": "Amara (subtitling platform)",
+                "pages": [
+                  "plugins/amara/overview",
+                  "plugins/amara/api",
+                  "plugins/amara/database"
+                ]
+              },
+              {
+                "group": "Ambee",
+                "pages": [
+                  "plugins/ambee/overview",
+                  "plugins/ambee/api",
+                  "plugins/ambee/database"
+                ]
+              },
+              {
+                "group": "AmbientWeather",
+                "pages": [
+                  "plugins/ambientweather/overview",
+                  "plugins/ambientweather/api",
+                  "plugins/ambientweather/database"
+                ]
+              },
+              {
+                "group": "AMcards",
+                "pages": [
+                  "plugins/amcards/overview",
+                  "plugins/amcards/api",
+                  "plugins/amcards/database"
                 ]
               },
               {
@@ -234,6 +389,94 @@
                 ]
               },
               {
+                "group": "Anchor Browser",
+                "pages": [
+                  "plugins/anchorbrowser/overview",
+                  "plugins/anchorbrowser/api",
+                  "plugins/anchorbrowser/database"
+                ]
+              },
+              {
+                "group": "Anonyflow",
+                "pages": [
+                  "plugins/anonyflow/overview",
+                  "plugins/anonyflow/api",
+                  "plugins/anonyflow/database"
+                ]
+              },
+              {
+                "group": "Anthropic Admin API",
+                "pages": [
+                  "plugins/anthropicadministrator/overview",
+                  "plugins/anthropicadministrator/api",
+                  "plugins/anthropicadministrator/database"
+                ]
+              },
+              {
+                "group": "Apaleo",
+                "pages": [
+                  "plugins/apaleo/overview",
+                  "plugins/apaleo/api",
+                  "plugins/apaleo/database"
+                ]
+              },
+              {
+                "group": "API Ninjas",
+                "pages": [
+                  "plugins/apininjas/overview",
+                  "plugins/apininjas/api",
+                  "plugins/apininjas/database"
+                ]
+              },
+              {
+                "group": "API-Sports",
+                "pages": [
+                  "plugins/apisports/overview",
+                  "plugins/apisports/api",
+                  "plugins/apisports/database"
+                ]
+              },
+              {
+                "group": "API.Bible",
+                "pages": [
+                  "plugins/apibible/overview",
+                  "plugins/apibible/api",
+                  "plugins/apibible/database"
+                ]
+              },
+              {
+                "group": "API2PDF",
+                "pages": [
+                  "plugins/api2pdf/overview",
+                  "plugins/api2pdf/api",
+                  "plugins/api2pdf/database"
+                ]
+              },
+              {
+                "group": "Apify",
+                "pages": [
+                  "plugins/apify/overview",
+                  "plugins/apify/api",
+                  "plugins/apify/database"
+                ]
+              },
+              {
+                "group": "ApiLabz",
+                "pages": [
+                  "plugins/apilabz/overview",
+                  "plugins/apilabz/api",
+                  "plugins/apilabz/database"
+                ]
+              },
+              {
+                "group": "APIpie AI",
+                "pages": [
+                  "plugins/apipie/overview",
+                  "plugins/apipie/api",
+                  "plugins/apipie/database"
+                ]
+              },
+              {
                 "group": "Asana",
                 "pages": [
                   "plugins/asana/overview",
@@ -241,6 +484,161 @@
                   "plugins/asana/api",
                   "plugins/asana/database",
                   "plugins/asana/webhooks"
+                ]
+              },
+              {
+                "group": "AsinDataApi",
+                "pages": [
+                  "plugins/asindataapi/overview",
+                  "plugins/asindataapi/api",
+                  "plugins/asindataapi/database",
+                  "plugins/asindataapi/webhooks"
+                ]
+              },
+              {
+                "group": "AsticaAi",
+                "pages": [
+                  "plugins/asticaai/overview",
+                  "plugins/asticaai/api",
+                  "plugins/asticaai/database"
+                ]
+              },
+              {
+                "group": "AsyncInterview",
+                "pages": [
+                  "plugins/asyncinterview/overview",
+                  "plugins/asyncinterview/api",
+                  "plugins/asyncinterview/database"
+                ]
+              },
+              {
+                "group": "Attio",
+                "pages": [
+                  "plugins/attio/overview",
+                  "plugins/attio/api",
+                  "plugins/attio/database",
+                  "plugins/attio/webhooks"
+                ]
+              },
+              {
+                "group": "Autom",
+                "pages": [
+                  "plugins/autom/overview",
+                  "plugins/autom/api",
+                  "plugins/autom/database"
+                ]
+              },
+              {
+                "group": "Ayrshare",
+                "pages": [
+                  "plugins/ayrshare/overview",
+                  "plugins/ayrshare/api",
+                  "plugins/ayrshare/database"
+                ]
+              },
+              {
+                "group": "Backendless",
+                "pages": [
+                  "plugins/backendless/overview",
+                  "plugins/backendless/api",
+                  "plugins/backendless/database"
+                ]
+              },
+              {
+                "group": "Bannerbear",
+                "pages": [
+                  "plugins/bannerbear/overview",
+                  "plugins/bannerbear/api",
+                  "plugins/bannerbear/database",
+                  "plugins/bannerbear/webhooks"
+                ]
+              },
+              {
+                "group": "Bart",
+                "pages": [
+                  "plugins/bart/overview",
+                  "plugins/bart/api",
+                  "plugins/bart/database"
+                ]
+              },
+              {
+                "group": "Basecamp OAuth",
+                "pages": [
+                  "plugins/basecamp/overview",
+                  "plugins/basecamp/api",
+                  "plugins/basecamp/database"
+                ]
+              },
+              {
+                "group": "BaseLinker",
+                "pages": [
+                  "plugins/baselinker/overview",
+                  "plugins/baselinker/api",
+                  "plugins/baselinker/database"
+                ]
+              },
+              {
+                "group": "Basin",
+                "pages": [
+                  "plugins/basin/overview",
+                  "plugins/basin/api",
+                  "plugins/basin/database"
+                ]
+              },
+              {
+                "group": "Beeminder",
+                "pages": [
+                  "plugins/beeminder/overview",
+                  "plugins/beeminder/api",
+                  "plugins/beeminder/database"
+                ]
+              },
+              {
+                "group": "Better Stack",
+                "pages": [
+                  "plugins/betterstack/overview",
+                  "plugins/betterstack/api",
+                  "plugins/betterstack/database"
+                ]
+              },
+              {
+                "group": "BetterContact",
+                "pages": [
+                  "plugins/bettercontact/overview",
+                  "plugins/bettercontact/api",
+                  "plugins/bettercontact/database"
+                ]
+              },
+              {
+                "group": "BigDataCloud",
+                "pages": [
+                  "plugins/bigdatacloud/overview",
+                  "plugins/bigdatacloud/api",
+                  "plugins/bigdatacloud/database"
+                ]
+              },
+              {
+                "group": "Bigmailer",
+                "pages": [
+                  "plugins/bigmailer/overview",
+                  "plugins/bigmailer/api",
+                  "plugins/bigmailer/database"
+                ]
+              },
+              {
+                "group": "Bigml",
+                "pages": [
+                  "plugins/bigml/overview",
+                  "plugins/bigml/api",
+                  "plugins/bigml/database"
+                ]
+              },
+              {
+                "group": "Bitbucket Cloud OAuth 2.0",
+                "pages": [
+                  "plugins/bitbucket/overview",
+                  "plugins/bitbucket/api",
+                  "plugins/bitbucket/database"
                 ]
               },
               {
@@ -252,11 +650,43 @@
                 ]
               },
               {
+                "group": "BlazeMeter",
+                "pages": [
+                  "plugins/blazemeter/overview",
+                  "plugins/blazemeter/api",
+                  "plugins/blazemeter/database"
+                ]
+              },
+              {
                 "group": "Bluesky",
                 "pages": [
                   "plugins/bluesky/overview",
                   "plugins/bluesky/api",
                   "plugins/bluesky/database"
+                ]
+              },
+              {
+                "group": "Boloforms",
+                "pages": [
+                  "plugins/boloforms/overview",
+                  "plugins/boloforms/api",
+                  "plugins/boloforms/database"
+                ]
+              },
+              {
+                "group": "Botpress",
+                "pages": [
+                  "plugins/botpress/overview",
+                  "plugins/botpress/api",
+                  "plugins/botpress/database"
+                ]
+              },
+              {
+                "group": "Bouncer",
+                "pages": [
+                  "plugins/bouncer/overview",
+                  "plugins/bouncer/api",
+                  "plugins/bouncer/database"
                 ]
               },
               {
@@ -267,6 +697,38 @@
                   "plugins/box/api",
                   "plugins/box/database",
                   "plugins/box/webhooks"
+                ]
+              },
+              {
+                "group": "BoxHero",
+                "pages": [
+                  "plugins/boxhero/overview",
+                  "plugins/boxhero/api",
+                  "plugins/boxhero/database"
+                ]
+              },
+              {
+                "group": "Brandfetch",
+                "pages": [
+                  "plugins/brandfetch/overview",
+                  "plugins/brandfetch/api",
+                  "plugins/brandfetch/database"
+                ]
+              },
+              {
+                "group": "Browse AI",
+                "pages": [
+                  "plugins/browseai/overview",
+                  "plugins/browseai/api",
+                  "plugins/browseai/database"
+                ]
+              },
+              {
+                "group": "BugSnag",
+                "pages": [
+                  "plugins/bugsnag/overview",
+                  "plugins/bugsnag/api",
+                  "plugins/bugsnag/database"
                 ]
               },
               {
@@ -298,6 +760,47 @@
                 ]
               },
               {
+                "group": "Canvas",
+                "pages": [
+                  "plugins/canvas/overview",
+                  "plugins/canvas/api",
+                  "plugins/canvas/database",
+                  "plugins/canvas/webhooks"
+                ]
+              },
+              {
+                "group": "Chatbotkit",
+                "pages": [
+                  "plugins/chatbotkit/overview",
+                  "plugins/chatbotkit/api",
+                  "plugins/chatbotkit/database"
+                ]
+              },
+              {
+                "group": "CircleCI",
+                "pages": [
+                  "plugins/circleci/overview",
+                  "plugins/circleci/api",
+                  "plugins/circleci/database"
+                ]
+              },
+              {
+                "group": "Clientary",
+                "pages": [
+                  "plugins/clientary/overview",
+                  "plugins/clientary/api",
+                  "plugins/clientary/database"
+                ]
+              },
+              {
+                "group": "Clockify",
+                "pages": [
+                  "plugins/clockify/overview",
+                  "plugins/clockify/api",
+                  "plugins/clockify/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
@@ -316,11 +819,36 @@
                 ]
               },
               {
+                "group": "CollegeFootballData",
+                "pages": [
+                  "plugins/collegefootballdata/overview",
+                  "plugins/collegefootballdata/api",
+                  "plugins/collegefootballdata/database"
+                ]
+              },
+              {
                 "group": "Confluence",
                 "pages": [
                   "plugins/confluence/overview",
                   "plugins/confluence/api",
                   "plugins/confluence/database"
+                ]
+              },
+              {
+                "group": "Contentful GraphQL",
+                "pages": [
+                  "plugins/contentfulgraphql/overview",
+                  "plugins/contentfulgraphql/api",
+                  "plugins/contentfulgraphql/database"
+                ]
+              },
+              {
+                "group": "CrowTerminal",
+                "pages": [
+                  "plugins/crowterminal/overview",
+                  "plugins/crowterminal/api",
+                  "plugins/crowterminal/database",
+                  "plugins/crowterminal/webhooks"
                 ]
               },
               {
@@ -330,6 +858,14 @@
                   "plugins/cursor/get-credentials",
                   "plugins/cursor/api",
                   "plugins/cursor/database"
+                ]
+              },
+              {
+                "group": "CustomGPT",
+                "pages": [
+                  "plugins/customgpt/overview",
+                  "plugins/customgpt/api",
+                  "plugins/customgpt/database"
                 ]
               },
               {
@@ -357,6 +893,22 @@
                 ]
               },
               {
+                "group": "DevinMcp",
+                "pages": [
+                  "plugins/devinmcp/overview",
+                  "plugins/devinmcp/api",
+                  "plugins/devinmcp/database"
+                ]
+              },
+              {
+                "group": "Diffbot",
+                "pages": [
+                  "plugins/diffbot/overview",
+                  "plugins/diffbot/api",
+                  "plugins/diffbot/database"
+                ]
+              },
+              {
                 "group": "DigitalOcean",
                 "pages": [
                   "plugins/digitalocean/overview",
@@ -375,12 +927,28 @@
                 ]
               },
               {
+                "group": "Docker Hub",
+                "pages": [
+                  "plugins/dockerhub/overview",
+                  "plugins/dockerhub/api",
+                  "plugins/dockerhub/database"
+                ]
+              },
+              {
                 "group": "Dodo Payments",
                 "pages": [
                   "plugins/dodopayments/overview",
                   "plugins/dodopayments/api",
                   "plugins/dodopayments/database",
                   "plugins/dodopayments/webhooks"
+                ]
+              },
+              {
+                "group": "Doppler",
+                "pages": [
+                  "plugins/doppler/overview",
+                  "plugins/doppler/api",
+                  "plugins/doppler/database"
                 ]
               },
               {
@@ -391,6 +959,14 @@
                   "plugins/dropbox/api",
                   "plugins/dropbox/database",
                   "plugins/dropbox/webhooks"
+                ]
+              },
+              {
+                "group": "Epic Games",
+                "pages": [
+                  "plugins/epicgames/overview",
+                  "plugins/epicgames/api",
+                  "plugins/epicgames/database"
                 ]
               },
               {
@@ -441,6 +1017,14 @@
                 ]
               },
               {
+                "group": "Formbricks",
+                "pages": [
+                  "plugins/formbricks/overview",
+                  "plugins/formbricks/api",
+                  "plugins/formbricks/database"
+                ]
+              },
+              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
@@ -478,6 +1062,14 @@
                 ]
               },
               {
+                "group": "Google Address Validation",
+                "pages": [
+                  "plugins/googleaddressvalidation/overview",
+                  "plugins/googleaddressvalidation/api",
+                  "plugins/googleaddressvalidation/database"
+                ]
+              },
+              {
                 "group": "Google BigQuery",
                 "pages": [
                   "plugins/googlebigquery/overview",
@@ -493,6 +1085,14 @@
                   "plugins/googlecalendar/api",
                   "plugins/googlecalendar/database",
                   "plugins/googlecalendar/webhooks"
+                ]
+              },
+              {
+                "group": "Google Cloud Vision",
+                "pages": [
+                  "plugins/googlecloudvision/overview",
+                  "plugins/googlecloudvision/api",
+                  "plugins/googlecloudvision/database"
                 ]
               },
               {
@@ -549,12 +1149,36 @@
                 ]
               },
               {
+                "group": "GroqCloud",
+                "pages": [
+                  "plugins/groqcloud/overview",
+                  "plugins/groqcloud/api",
+                  "plugins/groqcloud/database"
+                ]
+              },
+              {
+                "group": "Habitica",
+                "pages": [
+                  "plugins/habitica/overview",
+                  "plugins/habitica/api",
+                  "plugins/habitica/database"
+                ]
+              },
+              {
                 "group": "Hacker news",
                 "pages": [
                   "plugins/hackernews/overview",
                   "plugins/hackernews/get-credentials",
                   "plugins/hackernews/api",
                   "plugins/hackernews/database"
+                ]
+              },
+              {
+                "group": "Harvest",
+                "pages": [
+                  "plugins/harvest/overview",
+                  "plugins/harvest/api",
+                  "plugins/harvest/database"
                 ]
               },
               {
@@ -581,6 +1205,22 @@
                   "plugins/hubspot/api",
                   "plugins/hubspot/database",
                   "plugins/hubspot/webhooks"
+                ]
+              },
+              {
+                "group": "Hugging Face",
+                "pages": [
+                  "plugins/huggingface/overview",
+                  "plugins/huggingface/api",
+                  "plugins/huggingface/database"
+                ]
+              },
+              {
+                "group": "ImgBB",
+                "pages": [
+                  "plugins/imgbb/overview",
+                  "plugins/imgbb/api",
+                  "plugins/imgbb/database"
                 ]
               },
               {
@@ -611,6 +1251,14 @@
                 ]
               },
               {
+                "group": "JigsawStack",
+                "pages": [
+                  "plugins/jigsawstack/overview",
+                  "plugins/jigsawstack/api",
+                  "plugins/jigsawstack/database"
+                ]
+              },
+              {
                 "group": "Jira",
                 "pages": [
                   "plugins/jira/overview",
@@ -618,6 +1266,14 @@
                   "plugins/jira/api",
                   "plugins/jira/database",
                   "plugins/jira/webhooks"
+                ]
+              },
+              {
+                "group": "Kaggle",
+                "pages": [
+                  "plugins/kaggle/overview",
+                  "plugins/kaggle/api",
+                  "plugins/kaggle/database"
                 ]
               },
               {
@@ -639,12 +1295,36 @@
                 ]
               },
               {
+                "group": "Loyverse",
+                "pages": [
+                  "plugins/loyverse/overview",
+                  "plugins/loyverse/api",
+                  "plugins/loyverse/database"
+                ]
+              },
+              {
                 "group": "Mailchimp",
                 "pages": [
                   "plugins/mailchimp/overview",
                   "plugins/mailchimp/api",
                   "plugins/mailchimp/database",
                   "plugins/mailchimp/webhooks"
+                ]
+              },
+              {
+                "group": "Mailtrap",
+                "pages": [
+                  "plugins/mailtrap/overview",
+                  "plugins/mailtrap/api",
+                  "plugins/mailtrap/database"
+                ]
+              },
+              {
+                "group": "Merriam-Webster Dictionary",
+                "pages": [
+                  "plugins/merriamwebsterdict/overview",
+                  "plugins/merriamwebsterdict/api",
+                  "plugins/merriamwebsterdict/database"
                 ]
               },
               {
@@ -675,6 +1355,14 @@
                 ]
               },
               {
+                "group": "NextDNS",
+                "pages": [
+                  "plugins/nextdns/overview",
+                  "plugins/nextdns/api",
+                  "plugins/nextdns/database"
+                ]
+              },
+              {
                 "group": "Notion",
                 "pages": [
                   "plugins/notion/overview",
@@ -682,6 +1370,14 @@
                   "plugins/notion/api",
                   "plugins/notion/database",
                   "plugins/notion/webhooks"
+                ]
+              },
+              {
+                "group": "OCR.space",
+                "pages": [
+                  "plugins/ocrspace/overview",
+                  "plugins/ocrspace/api",
+                  "plugins/ocrspace/database"
                 ]
               },
               {
@@ -727,6 +1423,14 @@
                 ]
               },
               {
+                "group": "OpenRouter",
+                "pages": [
+                  "plugins/openrouter/overview",
+                  "plugins/openrouter/api",
+                  "plugins/openrouter/database"
+                ]
+              },
+              {
                 "group": "Oura",
                 "pages": [
                   "plugins/oura/overview",
@@ -754,6 +1458,15 @@
                   "plugins/pagerduty/api",
                   "plugins/pagerduty/database",
                   "plugins/pagerduty/webhooks"
+                ]
+              },
+              {
+                "group": "PDFMonkey",
+                "pages": [
+                  "plugins/pdfmonkey/overview",
+                  "plugins/pdfmonkey/api",
+                  "plugins/pdfmonkey/database",
+                  "plugins/pdfmonkey/webhooks"
                 ]
               },
               {
@@ -811,6 +1524,23 @@
                 ]
               },
               {
+                "group": "Salesforce",
+                "pages": [
+                  "plugins/salesforce/overview",
+                  "plugins/salesforce/api",
+                  "plugins/salesforce/database",
+                  "plugins/salesforce/webhooks"
+                ]
+              },
+              {
+                "group": "Securitytrails",
+                "pages": [
+                  "plugins/securitytrails/overview",
+                  "plugins/securitytrails/api",
+                  "plugins/securitytrails/database"
+                ]
+              },
+              {
                 "group": "Sentry",
                 "pages": [
                   "plugins/sentry/overview",
@@ -818,6 +1548,14 @@
                   "plugins/sentry/api",
                   "plugins/sentry/database",
                   "plugins/sentry/webhooks"
+                ]
+              },
+              {
+                "group": "Serpapi",
+                "pages": [
+                  "plugins/serpapi/overview",
+                  "plugins/serpapi/api",
+                  "plugins/serpapi/database"
                 ]
               },
               {
@@ -868,6 +1606,14 @@
                 ]
               },
               {
+                "group": "StudioByAI21Labs",
+                "pages": [
+                  "plugins/studiobyai21labs/overview",
+                  "plugins/studiobyai21labs/api",
+                  "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
                 "group": "Supabase",
                 "pages": [
                   "plugins/supabase/overview",
@@ -895,6 +1641,14 @@
                 ]
               },
               {
+                "group": "TavilyMcp",
+                "pages": [
+                  "plugins/tavilymcp/overview",
+                  "plugins/tavilymcp/api",
+                  "plugins/tavilymcp/database"
+                ]
+              },
+              {
                 "group": "Telegram",
                 "pages": [
                   "plugins/telegram/overview",
@@ -902,6 +1656,30 @@
                   "plugins/telegram/api",
                   "plugins/telegram/database",
                   "plugins/telegram/webhooks"
+                ]
+              },
+              {
+                "group": "TextRazor",
+                "pages": [
+                  "plugins/textrazor/overview",
+                  "plugins/textrazor/api",
+                  "plugins/textrazor/database"
+                ]
+              },
+              {
+                "group": "TickTick",
+                "pages": [
+                  "plugins/ticktick/overview",
+                  "plugins/ticktick/api",
+                  "plugins/ticktick/database"
+                ]
+              },
+              {
+                "group": "Tisane",
+                "pages": [
+                  "plugins/tisane/overview",
+                  "plugins/tisane/api",
+                  "plugins/tisane/database"
                 ]
               },
               {
@@ -915,6 +1693,14 @@
                 ]
               },
               {
+                "group": "Toggl",
+                "pages": [
+                  "plugins/toggl/overview",
+                  "plugins/toggl/api",
+                  "plugins/toggl/database"
+                ]
+              },
+              {
                 "group": "Trello",
                 "pages": [
                   "plugins/trello/overview",
@@ -922,6 +1708,14 @@
                   "plugins/trello/api",
                   "plugins/trello/database",
                   "plugins/trello/webhooks"
+                ]
+              },
+              {
+                "group": "TwentyOneRisk",
+                "pages": [
+                  "plugins/twentyonerisk/overview",
+                  "plugins/twentyonerisk/api",
+                  "plugins/twentyonerisk/database"
                 ]
               },
               {
@@ -953,6 +1747,14 @@
                 ]
               },
               {
+                "group": "TwoChat",
+                "pages": [
+                  "plugins/twochat/overview",
+                  "plugins/twochat/api",
+                  "plugins/twochat/database"
+                ]
+              },
+              {
                 "group": "Typeform",
                 "pages": [
                   "plugins/typeform/overview",
@@ -960,6 +1762,23 @@
                   "plugins/typeform/api",
                   "plugins/typeform/database",
                   "plugins/typeform/webhooks"
+                ]
+              },
+              {
+                "group": "UniOne",
+                "pages": [
+                  "plugins/unione/overview",
+                  "plugins/unione/api",
+                  "plugins/unione/database",
+                  "plugins/unione/webhooks"
+                ]
+              },
+              {
+                "group": "Uniswap Trading API",
+                "pages": [
+                  "plugins/uniswapapi/overview",
+                  "plugins/uniswapapi/api",
+                  "plugins/uniswapapi/database"
                 ]
               },
               {
@@ -983,12 +1802,52 @@
                 ]
               },
               {
+                "group": "Webflow",
+                "pages": [
+                  "plugins/webflow/overview",
+                  "plugins/webflow/api",
+                  "plugins/webflow/database"
+                ]
+              },
+              {
+                "group": "Webvizio",
+                "pages": [
+                  "plugins/webvizio/overview",
+                  "plugins/webvizio/api",
+                  "plugins/webvizio/database"
+                ]
+              },
+              {
                 "group": "WhatsApp",
                 "pages": [
                   "plugins/whatsapp/overview",
                   "plugins/whatsapp/api",
                   "plugins/whatsapp/database",
                   "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
+                "group": "WitAi",
+                "pages": [
+                  "plugins/witai/overview",
+                  "plugins/witai/api",
+                  "plugins/witai/database"
+                ]
+              },
+              {
+                "group": "Wiza",
+                "pages": [
+                  "plugins/wiza/overview",
+                  "plugins/wiza/api",
+                  "plugins/wiza/database"
+                ]
+              },
+              {
+                "group": "Workday",
+                "pages": [
+                  "plugins/workday/overview",
+                  "plugins/workday/api",
+                  "plugins/workday/database"
                 ]
               },
               {
@@ -1045,6 +1904,15 @@
                   "plugins/zoom/database",
                   "plugins/zoom/webhooks"
                 ]
+              },
+              {
+                "group": "ZoomInfo",
+                "pages": [
+                  "plugins/zoominfo/overview",
+                  "plugins/zoominfo/api",
+                  "plugins/zoominfo/database",
+                  "plugins/zoominfo/webhooks"
+                ]
               }
             ]
           }
@@ -1068,12 +1936,20 @@
   },
   "redirects": [
     {
+      "source": "/getting-started/introduction",
+      "destination": "/introduction"
+    },
+    {
+      "source": "/getting-started/quick-start",
+      "destination": "/quick-start"
+    },
+    {
       "source": "/",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/studio/overview",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/getting-started/installation",
@@ -1081,11 +1957,11 @@
     },
     {
       "source": "/app/home",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/app/introduction",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/app/agent-setup",
@@ -1157,7 +2033,7 @@
     },
     {
       "source": "/hosted-sdk/overview",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/hosted-sdk/quickstart",
@@ -1237,7 +2113,7 @@
     },
     {
       "source": "/getting-started/comparison",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/frameworks/nextjs",
@@ -1274,6 +2150,10 @@
     {
       "source": "/production/oauth-process",
       "destination": "/concepts/oauth-process"
+    },
+    {
+      "source": "/mcp-adapters/openai-agents",
+      "destination": "/mcp-adapters/openai"
     }
   ]
 }

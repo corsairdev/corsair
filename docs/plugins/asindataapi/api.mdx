@@ -1,0 +1,2083 @@
+---
+title: API
+description: "API reference for AsinDataApi: every `asindataapi.api.*` operation with input and output types."
+---
+
+Every `asindataapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### get
+
+`categories.get`
+
+Retrieve Amazon category data and products within a category
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.categories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amazon_domain` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `url` | `string` | No | — |
+| `refinements` | `string` | No | — |
+| `sort_by` | `most_recent \| price_low_to_high \| price_high_to_low \| featured \| average_review` | No | — |
+| `page` | `number` | No | — |
+| `max_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `request_parameters` | `object` | No | — |
+| `request_metadata` | `object` | No | — |
+| `category_results` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `refinements` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="request_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  id?: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  amazon_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="category_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  asin?: string,
+  link?: string,
+  image?: string,
+  is_prime?: boolean,
+  rating?: number,
+  ratings_total?: number,
+  sponsored?: boolean,
+  price?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  },
+  prices?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="refinements full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Collections
+
+### create
+
+`collections.create`
+
+Create a new Collection for batch data collection
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.collections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `schedule_type` | `monthly \| weekly \| daily \| minutes \| manual` | No | — |
+| `priority` | `highest \| high \| normal \| low \| lowest` | No | — |
+| `schedule_days_of_month` | `number[]` | No | — |
+| `schedule_days_of_week` | `number[]` | No | — |
+| `schedule_hours` | `number[]` | No | — |
+| `schedule_minutes` | `every_minute \| every_5_minutes \| every_10_minutes \| every_15_minutes \| every_20_minutes \| every_25_minutes \| every_30_minutes \| every_hour` | No | — |
+| `destination_ids` | `string[]` | No | — |
+| `notification_email` | `string` | No | — |
+| `notification_webhook` | `string` | No | — |
+| `notification_as_json` | `boolean` | No | — |
+| `notification_as_jsonlines` | `boolean` | No | — |
+| `notification_as_csv` | `boolean` | No | — |
+| `notification_csv_fields` | `string` | No | — |
+| `requests_type` | `mixed \| product \| offers \| search \| category` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`collections.delete`
+
+Delete a Collection [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asindataapi.api.collections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`collections.get`
+
+Get details of a specific Collection including status and request counts
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.collections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List all Collections on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `only_with_results` | `boolean` | No | — |
+| `only_without_results` | `boolean` | No | — |
+| `search_term` | `string` | No | — |
+| `search_type` | `contains \| starts_with \| ends_with \| exact` | No | — |
+| `status` | `all \| idle \| queued \| running` | No | — |
+| `created_before` | `string` | No | — |
+| `created_after` | `string` | No | — |
+| `last_run_before` | `string` | No | — |
+| `last_run_after` | `string` | No | — |
+| `destination_id` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `sort_by` | `created_at \| last_run \| name \| priority \| status` | No | — |
+| `sort_direction` | `ascending \| descending` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `total_count` | `number` | No | — |
+| `total_pages` | `number` | No | — |
+| `current_page` | `number` | No | — |
+| `count_this_page` | `number` | No | — |
+| `collections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collections full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`collections.start`
+
+Start a Collection to run all its requests immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.collections.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`collections.update`
+
+Update an existing Collection's configuration (only when not running)
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.collections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `schedule_type` | `monthly \| weekly \| daily \| minutes \| manual` | No | — |
+| `priority` | `highest \| high \| normal \| low \| lowest` | No | — |
+| `schedule_days_of_month` | `number[]` | No | — |
+| `schedule_days_of_week` | `number[]` | No | — |
+| `schedule_hours` | `number[]` | No | — |
+| `schedule_minutes` | `every_minute \| every_5_minutes \| every_10_minutes \| every_15_minutes \| every_20_minutes \| every_25_minutes \| every_30_minutes \| every_hour` | No | — |
+| `destination_ids` | `string[]` | No | — |
+| `notification_email` | `string` | No | — |
+| `notification_webhook` | `string` | No | — |
+| `notification_as_json` | `boolean` | No | — |
+| `notification_as_jsonlines` | `boolean` | No | — |
+| `notification_as_csv` | `boolean` | No | — |
+| `notification_csv_fields` | `string` | No | — |
+| `requests_type` | `mixed \| product \| offers \| search \| category` | No | — |
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Destinations
+
+### create
+
+`destinations.create`
+
+Create a new Destination for exporting Collection Result Sets
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.destinations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `s3 \| gcs \| azure \| oss \| s3compatible` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `s3_access_key_id` | `string` | No | — |
+| `s3_secret_access_key` | `string` | No | — |
+| `s3_bucket_name` | `string` | No | — |
+| `s3_path_prefix` | `string` | No | — |
+| `s3_endpoint` | `string` | No | — |
+| `s3_region` | `string` | No | — |
+| `gcs_access_key` | `string` | No | — |
+| `gcs_secret_key` | `string` | No | — |
+| `gcs_bucket_name` | `string` | No | — |
+| `gcs_path_prefix` | `string` | No | — |
+| `azure_account_name` | `string` | No | — |
+| `azure_account_key` | `string` | No | — |
+| `azure_container_name` | `string` | No | — |
+| `azure_path_prefix` | `string` | No | — |
+| `oss_access_key` | `string` | No | — |
+| `oss_secret_key` | `string` | No | — |
+| `oss_bucket_name` | `string` | No | — |
+| `oss_region_id` | `string` | No | — |
+| `oss_path_prefix` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `usage` | `object` | No | — |
+| `destination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  used?: number,
+  limit?: number,
+  available?: number
+}
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: s3 | gcs | azure | oss | s3compatible | null,
+  enabled?: boolean | null,
+  used_by?: number | null,
+  s3_bucket_name?: string | null,
+  s3_path_prefix?: string | null,
+  s3_endpoint?: string | null,
+  s3_region?: string | null,
+  gcs_bucket_name?: string | null,
+  gcs_path_prefix?: string | null,
+  azure_account_name?: string | null,
+  azure_container_name?: string | null,
+  azure_path_prefix?: string | null,
+  oss_bucket_name?: string | null,
+  oss_region_id?: string | null,
+  oss_path_prefix?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`destinations.delete`
+
+Delete a Destination [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asindataapi.api.destinations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`destinations.list`
+
+List all configured Destinations (S3, GCS, Azure Blob, S3-compatible)
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.destinations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `search_term` | `string` | No | — |
+| `sort_by` | `type \| name` | No | — |
+| `sort_direction` | `ascending \| descending` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `usage` | `object` | No | — |
+| `destinations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  used?: number,
+  limit?: number,
+  available?: number
+}
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: s3 | gcs | azure | oss | s3compatible | null,
+  enabled?: boolean | null,
+  used_by?: number | null,
+  s3_bucket_name?: string | null,
+  s3_path_prefix?: string | null,
+  s3_endpoint?: string | null,
+  s3_region?: string | null,
+  gcs_bucket_name?: string | null,
+  gcs_path_prefix?: string | null,
+  azure_account_name?: string | null,
+  azure_container_name?: string | null,
+  azure_path_prefix?: string | null,
+  oss_bucket_name?: string | null,
+  oss_region_id?: string | null,
+  oss_path_prefix?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`destinations.update`
+
+Update an existing Destination's configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.destinations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `s3_access_key_id` | `string` | No | — |
+| `s3_secret_access_key` | `string` | No | — |
+| `s3_bucket_name` | `string` | No | — |
+| `s3_path_prefix` | `string` | No | — |
+| `s3_endpoint` | `string` | No | — |
+| `s3_region` | `string` | No | — |
+| `gcs_access_key` | `string` | No | — |
+| `gcs_secret_key` | `string` | No | — |
+| `gcs_bucket_name` | `string` | No | — |
+| `gcs_path_prefix` | `string` | No | — |
+| `azure_account_name` | `string` | No | — |
+| `azure_account_key` | `string` | No | — |
+| `azure_container_name` | `string` | No | — |
+| `azure_path_prefix` | `string` | No | — |
+| `oss_access_key` | `string` | No | — |
+| `oss_secret_key` | `string` | No | — |
+| `oss_bucket_name` | `string` | No | — |
+| `oss_region_id` | `string` | No | — |
+| `oss_path_prefix` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `destination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: s3 | gcs | azure | oss | s3compatible | null,
+  enabled?: boolean | null,
+  used_by?: number | null,
+  s3_bucket_name?: string | null,
+  s3_path_prefix?: string | null,
+  s3_endpoint?: string | null,
+  s3_region?: string | null,
+  gcs_bucket_name?: string | null,
+  gcs_path_prefix?: string | null,
+  azure_account_name?: string | null,
+  azure_container_name?: string | null,
+  azure_path_prefix?: string | null,
+  oss_bucket_name?: string | null,
+  oss_region_id?: string | null,
+  oss_path_prefix?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Identifiers
+
+### resolve
+
+`identifiers.resolve`
+
+Resolve GTIN, ISBN, UPC, or EAN identifiers to ASINs automatically
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.identifiers.resolve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gtin` | `string` | Yes | — |
+| `amazon_domain` | `string` | No | — |
+| `skip_gtin_cache` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_info: {
+    success: true,
+    credits_used?: number,
+    credits_remaining?: number,
+    credits_reset_at?: string,
+    message?: string,
+    type?: string
+  },
+  request_parameters?: {
+  },
+  request_metadata?: {
+    id?: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    amazon_url?: string
+  },
+  product: {
+    title?: string,
+    asin: string,
+    link?: string,
+    brand?: string,
+    description?: string,
+    rating?: number,
+    ratings_total?: number,
+    reviews_total?: number,
+    main_image?: {
+      link?: string
+    },
+    images?: {
+    }[],
+    feature_bullets?: string[],
+    attributes?: {
+      name: string,
+      value: string
+    }[],
+    categories?: {
+      name?: string,
+      link?: string,
+      category_id?: string
+    }[],
+    price?: {
+      symbol?: string,
+      value?: number,
+      currency?: string,
+      raw?: string,
+      name?: string
+    },
+    buybox_winner?: {
+    }
+  }
+} | {
+  request_info: {
+    success: false,
+    credits_used?: number,
+    credits_remaining?: number,
+    credits_reset_at?: string,
+    message?: string,
+    type?: string
+  },
+  request_parameters?: {
+  },
+  request_metadata?: {
+    id?: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    amazon_url?: string
+  },
+  product?: {
+    title?: string,
+    asin?: string,
+    link?: string,
+    brand?: string,
+    description?: string,
+    rating?: number,
+    ratings_total?: number,
+    reviews_total?: number,
+    main_image?: {
+      link?: string
+    },
+    images?: {
+    }[],
+    feature_bullets?: string[],
+    attributes?: {
+      name: string,
+      value: string
+    }[],
+    categories?: {
+      name?: string,
+      link?: string,
+      category_id?: string
+    }[],
+    price?: {
+      symbol?: string,
+      value?: number,
+      currency?: string,
+      raw?: string,
+      name?: string
+    },
+    buybox_winner?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Offers
+
+### get
+
+`offers.get`
+
+Retrieve product offers, pricing, availability, and seller information
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.offers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amazon_domain` | `string` | No | — |
+| `asin` | `string` | No | — |
+| `url` | `string` | No | — |
+| `offers_prime` | `boolean` | No | — |
+| `offers_free_shipping` | `boolean` | No | — |
+| `offers_condition_new` | `boolean` | No | — |
+| `show_different_asins` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `max_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `request_parameters` | `object` | No | — |
+| `request_metadata` | `object` | No | — |
+| `product` | `object` | No | — |
+| `offers` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `available_filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="request_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  id?: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  amazon_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="product full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="offers full type">
+
+```ts
+{
+  position?: number,
+  is_prime?: boolean,
+  buybox_winner?: boolean,
+  offer_id?: string,
+  offer_asin?: string,
+  price?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  },
+  condition?: {
+  },
+  seller?: {
+  },
+  delivery?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="available_filters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### get
+
+`products.get`
+
+Retrieve Amazon product details by ASIN, URL, or GTIN/ISBN/UPC/EAN
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.products.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amazon_domain` | `string` | No | — |
+| `asin` | `string` | No | — |
+| `url` | `string` | No | — |
+| `gtin` | `string` | No | — |
+| `skip_gtin_cache` | `boolean` | No | — |
+| `include_summarization_attributes` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  request_info: {
+    success: true,
+    credits_used?: number,
+    credits_remaining?: number,
+    credits_reset_at?: string,
+    message?: string,
+    type?: string
+  },
+  request_parameters?: {
+  },
+  request_metadata?: {
+    id?: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    amazon_url?: string
+  },
+  product: {
+    title?: string,
+    asin: string,
+    link?: string,
+    brand?: string,
+    description?: string,
+    rating?: number,
+    ratings_total?: number,
+    reviews_total?: number,
+    main_image?: {
+      link?: string
+    },
+    images?: {
+    }[],
+    feature_bullets?: string[],
+    attributes?: {
+      name: string,
+      value: string
+    }[],
+    categories?: {
+      name?: string,
+      link?: string,
+      category_id?: string
+    }[],
+    price?: {
+      symbol?: string,
+      value?: number,
+      currency?: string,
+      raw?: string,
+      name?: string
+    },
+    buybox_winner?: {
+    }
+  }
+} | {
+  request_info: {
+    success: false,
+    credits_used?: number,
+    credits_remaining?: number,
+    credits_reset_at?: string,
+    message?: string,
+    type?: string
+  },
+  request_parameters?: {
+  },
+  request_metadata?: {
+    id?: string,
+    created_at?: string,
+    processed_at?: string,
+    total_time_taken?: number,
+    amazon_url?: string
+  },
+  product?: {
+    title?: string,
+    asin?: string,
+    link?: string,
+    brand?: string,
+    description?: string,
+    rating?: number,
+    ratings_total?: number,
+    reviews_total?: number,
+    main_image?: {
+      link?: string
+    },
+    images?: {
+    }[],
+    feature_bullets?: string[],
+    attributes?: {
+      name: string,
+      value: string
+    }[],
+    categories?: {
+      name?: string,
+      link?: string,
+      category_id?: string
+    }[],
+    price?: {
+      symbol?: string,
+      value?: number,
+      currency?: string,
+      raw?: string,
+      name?: string
+    },
+    buybox_winner?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Requests
+
+### add
+
+`requests.add`
+
+Add Requests to a Collection (up to 1000 per call)
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.requests.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  type?: product | offers | category | search | reviews | seller_profile | autocomplete,
+  amazon_domain?: string,
+  asin?: string,
+  url?: string,
+  gtin?: string,
+  search_term?: string,
+  category_id?: string,
+  refinements?: string,
+  sort_by?: most_recent | price_low_to_high | price_high_to_low | featured | average_review,
+  exclude_sponsored?: boolean,
+  direct_search?: boolean,
+  page?: number,
+  max_page?: number,
+  include_html?: boolean,
+  skip_gtin_cache?: boolean,
+  show_different_asins?: boolean,
+  custom_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### clear
+
+`requests.clear`
+
+Bulk-delete multiple Requests from a Collection by their IDs [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asindataapi.api.requests.clear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `request_ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`requests.delete`
+
+Delete a single Request from a Collection [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.asindataapi.api.requests.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `request_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`requests.list`
+
+List all Requests in a Collection (paginated, 1000 per page)
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.requests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `requests_page_current` | `number` | No | — |
+| `requests_page_count` | `number` | No | — |
+| `requests_total_count` | `number` | No | — |
+| `requests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="requests full type">
+
+```ts
+{
+  id: string,
+  custom_id?: string | null,
+  type?: product | offers | category | search | reviews | seller_profile | autocomplete | null,
+  amazon_domain?: string | null,
+  asin?: string | null,
+  url?: string | null,
+  gtin?: string | null,
+  search_term?: string | null,
+  category_id?: string | null,
+  refinements?: string | null,
+  sort_by?: string | null,
+  exclude_sponsored?: boolean | null,
+  direct_search?: boolean | null,
+  page?: number | null,
+  max_page?: number | null,
+  include_html?: boolean | null,
+  skip_gtin_cache?: boolean | null,
+  show_different_asins?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`requests.update`
+
+Update a single Request within a Collection
+
+**Risk:** `write`
+
+```ts
+await corsair.asindataapi.api.requests.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `request_id` | `string` | Yes | — |
+| `type` | `product \| offers \| category \| search \| reviews \| seller_profile \| autocomplete` | No | — |
+| `amazon_domain` | `string` | No | — |
+| `asin` | `string` | No | — |
+| `url` | `string` | No | — |
+| `gtin` | `string` | No | — |
+| `search_term` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `refinements` | `string` | No | — |
+| `sort_by` | `most_recent \| price_low_to_high \| price_high_to_low \| featured \| average_review` | No | — |
+| `exclude_sponsored` | `boolean` | No | — |
+| `direct_search` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `max_page` | `number` | No | — |
+| `include_html` | `boolean` | No | — |
+| `skip_gtin_cache` | `boolean` | No | — |
+| `show_different_asins` | `boolean` | No | — |
+| `custom_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `request` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="request full type">
+
+```ts
+{
+  type?: product | offers | category | search | reviews | seller_profile | autocomplete,
+  amazon_domain?: string,
+  asin?: string,
+  url?: string,
+  gtin?: string,
+  search_term?: string,
+  category_id?: string,
+  refinements?: string,
+  sort_by?: most_recent | price_low_to_high | price_high_to_low | featured | average_review,
+  exclude_sponsored?: boolean,
+  direct_search?: boolean,
+  page?: number,
+  max_page?: number,
+  include_html?: boolean,
+  skip_gtin_cache?: boolean,
+  show_different_asins?: boolean,
+  custom_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Result Sets
+
+### get
+
+`resultSets.get`
+
+Get a specific Result Set with download links
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.resultSets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+| `result_set_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  id: number,
+  collection_id?: string | null,
+  started_at?: string | null,
+  ended_at?: string | null,
+  expires_at?: string | null,
+  results_page_count?: number | null,
+  requests_completed?: number | null,
+  requests_failed?: number | null,
+  requests_total?: number | null,
+  download_links?: {
+    json?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null,
+    jsonlines?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null,
+    csv?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null
+  } | null,
+  webhook_status?: {
+  } | null,
+  destination_status?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`resultSets.list`
+
+List all Result Sets for a Collection
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.resultSets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `collection_id` | `string` | No | — |
+| `collection` | `object` | No | — |
+| `results_count` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  created_at?: string | null,
+  last_run?: string | null,
+  name?: string | null,
+  schedule_type?: monthly | weekly | daily | minutes | manual | null,
+  priority?: highest | high | normal | low | lowest | null,
+  destination_ids?: string[] | null,
+  enabled?: boolean | null,
+  status?: idle | queued | running | null,
+  request_total_count?: number | null,
+  request_page_count?: number | null,
+  requests_total_count?: number | null,
+  requests_page_count?: number | null,
+  credits_required?: number | null,
+  next_result_set_id?: number | null,
+  results_count?: number | null,
+  schedule_hours?: number[] | null,
+  schedule_days_of_week?: number[] | null,
+  schedule_days_of_month?: number[] | null,
+  schedule_minutes?: string | null,
+  notification_email?: string | null,
+  notification_webhook?: string | null,
+  notification_as_json?: boolean | null,
+  notification_as_jsonlines?: boolean | null,
+  notification_as_csv?: boolean | null,
+  notification_csv_fields?: string | null,
+  request_type?: string | null,
+  request_type_locked?: boolean | null,
+  requests_type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  collection_id?: string | null,
+  started_at?: string | null,
+  ended_at?: string | null,
+  expires_at?: string | null,
+  results_page_count?: number | null,
+  requests_completed?: number | null,
+  requests_failed?: number | null,
+  requests_total?: number | null,
+  download_links?: {
+    json?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null,
+    jsonlines?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null,
+    csv?: {
+      pages?: string[] | null,
+      all_pages?: string | null
+    } | null
+  } | null,
+  webhook_status?: {
+  } | null,
+  destination_status?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### get
+
+`search.get`
+
+Search Amazon products by keywords across supported Amazon domains
+
+**Risk:** `read`
+
+```ts
+await corsair.asindataapi.api.search.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amazon_domain` | `string` | No | — |
+| `search_term` | `string` | No | — |
+| `url` | `string` | No | — |
+| `category_id` | `string` | No | — |
+| `refinements` | `string` | No | — |
+| `sort_by` | `most_recent \| price_low_to_high \| price_high_to_low \| featured \| average_review` | No | — |
+| `exclude_sponsored` | `boolean` | No | — |
+| `direct_search` | `boolean` | No | — |
+| `page` | `number` | No | — |
+| `max_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_info` | `object` | Yes | — |
+| `request_parameters` | `object` | No | — |
+| `request_metadata` | `object` | No | — |
+| `search_results` | `object[]` | No | — |
+| `pagination` | `object` | No | — |
+| `refinements` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="request_info full type">
+
+```ts
+{
+  success: boolean,
+  credits_used?: number,
+  credits_remaining?: number,
+  credits_reset_at?: string,
+  message?: string,
+  type?: string
+}
+```
+</Accordion>
+
+<Accordion title="request_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="request_metadata full type">
+
+```ts
+{
+  id?: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  amazon_url?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_results full type">
+
+```ts
+{
+  position?: number,
+  title?: string,
+  asin?: string,
+  link?: string,
+  image?: string,
+  is_prime?: boolean,
+  rating?: number,
+  ratings_total?: number,
+  sponsored?: boolean,
+  price?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  },
+  prices?: {
+    symbol?: string,
+    value?: number,
+    currency?: string,
+    raw?: string,
+    name?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="refinements full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,383 @@
+---
+title: API
+description: "API reference for APIpie AI: every `apipie.api.*` operation with input and output types."
+---
+
+Every `apipie.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Chat
+
+### createCompletion
+
+`chat.createCompletion`
+
+Generate a chat completion using an APIpie model, with optional provider routing and memory.
+
+**Risk:** `write`
+
+```ts
+await corsair.apipie.api.chat.createCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `provider` | `string` | No | — |
+| `routing` | `price \| perf \| perf_avg` | No | — |
+| `maxTokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `topK` | `number` | No | — |
+| `frequencyPenalty` | `number` | No | — |
+| `presencePenalty` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `n` | `number` | No | — |
+| `memory` | `number` | No | — |
+| `memSession` | `string` | No | — |
+| `memExpire` | `number` | No | — |
+| `memClear` | `number` | No | — |
+| `integrity` | `number` | No | — |
+| `integrityModel` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `model` | `string` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message: {
+    role: string,
+    content: string
+  },
+  finish_reason?: string,
+  finishReason?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Embeddings
+
+### create
+
+`embeddings.create`
+
+Create embeddings for the given input text(s).
+
+**Risk:** `write`
+
+```ts
+await corsair.apipie.api.embeddings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `string \| string[]` | Yes | — |
+| `user` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `model` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  index?: number,
+  embedding: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### generate
+
+`images.generate`
+
+Generate image(s) from a text prompt.
+
+**Risk:** `write`
+
+```ts
+await corsair.apipie.api.images.generate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `n` | `number` | No | — |
+| `size` | `string` | No | — |
+| `quality` | `string` | No | — |
+| `style` | `string` | No | — |
+| `responseFormat` | `string` | No | — |
+| `user` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url?: string,
+  b64_json?: string,
+  revised_prompt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List APIpie models available to the account, filterable by type, subtype, provider, and model.
+
+**Risk:** `read`
+
+```ts
+await corsair.apipie.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `subtype` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `model` | `string` | No | — |
+| `enabled` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  model?: string | null,
+  provider?: string | null,
+  type?: string | null,
+  subtype?: string | null,
+  route?: string | null,
+  description?: string | null,
+  enabled?: boolean | number | null,
+  available?: boolean | number | null,
+  avg_cost?: string | null,
+  input_cost?: string | null,
+  output_cost?: string | null,
+  price_type?: string | null,
+  img_price?: any | null,
+  img_json?: {
+  } | null,
+  latency?: string | null,
+  query_count?: string | null,
+  max_tokens?: number | null,
+  max_response_tokens?: number | null
+}[] | {
+  object?: string,
+  data: {
+    id: string,
+    model?: string | null,
+    provider?: string | null,
+    type?: string | null,
+    subtype?: string | null,
+    route?: string | null,
+    description?: string | null,
+    enabled?: boolean | number | null,
+    available?: boolean | number | null,
+    avg_cost?: string | null,
+    input_cost?: string | null,
+    output_cost?: string | null,
+    price_type?: string | null,
+    img_price?: any | null,
+    img_json?: {
+    } | null,
+    latency?: string | null,
+    query_count?: string | null,
+    max_tokens?: number | null,
+    max_response_tokens?: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listDetailed
+
+`models.listDetailed`
+
+List APIpie models with detailed metadata including capabilities, limits, and pricing.
+
+**Risk:** `read`
+
+```ts
+await corsair.apipie.api.models.listDetailed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `provider` | `string` | No | — |
+| `model` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  model?: string | null,
+  provider?: string | null,
+  type?: string | null,
+  subtype?: string | null,
+  route?: string | null,
+  description?: string | null,
+  enabled?: boolean | number | null,
+  available?: boolean | number | null,
+  abortable?: boolean | null,
+  moderationRequired?: boolean | null,
+  supports_multipart?: boolean | null,
+  input_modalities?: string[] | null,
+  output_modalities?: string[] | null,
+  instruct_type?: string | null,
+  quantization?: string | null,
+  pool?: string | null,
+  mmlu?: number | null,
+  output_vector_size?: number | null,
+  max_tokens?: number | null,
+  max_response_tokens?: number | null,
+  max_images_per_prompt?: number | null,
+  max_audio_per_prompt?: number | null,
+  max_audio_length_hours?: number | null,
+  max_videos_per_prompt?: number | null,
+  max_video_length?: number | null,
+  max_pdf_size_mb?: number | null,
+  latency?: string | null,
+  query_count?: string | null,
+  pricing?: {
+  } | null,
+  supported_input_parameters?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,234 @@
+---
+title: Webhooks
+description: "Attio incoming webhooks: event paths, payloads, and response data."
+---
+
+The Attio plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/attio/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `record`
+  - `created` (`record.created`)
+  - `deleted` (`record.deleted`)
+  - `updated` (`record.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Record
+
+### Created
+
+`record.created`
+
+Triggered when a record is created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `record.created` | Yes | — |
+| `id` | `object` | Yes | — |
+| `actor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="id full type">
+
+```ts
+{
+  workspace_id: string,
+  object_id?: string,
+  record_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: record.created,
+  id: {
+    workspace_id: string,
+    object_id?: string,
+    record_id: string
+  },
+  actor?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+attio({
+    webhookHooks: {
+        record: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`record.deleted`
+
+Triggered when a record is deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `record.deleted` | Yes | — |
+| `id` | `object` | Yes | — |
+| `actor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="id full type">
+
+```ts
+{
+  workspace_id: string,
+  object_id?: string,
+  record_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: record.deleted,
+  id: {
+    workspace_id: string,
+    object_id?: string,
+    record_id: string
+  },
+  actor?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+attio({
+    webhookHooks: {
+        record: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`record.updated`
+
+Triggered when a record is updated
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `record.updated` | Yes | — |
+| `id` | `object` | Yes | — |
+| `actor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="id full type">
+
+```ts
+{
+  workspace_id: string,
+  object_id?: string,
+  record_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: record.updated,
+  id: {
+    workspace_id: string,
+    object_id?: string,
+    record_id: string
+  },
+  actor?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+attio({
+    webhookHooks: {
+        record: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

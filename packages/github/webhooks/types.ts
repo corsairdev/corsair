@@ -2186,7 +2186,7 @@ export function verifyGithubWebhookSignature(
 		return { valid: true };
 	}
 	if (!webhookSecret) {
-		return { valid: false };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;

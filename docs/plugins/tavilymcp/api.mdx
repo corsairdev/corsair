@@ -1,0 +1,434 @@
+---
+title: API
+description: "API reference for TavilyMcp: every `tavilymcp.api.*` operation with input and output types."
+---
+
+Every `tavilymcp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Tavily
+
+### crawl
+
+`tavily.crawl`
+
+Crawl a site from a start URL with configurable depth and breadth
+
+**Risk:** `read`
+
+```ts
+await corsair.tavilymcp.api.tavily.crawl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `max_depth` | `number` | No | — |
+| `max_breadth` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `instructions` | `string` | No | — |
+| `chunks_per_source` | `number` | No | — |
+| `select_paths` | `string[]` | No | — |
+| `select_domains` | `string[]` | No | — |
+| `exclude_paths` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `allow_external` | `boolean` | No | — |
+| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People[]` | No | — |
+| `extract_depth` | `basic \| advanced` | No | — |
+| `format` | `markdown \| text` | No | — |
+| `include_images` | `boolean` | No | — |
+| `include_favicon` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `include_usage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `failed_results` | `object[]` | No | — |
+| `response_time` | `number` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  raw_content: string,
+  images?: string[],
+  favicon?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="failed_results full type">
+
+```ts
+{
+  url: string,
+  error: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extract
+
+`tavily.extract`
+
+Extract page content from one or more URLs as markdown or plain text
+
+**Risk:** `read`
+
+```ts
+await corsair.tavilymcp.api.tavily.extract({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string \| string[]` | Yes | — |
+| `query` | `string` | No | — |
+| `chunks_per_source` | `number` | No | — |
+| `include_images` | `boolean` | No | — |
+| `extract_depth` | `basic \| advanced` | No | — |
+| `format` | `markdown \| text` | No | — |
+| `include_favicon` | `boolean` | No | — |
+| `timeout` | `number` | No | — |
+| `include_usage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `failed_results` | `object[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url: string,
+  raw_content: string,
+  title?: string | null,
+  images?: string[],
+  favicon?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="failed_results full type">
+
+```ts
+{
+  url: string,
+  error: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### map
+
+`tavily.map`
+
+Map a site's structure from a start URL and return its URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.tavilymcp.api.tavily.map({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `max_depth` | `number` | No | — |
+| `max_breadth` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `instructions` | `string` | No | — |
+| `select_paths` | `string[]` | No | — |
+| `select_domains` | `string[]` | No | — |
+| `exclude_paths` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `allow_external` | `boolean` | No | — |
+| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media \| People[]` | No | — |
+| `timeout` | `number` | No | — |
+| `include_usage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base_url` | `string` | Yes | — |
+| `results` | `string[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### research
+
+`tavily.research`
+
+Run comprehensive multi-source research on a topic and return a cited report
+
+**Risk:** `read`
+
+```ts
+await corsair.tavilymcp.api.tavily.research({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | — |
+| `model` | `auto \| mini \| pro` | No | — |
+| `output_schema` | `object` | No | — |
+| `citation_format` | `numbered \| mla \| apa \| chicago` | No | — |
+| `include_domains` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `output_length` | `short \| standard \| long` | No | — |
+| `files` | `object[]` | No | — |
+| `max_wait_ms` | `number` | No | — |
+| `poll_interval_ms` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="output_schema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  name: string,
+  data: string,
+  type: base64
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `pending \| in_progress \| completed \| failed` | Yes | — |
+| `input` | `string` | No | — |
+| `model` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `content` | `object` | No | — |
+| `sources` | `object[]` | No | — |
+| `response_time` | `number` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  title?: string | null,
+  url: string,
+  favicon?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`tavily.search`
+
+Search the web with Tavily and return ranked snippets with source URLs
+
+**Risk:** `read`
+
+```ts
+await corsair.tavilymcp.api.tavily.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `search_depth` | `advanced \| basic \| fast \| ultra-fast` | No | — |
+| `chunks_per_source` | `number` | No | — |
+| `max_results` | `number` | No | — |
+| `topic` | `general \| news \| finance` | No | — |
+| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `include_answer` | `boolean \| basic \| advanced` | No | — |
+| `include_raw_content` | `boolean \| markdown \| text` | No | — |
+| `include_images` | `boolean` | No | — |
+| `include_image_descriptions` | `boolean` | No | — |
+| `include_favicon` | `boolean` | No | — |
+| `include_domains` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `country` | `string` | No | — |
+| `auto_parameters` | `boolean` | No | — |
+| `exact_match` | `boolean` | No | — |
+| `safe_search` | `boolean` | No | — |
+| `include_usage` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `answer` | `string` | No | — |
+| `follow_up_questions` | `string[]` | No | — |
+| `images` | `object[]` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `response_time` | `number` | Yes | — |
+| `usage` | `object` | No | — |
+| `request_id` | `string` | No | — |
+| `auto_parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  url: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  title: string,
+  url: string,
+  content: string,
+  score: number,
+  raw_content?: string | null,
+  favicon?: string | null,
+  images?: {
+    url: string,
+    description?: string | null
+  }[] | null,
+  id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  credits: number
+}
+```
+</Accordion>
+
+<Accordion title="auto_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

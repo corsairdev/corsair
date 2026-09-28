@@ -1,0 +1,494 @@
+---
+title: API
+description: "API reference for Agility CMS: every `agilitycms.api.*` operation with input and output types."
+---
+
+Every `agilitycms.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Content
+
+### getApiTypes
+
+`content.getApiTypes`
+
+Retrieve enum types and metadata definitions used throughout Agility CMS API
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getApiTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code |
+| `apiType` | `fetch \| preview` | Yes | API access mode |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContentModels
+
+`content.getContentModels`
+
+Retrieve content models and page module schema definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getContentModels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  referenceName?: string | null,
+  displayName: string,
+  description?: string | null,
+  fields?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getItem
+
+`content.getItem`
+
+Fetch details of a content item by Content ID including fields and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `contentId` | `number` | Yes | Content item ID to retrieve |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
+| `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentID` | `number` | Yes | Unique identifier for the content item |
+| `properties` | `object` | No | System metadata properties |
+| `fields` | `object` | Yes | Dynamic content fields key-value dictionary |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  state?: number,
+  modified?: string,
+  versionID?: number,
+  referenceName?: string,
+  definitionName?: string,
+  itemOrder?: number
+}
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getList
+
+`content.getList`
+
+Retrieve a paginated, filterable list of content items by reference name
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `referenceName` | `string` | Yes | Content list reference name (e.g. posts, authors) |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
+| `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
+| `take` | `number` | No | Maximum number of items to return (page size) |
+| `skip` | `number` | No | Number of items to skip for pagination |
+| `sort` | `string` | No | Field name to sort items by (e.g. properties.modified) |
+| `direction` | `asc \| desc` | No | Sort direction: asc or desc |
+| `filter` | `string` | No | OData filter expression (e.g. fields.Title[like]MyPost) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | No | Total number of matching content items |
+| `items` | `object[]` | Yes | Array of retrieved content items |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  contentID: number,
+  properties?: {
+    state?: number,
+    modified?: string,
+    versionID?: number,
+    referenceName?: string,
+    definitionName?: string,
+    itemOrder?: number
+  },
+  fields: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLogs
+
+`content.getLogs`
+
+Retrieve sync items (content change logs) incrementally using sync tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `syncToken` | `string` | Yes | Sync token for incremental change sync; use '0' for initial sync |
+| `pageSize` | `number` | No | Number of sync items to return per page (max 500) |
+| `apiType` | `fetch \| preview` | Yes | API access mode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `syncToken` | `string` | Yes | Next sync token to persist; returns '0' when sync is up to date |
+| `items` | `object[]` | Yes | List of content items created or updated since last sync |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  contentID: number,
+  properties?: {
+    state?: number,
+    modified?: string,
+    versionID?: number,
+    referenceName?: string,
+    definitionName?: string,
+    itemOrder?: number
+  },
+  fields?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPage
+
+`content.getPage`
+
+Retrieve details of a Page including metadata, content zones, and components by page ID
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getPage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `pageId` | `number` | Yes | Page ID to retrieve |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+| `contentLinkDepth` | `number` | No | Depth of linked content items to expand (0-5) |
+| `expandAllContentLinks` | `boolean` | No | Whether to automatically expand all nested content links |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageID` | `number` | Yes | Unique identifier for the page |
+| `name` | `string` | Yes | Page name |
+| `path` | `string` | No | URL path of the page |
+| `title` | `string` | Yes | Browser title of the page |
+| `menuText` | `string` | No | Menu label text |
+| `pageType` | `string` | No | Page type (e.g. static, dynamic) |
+| `templateName` | `string` | Yes | Page template layout name |
+| `redirectUrl` | `string` | No | Redirect URL if configured |
+| `securePage` | `boolean` | No | Whether the page requires authentication |
+| `seo` | `object` | No | SEO and visibility configuration |
+| `zones` | `object` | No | Content zones dictionary mapping zone name to components |
+| `properties` | `object` | No | Page system metadata properties |
+
+<AccordionGroup>
+<Accordion title="seo full type">
+
+```ts
+{
+  metaDescription?: string,
+  metaKeywords?: string,
+  metaHTML?: string,
+  menuVisible?: boolean,
+  sitemapVisible?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="zones full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+  state?: number,
+  modified?: string,
+  versionID?: number,
+  referenceName?: string,
+  definitionName?: string,
+  itemOrder?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPageModules
+
+`content.getPageModules`
+
+Retrieve page module UI component definitions for building pages
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getPageModules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  referenceName?: string | null,
+  displayName: string,
+  description?: string | null,
+  fields?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSitemapFlat
+
+`content.getSitemapFlat`
+
+Retrieve the flat sitemap dictionary for a specific channel and locale
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.getSitemapFlat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `channelName` | `string` | Yes | Digital channel name (e.g. website) |
+| `apiType` | `fetch \| preview` | Yes | API access mode: fetch for live, preview for staging |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### syncPages
+
+`content.syncPages`
+
+Synchronize local page data with CMS incrementally using sync tokens
+
+**Risk:** `read`
+
+```ts
+await corsair.agilitycms.api.content.syncPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `instanceGuid` | `string` | Yes | Agility CMS instance GUID |
+| `locale` | `string` | Yes | Language locale code (e.g. en-us) |
+| `syncToken` | `string` | Yes | Sync token for incremental page sync; use '0' for initial sync |
+| `pageSize` | `number` | No | Number of sync pages to return per page (max 500) |
+| `apiType` | `fetch \| preview` | Yes | API access mode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `syncToken` | `string` | Yes | Next sync token to persist; returns '0' when page sync is up to date |
+| `items` | `object[]` | Yes | List of page items created or updated since last sync |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  pageID: number,
+  name?: string,
+  path?: string | null,
+  title?: string,
+  templateName?: string,
+  properties?: {
+    state?: number,
+    modified?: string,
+    versionID?: number,
+    referenceName?: string,
+    definitionName?: string,
+    itemOrder?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
