@@ -14,6 +14,34 @@ export class TwilioAPIError extends Error {
 
 const TWILIO_API_BASE = 'https://api.twilio.com/2010-04-01';
 
+export type TwilioCredentials = {
+	accountSid: string;
+	authToken: string;
+};
+
+/**
+ * Split a stored Twilio key into its Account SID and Auth Token parts.
+ *
+ * Keys are stored as `accountSid:authToken`, but the token itself may
+ * contain colons. Only split on the first colon so the full token is
+ * preserved. A key without a colon is treated as a plain token.
+ */
+export function parseTwilioCredentials(key: string): TwilioCredentials {
+	const separator = key.indexOf(':');
+	if (separator === -1) {
+		return { accountSid: key, authToken: key };
+	}
+	return {
+		accountSid: key.slice(0, separator),
+		authToken: key.slice(separator + 1),
+	};
+}
+
+/**
+ * Send an authenticated request to the Twilio REST API.
+ *
+ * Auth uses HTTP Basic with `base64(accountSid:authToken)`.
+ */
 export async function makeTwilioRequest<T>(
 	endpoint: string,
 	accountSid: string,
