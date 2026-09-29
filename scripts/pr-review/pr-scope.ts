@@ -42,6 +42,14 @@ function isGithubConfigFile(file: string): boolean {
 	return file.startsWith('.github/');
 }
 
+function isCiScopeTuningFile(file: string): boolean {
+	return (
+		isGithubConfigFile(file) ||
+		file === 'scripts/pr-review/pr-scope.ts' ||
+		file === 'scripts/pr-review/pr-scope.test.ts'
+	);
+}
+
 export function isGitZeroOid(oid: string): boolean {
 	return oid.length > 0 && /^0+$/.test(oid);
 }
@@ -116,7 +124,7 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 		return { lane: 'skip-heavy' };
 	}
 
-	if (changedFiles.length > 0 && changedFiles.every(isGithubConfigFile)) {
+	if (changedFiles.length > 0 && changedFiles.every(isCiScopeTuningFile)) {
 		return { lane: 'skip-heavy' };
 	}
 
