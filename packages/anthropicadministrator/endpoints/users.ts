@@ -3,7 +3,7 @@ import { cacheEntity, cacheList, callAdminApi, evictEntity } from './shared';
 import type {
 	AnthropicAdministratorEndpointOutputs as Outputs,
 	User,
-} from './types';
+} from './types/index';
 
 const BASE = '/v1/organizations/users';
 
