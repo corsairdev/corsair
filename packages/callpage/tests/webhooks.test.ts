@@ -35,6 +35,20 @@ describe('verifyCallPageWebhookToken', () => {
 			).valid,
 		).toBe(false);
 	});
+
+	it('accepts a hub-verified delivery without a token', () => {
+		expect(
+			verifyCallPageWebhookToken(
+				{
+					headers: {},
+					payload: {},
+					rawBody: '{}',
+					hubVerified: true,
+				},
+				undefined,
+			),
+		).toEqual({ valid: true });
+	});
 });
 
 describe('CallPage webhook handler', () => {
@@ -47,17 +61,13 @@ describe('CallPage webhook handler', () => {
 	};
 
 	it('rejects forged events without a verification token', async () => {
-		const result = await CallPageWebhooks.event.handler(
-			{ key: '', options: {} } as never,
-			{
+		await expect(
+			CallPageWebhooks.event.handler({ key: '', options: {} } as never, {
 				headers: {},
 				payload,
 				rawBody: JSON.stringify(payload),
-			},
-		);
-
-		expect(result.success).toBe(false);
-		expect(result.statusCode).toBe(401);
+			}),
+		).rejects.toThrow('Missing webhook verification token');
 	});
 
 	it('accepts events with a valid verification token', async () => {
@@ -67,6 +77,21 @@ describe('CallPage webhook handler', () => {
 				headers: { authorization: SECRET },
 				payload,
 				rawBody: JSON.stringify(payload),
+			},
+		);
+
+		expect(result.success).toBe(true);
+		expect(result.data).toEqual(payload);
+	});
+
+	it('accepts hub-verified events without a verification token', async () => {
+		const result = await CallPageWebhooks.event.handler(
+			{ key: undefined, options: {} } as never,
+			{
+				headers: {},
+				payload,
+				rawBody: JSON.stringify(payload),
+				hubVerified: true,
 			},
 		);
 

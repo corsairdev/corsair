@@ -13,11 +13,7 @@ export const event: CallPageWebhooks['event'] = {
 	handler: async (ctx, request) => {
 		const verification = verifyCallPageWebhookToken(request, ctx.key);
 		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error ?? 'Unauthorized',
-			};
+			throw new Error(verification.error ?? 'Unauthorized');
 		}
 
 		const payload = CallPageWebhookEventSchema.parse(request.payload);

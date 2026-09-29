@@ -29,8 +29,13 @@ export type CallPageWebhookOutputs = {
 
 export function verifyCallPageWebhookToken(
 	request: WebhookRequest<unknown>,
-	token: string,
+	token?: string,
 ): { valid: boolean; error?: string } {
+	// bind.ts skips keyBuilder when the hub already verified the delivery.
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+
 	if (!token) {
 		return { valid: false, error: 'Missing webhook verification token' };
 	}
