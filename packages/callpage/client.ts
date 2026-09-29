@@ -96,7 +96,10 @@ export async function makeCallPageRequest<T>(
 			config,
 			requestOptions,
 			{
-				rateLimitConfig: CALLPAGE_RATE_LIMIT_CONFIG,
+				rateLimitConfig:
+					method === 'GET'
+						? CALLPAGE_RATE_LIMIT_CONFIG
+						: { ...CALLPAGE_RATE_LIMIT_CONFIG, maxRetries: 0 },
 			},
 		);
 
