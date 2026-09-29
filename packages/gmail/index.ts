@@ -26,7 +26,7 @@ import {
 	GmailEndpointInputSchemas,
 	GmailEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
+import { createErrorHandlers, mergeErrorHandlers } from './error-handlers';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import { gmailSubscribe } from './subscribe';
@@ -388,6 +388,18 @@ const gmailEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof gmailEndpointsNested>;
 
+// Operations the error handlers may retry. Writes are never retried, because
+// Corsair retries the whole endpoint call and a write could run twice.
+const readOperations: ReadonlySet<string> = new Set(
+	Object.entries(gmailEndpointMeta)
+		.filter(([, meta]) => meta.riskLevel === 'read')
+		.map(([operation]) => operation),
+);
+
+export function isReadOperation(operation: string): boolean {
+	return readOperations.has(operation);
+}
+
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
 	typeof GmailSchema,
@@ -438,10 +450,10 @@ export function gmail<const T extends GmailPluginOptions>(
 		endpointMeta: gmailEndpointMeta,
 		endpointSchemas: gmailEndpointSchemas,
 		webhookSchemas: gmailWebhookSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(
+			createErrorHandlers(isReadOperation),
+			options.errorHandlers,
+		),
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			const authType = ctx.authType;
 

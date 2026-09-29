@@ -1,7 +1,13 @@
+import type { ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { errorHandlers } from './error-handlers';
+import { createErrorHandlers, mergeErrorHandlers } from './error-handlers';
+import { gmail, isReadOperation } from './index';
 
-function apiError(status: number, retryAfter?: number): ApiError {
+function apiError(
+	status: number,
+	message = `Request failed with status ${status}`,
+	retryAfter?: number,
+): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: '/users/me/profile' },
 		{
@@ -11,94 +17,186 @@ function apiError(status: number, retryAfter?: number): ApiError {
 			statusText: 'Error',
 			body: {},
 		},
-		`Request failed with status ${status}`,
+		message,
 		retryAfter === undefined ? undefined : { retryAfter },
 	);
 }
 
-describe('Gmail error handlers', () => {
-	it('matches a 429 and retries with the Retry-After delay', async () => {
-		const handler = errorHandlers.RATE_LIMIT_ERROR;
-		const error = apiError(429, 3000);
+function contextFor(operation: string, error: Error): ErrorContext {
+	return { pluginId: 'gmail', operation, input: {}, originalError: error };
+}
 
-		expect(handler.match(error)).toBe(true);
-		const result = await handler.handler(error);
+const handlers = createErrorHandlers(isReadOperation);
+
+/** The handler Corsair would pick: the first one whose match returns true. */
+function firstMatch(error: Error): string | undefined {
+	const context = contextFor('users.getProfile', error);
+	return Object.entries(handlers).find(([, h]) => h.match(error, context))?.[0];
+}
+
+describe('Gmail error handler matching', () => {
+	it.each([
+		[429, 'RATE_LIMIT_ERROR'],
+		[401, 'AUTH_ERROR'],
+		[403, 'PERMISSION_ERROR'],
+		[404, 'NOT_FOUND_ERROR'],
+		[400, 'VALIDATION_ERROR'],
+		[500, 'SERVER_ERROR'],
+		[503, 'SERVER_ERROR'],
+		[409, 'DEFAULT'],
+	])('routes an ApiError with status %i to %s', (status, expected) => {
+		expect(firstMatch(apiError(status))).toBe(expected);
+	});
+
+	it('treats a 403 with a Gmail quota reason as a rate limit', () => {
+		expect(firstMatch(apiError(403, 'userRateLimitExceeded'))).toBe(
+			'RATE_LIMIT_ERROR',
+		);
+		expect(firstMatch(apiError(403, 'rateLimitExceeded'))).toBe(
+			'RATE_LIMIT_ERROR',
+		);
+	});
+
+	it('lets the status decide, even when the message contains another code', () => {
+		// A message ID that happens to contain "429" or "500".
+		expect(firstMatch(apiError(404, 'Message 18f4290ab429 not found'))).toBe(
+			'NOT_FOUND_ERROR',
+		);
+		expect(firstMatch(apiError(400, 'Too many recipients (500)'))).toBe(
+			'VALIDATION_ERROR',
+		);
+		expect(firstMatch(apiError(404, 'rate limit'))).toBe('NOT_FOUND_ERROR');
+	});
+
+	it('matches plain errors by message, without bare status numbers', () => {
+		expect(firstMatch(new Error('Too Many Requests'))).toBe('RATE_LIMIT_ERROR');
+		expect(firstMatch(new Error('Invalid Credentials'))).toBe('AUTH_ERROR');
+		expect(firstMatch(new Error('Insufficient Permission'))).toBe(
+			'PERMISSION_ERROR',
+		);
+		expect(firstMatch(new Error('Requested entity was not found'))).toBe(
+			'NOT_FOUND_ERROR',
+		);
+		expect(firstMatch(new Error('Backend Error'))).toBe('SERVER_ERROR');
+		expect(firstMatch(new Error('thread 18f4290ab429 failed'))).toBe('DEFAULT');
+	});
+});
+
+describe('Gmail error handler retries', () => {
+	it('retries a rate limit on a read, honouring Retry-After', async () => {
+		const error = apiError(429, 'Too Many Requests', 3000);
+		const result = await handlers.RATE_LIMIT_ERROR.handler(
+			error,
+			contextFor('users.getProfile', error),
+		);
 		expect(result.maxRetries).toBe(5);
 		expect(result.headersRetryAfterMs).toBe(3000);
 	});
 
-	it('matches Gmail quota reasons in the message', async () => {
-		const handler = errorHandlers.RATE_LIMIT_ERROR;
-
-		expect(handler.match(new Error('rateLimitExceeded'))).toBe(true);
-		expect(handler.match(new Error('userRateLimitExceeded'))).toBe(true);
-		expect(handler.match(new Error('Too Many Requests'))).toBe(true);
-		expect(handler.match(new Error('different error'))).toBe(false);
-
-		const result = await handler.handler(new Error('rateLimitExceeded'));
-		expect(result.maxRetries).toBe(5);
-		expect(result.headersRetryAfterMs).toBeUndefined();
-	});
-
-	it('does not retry authentication errors', async () => {
-		const handler = errorHandlers.AUTH_ERROR;
-
-		expect(handler.match(apiError(401))).toBe(true);
-		expect(handler.match(new Error('Invalid Credentials'))).toBe(true);
-		expect(handler.match(new Error('other error'))).toBe(false);
-		expect((await handler.handler()).maxRetries).toBe(0);
-	});
-
-	it('does not retry permission errors', async () => {
-		const handler = errorHandlers.PERMISSION_ERROR;
-
-		expect(handler.match(apiError(403))).toBe(true);
-		expect(handler.match(new Error('Insufficient Permission'))).toBe(true);
-		expect(handler.match(new Error('other error'))).toBe(false);
-		expect((await handler.handler()).maxRetries).toBe(0);
-	});
-
-	it('does not retry not found errors', async () => {
-		const handler = errorHandlers.NOT_FOUND_ERROR;
-
-		expect(handler.match(apiError(404))).toBe(true);
-		expect(handler.match(new Error('Requested entity was not found'))).toBe(
-			true,
+	it('retries a server error on a read', async () => {
+		const error = apiError(503);
+		const result = await handlers.SERVER_ERROR.handler(
+			error,
+			contextFor('messages.get', error),
 		);
-		expect(handler.match(new Error('other error'))).toBe(false);
-		expect((await handler.handler()).maxRetries).toBe(0);
+		expect(result.maxRetries).toBe(3);
 	});
 
-	it('does not retry validation errors', async () => {
-		const handler = errorHandlers.VALIDATION_ERROR;
+	it.each(['messages.send', 'drafts.send', 'messages.modify', 'labels.delete'])(
+		'never retries the write %s, so it cannot run twice',
+		async (operation) => {
+			const rateLimited = apiError(429);
+			const serverError = apiError(500);
+			expect(
+				(
+					await handlers.RATE_LIMIT_ERROR.handler(
+						rateLimited,
+						contextFor(operation, rateLimited),
+					)
+				).maxRetries,
+			).toBe(0);
+			expect(
+				(
+					await handlers.SERVER_ERROR.handler(
+						serverError,
+						contextFor(operation, serverError),
+					)
+				).maxRetries,
+			).toBe(0);
+		},
+	);
 
-		expect(handler.match(apiError(400))).toBe(true);
-		expect(handler.match(new Error('Invalid argument'))).toBe(true);
-		expect(handler.match(new Error('other error'))).toBe(false);
-		expect((await handler.handler()).maxRetries).toBe(0);
+	it('does not retry auth, permission, not found or validation errors', async () => {
+		for (const name of [
+			'AUTH_ERROR',
+			'PERMISSION_ERROR',
+			'NOT_FOUND_ERROR',
+			'VALIDATION_ERROR',
+			'DEFAULT',
+		] as const) {
+			const error = new Error(name);
+			const result = await handlers[name].handler(
+				error,
+				contextFor('users.getProfile', error),
+			);
+			expect(result.maxRetries).toBe(0);
+		}
 	});
 
-	it('retries server errors', async () => {
-		const handler = errorHandlers.SERVER_ERROR;
-
-		expect(handler.match(apiError(500))).toBe(true);
-		expect(handler.match(apiError(503))).toBe(true);
-		expect(handler.match(new Error('Backend Error'))).toBe(true);
-		expect(handler.match(new Error('other error'))).toBe(false);
-		expect((await handler.handler()).maxRetries).toBe(3);
+	it('classifies reads and writes from the endpoint metadata', () => {
+		expect(isReadOperation('users.getProfile')).toBe(true);
+		expect(isReadOperation('messages.get')).toBe(true);
+		expect(isReadOperation('messages.send')).toBe(false);
+		expect(isReadOperation('drafts.send')).toBe(false);
+		expect(isReadOperation('not.an.endpoint')).toBe(false);
 	});
+});
 
-	it('falls back to a default handler without retries', async () => {
-		const handler = errorHandlers.DEFAULT;
+describe('mergeErrorHandlers', () => {
+	const custom = {
+		match: () => true,
+		handler: async () => ({ maxRetries: 1 }),
+	};
 
-		expect(handler.match(new Error('anything'))).toBe(true);
-		expect((await handler.handler()).maxRetries).toBe(0);
-	});
-
-	it('checks rate limits before permissions, since Gmail sends quota errors as 403', () => {
-		const names = Object.keys(errorHandlers);
-		expect(names.indexOf('RATE_LIMIT_ERROR')).toBeLessThan(
-			names.indexOf('PERMISSION_ERROR'),
+	it('keeps DEFAULT last when a caller adds a new handler key', () => {
+		const merged = mergeErrorHandlers(
+			createErrorHandlers(() => true),
+			{
+				NETWORK_ERROR: custom,
+			},
 		);
+		const keys = Object.keys(merged);
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
+		expect(keys.indexOf('NETWORK_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
+	});
+
+	it('uses a caller DEFAULT in place of the built-in one', () => {
+		const merged = mergeErrorHandlers(
+			createErrorHandlers(() => true),
+			{
+				DEFAULT: custom,
+			},
+		);
+		expect(merged.DEFAULT).toBe(custom);
+		const keys = Object.keys(merged);
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
+	});
+
+	it('lets a caller replace a built-in handler', () => {
+		const merged = mergeErrorHandlers(
+			createErrorHandlers(() => true),
+			{
+				RATE_LIMIT_ERROR: custom,
+			},
+		);
+		expect(merged.RATE_LIMIT_ERROR).toBe(custom);
+	});
+
+	it('is what the plugin registers', () => {
+		const plugin = gmail({ errorHandlers: { TIMEOUT_ERROR: custom } });
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
+		expect(plugin.errorHandlers?.TIMEOUT_ERROR).toBe(custom);
+		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBeDefined();
 	});
 });
