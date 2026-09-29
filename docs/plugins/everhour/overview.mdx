@@ -1,0 +1,154 @@
+---
+title: Overview
+description: "Everhour plugin for Corsair"
+---
+
+Use **Everhour** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 48 typed API operations
+- 13 synced entities (`clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, and 7 more) for fast `.search()` / `.list()`
+- 20 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/everhour
+```
+```bash yarn
+yarn add corsair @corsair-dev/everhour
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/everhour
+```
+```bash bun
+bun add corsair @corsair-dev/everhour
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { everhour } from '@corsair-dev/everhour';
+
+export const corsair = createCorsair({
+	plugins: [
+		everhour(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+everhour()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Everhour OAuth app.
+
+```ts
+everhour({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'everhour',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`clients.getClient`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.everhour.api.clients.getClient({});
+```
+
+
+**`clients.createClient`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.everhour.api.clients.createClient({});
+```
+
+
+See the full list on the [API](/plugins/everhour/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.everhour.db.<entity>.search()` and `.list()`: `clients`, `expenseCategories`, `expenses`, `invoices`, `platforms`, `projects`, `sections`, `tags`, `tasks`, `timecards`, `timeEntries`, `users`, `webhooks`.
+
+See [Database](/plugins/everhour/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **20** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/everhour/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/everhour/api">
+    Every `everhour.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/everhour/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/everhour/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
