@@ -98,6 +98,7 @@ export async function makeCodeInterpreterUpload<T>(
 	fileData: {
 		filename: string;
 		content: string;
+		contentEncoding?: 'utf8' | 'base64';
 		mimeType?: string;
 	},
 	options: {
@@ -111,7 +112,8 @@ export async function makeCodeInterpreterUpload<T>(
 		url.searchParams.set('session_id', options.sessionId);
 	}
 
-	const binaryContent = Buffer.from(fileData.content, 'utf8');
+	const encoding = fileData.contentEncoding === 'base64' ? 'base64' : 'utf8';
+	const binaryContent = Buffer.from(fileData.content, encoding);
 
 	const formData = new FormData();
 	const blob = new Blob([binaryContent], {

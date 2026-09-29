@@ -14,6 +14,7 @@ export const uploadFile: CodeInterpreterEndpoints['uploadFile'] = async (
 		{
 			filename: input.filename,
 			content: input.content,
+			contentEncoding: input.content_encoding,
 			mimeType: input.mime_type,
 		},
 		{

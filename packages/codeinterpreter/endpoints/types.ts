@@ -31,6 +31,7 @@ export type ExecuteCodeResponse = z.infer<typeof ExecuteCodeResponseSchema>;
 export const UploadFileInputSchema = z.object({
 	filename: z.string().min(1, 'Filename is required'),
 	content: z.string(),
+	content_encoding: z.enum(['utf8', 'base64']).optional(),
 	session_id: z.string().optional(),
 	mime_type: z.string().optional(),
 });
