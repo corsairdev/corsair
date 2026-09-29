@@ -88,7 +88,7 @@ export const AirtableEndpointInputSchemas = {
 	recordsGet: RecordsGetInputSchema,
 	recordsSearch: RecordsSearchInputSchema,
 	recordsUpdate: RecordsUpdateInputSchema,
-	webhookGetPayloads: WebhooksGetPayloadsInputSchema,
+	webhooksGetPayloads: WebhooksGetPayloadsInputSchema,
 } as const;
 
 export type AirtableEndpointInputs = {
@@ -211,7 +211,7 @@ export const AirtableEndpointOutputSchemas = {
 	recordsGet: RecordsGetResponseSchema,
 	recordsSearch: RecordsSearchResponseSchema,
 	recordsUpdate: RecordsUpdateResponseSchema,
-	webhookGetPayloads: WebhooksGetPayloadsResponseSchema,
+	webhooksGetPayloads: WebhooksGetPayloadsResponseSchema,
 } as const;
 
 export type AirtableEndpointOutputs = {
