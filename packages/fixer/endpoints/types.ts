@@ -47,9 +47,7 @@ export type RatesConvertOutput = z.infer<typeof RatesConvertOutputSchema>;
 
 // --- rates.historical ---
 export const RatesHistoricalInputSchema = z.object({
-	date: z
-		.string()
-		.regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format'),
+	date: z.iso.date(),
 	base: z.string().optional(),
 	symbols: z.array(z.string()).optional(),
 });

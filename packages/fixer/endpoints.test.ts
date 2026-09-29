@@ -47,6 +47,13 @@ describe('Fixer Endpoint Schemas', () => {
 			false,
 		);
 
+		expect(
+			RatesHistoricalInputSchema.safeParse({ date: '2025-02-29' }).success,
+		).toBe(false);
+		expect(
+			RatesHistoricalInputSchema.safeParse({ date: '2026-13-01' }).success,
+		).toBe(false);
+
 		const output = {
 			success: true,
 			historical: true,
