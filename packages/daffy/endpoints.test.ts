@@ -149,10 +149,11 @@ describe('Daffy endpoints', () => {
 
 	it('accounts.getDonations passes the requested page', async () => {
 		mockedRequest.mockResolvedValue(page(donation));
-		await Accounts.getDonations(ctx, { page: 3 });
+		const response = await Accounts.getDonations(ctx, { page: 3 });
 		expect(mockedRequest).toHaveBeenCalledWith('/donations', 'test-key', {
 			query: { page: 3 },
 		});
+		expect(response).toEqual(page(donation));
 	});
 
 	it('accounts.getUserCauses requests causes for the supplied user', async () => {
