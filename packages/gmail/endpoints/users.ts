@@ -7,9 +7,11 @@ export const getProfile: GmailEndpoints['usersGetProfile'] = async (
 	ctx,
 	input,
 ) => {
+	// Encode the path segment so a userId cannot add or change path segments.
+	const userId = encodeURIComponent(input.userId || 'me');
 	const result = await makeAuthenticatedGmailRequest<
 		GmailEndpointOutputs['usersGetProfile']
-	>(`/users/${input.userId || 'me'}/profile`, ctx, {
+	>(`/users/${userId}/profile`, ctx, {
 		method: 'GET',
 	});
 
