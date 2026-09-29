@@ -1,0 +1,711 @@
+{
+  "id": "carbone",
+  "displayName": "Carbone",
+  "description": "Document generation and template rendering API for creating files from data-driven templates.",
+  "npmPackageName": "@corsair-dev/carbone",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "carbone.api.render.generateReport",
+      "shortPath": "render.generateReport",
+      "description": "Tool to generate a Carbone report from a template and JSON data. Use when you need to render documents in various formats.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "64-character hexadecimal template ID or version ID to render"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{} | lazy[]",
+            "description": "JSON dataset to merge into the document template placeholders"
+          },
+          {
+            "key": "convertTo",
+            "optional": true,
+            "type": "string | { formatName: string, formatOptions?: {} }",
+            "description": "Target file format extension to convert output document into (e.g. pdf, docx, xlsx, html)"
+          },
+          {
+            "key": "converter",
+            "optional": true,
+            "type": "string",
+            "description": "Converter engine to use for document conversion"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Localization language code for formatting numbers, dates, and currency (e.g. en-US, fr-FR)"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone string for date/time calculations (e.g. Europe/Paris, America/New_York)"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 4217 currency code for currency formatters (e.g. USD, EUR)"
+          },
+          {
+            "key": "translations",
+            "optional": true,
+            "type": "{}",
+            "description": "Dictionary of translation strings per locale"
+          },
+          {
+            "key": "enum",
+            "optional": true,
+            "type": "{}",
+            "description": "Enum mapping dictionaries for translating code values"
+          },
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{}",
+            "description": "Pre-calculated variables accessible globally within the template"
+          },
+          {
+            "key": "complement",
+            "optional": true,
+            "type": "{}",
+            "description": "Complementary dataset accessible with the c. prefix in templates"
+          },
+          {
+            "key": "hardRefresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, recalculates all template functions and forces fresh render"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if report generation succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ renderId: string }",
+            "description": "Render result payload containing the render ID"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.render.renderDirect",
+      "shortPath": "render.renderDirect",
+      "description": "Tool to generate a document by uploading a base64-encoded template and data in a single API call. Use when you need to render documents without uploading templates separately.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded document template content"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{} | lazy[]",
+            "description": "JSON dataset to merge into the template placeholders"
+          },
+          {
+            "key": "convertTo",
+            "optional": true,
+            "type": "string | { formatName: string, formatOptions?: {} }",
+            "description": "Target output document format extension (e.g. pdf, docx, xlsx, html)"
+          },
+          {
+            "key": "converter",
+            "optional": true,
+            "type": "string",
+            "description": "Converter engine to use for document conversion"
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Localization language code for formatting numbers and dates"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone string for date operations"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 4217 currency code for currency formatting"
+          },
+          {
+            "key": "translations",
+            "optional": true,
+            "type": "{}",
+            "description": "Translation dictionaries for multi-language templates"
+          },
+          {
+            "key": "enum",
+            "optional": true,
+            "type": "{}",
+            "description": "Enum dictionaries for code translation"
+          },
+          {
+            "key": "variable",
+            "optional": true,
+            "type": "{}",
+            "description": "Pre-calculated variables accessible in template"
+          },
+          {
+            "key": "complement",
+            "optional": true,
+            "type": "{}",
+            "description": "Complementary data accessible with c. prefix"
+          },
+          {
+            "key": "hardRefresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force complete recalculation of document fields"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if direct template rendering succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ renderId: string }",
+            "description": "Render result payload"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.status.get",
+      "shortPath": "status.get",
+      "description": "Tool to retrieve the current status and health of the Carbone server. Use before generating reports to ensure the service is operational.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if the status check request succeeded"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number",
+            "description": "HTTP status code returned by API"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Status message from Carbone server"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Active Carbone engine/API version"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Permanently delete a template from the Carbone server by its 64-character hexadecimal template ID. This action is irreversible. Ensure you have the correct template ID before deleting.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "64-character hexadecimal template ID to permanently delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if template was successfully deleted"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Confirmation message from Carbone server"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.download",
+      "shortPath": "templates.download",
+      "description": "Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "64-character hexadecimal template ID to download"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "ID of the downloaded template"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded binary content of the retrieved template file"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if template download was successful"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "Tool to retrieve a list of templates from Carbone storage with filtering, search, and cursor-based pagination. Use when you need to find templates, search by name or ID, or iterate through all deployed templates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter templates by exact template ID match"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Alias for id; filter templates by exact template ID match"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter templates by exact version ID match"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Filter templates belonging to a specific category folder"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search templates by name or identifier query"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string | number",
+            "description": "Pagination cursor for iterating through templates"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if listing templates succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ versionId?: string, id?: string | null, name?: string, category?: string, type?: string, size?: number, comment?: string, tags?: string[], deployedAt?: number | null, createdAt?: number, expireAt?: number | null, origin?: number }[]",
+            "description": "Array of deployed Carbone template metadata records"
+          },
+          {
+            "key": "hasMore",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether more template records are available on next page"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | number",
+            "description": "Cursor to retrieve the next page of templates"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.listCategories",
+      "shortPath": "templates.listCategories",
+      "description": "Tool to retrieve a list of all categories used in templates. Categories function like folders for organizing templates. Use when you need to see available template groupings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if listing categories succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string }[]",
+            "description": "List of category folder names used across templates"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.listTags",
+      "shortPath": "templates.listTags",
+      "description": "Tool to list all tags currently used in templates. Use when you need to discover available tags for categorizing or filtering templates by document type or version.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if listing tags succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string }[]",
+            "description": "List of tag names used across templates"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Tool to update metadata and attributes of an existing Carbone template. Use when you need to modify template name, comment, tags, category, or control version deployment and lifecycle.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "64-character hexadecimal template ID to update"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated human-readable name of the template"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Updated category folder for organizing the template"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Updated description or version release comment"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Updated array of tag strings for filtering"
+          },
+          {
+            "key": "deployedAt",
+            "optional": true,
+            "type": "number",
+            "description": "Unix timestamp to control version deployment"
+          },
+          {
+            "key": "expireAt",
+            "optional": true,
+            "type": "number",
+            "description": "Unix timestamp when the template will automatically expire"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if template metadata update succeeded"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ name?: string, category?: string, comment?: string, tags?: string[], deployedAt?: number | null, versionId?: string, id?: string | null }",
+            "description": "Updated metadata values of the template"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.templates.upload",
+      "shortPath": "templates.upload",
+      "description": "Upload a template file to the Carbone server to obtain a template ID for document generation. Supported template formats: DOCX, XLSX, PPTX, ODT, ODS, ODP, ODG, XHTML, IDML, HTML, or XML. Templates can contain placeholders like {d.fieldname} that will be replaced with data during report generation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded document template payload"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if template upload succeeded"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ templateId?: string, id?: string, versionId?: string, templateExtension?: string, type?: string, size?: number, createdAt?: number }",
+            "description": "Metadata of the newly uploaded template"
+          }
+        ]
+      }
+    },
+    {
+      "path": "carbone.api.version.set",
+      "shortPath": "version.set",
+      "description": "Tool to set the Carbone API version to be used for subsequent requests. Use before rendering or managing templates to ensure correct version is applied.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "Carbone API major version string to use for subsequent requests (e.g. \"5\")"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Indicates if setting API version was successful"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "The active Carbone API version now configured"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Confirmation message"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "carbone.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "carbone.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "carbone.db.templates.search",
+      "entityName": "templates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "versionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deployedAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "expireAt",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

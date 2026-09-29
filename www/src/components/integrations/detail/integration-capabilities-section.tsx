@@ -9,7 +9,7 @@ export function IntegrationCapabilitiesSection({
 	triggers: IntegrationDetailData['triggers'];
 }) {
 	return (
-		<section className="py-10 md:py-12">
+		<section className="pt-7 pb-4 md:pt-8 md:pb-5">
 			<div className="mx-auto max-w-[960px] px-4 sm:px-6 md:px-10">
 				<h2 className="font-[family-name:var(--landing-font-mono)] text-xs font-medium uppercase tracking-[0.06em] text-[#1c1c1c66]">
 					Supported operations

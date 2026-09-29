@@ -1,0 +1,1077 @@
+{
+  "id": "pushbullet",
+  "displayName": "Pushbullet",
+  "description": "Pushbullet plugin for Corsair",
+  "npmPackageName": "@corsair-dev/pushbullet",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "pushbullet.api.chats.create",
+      "shortPath": "chats.create",
+      "description": "Start a chat with another Pushbullet user by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "muted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "{ iden?: string, email?: string, name?: string, image_url?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.chats.delete",
+      "shortPath": "chats.delete",
+      "description": "Delete a chat",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pushbullet.api.chats.list",
+      "shortPath": "chats.list",
+      "description": "List the chats on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chats",
+            "optional": false,
+            "type": "{ iden: string, active?: boolean, muted?: boolean, created?: number, modified?: number, with?: { iden?: string, email?: string, name?: string, image_url?: string, type?: string } }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.chats.setMuted",
+      "shortPath": "chats.setMuted",
+      "description": "Mute or unmute a chat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "muted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "muted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "{ iden?: string, email?: string, name?: string, image_url?: string, type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.devices.delete",
+      "shortPath": "devices.delete",
+      "description": "Delete a device from the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pushbullet.api.devices.list",
+      "shortPath": "devices.list",
+      "description": "List devices registered to the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "devices",
+            "optional": false,
+            "type": "{ iden: string, active?: boolean, nickname?: string, manufacturer?: string, model?: string, icon?: string, app_version?: number, push_token?: string, has_sms?: boolean, created?: number, modified?: number }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.devices.register",
+      "shortPath": "devices.register",
+      "description": "Register a new device on the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_sms",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "push_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.devices.update",
+      "shortPath": "devices.update",
+      "description": "Update a device nickname, model or push token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "push_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_sms",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manufacturer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "push_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_sms",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.files.uploadRequest",
+      "shortPath": "files.uploadRequest",
+      "description": "Reserve an upload slot, returning the upload URL and the file URL to use in a file push",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.pushes.create",
+      "shortPath": "pushes.create",
+      "description": "Send a note, link or file push to a device, person or channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "note | link | file"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "guid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_iden",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dismissed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiver_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiver_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.pushes.delete",
+      "shortPath": "pushes.delete",
+      "description": "Delete a single push",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pushbullet.api.pushes.deleteAll",
+      "shortPath": "pushes.deleteAll",
+      "description": "Delete every push on the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pushbullet.api.pushes.list",
+      "shortPath": "pushes.list",
+      "description": "List pushes on the account, optionally modified after a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modified_after",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pushes",
+            "optional": false,
+            "type": "{ iden: string, active?: boolean, type?: string, title?: string, body?: string, url?: string, dismissed?: boolean, direction?: string, sender_iden?: string, sender_email?: string, receiver_iden?: string, receiver_email?: string, target_device_iden?: string, source_device_iden?: string, file_name?: string, file_type?: string, file_url?: string, created?: number, modified?: number }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.pushes.update",
+      "shortPath": "pushes.update",
+      "description": "Mark a push dismissed or undismissed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dismissed",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dismissed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sender_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiver_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receiver_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_device_iden",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pushbullet.api.users.me",
+      "shortPath": "users.me",
+      "description": "Retrieve the account the access token belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iden",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_normalized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_upload_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modified",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "pushbullet.db.devices.search",
+      "entityName": "devices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nickname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "manufacturer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_sms",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "pushbullet.db.pushes.search",
+      "entityName": "pushes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "dismissed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "direction",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

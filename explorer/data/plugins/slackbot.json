@@ -1,0 +1,6796 @@
+{
+  "id": "slackbot",
+  "displayName": "Slackbot",
+  "description": "Slackbot plugin for Corsair",
+  "npmPackageName": "@corsair-dev/slackbot",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 87,
+    "webhooks": 10,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "team_id",
+        "enterprise_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "slackbot.api.calls.add",
+      "shortPath": "calls.add",
+      "description": "Register a call with Slack",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_unique_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date_start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "desktop_app_join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_display_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ slack_id?: string, external_id?: string, display_name?: string, avatar_url?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.calls.end",
+      "shortPath": "calls.end",
+      "description": "End an in-progress call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.calls.info",
+      "shortPath": "calls.info",
+      "description": "Retrieve information about a call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.calls.participantsAdd",
+      "shortPath": "calls.participantsAdd",
+      "description": "Add participants to a call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ slack_id?: string, external_id?: string, display_name?: string, avatar_url?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.calls.participantsRemove",
+      "shortPath": "calls.participantsRemove",
+      "description": "Remove participants from a call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ slack_id?: string, external_id?: string, display_name?: string, avatar_url?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.calls.update",
+      "shortPath": "calls.update",
+      "description": "Update a call title or join URLs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desktop_app_join_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call",
+            "optional": true,
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.create",
+      "shortPath": "canvases.create",
+      "description": "Create a standalone or channel canvas",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_content",
+            "optional": true,
+            "type": "{ type: markdown, markdown: string }"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canvas_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.delete",
+      "shortPath": "canvases.delete",
+      "description": "Delete a canvas",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canvas_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.edit",
+      "shortPath": "canvases.edit",
+      "description": "Apply changes to a canvas",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canvas_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "changes",
+            "optional": false,
+            "type": "{ operation: insert_after | insert_before | insert_at_start | insert_at_end | replace | delete, section_id?: string, document_content?: { type: markdown, markdown: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.get",
+      "shortPath": "canvases.get",
+      "description": "Retrieve a canvas and its content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canvas_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.list",
+      "shortPath": "canvases.list",
+      "description": "List canvases in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.canvases.sectionsLookup",
+      "shortPath": "canvases.sectionsLookup",
+      "description": "Look up section ids within a canvas",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canvas_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "criteria",
+            "optional": false,
+            "type": "{ section_types?: any_header | h1 | h2 | h3[], contains_text?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "{ id: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.archive",
+      "shortPath": "conversations.archive",
+      "description": "Archive a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.close",
+      "shortPath": "conversations.close",
+      "description": "Close a direct message or group conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          },
+          {
+            "key": "no_op",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "already_open",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a public or private channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.find",
+      "shortPath": "conversations.find",
+      "description": "Search conversations by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "exclude_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "public_channel | private_channel | mpim | im[]"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "contains | exact | prefix"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "pages_scanned",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.info",
+      "shortPath": "conversations.info",
+      "description": "Retrieve information about a conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_locale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_num_members",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.invite",
+      "shortPath": "conversations.invite",
+      "description": "Invite users to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.join",
+      "shortPath": "conversations.join",
+      "description": "Join a public channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.kick",
+      "shortPath": "conversations.kick",
+      "description": "Remove a user from a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.leave",
+      "shortPath": "conversations.leave",
+      "description": "Leave a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exclude_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "public_channel | private_channel | mpim | im[]"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.listForUser",
+      "shortPath": "conversations.listForUser",
+      "description": "List the conversations a user belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "public_channel | private_channel | mpim | im[]"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.mark",
+      "shortPath": "conversations.mark",
+      "description": "Move a conversation read cursor",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.members",
+      "shortPath": "conversations.members",
+      "description": "List the members of a conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.rename",
+      "shortPath": "conversations.rename",
+      "description": "Rename a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.setPurpose",
+      "shortPath": "conversations.setPurpose",
+      "description": "Set a conversation purpose",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.setTopic",
+      "shortPath": "conversations.setTopic",
+      "description": "Set a conversation topic",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.conversations.unarchive",
+      "shortPath": "conversations.unarchive",
+      "description": "Unarchive a conversation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.commentsDelete",
+      "shortPath": "files.commentsDelete",
+      "description": "Delete a comment on a file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a file by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download the contents of a Slack file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "max_bytes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "byte_size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.info",
+      "shortPath": "files.info",
+      "description": "Retrieve detailed information about a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.list",
+      "shortPath": "files.list",
+      "description": "List files in the workspace, filtered by channel, user or type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ts_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_files_hidden_by_limit",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteAdd",
+      "shortPath": "files.remoteAdd",
+      "description": "Register an externally hosted file with Slack",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filetype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "indexable_file_contents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_image",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteInfo",
+      "shortPath": "files.remoteInfo",
+      "description": "Retrieve a remote file metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteList",
+      "shortPath": "files.remoteList",
+      "description": "List remote files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts_from",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ts_to",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteRemove",
+      "shortPath": "files.remoteRemove",
+      "description": "Remove a remote file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteShare",
+      "shortPath": "files.remoteShare",
+      "description": "Share a remote file into one or more channels",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.remoteUpdate",
+      "shortPath": "files.remoteUpdate",
+      "description": "Update an existing remote file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filetype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "indexable_file_contents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preview_image",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.revokePublicUrl",
+      "shortPath": "files.revokePublicUrl",
+      "description": "Revoke a file public URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.sharePublicUrl",
+      "shortPath": "files.sharePublicUrl",
+      "description": "Create a public URL for a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to Slack and optionally share it to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alt_txt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snippet_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "initial_comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }[]"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.delete",
+      "shortPath": "messages.delete",
+      "description": "Delete a message from a conversation",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.deleteScheduled",
+      "shortPath": "messages.deleteScheduled",
+      "description": "Cancel a scheduled message before it sends",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_message_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.history",
+      "shortPath": "messages.history",
+      "description": "Fetch a conversation message history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "latest",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oldest",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inclusive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_all_metadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pin_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.pinAdd",
+      "shortPath": "messages.pinAdd",
+      "description": "Pin a message to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.pinRemove",
+      "shortPath": "messages.pinRemove",
+      "description": "Unpin a message from a channel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.pinsList",
+      "shortPath": "messages.pinsList",
+      "description": "List the pinned items in a channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.post",
+      "shortPath": "messages.post",
+      "description": "Send a message to a channel, DM or thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mrkdwn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "full | none"
+          },
+          {
+            "key": "link_names",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_media",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icon_emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_broadcast",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.postEphemeral",
+      "shortPath": "messages.postEphemeral",
+      "description": "Send a message visible only to a single user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mrkdwn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "full | none"
+          },
+          {
+            "key": "link_names",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_media",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icon_emoji",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "icon_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.postMe",
+      "shortPath": "messages.postMe",
+      "description": "Send a me-style message to a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.reactionAdd",
+      "shortPath": "messages.reactionAdd",
+      "description": "Add an emoji reaction to a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.reactionRemove",
+      "shortPath": "messages.reactionRemove",
+      "description": "Remove an emoji reaction from a message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.reactionsGet",
+      "shortPath": "messages.reactionsGet",
+      "description": "Fetch the reactions on a message or file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_comment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id: string, name?: string, title?: string, mimetype?: string, filetype?: string, size?: number, user?: string, created?: number, is_external?: boolean, is_public?: boolean, url_private?: string, url_private_download?: string, permalink?: string, permalink_public?: string, external_id?: string, external_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.reactionsList",
+      "shortPath": "messages.reactionsList",
+      "description": "List the items a user has reacted to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.replies",
+      "shortPath": "messages.replies",
+      "description": "Fetch the replies in a message thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "latest",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oldest",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inclusive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_all_metadata",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messages",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.schedule",
+      "shortPath": "messages.schedule",
+      "description": "Schedule a message to be sent at a future time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "post_at",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mrkdwn",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "full | none"
+          },
+          {
+            "key": "link_names",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_links",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unfurl_media",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reply_broadcast",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_message_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "post_at",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.messages.update",
+      "shortPath": "messages.update",
+      "description": "Update the text or blocks of an existing message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "as_user",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link_names",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "full | none"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "reply_broadcast",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "file_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.reminders.add",
+      "shortPath": "reminders.add",
+      "description": "Create a reminder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminder",
+            "optional": true,
+            "type": "{ id: string, creator?: string, user?: string, text?: string, recurring?: boolean, time?: number, complete_ts?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.reminders.complete",
+      "shortPath": "reminders.complete",
+      "description": "Mark a reminder complete (deprecated by Slack)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reminder",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.reminders.delete",
+      "shortPath": "reminders.delete",
+      "description": "Delete a reminder",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reminder",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.reminders.info",
+      "shortPath": "reminders.info",
+      "description": "Retrieve information about a reminder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reminder",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminder",
+            "optional": true,
+            "type": "{ id: string, creator?: string, user?: string, text?: string, recurring?: boolean, time?: number, complete_ts?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.reminders.list",
+      "shortPath": "reminders.list",
+      "description": "List the reminders visible to the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id: string, creator?: string, user?: string, text?: string, recurring?: boolean, time?: number, complete_ts?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.team.emojiList",
+      "shortPath": "team.emojiList",
+      "description": "List the workspace custom emoji",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_categories",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emoji",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.team.info",
+      "shortPath": "team.info",
+      "description": "Fetch workspace information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id: string, name?: string, domain?: string, email_domain?: string, icon?: {}, enterprise_id?: string, enterprise_name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.team.openDm",
+      "shortPath": "team.openDm",
+      "description": "Open a direct or multi-person direct message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "prevent_creation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "return_im",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+          },
+          {
+            "key": "no_op",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "already_open",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.team.profileGet",
+      "shortPath": "team.profileGet",
+      "description": "Fetch the workspace profile field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "all | visible | hidden"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.team.unfurl",
+      "shortPath": "team.unfurl",
+      "description": "Attach a custom preview to a link in a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unfurls",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "user_auth_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_auth_required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "user_auth_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.create",
+      "shortPath": "userGroups.create",
+      "description": "Create a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroup",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.disable",
+      "shortPath": "userGroups.disable",
+      "description": "Disable a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usergroup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroup",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.enable",
+      "shortPath": "userGroups.enable",
+      "description": "Enable a user group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usergroup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroup",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.list",
+      "shortPath": "userGroups.list",
+      "description": "List the workspace user groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_users",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroups",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.update",
+      "shortPath": "userGroups.update",
+      "description": "Update a user group name, handle or channels",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usergroup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroup",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.usersList",
+      "shortPath": "userGroups.usersList",
+      "description": "List the members of a user group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usergroup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.userGroups.usersUpdate",
+      "shortPath": "userGroups.usersUpdate",
+      "description": "Replace a user group membership",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "usergroup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "usergroup",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, handle?: string, description?: string, is_external?: boolean, date_create?: number, date_delete?: number, user_count?: number | string, users?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.botsInfo",
+      "shortPath": "users.botsInfo",
+      "description": "Retrieve information about a bot user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "{ id?: string, deleted?: boolean, name?: string, updated?: number, app_id?: string, user_id?: string, icons?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.dndInfo",
+      "shortPath": "users.dndInfo",
+      "description": "Retrieve a user do-not-disturb status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dnd_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_dnd_start_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_dnd_end_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snooze_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snooze_endtime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "snooze_remaining",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.dndTeamInfo",
+      "shortPath": "users.dndTeamInfo",
+      "description": "Retrieve do-not-disturb status for several users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.find",
+      "shortPath": "users.find",
+      "description": "Search users by name, display name or email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_bots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "pages_scanned",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.getPresence",
+      "shortPath": "users.getPresence",
+      "description": "Retrieve a user presence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "presence",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "online",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "auto_away",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manual_away",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "connection_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_activity",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.getProfile",
+      "shortPath": "users.getProfile",
+      "description": "Retrieve a user profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_labels",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.info",
+      "shortPath": "users.info",
+      "description": "Retrieve detailed information about a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_locale",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the users in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_locale",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }[]"
+          },
+          {
+            "key": "cache_ts",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, warnings?: string[], messages?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.lookupByEmail",
+      "shortPath": "users.lookupByEmail",
+      "description": "Look up a user by email address (deprecated by Slack)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.setActive",
+      "shortPath": "users.setActive",
+      "description": "Mark the calling user as active",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slackbot.api.users.setPresence",
+      "shortPath": "users.setPresence",
+      "description": "Set the calling user presence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presence",
+            "optional": false,
+            "type": "auto | away"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "slackbot.webhooks.channels.created",
+      "shortPath": "channels.created",
+      "description": "A new channel created in the workspace",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "channel_created"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "{ id: string, name?: string, created?: number, creator?: string, is_channel?: boolean, is_private?: boolean }"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: channel_created, channel: { id: string, name?: string, created?: number, creator?: string, is_channel?: boolean, is_private?: boolean }, event_ts?: string }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        channels: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.botMessage",
+      "shortPath": "messages.botMessage",
+      "description": "A message posted by another bot or app",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            botMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.directMessage",
+      "shortPath": "messages.directMessage",
+      "description": "A direct message sent to the bot",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            directMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.groupDirectMessage",
+      "shortPath": "messages.groupDirectMessage",
+      "description": "A message in a multi-person direct message",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            groupDirectMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.message",
+      "shortPath": "messages.message",
+      "description": "A message posted by a person in a public channel",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            message: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.privateChannelMessage",
+      "shortPath": "messages.privateChannelMessage",
+      "description": "A message posted by a person in a private channel",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            privateChannelMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.messages.threadReply",
+      "shortPath": "messages.threadReply",
+      "description": "A reply posted inside a message thread",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "message"
+          },
+          {
+            "key": "subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "channel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "channel | group | im | mpim"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_profile",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ts",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            threadReply: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.reactions.added",
+      "shortPath": "reactions.added",
+      "description": "An emoji reaction added to a message or file",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "reaction_added"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type: string, channel?: string, ts?: string, file?: string }"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: reaction_added, user: string, reaction: string, item_user?: string, item: { type: string, channel?: string, ts?: string, file?: string }, event_ts?: string }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        reactions: {\n            added: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.reactions.removed",
+      "shortPath": "reactions.removed",
+      "description": "An emoji reaction removed from a message or file",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "reaction_removed"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item",
+            "optional": false,
+            "type": "{ type: string, channel?: string, ts?: string, file?: string }"
+          },
+          {
+            "key": "event_ts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: reaction_removed, user: string, reaction: string, item_user?: string, item: { type: string, channel?: string, ts?: string, file?: string }, event_ts?: string }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        reactions: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "slackbot.webhooks.setup.challenge",
+      "shortPath": "setup.challenge",
+      "description": "Slack Events API URL verification handshake",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "url_verification"
+          },
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "responseType": "{ type: url_verification, challenge: string }",
+      "usageExample": "slackbot({\n    webhookHooks: {\n        setup: {\n            challenge: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "slackbot.db.channels.search",
+      "entityName": "channels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_private",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "creator",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_members",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "slackbot.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimetype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filetype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "size",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "permalink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "slackbot.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bot_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "app_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thread_ts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "slackbot.db.reminders.search",
+      "entityName": "reminders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creator",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "recurring",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "slackbot.db.scheduled_messages.search",
+      "entityName": "scheduled_messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "post_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thread_ts",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "slackbot.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "real_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_bot",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deleted",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "tz",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}
