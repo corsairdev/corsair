@@ -1,3 +1,4 @@
+import * as http from 'corsair/http';
 import { makeDaffyRequest } from './client';
 
 const TEST_KEY = 'test-key-not-a-credential';
@@ -16,6 +17,7 @@ function mockFetch(): void {
 			json: async () => ({}),
 			text: async () => '{}',
 		};
+		// unknown: Jest's fetch stub lacks the full Response type.
 	}) as unknown as typeof global.fetch;
 }
 
@@ -82,6 +84,25 @@ describe('Daffy client', () => {
 			);
 		},
 	);
+
+	it('disables transport retries for gift creation POSTs', async () => {
+		const requestSpy = jest.spyOn(http, 'request').mockResolvedValue({});
+		await makeDaffyRequest('/gifts', TEST_KEY, {
+			method: 'POST',
+			body: { name: 'Jamie', amount: 18 },
+		});
+		expect(requestSpy).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({ method: 'POST', url: '/gifts' }),
+			expect.objectContaining({
+				rateLimitConfig: expect.objectContaining({
+					enabled: false,
+					maxRetries: 0,
+				}),
+			}),
+		);
+		requestSpy.mockRestore();
+	});
 
 	it('sends gift creation as a JSON POST without putting the key in the URL', async () => {
 		await makeDaffyRequest('/gifts', TEST_KEY, {

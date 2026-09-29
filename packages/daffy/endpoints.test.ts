@@ -3,13 +3,20 @@
 
 import { makeDaffyRequest } from './client';
 import { Accounts, Gifts, NonProfits } from './endpoints';
-import type { DaffyContext } from './index';
 
 jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 jest.mock('./client', () => ({ makeDaffyRequest: jest.fn() }));
 
 const mockedRequest = makeDaffyRequest as jest.Mock;
-const ctx = { key: 'test-key' } as unknown as DaffyContext;
+
+type Ctx = Parameters<typeof Accounts.getBalance>[0];
+
+function makeCtx(): Ctx {
+	// unknown: fixture only supplies ctx.key; endpoints read nothing else.
+	return { key: 'test-key' } as unknown as Ctx;
+}
+
+const ctx = makeCtx();
 const code = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
 const cause = {

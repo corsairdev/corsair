@@ -1,7 +1,21 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 const DAFFY_API_BASE = 'https://public.daffy.org/v1';
+
+const DAFFY_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export type DaffyRequestOptions = {
 	method?: 'GET' | 'POST';
@@ -31,5 +45,12 @@ export async function makeDaffyRequest<T>(
 		mediaType: method === 'POST' ? 'application/json' : undefined,
 		query,
 	};
-	return await request<T>(config, requestOptions);
+	// Gift creation is a non-idempotent POST. Disable transport retries so a
+	// 429 is surfaced once; error-handlers.ts decides whether to replay reads.
+	return await request<T>(config, requestOptions, {
+		rateLimitConfig:
+			method === 'POST'
+				? { ...DAFFY_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 }
+				: DAFFY_RATE_LIMIT_CONFIG,
+	});
 }
