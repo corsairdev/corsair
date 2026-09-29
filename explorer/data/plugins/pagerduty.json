@@ -1,0 +1,564 @@
+{
+  "id": "pagerduty",
+  "displayName": "PagerDuty",
+  "description": "Incident response platform for on-call schedules, alerts, and operational reliability workflows.",
+  "npmPackageName": "@corsair-dev/pagerduty",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 4,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subdomain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pagerduty.api.incidentNotes.create",
+      "shortPath": "incidentNotes.create",
+      "description": "Add a note to an incident",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note",
+            "optional": false,
+            "type": "{ id: string, content?: string, created_at?: string, user?: { id: string, type: string, summary?: string, html_url?: string | null }, channel?: { type?: string, name?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.incidentNotes.list",
+      "shortPath": "incidentNotes.list",
+      "description": "List notes for an incident",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "{ id: string, content?: string, created_at?: string, user?: { id: string, type: string, summary?: string, html_url?: string | null }, channel?: { type?: string, name?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.incidents.create",
+      "shortPath": "incidents.create",
+      "description": "Create a new incident",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "service",
+            "optional": false,
+            "type": "{ id: string, type: service_reference }"
+          },
+          {
+            "key": "urgency",
+            "optional": true,
+            "type": "high | low"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ type: incident_body, details: string }"
+          },
+          {
+            "key": "escalation_policy",
+            "optional": true,
+            "type": "{ id: string, type: escalation_policy_reference }"
+          },
+          {
+            "key": "assignments",
+            "optional": true,
+            "type": "{ assignee: { id: string, type: user_reference } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident",
+            "optional": false,
+            "type": "{ id: string, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignments?: { at: string, assignee: { id: string, type: string, summary?: string, html_url?: string | null } }[], body?: { type?: string, details?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.incidents.get",
+      "shortPath": "incidents.get",
+      "description": "Get a single incident by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident",
+            "optional": false,
+            "type": "{ id: string, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignments?: { at: string, assignee: { id: string, type: string, summary?: string, html_url?: string | null } }[], body?: { type?: string, details?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.incidents.list",
+      "shortPath": "incidents.list",
+      "description": "List incidents with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "triggered | acknowledged | resolved[]"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "urgencies",
+            "optional": true,
+            "type": "high | low[]"
+          },
+          {
+            "key": "service_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incidents",
+            "optional": false,
+            "type": "{ id: string, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignments?: { at: string, assignee: { id: string, type: string, summary?: string, html_url?: string | null } }[], body?: { type?: string, details?: string } }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.incidents.update",
+      "shortPath": "incidents.update",
+      "description": "Update an incident (acknowledge, resolve, reassign)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "acknowledged | resolved"
+          },
+          {
+            "key": "urgency",
+            "optional": true,
+            "type": "high | low"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignments",
+            "optional": true,
+            "type": "{ assignee: { id: string, type: user_reference } }[]"
+          },
+          {
+            "key": "escalation_policy",
+            "optional": true,
+            "type": "{ id: string, type: escalation_policy_reference }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "incident",
+            "optional": false,
+            "type": "{ id: string, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignments?: { at: string, assignee: { id: string, type: string, summary?: string, html_url?: string | null } }[], body?: { type?: string, details?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.logEntries.get",
+      "shortPath": "logEntries.get",
+      "description": "Get a single log entry by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "log_entry",
+            "optional": false,
+            "type": "{ id: string, type?: string, summary?: string, created_at?: string, html_url?: string | null, incident?: { id: string, type: string, summary?: string, html_url?: string | null }, service?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], agent?: { id: string, type: string, summary?: string, html_url?: string | null }, channel?: { type: string, name?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.logEntries.list",
+      "shortPath": "logEntries.list",
+      "description": "List log entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_overview",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "log_entries",
+            "optional": false,
+            "type": "{ id: string, type?: string, summary?: string, created_at?: string, html_url?: string | null, incident?: { id: string, type: string, summary?: string, html_url?: string | null }, service?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], agent?: { id: string, type: string, summary?: string, html_url?: string | null }, channel?: { type: string, name?: string } }[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pagerduty.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: string, name?: string, email?: string, role?: string, description?: string | null, time_zone?: string, html_url?: string, avatar_url?: string, color?: string, contact_methods?: { id: string, type: string, summary?: string, html_url?: string | null }[], notification_rules?: { id: string, type: string, summary?: string, html_url?: string | null }[], teams?: { id: string, type: string, summary?: string, html_url?: string | null }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "pagerduty.webhooks.incidents.acknowledged",
+      "shortPath": "incidents.acknowledged",
+      "description": "An incident was acknowledged",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id: string, event_type: incident.triggered, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.acknowledged, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.resolved, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.assigned, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: string, resource_type: string, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event_type: incident.acknowledged, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } }",
+      "usageExample": "pagerduty({\n    webhookHooks: {\n        incidents: {\n            acknowledged: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "pagerduty.webhooks.incidents.assigned",
+      "shortPath": "incidents.assigned",
+      "description": "An incident was assigned to a user or escalation policy",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id: string, event_type: incident.triggered, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.acknowledged, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.resolved, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.assigned, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: string, resource_type: string, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event_type: incident.assigned, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } }",
+      "usageExample": "pagerduty({\n    webhookHooks: {\n        incidents: {\n            assigned: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "pagerduty.webhooks.incidents.resolved",
+      "shortPath": "incidents.resolved",
+      "description": "An incident was resolved",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id: string, event_type: incident.triggered, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.acknowledged, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.resolved, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.assigned, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: string, resource_type: string, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event_type: incident.resolved, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } }",
+      "usageExample": "pagerduty({\n    webhookHooks: {\n        incidents: {\n            resolved: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "pagerduty.webhooks.incidents.triggered",
+      "shortPath": "incidents.triggered",
+      "description": "An incident was triggered (created)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ id: string, event_type: incident.triggered, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.acknowledged, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.resolved, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: incident.assigned, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } } | { id: string, event_type: string, resource_type: string, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: {} }"
+          }
+        ]
+      },
+      "responseType": "{ id: string, event_type: incident.triggered, resource_type: incident, occurred_at: string, agent?: { id?: string, type?: string, summary?: string, html_url?: string | null }, client?: { name?: string } | null, data: { id: string, type: incident, incident_number?: number, title?: string, status?: triggered | acknowledged | resolved, urgency?: high | low, html_url?: string, created_at?: string, updated_at?: string, resolved_at?: string | null, service?: { id: string, type: string, summary?: string, html_url?: string | null }, escalation_policy?: { id: string, type: string, summary?: string, html_url?: string | null }, teams?: { id: string, type: string, summary?: string, html_url?: string | null }[], assignees?: { id: string, type: string, summary?: string, html_url?: string | null }[] } }",
+      "usageExample": "pagerduty({\n    webhookHooks: {\n        incidents: {\n            triggered: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "pagerduty.db.incidents.search",
+      "entityName": "incidents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "incident_number",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "resolved_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

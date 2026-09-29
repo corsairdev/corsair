@@ -1,0 +1,21 @@
+displayName: Linear
+description: Issue tracking tool for software teams managing projects, cycles, and product roadmaps.
+examples:
+  read:
+    path: issues.list
+    title: List issues
+  write:
+    path: issues.create
+    title: Create an issue
+    args:
+      title: Fix bug in login flow
+      teamId: team_123
+dbExample:
+  entity: issues
+  note: Search synced issues without hitting Linear.
+  limit: 50
+exampleWebhook:
+  path: issues.create
+  note: Fires when a new issue is created in Linear.
+  after: |
+    console.log('Linear issue created:', result.data);

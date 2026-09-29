@@ -1,0 +1,22 @@
+displayName: Stripe
+description: Payment infrastructure for accepting charges, subscriptions, invoices, and online checkout flows.
+examples:
+  read:
+    path: customers.list
+    title: List customers
+  write:
+    path: paymentIntents.create
+    title: Create a payment intent
+    args:
+      amount: 2000
+      currency: usd
+dbExample:
+  entity: customers
+  note: Search synced customers without hitting Stripe.
+  limit: 50
+exampleWebhook:
+  path: paymentIntent.succeeded
+  note: Fires when a payment intent transitions to `succeeded`. Use this to fulfil orders.
+  after: |
+    const intent = result.data.data.object;
+    console.log('Payment succeeded:', intent.id, intent.amount, intent.currency);

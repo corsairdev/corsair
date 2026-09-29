@@ -1,0 +1,1698 @@
+{
+  "id": "classmarker",
+  "displayName": "Classmarker",
+  "description": "Classmarker plugin for Corsair",
+  "npmPackageName": "@corsair-dev/classmarker",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_key_secret"]
+    }
+  ],
+  "api": [
+    {
+      "path": "classmarker.api.accessLists.addCodes",
+      "shortPath": "accessLists.addCodes",
+      "description": "Add access-list codes for a link exam.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_list_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "access_codes",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "access_lists",
+            "optional": true,
+            "type": "{ access_list: { access_list_id: number, access_list_name?: string, num_codes_added?: number, num_codes_deleted?: number, num_codes_total?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.accessLists.deleteCodes",
+      "shortPath": "accessLists.deleteCodes",
+      "description": "Delete access-list codes for a link exam.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_list_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "access_codes",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "access_lists",
+            "optional": true,
+            "type": "{ access_list: { access_list_id: number, access_list_name?: string, num_codes_added?: number, num_codes_deleted?: number, num_codes_total?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.apiKeys.delete",
+      "shortPath": "apiKeys.delete",
+      "description": "Delete a ClassMarker API key by id.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.categories.create",
+      "shortPath": "categories.create",
+      "description": "Create a category under a parent category.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "verify_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, data?: { parent_category?: { parent_category_id: number, parent_category_name: string, categories?: { category_id: number, category_name: string, parent_category_id: number }[] }, category?: { category_id: number, category_name: string, parent_category_id: number } } }"
+      }
+    },
+    {
+      "path": "classmarker.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List parent categories and sub-categories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ parent_categories: { parent_category_id: number, parent_category_name: string, categories?: { category_id: number, category_name: string, parent_category_id: number }[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.categories.update",
+      "shortPath": "categories.update",
+      "description": "Update a category and optionally re-parent it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "category_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "verify_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, data?: { parent_category?: { parent_category_id: number, parent_category_name: string, categories?: { category_id: number, category_name: string, parent_category_id: number }[] }, category?: { category_id: number, category_name: string, parent_category_id: number } } }"
+      }
+    },
+    {
+      "path": "classmarker.api.categories.updateParent",
+      "shortPath": "categories.updateParent",
+      "description": "Update a parent category in the question bank.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent_category_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "parent_category_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "verify_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, data?: { parent_category?: { parent_category_id: number, parent_category_name: string, categories?: { category_id: number, category_name: string, parent_category_id: number }[] }, category?: { category_id: number, category_name: string, parent_category_id: number } } }"
+      }
+    },
+    {
+      "path": "classmarker.api.certificates.list",
+      "shortPath": "certificates.list",
+      "description": "List all ClassMarker certificates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new ClassMarker group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a ClassMarker group.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get details for a specific ClassMarker group.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ group_id: number, group_name: string, assigned_tests?: { test: { test_id: number, test_name: string } }[] }"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.questions.create",
+      "shortPath": "questions.create",
+      "description": "Create a new question in the question bank.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question",
+            "optional": false,
+            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: {}, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
+          },
+          {
+            "key": "verify_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+      }
+    },
+    {
+      "path": "classmarker.api.questions.get",
+      "shortPath": "questions.get",
+      "description": "Get one question from the question bank.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+      }
+    },
+    {
+      "path": "classmarker.api.questions.list",
+      "shortPath": "questions.list",
+      "description": "List question-bank questions (200 per page).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "questions",
+            "optional": true,
+            "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.questions.update",
+      "shortPath": "questions.update",
+      "description": "Update an existing question in the question bank.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "question_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "question",
+            "optional": false,
+            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: {}, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
+          },
+          {
+            "key": "verify_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+      }
+    },
+    {
+      "path": "classmarker.api.recentResults.forAllGroups",
+      "shortPath": "recentResults.forAllGroups",
+      "description": "Fetch recent results across all groups with timestamp pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finishedAfterTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ group: { group_id: number, group_name: string, assigned_tests?: { test: { test_id: number, test_name: string } }[] } }[]"
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "{ test: { test_id: number, test_name: string } }[]"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ result: { test_id: number, percentage: number, points_scored: number, points_available: number, time_started: number, time_finished: number, status: string, duration?: string, percentage_passmark?: number, passed?: boolean, requires_grading?: string, give_certificate_only_when_passed?: boolean, certificate_url?: string, certificate_serial?: string, view_results_url?: string, test_type?: string, monitor_events?: { browser_monitoring?: string, camera_monitoring?: string, total_event_count?: number, total_seconds_away?: number, events?: { timestamp: number, event: string, seconds_away: number }[] }, user_id: number, group_id: number, first?: string, last?: string, email?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.recentResults.forAllLinks",
+      "shortPath": "recentResults.forAllLinks",
+      "description": "Fetch recent results across all links with timestamp pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finishedAfterTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ link: { link_id: number, link_name: string, link_url_id?: string, access_list_id?: number, assigned_tests?: { test: { test_id: number, test_name: string } }[] } }[]"
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "{ test: { test_id: number, test_name: string } }[]"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ result: { test_id: number, percentage: number, points_scored: number, points_available: number, time_started: number, time_finished: number, status: string, duration?: string, percentage_passmark?: number, passed?: boolean, requires_grading?: string, give_certificate_only_when_passed?: boolean, certificate_url?: string, certificate_serial?: string, view_results_url?: string, test_type?: string, monitor_events?: { browser_monitoring?: string, camera_monitoring?: string, total_event_count?: number, total_seconds_away?: number, events?: { timestamp: number, event: string, seconds_away: number }[] }, link_id: number, first?: string, last?: string, email?: string, access_code?: string, extra_info?: string, extra_info2?: string, extra_info3?: string, extra_info4?: string, extra_info5?: string, link_result_id?: number, cm_user_id?: string, ip_address?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.recentResults.forGroupExam",
+      "shortPath": "recentResults.forGroupExam",
+      "description": "Fetch recent results for one group/test pair.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "finishedAfterTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ group: { group_id: number, group_name: string, assigned_tests?: { test: { test_id: number, test_name: string } }[] } }[]"
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "{ test: { test_id: number, test_name: string } }[]"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ result: { test_id: number, percentage: number, points_scored: number, points_available: number, time_started: number, time_finished: number, status: string, duration?: string, percentage_passmark?: number, passed?: boolean, requires_grading?: string, give_certificate_only_when_passed?: boolean, certificate_url?: string, certificate_serial?: string, view_results_url?: string, test_type?: string, monitor_events?: { browser_monitoring?: string, camera_monitoring?: string, total_event_count?: number, total_seconds_away?: number, events?: { timestamp: number, event: string, seconds_away: number }[] }, user_id: number, group_id: number, first?: string, last?: string, email?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.recentResults.forLinkExam",
+      "shortPath": "recentResults.forLinkExam",
+      "description": "Fetch recent results for one link/test pair.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "finishedAfterTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ link: { link_id: number, link_name: string, link_url_id?: string, access_list_id?: number, assigned_tests?: { test: { test_id: number, test_name: string } }[] } }[]"
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "{ test: { test_id: number, test_name: string } }[]"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ result: { test_id: number, percentage: number, points_scored: number, points_available: number, time_started: number, time_finished: number, status: string, duration?: string, percentage_passmark?: number, passed?: boolean, requires_grading?: string, give_certificate_only_when_passed?: boolean, certificate_url?: string, certificate_serial?: string, view_results_url?: string, test_type?: string, monitor_events?: { browser_monitoring?: string, camera_monitoring?: string, total_event_count?: number, total_seconds_away?: number, events?: { timestamp: number, event: string, seconds_away: number }[] }, link_id: number, first?: string, last?: string, email?: string, access_code?: string, extra_info?: string, extra_info2?: string, extra_info3?: string, extra_info4?: string, extra_info5?: string, link_result_id?: number, cm_user_id?: string, ip_address?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.tests.deleteLink",
+      "shortPath": "tests.deleteLink",
+      "description": "Delete one link assignment from a test.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.tests.get",
+      "shortPath": "tests.get",
+      "description": "Get details for a specific ClassMarker test.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "{ test_id: number, test_name: string }"
+          },
+          {
+            "key": "assignments",
+            "optional": false,
+            "type": "{ test: { test_id: number, test_name: string }, group?: { group_id: number, group_name: string, assigned_tests?: { test: { test_id: number, test_name: string } }[] }, link?: { link_id: number, link_name: string, link_url_id?: string, access_list_id?: number, assigned_tests?: { test: { test_id: number, test_name: string } }[] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.tests.list",
+      "shortPath": "tests.list",
+      "description": "List all tests available to the API key.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "tests",
+            "optional": false,
+            "type": "{ test_id: number, test_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a new ClassMarker user.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete an existing ClassMarker user.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get details for one ClassMarker user.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ user_id?: number, first_name?: string, last_name?: string, email?: string } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, user?: { user_id?: number, first_name?: string, last_name?: string, email?: string } }"
+      }
+    },
+    {
+      "path": "classmarker.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in your ClassMarker account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ user: { user_id?: number, first_name?: string, last_name?: string, email?: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.utility.getInitialFinishedAfterTimestamp",
+      "shortPath": "utility.getInitialFinishedAfterTimestamp",
+      "description": "Compute the initial finishedAfterTimestamp cursor for recent-results pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finishedAfterTimestamp",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a ClassMarker webhook.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "classmarker.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List configured ClassMarker webhooks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ok | no_results | error | verified"
+          },
+          {
+            "key": "request_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "server_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "finished_after_timestamp_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_available",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num_results_returned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "more_results_exist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_finished_after_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "{ error_code?: string, error_message?: string, next_request_after?: number }"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "classmarker.db.results.search",
+      "entityName": "results",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "external_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

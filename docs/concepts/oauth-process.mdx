@@ -365,7 +365,7 @@ export async function oauthCallbackHandler(req: Request, res: Response) {
 
 | Variable | Description |
 |---|---|
-| `CORSAIR_KEK` | Key-encryption key. Generate with `openssl rand -hex 32`. Never rotate without re-encrypting stored DEKs. |
+| `CORSAIR_KEK` | Key-encryption key. Generate with `openssl rand -base64 32`. Never rotate without re-encrypting stored DEKs. |
 | `APP_URL` | Your app's public base URL (e.g. `https://myapp.com`). Used to build `manual.baseUrl` and `manual.redirectUri`. |
 | `NODE_ENV` | Set to `production` to enable HTTPS-only cookies and other hardening elsewhere in your app. |
 

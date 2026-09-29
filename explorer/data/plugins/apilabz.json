@@ -1,0 +1,193 @@
+{
+  "id": "apilabz",
+  "displayName": "ApiLabz",
+  "description": "Collection of utility APIs for developers including conversion, validation, and lookup tools.",
+  "npmPackageName": "@corsair-dev/apilabz",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "apilabz.api.airtable.listTables",
+      "shortPath": "airtable.listTables",
+      "description": "List Airtable tables for a base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apilabz.api.deals.integrate",
+      "shortPath": "deals.integrate",
+      "description": "Integrate a deal into API Labz",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "dealId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apilabz.api.iban.validate",
+      "shortPath": "iban.validate",
+      "description": "Validate an IBAN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "iban",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "{ iban: string, is_valid: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "apilabz.api.trello.aiSearchEngine",
+      "shortPath": "trello.aiSearchEngine",
+      "description": "Run AI search across Trello data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "boardId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includeArchived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

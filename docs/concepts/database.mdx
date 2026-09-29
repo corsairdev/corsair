@@ -449,7 +449,7 @@ Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, an
 
 ## Core tables
 
-Five tables for every integration. Slack, GitHub, Linear, and the rest all share the same schema.
+Five tables, shared by every integration — Slack, GitHub, Linear, and the rest use the same schema. Connect prompts are recorded in `corsair_events`.
 
 | Table | Purpose |
 |-------|---------|
@@ -569,7 +569,7 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="Drizzle / Prisma">
 
-Define the five Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair, not the ORM client:
+Define the six Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair, not the ORM client:
 
 ```ts
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });

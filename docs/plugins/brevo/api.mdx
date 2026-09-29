@@ -1,0 +1,693 @@
+---
+title: API
+description: "API reference for Brevo: every `brevo.api.*` operation with input and output types."
+---
+
+Every `brevo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Get Brevo account details, plans, and relay settings
+
+**Risk:** `read`
+
+```ts
+await corsair.brevo.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `address` | `object` | No | — |
+| `plan` | `object[]` | No | — |
+| `relay` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  street?: string,
+  city?: string,
+  zipCode?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="plan full type">
+
+```ts
+{
+  type: string,
+  credits: number,
+  creditsType?: string,
+  startDate?: string,
+  endDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="relay full type">
+
+```ts
+{
+  enabled: boolean,
+  data?: {
+    userName?: string,
+    relay?: string,
+    port?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a new Brevo contact
+
+**Risk:** `write`
+
+```ts
+await corsair.brevo.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `ext_id` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `emailBlacklisted` | `boolean` | No | — |
+| `smsBlacklisted` | `boolean` | No | — |
+| `listIds` | `number[]` | No | — |
+| `updateEnabled` | `boolean` | No | — |
+| `smtpBlacklistSender` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a Brevo contact [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.brevo.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Get a Brevo contact by ID or email identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.brevo.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `email` | `string` | No | — |
+| `emailBlacklisted` | `boolean` | No | — |
+| `smsBlacklisted` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+| `listIds` | `number[]` | No | — |
+| `listUnsubscribed` | `number[]` | No | — |
+| `attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List Brevo contacts with filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.brevo.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `modifiedSince` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `segmentId` | `number` | No | — |
+| `listId` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: number,
+  email?: string | null,
+  emailBlacklisted?: boolean,
+  smsBlacklisted?: boolean,
+  createdAt?: string,
+  modifiedAt?: string,
+  listIds?: number[],
+  listUnsubscribed?: number[],
+  attributes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update an existing Brevo contact by ID or email identifier
+
+**Risk:** `write`
+
+```ts
+await corsair.brevo.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| number` | Yes | — |
+| `attributes` | `object` | No | — |
+| `emailBlacklisted` | `boolean` | No | — |
+| `smsBlacklisted` | `boolean` | No | — |
+| `listIds` | `number[]` | No | — |
+| `unlinkListIds` | `number[]` | No | — |
+| `smtpBlacklistSender` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Email Campaigns
+
+### create
+
+`emailCampaigns.create`
+
+Create a new Brevo email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.brevo.api.emailCampaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `sender` | `object` | Yes | — |
+| `htmlContent` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `templateId` | `number` | No | — |
+| `scheduledAt` | `string` | No | — |
+| `recipients` | `object` | No | — |
+| `replyTo` | `string` | No | — |
+| `toField` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `header` | `string` | No | — |
+| `footer` | `string` | No | — |
+| `utmCampaign` | `string` | No | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  id?: number
+}
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  lists?: number[],
+  exclusionLists?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`emailCampaigns.delete`
+
+Delete a Brevo email campaign [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.brevo.api.emailCampaigns.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`emailCampaigns.get`
+
+Get a Brevo email campaign by campaign ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brevo.api.emailCampaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `type` | `string` | No | — |
+| `status` | `string` | No | — |
+| `htmlContent` | `string` | No | — |
+| `scheduledAt` | `string` | No | — |
+| `sentDate` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+| `sender` | `object` | No | — |
+| `replyTo` | `string` | No | — |
+| `toField` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `recipients` | `object` | No | — |
+| `statistics` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  id?: number
+}
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  lists?: number[],
+  exclusionLists?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emailCampaigns.list`
+
+List Brevo email campaigns with filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.brevo.api.emailCampaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `classic \| trigger` | No | — |
+| `status` | `suspended \| archive \| sent \| queued \| draft \| in_process` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  subject?: string,
+  type?: string,
+  status?: string,
+  scheduledAt?: string,
+  sentDate?: string,
+  createdAt?: string,
+  modifiedAt?: string,
+  recipients?: {
+    lists?: number[],
+    exclusionLists?: number[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendNow
+
+`emailCampaigns.sendNow`
+
+Send a Brevo email campaign immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.brevo.api.emailCampaigns.sendNow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### sendTest
+
+`emailCampaigns.sendTest`
+
+Send a test email for a Brevo email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.brevo.api.emailCampaigns.sendTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | — |
+| `emailTo` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`emailCampaigns.update`
+
+Update an existing Brevo email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.brevo.api.emailCampaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `sender` | `object` | No | — |
+| `htmlContent` | `string` | No | — |
+| `htmlUrl` | `string` | No | — |
+| `templateId` | `number` | No | — |
+| `scheduledAt` | `string` | No | — |
+| `recipients` | `object` | No | — |
+| `replyTo` | `string` | No | — |
+| `toField` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `header` | `string` | No | — |
+| `footer` | `string` | No | — |
+| `utmCampaign` | `string` | No | — |
+| `params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sender full type">
+
+```ts
+{
+  name?: string,
+  email?: string,
+  id?: number
+}
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  lists?: number[],
+  exclusionLists?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+

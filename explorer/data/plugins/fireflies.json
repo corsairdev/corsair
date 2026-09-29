@@ -1,0 +1,782 @@
+{
+  "id": "fireflies",
+  "displayName": "Fireflies.ai",
+  "description": "AI meeting assistant for recording, transcribing, and summarizing calls and conversations.",
+  "npmPackageName": "@corsair-dev/fireflies",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 5,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fireflies.api.aiApp.getOutputs",
+      "shortPath": "aiApp.getOutputs",
+      "description": "Get the outputs of an AI app for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "appId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apps",
+            "optional": true,
+            "type": "{ outputs?: { transcript_id?: string | null, user_id?: string | null, app_id?: string | null, created_at?: number | null, title?: string | null, prompt?: string | null, response?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.askFred.continueThread",
+      "shortPath": "askFred.continueThread",
+      "description": "Continue an existing AskFred conversation thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "continueAskFredThread",
+            "optional": false,
+            "type": "{ message: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }, cost?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.askFred.createThread",
+      "shortPath": "askFred.createThread",
+      "description": "Create a new AskFred conversation thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "createAskFredThread",
+            "optional": false,
+            "type": "{ message: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }, cost?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.askFred.deleteThread",
+      "shortPath": "askFred.deleteThread",
+      "description": "Delete an AskFred conversation thread",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleteAskFredThread",
+            "optional": false,
+            "type": "{ id: string, title: string, transcript_id?: string | null, user_id: string, created_at: string, messages?: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.askFred.getThread",
+      "shortPath": "askFred.getThread",
+      "description": "Get a single AskFred conversation thread by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "askfred_thread",
+            "optional": true,
+            "type": "{ id: string, title: string, transcript_id?: string | null, user_id: string, created_at: string, messages?: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.askFred.getThreads",
+      "shortPath": "askFred.getThreads",
+      "description": "Get all AskFred conversation threads for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "askfred_threads",
+            "optional": false,
+            "type": "{ id: string, title: string, transcript_id?: string | null, user_id: string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.audio.upload",
+      "shortPath": "audio.upload",
+      "description": "Upload an audio file for transcription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_reference_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uploadAudio",
+            "optional": false,
+            "type": "{ success: boolean, title: string, message: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.get",
+      "shortPath": "transcripts.get",
+      "description": "Get a single transcript by ID with full details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ id: string, title?: string | null, date?: Date | null, duration?: number | null, host_email?: string | null, organizer_email?: string | null, calendar_id?: string | null, transcript_url?: string | null, meeting_link?: string | null, video_url?: string | null, audio_url?: string | null, privacy?: string | null, sentences?: { index?: number | null, speaker_id?: number | null, speaker_name?: string | null, raw_text?: string | null, text?: string | null, start_time?: number | null, end_time?: number | null, ai_filters?: { task?: string | null, pricing?: string | null, metric?: string | null, question?: string | null, date_and_time?: string | null } | null }[] | null, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null, speakers?: { id?: string | null, name?: string | null }[] | null, meeting_attendees?: { displayName?: string | null, email?: string | null, phoneNumber?: string | null, name?: string | null, location?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.getAnalytics",
+      "shortPath": "transcripts.getAnalytics",
+      "description": "Get analytics data for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ id: string, analytics?: { sentiments?: { negative_pct?: number | null, neutral_pct?: number | null, positive_pct?: number | null } | null, categories?: { questions?: number | null, date_times?: number | null, metrics?: number | null, tasks?: number | null } | null, speakers?: {}[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.getAudioUrl",
+      "shortPath": "transcripts.getAudioUrl",
+      "description": "Get the audio URL for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ id: string, audio_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.getSummary",
+      "shortPath": "transcripts.getSummary",
+      "description": "Get the AI-generated summary for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ id: string, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.getVideoUrl",
+      "shortPath": "transcripts.getVideoUrl",
+      "description": "Get the video URL for a transcript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ id: string, video_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.transcripts.list",
+      "shortPath": "transcripts.list",
+      "description": "List transcripts with optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "host_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "participant_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mine",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcripts",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, date?: Date | null, duration?: number | null, host_email?: string | null, organizer_email?: string | null, calendar_id?: string | null, transcript_url?: string | null, meeting_link?: string | null, video_url?: string | null, audio_url?: string | null, privacy?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the current authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ user_id: string, email?: string | null, name?: string | null, num_transcripts?: number | null, minutes_consumed?: number | null, is_admin?: boolean | null, integrations?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fireflies.api.users.list",
+      "shortPath": "users.list",
+      "description": "List all users in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ user_id: string, email?: string | null, name?: string | null, num_transcripts?: number | null, minutes_consumed?: number | null, is_admin?: boolean | null, integrations?: string[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "fireflies.webhooks.meetings.inMeeting",
+      "shortPath": "meetings.inMeeting",
+      "description": "Fireflies bot has joined a meeting",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientReferenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "InMeeting"
+          }
+        ]
+      },
+      "responseType": "{ meetingId: string, clientReferenceId?: string | null, eventType: InMeeting }",
+      "usageExample": "fireflies({\n    webhookHooks: {\n        meetings: {\n            inMeeting: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "fireflies.webhooks.meetings.meetingDeleted",
+      "shortPath": "meetings.meetingDeleted",
+      "description": "A meeting has been deleted",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientReferenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "MeetingDeleted"
+          }
+        ]
+      },
+      "responseType": "{ meetingId: string, clientReferenceId?: string | null, eventType: MeetingDeleted }",
+      "usageExample": "fireflies({\n    webhookHooks: {\n        meetings: {\n            meetingDeleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "fireflies.webhooks.meetings.newMeeting",
+      "shortPath": "meetings.newMeeting",
+      "description": "A new meeting has been detected",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientReferenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "NewMeeting"
+          }
+        ]
+      },
+      "responseType": "{ meetingId: string, clientReferenceId?: string | null, eventType: NewMeeting }",
+      "usageExample": "fireflies({\n    webhookHooks: {\n        meetings: {\n            newMeeting: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "fireflies.webhooks.transcriptions.transcriptionComplete",
+      "shortPath": "transcriptions.transcriptionComplete",
+      "description": "Transcription is complete and available",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientReferenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "Transcription"
+          }
+        ]
+      },
+      "responseType": "{ meetingId: string, clientReferenceId?: string | null, eventType: Transcription }",
+      "usageExample": "fireflies({\n    webhookHooks: {\n        transcriptions: {\n            transcriptionComplete: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "fireflies.webhooks.transcriptions.transcriptProcessing",
+      "shortPath": "transcriptions.transcriptProcessing",
+      "description": "Transcript is being processed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetingId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "clientReferenceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "TranscriptProcessing"
+          }
+        ]
+      },
+      "responseType": "{ meetingId: string, clientReferenceId?: string | null, eventType: TranscriptProcessing }",
+      "usageExample": "fireflies({\n    webhookHooks: {\n        transcriptions: {\n            transcriptProcessing: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "fireflies.db.askFredThreads.search",
+      "entityName": "askFredThreads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transcript_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "fireflies.db.transcripts.search",
+      "entityName": "transcripts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "host_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organizer_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "calendar_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transcript_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_link",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "video_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "audio_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "fireflies.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_transcripts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "minutes_consumed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_admin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

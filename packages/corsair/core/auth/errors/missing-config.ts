@@ -1,4 +1,5 @@
 import { KEY_LENGTH } from '../encryption';
+import { CorsairKekMissingError } from './kek-missing';
 
 /**
  * Creates a proxy that throws helpful errors when accessing keys without proper configuration.
@@ -20,6 +21,9 @@ export function createMissingConfigProxy<T>(
 
 	return new Proxy(proxyTarget, {
 		get(_target, prop) {
+			if (hasDatabase && !hasKek) {
+				throw new CorsairKekMissingError();
+			}
 			const isPlural = missingConfig.length > 1;
 			throw new Error(
 				`corsair.keys.${String(prop)}: Cannot access keys because ${missingConfig.join(' and ')} ${isPlural ? 'are' : 'is'} not configured. ` +

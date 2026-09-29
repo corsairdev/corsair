@@ -1,0 +1,2457 @@
+{
+  "id": "dropboxsign",
+  "displayName": "Dropbox Sign",
+  "description": "E-signature platform for sending, signing, and tracking legally binding document agreements.",
+  "npmPackageName": "@corsair-dev/dropboxsign",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 56,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "dropboxsign.api.account.create",
+      "shortPath": "account.create",
+      "description": "Creates a new Dropbox Sign account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.account.get",
+      "shortPath": "account.get",
+      "description": "Retrieves detailed information about a Dropbox Sign account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.account.update",
+      "shortPath": "account.update",
+      "description": "Updates Dropbox Sign account settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.account.verify",
+      "shortPath": "account.verify",
+      "description": "Verifies whether a Dropbox Sign account exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ email_address: string }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.authorize",
+      "shortPath": "apiApps.authorize",
+      "description": "Generates OAuth authorization URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.create",
+      "shortPath": "apiApps.create",
+      "description": "Creates a new API App",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_app",
+            "optional": false,
+            "type": "{ client_id?: string, name?: string, domain?: string | null, callback_url?: string | null, is_approved?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.delete",
+      "shortPath": "apiApps.delete",
+      "description": "Deletes an API App",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.get",
+      "shortPath": "apiApps.get",
+      "description": "Retrieves API App details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_app",
+            "optional": false,
+            "type": "{ client_id?: string, name?: string, domain?: string | null, callback_url?: string | null, is_approved?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.list",
+      "shortPath": "apiApps.list",
+      "description": "Lists API Apps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_apps",
+            "optional": false,
+            "type": "{ client_id?: string, name?: string, domain?: string | null, callback_url?: string | null, is_approved?: boolean, created_at?: number }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.apiApps.update",
+      "shortPath": "apiApps.update",
+      "description": "Updates an existing API App",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_app",
+            "optional": false,
+            "type": "{ client_id?: string, name?: string, domain?: string | null, callback_url?: string | null, is_approved?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.bulkSend.createEmbeddedWithTemplate",
+      "shortPath": "bulkSend.createEmbeddedWithTemplate",
+      "description": "Bulk creates embedded signature requests with template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signer_file",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signer_list",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_job",
+            "optional": false,
+            "type": "{ bulk_send_job_id?: string, total?: number, is_creator?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.bulkSend.getJob",
+      "shortPath": "bulkSend.getJob",
+      "description": "Gets bulk send job status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_job",
+            "optional": false,
+            "type": "{ bulk_send_job_id?: string, total?: number, is_creator?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.bulkSend.listJobs",
+      "shortPath": "bulkSend.listJobs",
+      "description": "Lists bulk send jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_jobs",
+            "optional": false,
+            "type": "{ bulk_send_job_id?: string, total?: number, is_creator?: boolean, created_at?: number }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.bulkSend.sendWithTemplate",
+      "shortPath": "bulkSend.sendWithTemplate",
+      "description": "Bulk sends signature requests with template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signer_list",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_send_job",
+            "optional": false,
+            "type": "{ bulk_send_job_id?: string, total?: number, is_creator?: boolean, created_at?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.drafts.createEmbeddedUnclaimedWithTemplate",
+      "shortPath": "drafts.createEmbeddedUnclaimedWithTemplate",
+      "description": "Creates embedded unclaimed draft with template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          },
+          {
+            "key": "requester_email_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.drafts.createUnclaimed",
+      "shortPath": "drafts.createUnclaimed",
+      "description": "Creates an unclaimed draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "send_document | request_signature"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.drafts.editAndResendUnclaimed",
+      "shortPath": "drafts.editAndResendUnclaimed",
+      "description": "Edits and resends an unclaimed draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.embedded.getSignUrl",
+      "shortPath": "embedded.getSignUrl",
+      "description": "Gets embedded signing URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "embedded",
+            "optional": false,
+            "type": "{ sign_url?: string, expires_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.embedded.getTemplateEditUrl",
+      "shortPath": "embedded.getTemplateEditUrl",
+      "description": "Gets embedded template edit URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force_signer_roles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "force_subject_message",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "embedded",
+            "optional": false,
+            "type": "{ edit_url?: string, expires_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.faxAndReports.createReport",
+      "shortPath": "faxAndReports.createReport",
+      "description": "Requests CSV report generation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report_type",
+            "optional": false,
+            "type": "user_activity | document_status | sms_activity | fax_usage[]"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report",
+            "optional": false,
+            "type": "{ success?: string, start_date?: string, end_date?: string, report_type?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.faxAndReports.deleteFax",
+      "shortPath": "faxAndReports.deleteFax",
+      "description": "Deletes a fax",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fax_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.faxAndReports.getAreaCodes",
+      "shortPath": "faxAndReports.getAreaCodes",
+      "description": "Gets available fax line area codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.faxAndReports.listFaxes",
+      "shortPath": "faxAndReports.listFaxes",
+      "description": "Lists faxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "faxes",
+            "optional": false,
+            "type": "{ fax_id?: string, title?: string, original_title?: string, message?: string | null, created_at?: number, sender?: string, files_url?: string, transmissions?: {}[] }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.faxAndReports.listFaxLines",
+      "shortPath": "faxAndReports.listFaxLines",
+      "description": "Lists fax lines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.cancel",
+      "shortPath": "signatureRequests.cancel",
+      "description": "Cancels an incomplete signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.createEmbedded",
+      "shortPath": "signatureRequests.createEmbedded",
+      "description": "Creates an embedded signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.createEmbeddedWithTemplate",
+      "shortPath": "signatureRequests.createEmbeddedWithTemplate",
+      "description": "Creates an embedded signature request with template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.downloadFiles",
+      "shortPath": "signatureRequests.downloadFiles",
+      "description": "Downloads signature request files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "pdf | zip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.editAndResend",
+      "shortPath": "signatureRequests.editAndResend",
+      "description": "Edits and resends a signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.editAndResendEmbedded",
+      "shortPath": "signatureRequests.editAndResendEmbedded",
+      "description": "Edits and resends an embedded signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.editAndResendEmbeddedTemplate",
+      "shortPath": "signatureRequests.editAndResendEmbeddedTemplate",
+      "description": "Edits and resends an embedded signature request with template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.get",
+      "shortPath": "signatureRequests.get",
+      "description": "Retrieves details of a signature request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.getFilesAsDataUri",
+      "shortPath": "signatureRequests.getFilesAsDataUri",
+      "description": "Gets signature request files as Data URI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.getFilesAsFileUrl",
+      "shortPath": "signatureRequests.getFilesAsFileUrl",
+      "description": "Gets temporary file URL for signature request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.list",
+      "shortPath": "signatureRequests.list",
+      "description": "Lists signature requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_requests",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.releaseHold",
+      "shortPath": "signatureRequests.releaseHold",
+      "description": "Releases a held signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.remind",
+      "shortPath": "signatureRequests.remind",
+      "description": "Sends a reminder to a signer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.send",
+      "shortPath": "signatureRequests.send",
+      "description": "Sends a signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signers",
+            "optional": true,
+            "type": "{ email_address?: string, name?: string, role?: string, order?: number }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.signatureRequests.update",
+      "shortPath": "signatureRequests.update",
+      "description": "Updates signer contact information on signature request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signature_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature_request",
+            "optional": false,
+            "type": "{ signature_request_id?: string, title?: string, original_title?: string, subject?: string, message?: string, is_complete?: boolean, is_declined?: boolean, has_error?: boolean, files_url?: string, details_url?: string, signing_url?: string | null, created_at?: number, signatures?: { signature_id?: string, signer_email_address?: string, signer_name?: string, signer_role?: string | null, order?: number | null, status_code?: string, signed_at?: number | null, last_viewed_at?: number | null, last_reminded_at?: number | null, has_pin?: boolean }[], template_ids?: string[] | null }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.addMember",
+      "shortPath": "teams.addMember",
+      "description": "Invites or adds a user to team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ name?: string, team_id?: string, num_members?: number, num_sub_teams?: number, accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_emails?: string[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.getCurrent",
+      "shortPath": "teams.getCurrent",
+      "description": "Gets current team membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ name?: string, team_id?: string, num_members?: number, num_sub_teams?: number, accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_emails?: string[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.getInfo",
+      "shortPath": "teams.getInfo",
+      "description": "Retrieves team details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ name?: string, team_id?: string, num_members?: number, num_sub_teams?: number, accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_emails?: string[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "Lists all accessible teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ name?: string, team_id?: string, num_members?: number, num_sub_teams?: number, accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_emails?: string[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.listMembers",
+      "shortPath": "teams.listMembers",
+      "description": "Lists team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_members",
+            "optional": false,
+            "type": "{ account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.teams.listSubTeams",
+      "shortPath": "teams.listSubTeams",
+      "description": "Lists sub-teams for a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ name?: string, team_id?: string, num_members?: number, num_sub_teams?: number, accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_accounts?: { account_id?: string, email_address?: string, is_locked?: boolean, is_paid_hs?: boolean, is_paid_hf?: boolean, quotas?: { api_signature_requests_left?: number | null, documents_left?: number | null, templates_total?: number | null, templates_left?: number | null, sms_verifications_left?: number | null, num_fax_pages_left?: number | null }, callback_url?: string | null, role_code?: string | null, team_id?: string | null, locale?: string | null }[], invited_emails?: string[] }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.addUser",
+      "shortPath": "templates.addUser",
+      "description": "Adds user access to template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Creates a reusable template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signer_roles",
+            "optional": true,
+            "type": "{ name: string, order?: number }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.createEmbeddedDraft",
+      "shortPath": "templates.createEmbeddedDraft",
+      "description": "Creates an embedded template draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signer_roles",
+            "optional": true,
+            "type": "{ name: string, order?: number }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "test_mode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Deletes a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Retrieves a template by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.getFiles",
+      "shortPath": "templates.getFiles",
+      "description": "Downloads template documents",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_type",
+            "optional": true,
+            "type": "pdf | zip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.getFilesAsDataUri",
+      "shortPath": "templates.getFilesAsDataUri",
+      "description": "Gets template files as Data URI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_uri",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.getFilesAsFileUrl",
+      "shortPath": "templates.getFilesAsFileUrl",
+      "description": "Gets template files as URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "Lists templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }[]"
+          },
+          {
+            "key": "list_info",
+            "optional": true,
+            "type": "{ page?: number, num_pages?: number, num_results?: number, page_size?: number }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.removeUser",
+      "shortPath": "templates.removeUser",
+      "description": "Removes user access from template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dropboxsign.api.templates.updateFiles",
+      "shortPath": "templates.updateFiles",
+      "description": "Updates files for a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "file_urls",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ template_id?: string, title?: string, message?: string, updated_at?: number, is_creator?: boolean, is_embedded?: boolean, can_edit?: boolean, is_locked?: boolean, signer_roles?: { name?: string, order?: number | null }[] }"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ warning_msg: string, warning_name: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "dropboxsign.db.account.search",
+      "entityName": "account",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "account_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email_address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_paid_hs",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_paid_hf",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "role_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.apiApp.search",
+      "entityName": "apiApp",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_approved",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.bulkSendJob.search",
+      "entityName": "bulkSendJob",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bulk_send_job_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_creator",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.fax.search",
+      "entityName": "fax",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fax_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "original_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "files_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.signatureRequest.search",
+      "entityName": "signatureRequest",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signature_request_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "original_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subject",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_complete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_declined",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "has_error",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "files_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "details_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "signing_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.team.search",
+      "entityName": "team",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "team_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "num_members",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_sub_teams",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "dropboxsign.db.template.search",
+      "entityName": "template",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "template_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_creator",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_embedded",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "can_edit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_locked",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

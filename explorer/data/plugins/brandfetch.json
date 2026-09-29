@@ -1,0 +1,665 @@
+{
+  "id": "brandfetch",
+  "displayName": "Brandfetch",
+  "description": "Brand asset API for logos, colors, fonts, and company visual identity data.",
+  "npmPackageName": "@corsair-dev/brandfetch",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "client_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "brandfetch.api.brands.get",
+      "shortPath": "brands.get",
+      "description": "Get brand logos, colors, fonts, and company details by domain, ticker, ISIN, crypto symbol, or Brand ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC)"
+          },
+          {
+            "key": "identifierType",
+            "optional": true,
+            "type": "domain | ticker | isin | crypto",
+            "description": "Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto)."
+          },
+          {
+            "key": "allowNsfw",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "claimed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ name: string, url: string }[]"
+          },
+          {
+            "key": "logos",
+            "optional": false,
+            "type": "{ theme?: dark | light | null, formats: { src?: string, format?: svg | webp | png | jpeg, height?: number | null, width?: number | null, size?: number, background?: transparent | null }[], tags: any[], type: icon | logo | symbol | other }[]"
+          },
+          {
+            "key": "colors",
+            "optional": false,
+            "type": "{ hex: string, type: accent | dark | light | brand, brightness: number }[]"
+          },
+          {
+            "key": "fonts",
+            "optional": false,
+            "type": "{ name?: string | null, type: title | body, origin?: google | custom | system, originId?: string | null, weights?: any[] }[]"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ formats: { src?: string, format?: svg | webp | png | jpeg, height?: number | null, width?: number | null, size?: number, background?: transparent | null }[], tags: any[], type: banner | other | picture, pictureMetadata?: { score: number, rank: number, naturalWidth: number, naturalHeight: number, alt: string, sourceUrl: string, imageCategory?: string | null, categoryConfidence?: number | null } | null }[]"
+          },
+          {
+            "key": "qualityScore",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } }"
+          },
+          {
+            "key": "isNsfw",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "urn",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.brands.getCompany",
+      "shortPath": "brands.getCompany",
+      "description": "Get firmographic company data for a brand identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC)"
+          },
+          {
+            "key": "identifierType",
+            "optional": true,
+            "type": "domain | ticker | isin | crypto",
+            "description": "Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto)."
+          },
+          {
+            "key": "allowNsfw",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "financialIdentifiers",
+            "optional": true,
+            "type": "{ isin?: string[], ticker?: string[] }"
+          },
+          {
+            "key": "foundedYear",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "industries",
+            "optional": true,
+            "type": "{ id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[]"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.brands.search",
+      "shortPath": "brands.search",
+      "description": "Search brands by name for autocomplete (requires client ID)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Brand name to search for"
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string",
+            "description": "Brandfetch client ID. Falls back to plugin options / stored key."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ icon?: string | null, name?: string | null, domain: string, claimed: boolean, brandId: string }[]"
+      }
+    },
+    {
+      "path": "brandfetch.api.graphql.getVersion",
+      "shortPath": "graphql.getVersion",
+      "description": "Get the Brandfetch GraphQL API version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.logos.get",
+      "shortPath": "logos.get",
+      "description": "Build a Brandfetch Logo CDN URL (requires client ID)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC)"
+          },
+          {
+            "key": "identifierType",
+            "optional": true,
+            "type": "domain | ticker | isin | crypto",
+            "description": "Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto)."
+          },
+          {
+            "key": "clientId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "logoType",
+            "optional": true,
+            "type": "icon | logo | symbol",
+            "description": "CDN asset type. Defaults to icon."
+          },
+          {
+            "key": "theme",
+            "optional": true,
+            "type": "light | dark"
+          },
+          {
+            "key": "fallback",
+            "optional": true,
+            "type": "404 | brandfetch | transparent | lettermark"
+          },
+          {
+            "key": "w",
+            "optional": true,
+            "type": "number",
+            "description": "Width in pixels"
+          },
+          {
+            "key": "h",
+            "optional": true,
+            "type": "number",
+            "description": "Height in pixels"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.taxonomy.get",
+      "shortPath": "taxonomy.get",
+      "description": "Get Brandfetch industries, countries, and geographic regions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "industries",
+            "optional": false,
+            "type": "{ id: string, urn?: string, name: string, slug: string, emoji?: string, depth?: number, banner?: string | null, parent?: { id: string, urn?: string, name: string, slug: string, emoji?: string, depth?: number, banner?: string | null } | null, children?: { id: string, urn?: string, name: string, slug: string, emoji?: string, depth?: number, banner?: string | null }[] }[]"
+          },
+          {
+            "key": "countries",
+            "optional": false,
+            "type": "{ code: string, name: string, slug: string, emoji?: string, latitude?: number, longitude?: number }[]"
+          },
+          {
+            "key": "geographicRegions",
+            "optional": false,
+            "type": "{ name: string, slug: string, emoji?: string, depth?: number, parent?: { name: string, slug: string } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Match a payment descriptor to merchant brand data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionLabel",
+            "optional": false,
+            "type": "string",
+            "description": "Raw transaction text from a credit-card statement"
+          },
+          {
+            "key": "countryCode",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code where the transaction took place"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "claimed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "longDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ name: string, url: string }[]"
+          },
+          {
+            "key": "logos",
+            "optional": false,
+            "type": "{ theme?: dark | light | null, formats: { src?: string, format?: svg | webp | png | jpeg, height?: number | null, width?: number | null, size?: number, background?: transparent | null }[], tags: any[], type: icon | logo | symbol | other }[]"
+          },
+          {
+            "key": "colors",
+            "optional": false,
+            "type": "{ hex: string, type: accent | dark | light | brand, brightness: number }[]"
+          },
+          {
+            "key": "fonts",
+            "optional": false,
+            "type": "{ name?: string | null, type: title | body, origin?: google | custom | system, originId?: string | null, weights?: any[] }[]"
+          },
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ formats: { src?: string, format?: svg | webp | png | jpeg, height?: number | null, width?: number | null, size?: number, background?: transparent | null }[], tags: any[], type: banner | other | picture, pictureMetadata?: { score: number, rank: number, naturalWidth: number, naturalHeight: number, alt: string, sourceUrl: string, imageCategory?: string | null, categoryConfidence?: number | null } | null }[]"
+          },
+          {
+            "key": "qualityScore",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } }"
+          },
+          {
+            "key": "isNsfw",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "urn",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List registered Brandfetch webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. GraphQL default is 10."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from the previous pageInfo.endCursor"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{ urn: string, url: string, description?: string | null, enabled: boolean, events: string[], createdAt?: string, updatedAt?: string }[]"
+          },
+          {
+            "key": "pageInfo",
+            "optional": false,
+            "type": "{ hasNextPage: boolean, endCursor?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "brandfetch.api.webhooks.listEvents",
+      "shortPath": "webhooks.listEvents",
+      "description": "List webhook event types that can be subscribed to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribableEvents",
+            "optional": false,
+            "type": "{ namespace: string, name: string, description: string, subscriptionScope: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "brandfetch.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "claimed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "longDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "qualityScore",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isNsfw",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "urn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "brandfetch.db.companies.search",
+      "entityName": "companies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brandId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "foundedYear",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "countryCode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subregion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "brandfetch.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "urn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

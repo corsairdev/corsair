@@ -1,0 +1,168 @@
+{
+  "id": "aivoov",
+  "displayName": "AiVOOV",
+  "description": "Text-to-speech platform for generating natural voiceovers from written scripts.",
+  "npmPackageName": "@corsair-dev/aivoov",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "aivoov.api.audio.create",
+      "shortPath": "audio.create",
+      "description": "Synthesise speech from one or more voice and text pairs, returning Base64-encoded audio. Consumes character credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "transcribe_text",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "transcribe_ssml_pitch_rate",
+            "optional": true,
+            "type": "(number | default)[]"
+          },
+          {
+            "key": "transcribe_ssml_spk_rate",
+            "optional": true,
+            "type": "(number | default)[]"
+          },
+          {
+            "key": "transcribe_ssml_volume",
+            "optional": true,
+            "type": "(number | default)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aivoov.api.voices.list",
+      "shortPath": "voices.list",
+      "description": "List available text-to-speech voices, optionally filtered by BCP-47 language code. Limited to 20 calls per day, so results are mirrored to the voices entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voice_id: string, name: string, value?: string, gender?: string, language_code?: string, language_name?: string, label?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "aivoov.db.voices.search",
+      "entityName": "voices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "voice_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "language_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

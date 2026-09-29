@@ -1,0 +1,478 @@
+{
+  "id": "aryn",
+  "displayName": "Aryn",
+  "description": "Aryn plugin for Corsair",
+  "npmPackageName": "@corsair-dev/aryn",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "aryn.api.asyncTasks.list",
+      "shortPath": "asyncTasks.list",
+      "description": "List async partitioning tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path_filter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.docset.create",
+      "shortPath": "docset.create",
+      "description": "Create a new DocSet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "prompts",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "readonly",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.docset.delete",
+      "shortPath": "docset.delete",
+      "description": "Delete a DocSet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "readonly",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.docset.get",
+      "shortPath": "docset.get",
+      "description": "Get DocSet metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "readonly",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.document.get",
+      "shortPath": "document.get",
+      "description": "Get a document by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_elements",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_binary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_original_elements",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type?: string, bbox?: number[], properties?: { score?: number, page_number?: number } | null, text_representation?: string | null, binary_representation?: any }[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "binary_data",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.document.getBinary",
+      "shortPath": "document.getBinary",
+      "description": "Download document binary content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.document.partition",
+      "shortPath": "document.partition",
+      "description": "Partition document using Aryn DocParse",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": true,
+            "type": "custom"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ threshold?: number | auto, text_mode?: string, table_mode?: string, extract_images?: boolean, extract_image_format?: string, selected_pages?: (number | number[])[], strategy?: string, max_tokens?: number, tokenizer?: string, merge_across_pages?: boolean, promote_title?: boolean, title_candidate_elements?: string[], orientation_correction?: boolean, include_pagenum?: boolean, include_headers?: boolean, include_footers?: boolean, pipeline?: string, add_to_docset_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{ type?: string, bbox?: number[], properties?: { score?: number, page_number?: number } | null, text_representation?: string | null, binary_representation?: any }[]"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.document.submitAsyncAdd",
+      "shortPath": "document.submitAsyncAdd",
+      "description": "Submit document asynchronously to a DocSet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docset_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "custom"
+          },
+          {
+            "key": "file_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ threshold?: number | auto, text_mode?: string, table_mode?: string, extract_images?: boolean, extract_image_format?: string, selected_pages?: (number | number[])[], strategy?: string, max_tokens?: number, tokenizer?: string, merge_across_pages?: boolean, promote_title?: boolean, title_candidate_elements?: string[], orientation_correction?: boolean, include_pagenum?: boolean, include_headers?: boolean, include_footers?: boolean, pipeline?: string, add_to_docset_id?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "aryn.api.query.generatePlan",
+      "shortPath": "query.generatePlan",
+      "description": "Generate query plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "docset_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summarize_result",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "nodes",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "result_node",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "llm_prompt",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "llm_plan",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

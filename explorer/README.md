@@ -11,17 +11,18 @@ This folder is **not** a monorepo workspace package — it ships with its own
 `pnpm-workspace.yaml` (empty), its own `package.json`, and its own lockfile,
 so it can be containerised or moved elsewhere without dragging the rest of
 the repo along. The only link back into the monorepo is the generator
-script that produces `data/plugins.json`.
+script that produces `data/catalog.json` and `data/plugins/*.json`.
 
 ## How it works
 
 1. `../scripts/build-explorer-catalog.ts` (run from the repo root) walks
    `packages/*`, imports each `@corsair-dev/*` plugin, runs
-   `introspectPluginForDocs`, and writes a single JSON file at
-   `explorer/data/plugins.json`.
-2. The Express server in `src/server.ts` reads that JSON at startup,
-   builds lookup maps, and serves it over a small REST surface. No runtime
-   dependency on `corsair` itself — just a JSON blob.
+   `introspectPluginForDocs`, and writes:
+   - `explorer/data/catalog.json` — metadata, plugin summaries, and a search index
+   - `explorer/data/plugins/<id>.json` — full plugin record, one file per plugin
+2. The Express server in `src/server.ts` reads the index at startup,
+   lazy-loads plugin files on demand, and serves them over a small REST
+   surface. No runtime dependency on `corsair` itself — just JSON files.
 
 To regenerate the catalog (run from the repo root):
 
@@ -29,7 +30,8 @@ To regenerate the catalog (run from the repo root):
 pnpm build:explorer-catalog
 ```
 
-Commit the resulting `explorer/data/plugins.json` alongside your deploy.
+Commit the resulting `explorer/data/catalog.json` and `explorer/data/plugins/`
+alongside your deploy.
 
 ## Setup
 
@@ -56,7 +58,7 @@ Environment variables:
 |-----|---------|---------|
 | `PORT` | `4319` | Port to bind |
 | `HOST` | `0.0.0.0` | Host to bind |
-| `EXPLORER_CATALOG_PATH` | bundled `data/plugins.json` | Override catalog location |
+| `EXPLORER_CATALOG_PATH` | bundled `data/catalog.json` | Override catalog index location |
 | `EXPLORER_CORS_ORIGIN` | `*` | CORS allow-origin header |
 
 ## Building for production

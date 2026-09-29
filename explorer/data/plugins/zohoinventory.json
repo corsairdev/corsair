@@ -1,0 +1,3054 @@
+{
+  "id": "zohoinventory",
+  "displayName": "Zoho Inventory",
+  "description": "Track stock, manage orders, and sync inventory across sales channels",
+  "npmPackageName": "@corsair-dev/zohoinventory",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 58,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "zohoinventory.api.bills.create",
+      "shortPath": "bills.create",
+      "description": "Create a bill",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "vendor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bill",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.bills.list",
+      "shortPath": "bills.list",
+      "description": "List bills",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bills",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.compositeItems.delete",
+      "shortPath": "compositeItems.delete",
+      "description": "Delete a composite item [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "composite_item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ contact_id: string, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, currency_code?: string, outstanding_receivable_amount?: number, outstanding_payable_amount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.createPerson",
+      "shortPath": "contacts.createPerson",
+      "description": "Create a contact person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_person",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.deactivate",
+      "shortPath": "contacts.deactivate",
+      "description": "Mark a contact inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.deletePerson",
+      "shortPath": "contacts.deletePerson",
+      "description": "Delete a contact person [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_person_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.email",
+      "shortPath": "contacts.email",
+      "description": "Email a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cc_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.emailStatement",
+      "shortPath": "contacts.emailStatement",
+      "description": "Email a contact statement",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cc_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ contact_id: string, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, currency_code?: string, outstanding_receivable_amount?: number, outstanding_payable_amount?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.getAddress",
+      "shortPath": "contacts.getAddress",
+      "description": "Get a contact address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact_type",
+            "optional": true,
+            "type": "customer | vendor | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ contact_id: string, contact_name: string, company_name?: string, contact_type?: string, status?: string, email?: string, currency_code?: string, outstanding_receivable_amount?: number, outstanding_payable_amount?: number }[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.addComment",
+      "shortPath": "creditNotes.addComment",
+      "description": "Add a credit note comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "creditnote_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.applyCredits",
+      "shortPath": "creditNotes.applyCredits",
+      "description": "Apply credit note credits to invoices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "creditnote_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ invoice_id: string, amount_applied: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.create",
+      "shortPath": "creditNotes.create",
+      "description": "Create a credit note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditnote",
+            "optional": true,
+            "type": "{ creditnote_id: string, creditnote_number?: string, customer_id?: string, status?: string, total?: number, balance?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.email",
+      "shortPath": "creditNotes.email",
+      "description": "Email a credit note",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "creditnote_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cc_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.get",
+      "shortPath": "creditNotes.get",
+      "description": "Get a credit note",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "creditnote_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditnote",
+            "optional": true,
+            "type": "{ creditnote_id: string, creditnote_number?: string, customer_id?: string, status?: string, total?: number, balance?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.getEmailContent",
+      "shortPath": "creditNotes.getEmailContent",
+      "description": "Get credit note email content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "creditnote_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.creditNotes.list",
+      "shortPath": "creditNotes.list",
+      "description": "List credit notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creditnotes",
+            "optional": false,
+            "type": "{ creditnote_id: string, creditnote_number?: string, customer_id?: string, status?: string, total?: number, balance?: number }[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.currencies.list",
+      "shortPath": "currencies.list",
+      "description": "List currencies",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currencies",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.customerPayments.create",
+      "shortPath": "customerPayments.create",
+      "description": "Create a customer payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoices",
+            "optional": true,
+            "type": "{ invoice_id: string, amount_applied?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.addAttachment",
+      "shortPath": "invoices.addAttachment",
+      "description": "Upload an invoice attachment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.addComment",
+      "shortPath": "invoices.addComment",
+      "description": "Add an invoice comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "show_comment_to_clients",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.bulkEmail",
+      "shortPath": "invoices.bulkEmail",
+      "description": "Bulk email invoices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.bulkExport",
+      "shortPath": "invoices.bulkExport",
+      "description": "Bulk export invoices as PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.bulkPrint",
+      "shortPath": "invoices.bulkPrint",
+      "description": "Bulk print invoices as PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.cancelWriteOff",
+      "shortPath": "invoices.cancelWriteOff",
+      "description": "Cancel an invoice write-off",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice",
+            "optional": true,
+            "type": "{ invoice_id: string, invoice_number?: string, customer_id?: string, customer_name?: string, status?: string, date?: string, total?: number, balance?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.delete",
+      "shortPath": "invoices.delete",
+      "description": "Delete an invoice [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.deleteAttachment",
+      "shortPath": "invoices.deleteAttachment",
+      "description": "Delete an invoice attachment [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.deleteComment",
+      "shortPath": "invoices.deleteComment",
+      "description": "Delete an invoice comment [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "comment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.disablePaymentReminder",
+      "shortPath": "invoices.disablePaymentReminder",
+      "description": "Disable invoice payment reminders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.email",
+      "shortPath": "invoices.email",
+      "description": "Email an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cc_mail_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.enablePaymentReminder",
+      "shortPath": "invoices.enablePaymentReminder",
+      "description": "Enable invoice payment reminders",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ invoice_id: string, invoice_number?: string, customer_id?: string, customer_name?: string, status?: string, date?: string, total?: number, balance?: number }[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.invoices.listPayments",
+      "shortPath": "invoices.listPayments",
+      "description": "List payments on an invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.itemGroups.create",
+      "shortPath": "itemGroups.create",
+      "description": "Create an item group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "group_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemgroup",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.itemGroups.deactivate",
+      "shortPath": "itemGroups.deactivate",
+      "description": "Mark an item group inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "itemgroup_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.itemGroups.delete",
+      "shortPath": "itemGroups.delete",
+      "description": "Delete an item group [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "itemgroup_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.itemGroups.list",
+      "shortPath": "itemGroups.list",
+      "description": "List item groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "itemgroups",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.items.create",
+      "shortPath": "items.create",
+      "description": "Create an inventory item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item",
+            "optional": true,
+            "type": "{ item_id: string, name: string, sku?: string, status?: string, rate?: number, purchase_rate?: number, item_type?: string, product_type?: string, stock_on_hand?: number, available_stock?: number, description?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.items.deactivate",
+      "shortPath": "items.deactivate",
+      "description": "Mark an item inactive",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete an item [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.items.deleteImage",
+      "shortPath": "items.deleteImage",
+      "description": "Delete an item image [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.items.list",
+      "shortPath": "items.list",
+      "description": "List inventory items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ item_id: string, name: string, sku?: string, status?: string, rate?: number, purchase_rate?: number, item_type?: string, product_type?: string, stock_on_hand?: number, available_stock?: number, description?: string }[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations the user can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organizations",
+            "optional": false,
+            "type": "{ organization_id: string, name: string, is_default_org?: boolean, contact_name?: string, email?: string, is_org_active?: boolean, currency_code?: string, currency_id?: string, currency_symbol?: string, time_zone?: string, language_code?: string, fiscal_year_start_month?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.packages.bulkPrint",
+      "shortPath": "packages.bulkPrint",
+      "description": "Bulk print package slips as PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "package_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_base64",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.packages.create",
+      "shortPath": "packages.create",
+      "description": "Create a package for a sales order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "salesorder_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "package",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.packages.delete",
+      "shortPath": "packages.delete",
+      "description": "Delete a package [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "package_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.purchaseOrders.create",
+      "shortPath": "purchaseOrders.create",
+      "description": "Create a purchase order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "vendor_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaseorder",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.purchaseOrders.list",
+      "shortPath": "purchaseOrders.list",
+      "description": "List purchase orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "purchaseorders",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.salesOrders.bulkDelete",
+      "shortPath": "salesOrders.bulkDelete",
+      "description": "Bulk delete sales orders [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "salesorder_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.salesOrders.create",
+      "shortPath": "salesOrders.create",
+      "description": "Create a sales order",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ item_id?: string, name?: string, description?: string, rate?: number, quantity?: number, unit?: string, tax_id?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salesorder",
+            "optional": true,
+            "type": "{ salesorder_id: string, salesorder_number?: string, customer_id?: string, customer_name?: string, status?: string, date?: string, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.salesOrders.delete",
+      "shortPath": "salesOrders.delete",
+      "description": "Delete a sales order [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "salesorder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.salesOrders.get",
+      "shortPath": "salesOrders.get",
+      "description": "Get a sales order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "salesorder_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salesorder",
+            "optional": true,
+            "type": "{ salesorder_id: string, salesorder_number?: string, customer_id?: string, customer_name?: string, status?: string, date?: string, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.salesOrders.list",
+      "shortPath": "salesOrders.list",
+      "description": "List sales orders",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "salesorders",
+            "optional": false,
+            "type": "{ salesorder_id: string, salesorder_number?: string, customer_id?: string, customer_name?: string, status?: string, date?: string, total?: number }[]"
+          },
+          {
+            "key": "page_context",
+            "optional": true,
+            "type": "{ page?: number, per_page?: number, has_more_page?: boolean, report_name?: string, applied_filter?: string, sort_column?: string, sort_order?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "zohoinventory.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the current authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Zoho Inventory organization_id (query on every org-scoped call)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ user_id: string, name: string, email: string, user_role?: string, status?: string, is_current_user?: boolean }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "zohoinventory.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "company_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "outstanding_receivable_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "outstanding_payable_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinventory.db.creditNotes.search",
+      "entityName": "creditNotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creditnote_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creditnote_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinventory.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invoice_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invoice_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinventory.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "purchase_rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "item_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "product_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stock_on_hand",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "available_stock",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinventory.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_default_org",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "language_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fiscal_year_start_month",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "account_created_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "time_zone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_org_active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "currency_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_symbol",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currency_format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "price_precision",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "zohoinventory.db.salesOrders.search",
+      "entityName": "salesOrders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "salesorder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "salesorder_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

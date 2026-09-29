@@ -1,0 +1,4318 @@
+{
+  "id": "bugsnag",
+  "displayName": "Bugsnag",
+  "description": "Error monitoring platform for tracking application crashes and stability across releases.",
+  "npmPackageName": "@corsair-dev/bugsnag",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 61,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bugsnag.api.collaborators.delete",
+      "shortPath": "collaborators.delete",
+      "description": "Remove a collaborator, revoking access to every project in the organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.get",
+      "shortPath": "collaborators.get",
+      "description": "Get a single collaborator",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password_updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_time_in_utc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "heroku",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recovery_codes_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pending_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_request_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_for",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "managed_by_smartbear_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.getOnProject",
+      "shortPath": "collaborators.getOnProject",
+      "description": "Get a collaborator in the context of a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password_updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_time_in_utc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "heroku",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recovery_codes_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pending_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_request_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_for",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "managed_by_smartbear_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.getProjectAccess",
+      "shortPath": "collaborators.getProjectAccess",
+      "description": "Get how one collaborator reaches one project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_summary",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, slug?: string | null }"
+          },
+          {
+            "key": "team_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "individual_project_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team_project_role",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.invite",
+      "shortPath": "collaborators.invite",
+      "description": "Invite a collaborator to an organization by email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password_updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_time_in_utc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "heroku",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recovery_codes_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pending_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_request_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_for",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "managed_by_smartbear_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.list",
+      "shortPath": "collaborators.list",
+      "description": "List the collaborators on an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: {} | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.listOnProject",
+      "shortPath": "collaborators.listOnProject",
+      "description": "List the collaborators who can reach a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, email?: string | null, two_factor_enabled?: boolean | null, two_factor_enabled_on?: string | null, password_updated_on?: string | null, show_time_in_utc?: boolean | null, heroku?: boolean | null, recovery_codes_remaining?: number | null, is_admin?: boolean | null, pending_invitation?: boolean | null, last_request_at?: string | null, paid_for?: boolean | null, project_ids?: string[] | null, team_ids?: string[] | null, project_roles?: {} | null, managed_by_smartbear_id?: boolean | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.listProjectAccesses",
+      "shortPath": "collaborators.listProjectAccesses",
+      "description": "List how a collaborator reaches each project, with the granting role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inaccessible",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ project_summary?: { id?: string | null, name?: string | null, type?: string | null, slug?: string | null } | null, team_count?: number | null, is_admin?: boolean | null, project_role?: string | null, individual_project_role?: string | null, team_project_role?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.listProjects",
+      "shortPath": "collaborators.listProjects",
+      "description": "List the projects a collaborator can reach",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, organization_id?: string | null, slug?: string | null, name?: string | null, api_key?: string | null, upload_api_key?: string | null, must_use_upload_api_key?: boolean | null, type?: string | null, is_full_view?: boolean | null, release_stages?: string[] | null, language?: string | null, errors_url?: string | null, events_url?: string | null, url?: string | null, html_url?: string | null, open_error_count?: number | null, for_review_error_count?: number | null, collaborators_count?: number | null, teams_count?: number | null, global_grouping?: string[] | null, location_grouping?: string[] | null, discarded_app_versions?: string[] | null, discarded_errors?: string[] | null, custom_event_fields_used?: number | null, resolve_on_deploy?: boolean | null, performance_display_type?: string | null, default_performance_percentile?: string | null, target_stability?: { value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null, critical_stability?: { value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null, stability_target_type?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.projectAccessCounts",
+      "shortPath": "collaborators.projectAccessCounts",
+      "description": "Count how many projects each named collaborator can reach",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ collaborator_id: string, project_count?: number | null, is_admin?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.collaborators.updatePermissions",
+      "shortPath": "collaborators.updatePermissions",
+      "description": "Change a collaborator's project access or admin status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password_updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_time_in_utc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "heroku",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recovery_codes_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pending_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_request_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_for",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "managed_by_smartbear_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataDeletions.confirmForProject",
+      "shortPath": "dataDeletions.confirmForProject",
+      "description": "Confirm a project event data deletion, irreversibly erasing the matched data",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletion_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataDeletions.createForOrganization",
+      "shortPath": "dataDeletions.createForOrganization",
+      "description": "Create a request to erase matching event data across an organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataDeletions.createForProject",
+      "shortPath": "dataDeletions.createForProject",
+      "description": "Create a request to erase matching event data in a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataDeletions.getForOrganization",
+      "shortPath": "dataDeletions.getForOrganization",
+      "description": "Check the status of an organization event data deletion",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletion_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataDeletions.getForProject",
+      "shortPath": "dataDeletions.getForProject",
+      "description": "Check the status of a project event data deletion",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deletion_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "events_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataRequests.createForOrganization",
+      "shortPath": "dataRequests.createForOrganization",
+      "description": "Request an export of an organization's event data for a subject access request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataRequests.createForProject",
+      "shortPath": "dataRequests.createForProject",
+      "description": "Request an export of a project's event data for a subject access request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataRequests.getForOrganization",
+      "shortPath": "dataRequests.getForOrganization",
+      "description": "Check the status of an organization event data export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.dataRequests.getForProject",
+      "shortPath": "dataRequests.getForProject",
+      "description": "Check the status of a project event data export",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "report_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.errors.bulkUpdate",
+      "shortPath": "errors.bulkUpdate",
+      "description": "Apply one operation to many errors at once, including delete and discard",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "error_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "fix | open | ignore | snooze | discard | undiscard | delete | override_severity | assign | create_issue | link_issue | unlink_issue"
+          },
+          {
+            "key": "severity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_collaborator_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigned_team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "issue_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reopen_rules",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "operation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.errors.deleteAll",
+      "shortPath": "errors.deleteAll",
+      "description": "Permanently delete every error and event in a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.errors.list",
+      "shortPath": "errors.list",
+      "description": "List the error groups on a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, project_id?: string | null, error_class?: string | null, message?: string | null, context?: string | null, severity?: string | null, original_severity?: string | null, overridden_severity?: string | null, events?: number | null, events_url?: string | null, unthrottled_occurrence_count?: number | null, users?: number | null, first_seen?: string | null, last_seen?: string | null, first_seen_unfiltered?: string | null, last_seen_unfiltered?: string | null, status?: string | null, created_issue?: any, linked_issues?: any[] | null, reopen_rules?: any, assigned_collaborator_id?: string | null, assigned_team_id?: string | null, comment_count?: number | null, missing_dsyms?: string[] | null, release_stages?: string[] | null, grouping_reason?: string | null, grouping_fields?: any, url?: string | null, project_url?: string | null, discarded?: boolean | null, trend?: any, introduced_in_releases?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.eventFields.create",
+      "shortPath": "eventFields.create",
+      "description": "Create a custom event field from a path inside event metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter_options",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "display_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pivot_options",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_options",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "reindex_in_progress",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "reindex_percentage",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.eventFields.delete",
+      "shortPath": "eventFields.delete",
+      "description": "Delete a custom event field",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.eventFields.list",
+      "shortPath": "eventFields.list",
+      "description": "List the fields a project can filter and pivot on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ display_id: string, custom?: boolean | null, pivot_options?: any, path?: string | null, filter_options?: any, reindex_in_progress?: boolean | null, reindex_percentage?: number | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.events.list",
+      "shortPath": "events.list",
+      "description": "List the individual event occurrences on a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_reports",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, project_url?: string | null, is_full_report?: boolean | null, error_id?: string | null, received_at?: string | null, exceptions?: any[] | null, severity?: string | null, context?: string | null, unhandled?: boolean | null, app?: any, threads?: any[] | null, metaData?: any, request?: any, device?: any, user?: any, breadcrumbs?: any[] | null, feature_flags?: any[] | null, correlation?: any, session?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.events.listForError",
+      "shortPath": "events.listForError",
+      "description": "List the individual events belonging to one error",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "error_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_reports",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, url?: string | null, project_url?: string | null, is_full_report?: boolean | null, error_id?: string | null, received_at?: string | null, exceptions?: any[] | null, severity?: string | null, context?: string | null, unhandled?: boolean | null, app?: any, threads?: any[] | null, metaData?: any, request?: any, device?: any, user?: any, breadcrumbs?: any[] | null, feature_flags?: any[] | null, correlation?: any, session?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.featureFlags.list",
+      "shortPath": "featureFlags.list",
+      "description": "List the feature flags seen on a project in a release stage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "release_stage_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_inactive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_variant_summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, active?: boolean | null, first_seen?: string | null, last_seen?: string | null, variants?: any[] | null, variant_summary?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.featureFlags.listSummaries",
+      "shortPath": "featureFlags.listSummaries",
+      "description": "List feature flag summaries for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, variant_count?: number | null, error_count?: number | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.configure",
+      "shortPath": "integrations.configure",
+      "description": "Configure an integration on a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "trigger_configs",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.deleteConfigured",
+      "shortPath": "integrations.deleteConfigured",
+      "description": "Delete a configured integration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.getConfigured",
+      "shortPath": "integrations.getConfigured",
+      "description": "Get a single configured integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integration_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "trigger_configs",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.listConfigured",
+      "shortPath": "integrations.listConfigured",
+      "description": "List the integrations configured on a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, integration_key?: string | null, project_id?: string | null, name?: string | null, type?: string | null, config?: any, trigger_configs?: any, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.listSupported",
+      "shortPath": "integrations.listSupported",
+      "description": "List every integration BugSnag supports",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string, name?: string | null, url?: string | null, type?: string | null, description?: string | null, actions?: any, fields?: any, icon_url?: string | null, created_entity_name?: string | null, two_way_sync?: boolean | null, issue_automation_options?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.integrations.test",
+      "shortPath": "integrations.test",
+      "description": "Test an integration configuration before creating it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "configuration",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.organizations.delete",
+      "shortPath": "organizations.delete",
+      "description": "Delete an organization with all of its projects, errors and collaborator access",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get a single organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null }"
+          },
+          {
+            "key": "collaborators_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "projects_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "auto_upgrade",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "upgrade_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "can_start_pro_trial",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pro_trial_ends_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pro_trial_feature",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "managed_by_platform_services",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billing_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List the organizations the token's owner belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, slug?: string | null, api_key?: string | null, creator?: { id?: string | null, name?: string | null, email?: string | null } | null, collaborators_url?: string | null, projects_url?: string | null, auto_upgrade?: boolean | null, upgrade_url?: string | null, can_start_pro_trial?: boolean | null, pro_trial_ends_at?: string | null, pro_trial_feature?: boolean | null, managed_by_platform_services?: boolean | null, billing_emails?: string[] | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.pivots.list",
+      "shortPath": "pivots.list",
+      "description": "List the pivot definitions available on a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pivots",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "summary_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ event_field_display_id: string, name?: string | null, cardinality?: number | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.pivots.values",
+      "shortPath": "pivots.values",
+      "description": "List one pivot's values with each value's share of events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_field_display_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ event_field_value?: string | null, events?: number | null, proportion?: number | null, first_seen?: string | null, last_seen?: string | null, fields?: any, aggregates?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project in an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upload_api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "must_use_upload_api_key",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_full_view",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "release_stages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errors_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "open_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "for_review_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collaborators_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teams_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "global_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_app_versions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_errors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_event_fields_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolve_on_deploy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "performance_display_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_performance_percentile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "critical_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "stability_target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project and its entire error history",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a single project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upload_api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "must_use_upload_api_key",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_full_view",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "release_stages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errors_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "open_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "for_review_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collaborators_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teams_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "global_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_app_versions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_errors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_event_fields_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolve_on_deploy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "performance_display_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_performance_percentile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "critical_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "stability_target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, organization_id?: string | null, slug?: string | null, name?: string | null, api_key?: string | null, upload_api_key?: string | null, must_use_upload_api_key?: boolean | null, type?: string | null, is_full_view?: boolean | null, release_stages?: string[] | null, language?: string | null, errors_url?: string | null, events_url?: string | null, url?: string | null, html_url?: string | null, open_error_count?: number | null, for_review_error_count?: number | null, collaborators_count?: number | null, teams_count?: number | null, global_grouping?: string[] | null, location_grouping?: string[] | null, discarded_app_versions?: string[] | null, discarded_errors?: string[] | null, custom_event_fields_used?: number | null, resolve_on_deploy?: boolean | null, performance_display_type?: string | null, default_performance_percentile?: string | null, target_stability?: { value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null, critical_stability?: { value?: number | null, updated_at?: string | null, updated_by_id?: string | null } | null, stability_target_type?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.networkGroupingRuleset",
+      "shortPath": "projects.networkGroupingRuleset",
+      "description": "Get a project's network span grouping ruleset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpoints",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.projects.regenerateApiKey",
+      "shortPath": "projects.regenerateApiKey",
+      "description": "Rotate a project's notifier API key, stopping every deployed notifier until redeployed",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upload_api_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "must_use_upload_api_key",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_full_view",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "release_stages",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "errors_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "open_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "for_review_error_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "collaborators_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "teams_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "global_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "location_grouping",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_app_versions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "discarded_errors",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_event_fields_used",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolve_on_deploy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "performance_display_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_performance_percentile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "critical_stability",
+            "optional": true,
+            "type": "{ value?: number | null, updated_at?: string | null, updated_by_id?: string | null }"
+          },
+          {
+            "key": "stability_target_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.releases.list",
+      "shortPath": "releases.list",
+      "description": "List the releases of a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "release_stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "base",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, project_id?: string | null, release_group_id?: string | null, release_time?: string | null, release_source?: string | null, app_version?: string | null, app_version_code?: string | null, app_bundle_version?: string | null, build_label?: string | null, builder_name?: string | null, build_tool?: string | null, errors_introduced_count?: number | null, errors_seen_count?: number | null, sessions_count_in_last_24h?: number | null, total_sessions_count?: number | null, unhandled_sessions_count?: number | null, accumulative_daily_users_seen?: number | null, accumulative_daily_users_with_unhandled?: number | null, metadata?: any, release_stage?: any }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.releases.listGroups",
+      "shortPath": "releases.listGroups",
+      "description": "List the release groups of a project within a release stage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "release_stage_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "top_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, project_id?: string | null, release_stage_name?: string | null, app_version?: string | null, first_released_at?: string | null, first_release_id?: string | null, releases_count?: number | null, has_secondary_versions?: boolean | null, build_tool?: string | null, builder_name?: string | null, source_control?: any, top_release_group?: boolean | null, visible?: boolean | null, total_sessions_count?: number | null, unhandled_sessions_count?: number | null, sessions_count_in_last_24h?: number | null, accumulative_daily_users_seen?: number | null, accumulative_daily_users_with_unhandled?: number | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.savedSearches.create",
+      "shortPath": "savedSearches.create",
+      "description": "Create a saved search from a filter configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_by_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_assigned_to_me",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_assigned_to",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_created_issue_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_status_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "new_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "open_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "for_review_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snoozed_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fixed_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignored_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "additional_filtersets",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "advanced_filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.savedSearches.delete",
+      "shortPath": "savedSearches.delete",
+      "description": "Delete a saved search",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saved_search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.savedSearches.get",
+      "shortPath": "savedSearches.get",
+      "description": "Get a single saved search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saved_search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_by_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_assigned_to_me",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_assigned_to",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_created_issue_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_status_filter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "new_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "open_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "for_review_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snoozed_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fixed_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignored_error_inclusion",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "additional_filtersets",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "advanced_filters",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.savedSearches.list",
+      "shortPath": "savedSearches.list",
+      "description": "List the saved searches on a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, user_id?: string | null, project_id?: string | null, name?: string | null, filters?: any, sort?: string | null, type?: string | null, shared?: boolean | null, updated_by_id?: string | null, project_default?: boolean | null, has_assigned_to_me?: boolean | null, has_assigned_to?: boolean | null, has_created_issue_filter?: boolean | null, has_status_filter?: boolean | null, new_error_inclusion?: boolean | null, open_error_inclusion?: boolean | null, for_review_error_inclusion?: boolean | null, snoozed_error_inclusion?: boolean | null, fixed_error_inclusion?: boolean | null, ignored_error_inclusion?: boolean | null, additional_filtersets?: any, advanced_filters?: any, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.savedSearches.usageSummary",
+      "shortPath": "savedSearches.usageSummary",
+      "description": "Report what depends on a saved search, to check before deleting it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "saved_search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_notifications_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "current_user_using_for_email_notification",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "collaborator_email_notifications_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "performance_monitor_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.addCollaboratorMemberships",
+      "shortPath": "teams.addCollaboratorMemberships",
+      "description": "Add a collaborator to teams, or to all of them",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "add_all_teams",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password_updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "show_time_in_utc",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "heroku",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recovery_codes_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pending_invitation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "last_request_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paid_for",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "team_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_roles",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "managed_by_smartbear_id",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.addMembers",
+      "shortPath": "teams.addMembers",
+      "description": "Add collaborators to a team, or add all of them",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "add_all_collaborators",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team in an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team, removing the grouping but not its members",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "already_absent",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a single team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collaborator_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bugsnag.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, collaborator_count?: number | null, project_count?: number | null }[]"
+      }
+    },
+    {
+      "path": "bugsnag.api.trends.projectBuckets",
+      "shortPath": "trends.projectBuckets",
+      "description": "Get a project's event counts split into time buckets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "buckets_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ from?: string | null, to?: string | null, events_count?: number | null }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bugsnag.db.collaborators.search",
+      "entityName": "collaborators",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "two_factor_enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "two_factor_enabled_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "password_updated_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "show_time_in_utc",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "heroku",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "recovery_codes_remaining",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_admin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pending_invitation",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "last_request_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "paid_for",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "managed_by_smartbear_id",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugsnag.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "api_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collaborators_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "projects_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "auto_upgrade",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "upgrade_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "can_start_pro_trial",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "pro_trial_ends_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pro_trial_feature",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "managed_by_platform_services",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugsnag.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organization_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slug",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "api_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upload_api_key",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "must_use_upload_api_key",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_full_view",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "errors_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "events_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "open_error_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "for_review_error_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "collaborators_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "teams_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "custom_event_fields_used",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "resolve_on_deploy",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "performance_display_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_performance_percentile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stability_target_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bugsnag.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collaborator_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

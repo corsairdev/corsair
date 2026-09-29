@@ -1,0 +1,1163 @@
+{
+  "id": "linkedin",
+  "displayName": "LinkedIn",
+  "description": "Professional network for profiles, company pages, posts, and B2B social marketing.",
+  "npmPackageName": "@corsair-dev/linkedin",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "linkedin.api.ads.getAudienceCounts",
+      "shortPath": "ads.getAudienceCounts",
+      "description": "Retrieve audience size counts for targeting criteria.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "{}",
+            "description": "Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. { and: [ { or: [...] }] })."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Audience size entries for the given targeting criteria."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.ads.getTargetingFacets",
+      "shortPath": "ads.getTargetingFacets",
+      "description": "Retrieve available LinkedIn ad targeting facets.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "facets",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Available targeting facets."
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.ads.searchTargetingEntities",
+      "shortPath": "ads.searchTargetingEntities",
+      "description": "Search LinkedIn ad targeting entities via typeahead.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Typeahead search query for targeting entities."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Optional facet type to scope the search (e.g. locations, titles, industries)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Matching targeting entities."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Create a comment on a LinkedIn share, UGC post, or comment.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commented_on_urn",
+            "optional": false,
+            "type": "string",
+            "description": "URN of the object being commented on: a share, UGC post, or parent comment."
+          },
+          {
+            "key": "actor",
+            "optional": false,
+            "type": "string",
+            "description": "URN of the member or organization posting the comment, e.g. urn:li:person:... or urn:li:organization:...."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The text of the comment (max 3000 characters)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "The URN of the created comment."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "The comment text."
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string",
+            "description": "The URN the comment was posted on."
+          },
+          {
+            "key": "lastModified",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.images.get",
+      "shortPath": "images.get",
+      "description": "Retrieve details of a single LinkedIn image by URN.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "image_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The image URN (e.g. urn:li:image:C4D22...) whose details to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The image URN."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "UPLOADING, AVAILABLE, WAITING_UPLOAD, etc."
+          },
+          {
+            "key": "downloadUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "original",
+            "optional": true,
+            "type": "{ size?: string, width?: number, height?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.images.initializeUpload",
+      "shortPath": "images.initializeUpload",
+      "description": "Initialize a LinkedIn image upload and return an upload URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string",
+            "description": "Owner URN that will own the uploaded image, e.g. urn:li:person:... or urn:li:organization:...."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ image: string, uploadUrl?: string, uploadUrlExpiresAt?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.images.list",
+      "shortPath": "images.list",
+      "description": "Retrieve LinkedIn image metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string",
+            "description": "Owner URN. Returns images owned by this member/org."
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[]",
+            "description": "Specific image URNs to fetch in a single batch request."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination start index."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Number of images per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{ id: string, owner?: string, status?: string, downloadUrl?: string | null, original?: { size?: string, width?: number, height?: number } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.images.registerUpload",
+      "shortPath": "images.registerUpload",
+      "description": "Register a native image upload for feed shares.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string",
+            "description": "Owner URN for the media asset, e.g. urn:li:person:... or urn:li:organization:...."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "{ asset: string, mediaArtifact?: string, uploadMechanism?: {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.organizations.getCompanyInfo",
+      "shortPath": "organizations.getCompanyInfo",
+      "description": "Retrieve organizations where the user has roles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role_assignee",
+            "optional": true,
+            "type": "string",
+            "description": "Person URN whose organization roles to list. Defaults to the authenticated member."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "ADMINISTRATOR | DIRECT_SPONSORED_CONTENT_POSTER | RECRUITING_POSTER | LEAD_GEN_FORMS_MANAGER | CONTENT_ADMIN | ANALYTICS_ROLE[]",
+            "description": "Filter to specific organization roles."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "APPROVED | PENDING | REVOKED",
+            "description": "Filter to ACLs in a given state. Defaults to APPROVED."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based pagination offset into the role list."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of roles to return per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{ organization?: string, organizationRoleAssignee?: string, role?: string, state?: string }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.organizations.getNetworkSize",
+      "shortPath": "organizations.getNetworkSize",
+      "description": "Retrieve the follower count for a LinkedIn organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The organization URN (e.g. urn:li:organization:2414183) whose follower count to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalFollowerCount",
+            "optional": true,
+            "type": "number",
+            "description": "Total followers of the organization."
+          },
+          {
+            "key": "organizationFollowerCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "elements",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.organizations.getPageStats",
+      "shortPath": "organizations.getPageStats",
+      "description": "Retrieve page statistics for a LinkedIn organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The organization URN whose page statistics to retrieve."
+          },
+          {
+            "key": "time_integrated",
+            "optional": true,
+            "type": "{ start?: number, end?: number }",
+            "description": "Optional time range for time-bound (aggregate) statistics."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination start index."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{}[]",
+            "description": "Page statistics entries."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.organizations.getShareStats",
+      "shortPath": "organizations.getShareStats",
+      "description": "Retrieve share statistics for an organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The organization URN whose share statistics to retrieve."
+          },
+          {
+            "key": "time_integrated",
+            "optional": true,
+            "type": "{ start?: number, end?: number }",
+            "description": "Optional time range to filter statistics."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination start index."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{}[]",
+            "description": "Share statistics entries."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create a new LinkedIn post for a member or organization.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "author",
+            "optional": false,
+            "type": "string",
+            "description": "Author URN. Use urn:li:person:... to post as a person (w_member_social) or urn:li:organization:... to post as an organization (w_organization_social)."
+          },
+          {
+            "key": "commentary",
+            "optional": false,
+            "type": "string",
+            "description": "The text commentary (body) of the post."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "PUBLIC | CONNECTIONS | LOGGED_IN_MEMBERS",
+            "description": "Who can see the post. Defaults to PUBLIC."
+          },
+          {
+            "key": "lifecycleState",
+            "optional": true,
+            "type": "PUBLISHED | DRAFT",
+            "description": "PUBLISHED to post immediately, DRAFT to save as a draft."
+          },
+          {
+            "key": "isReshareDisabledByAuthor",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, other members cannot reshare this post."
+          },
+          {
+            "key": "article_url",
+            "optional": true,
+            "type": "string",
+            "description": "Optional URL to attach as article content with the post."
+          },
+          {
+            "key": "article_title",
+            "optional": true,
+            "type": "string",
+            "description": "Title for the attached article. Requires article_url."
+          },
+          {
+            "key": "article_description",
+            "optional": true,
+            "type": "string",
+            "description": "Description for the attached article. Requires article_url."
+          },
+          {
+            "key": "image_urn",
+            "optional": true,
+            "type": "string",
+            "description": "Optional image URN to attach as media."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The URN of the newly created post."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.createArticleShare",
+      "shortPath": "posts.createArticleShare",
+      "description": "Create an article or URL share on LinkedIn.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "authorUrn",
+            "optional": false,
+            "type": "string",
+            "description": "Author URN, e.g. urn:li:person:... or urn:li:organization:...."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Optional commentary to include alongside the shared URL."
+          },
+          {
+            "key": "article_url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to share as an article."
+          },
+          {
+            "key": "article_title",
+            "optional": true,
+            "type": "string",
+            "description": "Optional title for the article."
+          },
+          {
+            "key": "article_description",
+            "optional": true,
+            "type": "string",
+            "description": "Optional description for the article."
+          },
+          {
+            "key": "article_thumbnail",
+            "optional": true,
+            "type": "string",
+            "description": "Optional thumbnail URL for the article."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "PUBLIC | CONNECTIONS",
+            "description": "Visibility of the share. Defaults to PUBLIC."
+          },
+          {
+            "key": "lifecycleState",
+            "optional": true,
+            "type": "PUBLISHED | DRAFT",
+            "description": "PUBLISHED to post immediately, DRAFT to save as a draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The URN of the newly created UGC post."
+          },
+          {
+            "key": "activity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a LinkedIn post via the Posts API.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string",
+            "description": "The post URN or ID to delete via the Posts API (idempotent, returns 204)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete operation completed."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.deleteShare",
+      "shortPath": "posts.deleteShare",
+      "description": "Delete a LinkedIn post (share) by its share_id.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "share_id",
+            "optional": false,
+            "type": "string",
+            "description": "The share ID of the LinkedIn share to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete operation completed."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.deleteUgc",
+      "shortPath": "posts.deleteUgc",
+      "description": "Delete a UGC post via the legacy v2/ugcPosts endpoint.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ugc_post_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The UGC post URN (e.g. urn:li:ugcPost:12345) to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete operation completed."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.posts.getContent",
+      "shortPath": "posts.getContent",
+      "description": "Retrieve detailed content of a specific LinkedIn post.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_urn",
+            "optional": false,
+            "type": "string",
+            "description": "The post URN (e.g. urn:li:post:1234567890) whose content to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commentary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lifecycleState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "isReshareDisabledByAuthor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.profile.getMyInfo",
+      "shortPath": "profile.getMyInfo",
+      "description": "Fetch the authenticated LinkedIn member's profile.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "string",
+            "description": "Optional projection of profile fields to return (e.g. \"(sub,name,email)\")."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sub",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "given_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "picture",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vanityName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.profile.getPerson",
+      "shortPath": "profile.getPerson",
+      "description": "Retrieve a LinkedIn member profile by person ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string",
+            "description": "The LinkedIn member ID of the person whose profile to retrieve."
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "string",
+            "description": "Optional projection of fields. Defaults to the lite profile; add headline and vanityName for the basic profile (requires r_basicprofile)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The member ID."
+          },
+          {
+            "key": "localizedFirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "localizedLastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "localizedHeadline",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vanityName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "profilePicture",
+            "optional": true,
+            "type": "{ displayImage~?: string, displayImage~:playableStreams?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.reactions.list",
+      "shortPath": "reactions.list",
+      "description": "List reactions on a LinkedIn entity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_urn",
+            "optional": false,
+            "type": "string",
+            "description": "URN of the entity (share, post, or comment) whose reactions to list."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination start index. Defaults to 0."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Number of reactions to return per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{ actor?: string, type?: string, created?: {} }[]",
+            "description": "The reactions on the entity."
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkedin.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "Retrieve LinkedIn video metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_urn",
+            "optional": true,
+            "type": "string",
+            "description": "A single video URN to retrieve."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string",
+            "description": "Owner URN. Returns videos owned by this account."
+          },
+          {
+            "key": "urns",
+            "optional": true,
+            "type": "string[]",
+            "description": "Specific video URNs to fetch in a batch."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination start index."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Number of videos per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{ id: string, owner?: string, status?: string, downloadUrl?: string | null, durationMilliseconds?: number, original?: { width?: number, height?: number } }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "linkedin.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sub",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "given_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "family_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "picture",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "locale",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headline",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "vanityName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

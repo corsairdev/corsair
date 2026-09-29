@@ -1,0 +1,5129 @@
+{
+  "id": "loyverse",
+  "displayName": "Loyverse",
+  "description": "Point-of-sale system for retail stores, inventory, receipts, and customer loyalty programs.",
+  "npmPackageName": "@corsair-dev/loyverse",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 59,
+    "webhooks": 0,
+    "db": 13
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "loyverse.api.categories.delete",
+      "shortPath": "categories.delete",
+      "description": "Delete a category",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Get a single category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "categories_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, color?: string | null, created_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.categories.upsert",
+      "shortPath": "categories.upsert",
+      "description": "Create or update a category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer permanently",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get a single customer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_visit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_visit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_visits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_spent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_points",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permanent_deletion_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customers",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, phone_number?: string | null, address?: string | null, city?: string | null, region?: string | null, postal_code?: string | null, country_code?: string | null, customer_code?: string | null, note?: string | null, first_visit?: string | null, last_visit?: string | null, total_visits?: number | null, total_spent?: number | null, total_points?: number | null, permanent_deletion_at?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.customers.upsert",
+      "shortPath": "customers.upsert",
+      "description": "Create or update a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_visit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_visit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_visits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_spent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_points",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "permanent_deletion_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.discounts.delete",
+      "shortPath": "discounts.delete",
+      "description": "Delete a discount",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discount_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.discounts.get",
+      "shortPath": "discounts.get",
+      "description": "Get a single discount",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discount_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "restricted_access",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.discounts.list",
+      "shortPath": "discounts.list",
+      "description": "List discounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discounts",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, name?: string | null, discount_amount?: number | null, discount_percent?: number | null, stores?: string[] | null, restricted_access?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.discounts.listFiltered",
+      "shortPath": "discounts.listFiltered",
+      "description": "List discounts filtered by id, timestamp range or deleted status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discounts",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, name?: string | null, discount_amount?: number | null, discount_percent?: number | null, stores?: string[] | null, restricted_access?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.discounts.upsert",
+      "shortPath": "discounts.upsert",
+      "description": "Create or update a discount",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "FIXED_PERCENT | FIXED_AMOUNT | VARIABLE_PERCENT | VARIABLE_AMOUNT | DISCOUNT_BY_POINTS"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "restricted_access",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "discount_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "discount_percent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "restricted_access",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.employees.get",
+      "shortPath": "employees.get",
+      "description": "Get a single employee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.employees.list",
+      "shortPath": "employees.list",
+      "description": "List employees",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, phone_number?: string | null, stores?: string[] | null, is_owner?: boolean | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.inventory.list",
+      "shortPath": "inventory.list",
+      "description": "List inventory levels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "store_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "variant_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_levels",
+            "optional": false,
+            "type": "{ variant_id?: string | null, store_id?: string | null, in_stock?: number | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.inventory.update",
+      "shortPath": "inventory.update",
+      "description": "Set inventory levels for item variants",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_levels",
+            "optional": false,
+            "type": "{ variant_id: string, store_id: string, stock_after: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inventory_levels",
+            "optional": false,
+            "type": "{ variant_id?: string | null, store_id?: string | null, in_stock?: number | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.delete",
+      "shortPath": "items.delete",
+      "description": "Delete an item",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.deleteImage",
+      "shortPath": "items.deleteImage",
+      "description": "Delete an item's image",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.get",
+      "shortPath": "items.get",
+      "description": "Get a single item",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_stock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sold_by_weight",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_composite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_production",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ variant_id?: string | null, quantity?: number | null }[]"
+          },
+          {
+            "key": "primary_supplier_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option1_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.list",
+      "shortPath": "items.list",
+      "description": "List items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, handle?: string | null, item_name?: string | null, description?: string | null, reference_id?: string | null, category_id?: string | null, track_stock?: boolean | null, sold_by_weight?: boolean | null, is_composite?: boolean | null, use_production?: boolean | null, components?: { variant_id?: string | null, quantity?: number | null }[] | null, primary_supplier_id?: string | null, tax_ids?: string[] | null, modifier_ids?: string[] | null, form?: string | null, color?: string | null, image_url?: string | null, option1_name?: string | null, option2_name?: string | null, option3_name?: string | null, variants?: { variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.uploadImage",
+      "shortPath": "items.uploadImage",
+      "description": "Upload an item's image",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "image_base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "media_type",
+            "optional": true,
+            "type": "image/png | image/jpeg"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.items.upsert",
+      "shortPath": "items.upsert",
+      "description": "Create or update an item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_stock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sold_by_weight",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_composite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_production",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ variant_id: string, quantity: number }[]"
+          },
+          {
+            "key": "primary_supplier_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "SQUARE | CIRCLE | SUN | OCTAGON"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "GREY | RED | PINK | ORANGE | YELLOW | GREEN | BLUE | PURPLE"
+          },
+          {
+            "key": "option1_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ variant_id?: string, sku?: string, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number, purchase_cost?: number | null, default_pricing_type?: FIXED | VARIABLE, default_price?: number | null, stores?: { store_id: string, pricing_type?: FIXED | VARIABLE, price?: number, available_for_sale?: boolean, optimal_stock?: number | null, low_stock?: number | null }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "track_stock",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sold_by_weight",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_composite",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "use_production",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "{ variant_id?: string | null, quantity?: number | null }[]"
+          },
+          {
+            "key": "primary_supplier_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option1_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.merchant.get",
+      "shortPath": "merchant.get",
+      "description": "Get merchant information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "{ code?: string | null, decimal_places?: number | null }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.modifiers.delete",
+      "shortPath": "modifiers.delete",
+      "description": "Delete a modifier",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modifier_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.modifiers.get",
+      "shortPath": "modifiers.get",
+      "description": "Get a single modifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modifier_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_options",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.modifiers.list",
+      "shortPath": "modifiers.list",
+      "description": "List modifiers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifier_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modifiers",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, position?: number | null, stores?: string[] | null, modifier_options?: { id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.modifiers.upsert",
+      "shortPath": "modifiers.upsert",
+      "description": "Create or update a modifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_options",
+            "optional": false,
+            "type": "{ id?: string, name: string, price?: number, position?: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "modifier_options",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, price?: number | null, position?: number | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.oidc.discovery",
+      "shortPath": "oidc.discovery",
+      "description": "Get the OpenID Connect discovery document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issuer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorization_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "token_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userinfo_endpoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jwks_uri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scopes_supported",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "response_types_supported",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.oidc.jwks",
+      "shortPath": "oidc.jwks",
+      "description": "Get the JSON Web Key Set",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.paymentTypes.get",
+      "shortPath": "paymentTypes.get",
+      "description": "Get a single payment type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment_type_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.paymentTypes.list",
+      "shortPath": "paymentTypes.list",
+      "description": "List payment types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "payment_type_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment_types",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, stores?: string[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.posDevices.delete",
+      "shortPath": "posDevices.delete",
+      "description": "Delete a POS device",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pos_device_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.posDevices.get",
+      "shortPath": "posDevices.get",
+      "description": "Get a single POS device",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pos_device_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.posDevices.list",
+      "shortPath": "posDevices.list",
+      "description": "List POS devices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pos_devices",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, store_id?: string | null, activated?: boolean | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.posDevices.upsert",
+      "shortPath": "posDevices.upsert",
+      "description": "Create or update a POS device",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "activated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.receipts.create",
+      "shortPath": "receipts.create",
+      "description": "Record a sale, which cannot be withdrawn once created",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "store_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dining_option",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_discounts",
+            "optional": true,
+            "type": "{ id: string }[]"
+          },
+          {
+            "key": "line_items",
+            "optional": false,
+            "type": "{ id?: string, variant_id: string, quantity: number, price?: number, cost?: number, line_note?: string, line_taxes?: { id: string }[], line_discounts?: { id: string }[], line_modifiers?: { modifier_option_id: string, price?: number }[] }[]"
+          },
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{ payment_type_id: string, money_amount: number, paid_at?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_money",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_earned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_deducted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "surcharge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos_device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dining_option",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_discounts",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "total_taxes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.receipts.get",
+      "shortPath": "receipts.get",
+      "description": "Get a single receipt",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_money",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_earned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_deducted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "surcharge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos_device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dining_option",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_discounts",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "total_taxes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.receipts.list",
+      "shortPath": "receipts.list",
+      "description": "List receipts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "receipt_numbers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "since_receipt_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_receipt_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipts",
+            "optional": false,
+            "type": "{ receipt_number?: string | null, receipt_type?: string | null, refund_for?: string | null, order?: string | null, note?: string | null, receipt_date?: string | null, created_at?: string | null, updated_at?: string | null, cancelled_at?: string | null, source?: string | null, total_money?: number | null, total_tax?: number | null, total_discount?: number | null, points_earned?: number | null, points_deducted?: number | null, points_balance?: number | null, tip?: number | null, surcharge?: number | null, customer_id?: string | null, employee_id?: string | null, store_id?: string | null, pos_device_id?: string | null, dining_option?: string | null, total_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null, total_taxes?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null, line_items?: { id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[] | null, payments?: { payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[] | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.receipts.refund",
+      "shortPath": "receipts.refund",
+      "description": "Refund a receipt, which returns money to the customer",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_number",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": false,
+            "type": "{ id: string, variant_id?: string, quantity: number, price?: number }[]"
+          },
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{ payment_type_id: string, money_amount: number, paid_at?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_for",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receipt_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_money",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_discount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_earned",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_deducted",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "points_balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "surcharge",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos_device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dining_option",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_discounts",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "total_taxes",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[]"
+          },
+          {
+            "key": "line_items",
+            "optional": true,
+            "type": "{ id?: string | null, item_id?: string | null, variant_id?: string | null, item_name?: string | null, variant_name?: string | null, sku?: string | null, quantity?: number | null, price?: number | null, gross_total_money?: number | null, total_money?: number | null, cost?: number | null, cost_total?: number | null, line_note?: string | null, total_discount?: number | null, line_taxes?: { id?: string | null, name?: string | null, type?: string | null, rate?: number | null, money_amount?: number | null }[] | null, line_discounts?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, money_amount?: number | null }[] | null, line_modifiers?: { id?: string | null, modifier_option_id?: string | null, name?: string | null, option?: string | null, price?: number | null, money_amount?: number | null }[] | null }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.shifts.list",
+      "shortPath": "shifts.list",
+      "description": "List shifts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "store_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shifts",
+            "optional": false,
+            "type": "{ id?: string | null, store_id?: string | null, pos_device_id?: string | null, opened_at?: string | null, closed_at?: string | null, opened_by_employee_id?: string | null, closed_by_employee_id?: string | null, starting_cash?: number | null, cash_payments?: number | null, cash_refunds?: number | null, paid_in?: number | null, paid_out?: number | null, expected_cash?: number | null, actual_cash?: number | null, gross_sales?: number | null, refunds?: number | null, discounts?: number | null, net_sales?: number | null, tip?: number | null, surcharge?: number | null, taxes?: { id?: string | null, name?: string | null, type?: string | null, percentage?: number | null, rate?: number | null, money_amount?: number | null }[] | null, payments?: { payment_type_id?: string | null, name?: string | null, type?: string | null, money_amount?: number | null, paid_at?: string | null, payment_details?: { authorization_code?: string | null, reference_id?: string | null, entry_method?: string | null, card_company?: string | null, card_number?: string | null } | null }[] | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.stores.get",
+      "shortPath": "stores.get",
+      "description": "Get a single store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "store_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.stores.list",
+      "shortPath": "stores.list",
+      "description": "List stores",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stores",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, address?: string | null, city?: string | null, region?: string | null, state?: string | null, postal_code?: string | null, country_code?: string | null, country?: string | null, phone_number?: string | null, description?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.suppliers.delete",
+      "shortPath": "suppliers.delete",
+      "description": "Delete a supplier",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplier_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.suppliers.get",
+      "shortPath": "suppliers.get",
+      "description": "Get a single supplier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplier_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.suppliers.list",
+      "shortPath": "suppliers.list",
+      "description": "List suppliers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "suppliers_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suppliers",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, contact?: string | null, email?: string | null, phone_number?: string | null, address_1?: string | null, address_2?: string | null, city?: string | null, region?: string | null, postal_code?: string | null, country_code?: string | null, website?: string | null, note?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.suppliers.upsert",
+      "shortPath": "suppliers.upsert",
+      "description": "Create or update a supplier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.taxes.delete",
+      "shortPath": "taxes.delete",
+      "description": "Delete a tax",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.taxes.get",
+      "shortPath": "taxes.get",
+      "description": "Get a single tax",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tax_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.taxes.list",
+      "shortPath": "taxes.list",
+      "description": "List taxes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taxes",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, type?: string | null, rate?: number | null, stores?: string[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.taxes.upsert",
+      "shortPath": "taxes.upsert",
+      "description": "Create or update a tax",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "INCLUDED | ADDED"
+          },
+          {
+            "key": "rate",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.variants.delete",
+      "shortPath": "variants.delete",
+      "description": "Delete an item variant",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.variants.get",
+      "shortPath": "variants.get",
+      "description": "Get a single variant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option1_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchase_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_pricing_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.variants.list",
+      "shortPath": "variants.list",
+      "description": "List item variants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "show_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_min",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at_max",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "variants_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "items_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variants",
+            "optional": false,
+            "type": "{ variant_id: string, item_id?: string | null, sku?: string | null, reference_variant_id?: string | null, option1_value?: string | null, option2_value?: string | null, option3_value?: string | null, barcode?: string | null, cost?: number | null, purchase_cost?: number | null, default_pricing_type?: string | null, default_price?: number | null, stores?: { store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[] | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.variants.upsert",
+      "shortPath": "variants.upsert",
+      "description": "Create or update an item variant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option1_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchase_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_pricing_type",
+            "optional": true,
+            "type": "FIXED | VARIABLE"
+          },
+          {
+            "key": "default_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "{ store_id: string, pricing_type?: FIXED | VARIABLE, price?: number, available_for_sale?: boolean, optimal_stock?: number | null, low_stock?: number | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "variant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "item_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sku",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference_variant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option1_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option2_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "option3_value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "barcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchase_cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "default_pricing_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stores",
+            "optional": true,
+            "type": "{ store_id?: string | null, pricing_type?: string | null, price?: number | null, available_for_sale?: boolean | null, optimal_stock?: number | null, low_stock?: number | null }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted_object_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a single webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merchant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ id?: string | null, merchant_id?: string | null, url?: string | null, type?: string | null, status?: string | null, created_at?: string | null, updated_at?: string | null, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loyverse.api.webhooks.upsert",
+      "shortPath": "webhooks.upsert",
+      "description": "Create or update a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "inventory_levels.update | items.update | customers.update | receipts.update | shifts.create"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ENABLED | DISABLED"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merchant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "loyverse.db.categories.search",
+      "entityName": "categories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postal_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customer_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "note",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_visit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_visit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_visits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_spent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_points",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "permanent_deletion_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.discounts.search",
+      "entityName": "discounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "discount_amount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "discount_percent",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "restricted_access",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.employees.search",
+      "entityName": "employees",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_owner",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.items.search",
+      "entityName": "items",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "handle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "category_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "track_stock",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "sold_by_weight",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_composite",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "use_production",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "primary_supplier_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "form",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option1_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option2_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option3_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.merchant.search",
+      "entityName": "merchant",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "business_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.modifiers.search",
+      "entityName": "modifiers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "position",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.paymentTypes.search",
+      "entityName": "paymentTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.posDevices.search",
+      "entityName": "posDevices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "store_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "activated",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.stores.search",
+      "entityName": "stores",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postal_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.suppliers.search",
+      "entityName": "suppliers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contact",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone_number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address_1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address_2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postal_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "note",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.taxes.search",
+      "entityName": "taxes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "loyverse.db.variants.search",
+      "entityName": "variants",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "variant_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "item_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "reference_variant_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option1_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option2_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "option3_value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "barcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "purchase_cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "default_pricing_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_price",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deleted_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

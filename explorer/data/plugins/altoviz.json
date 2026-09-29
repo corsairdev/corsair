@@ -1,0 +1,5668 @@
+{
+  "id": "altoviz",
+  "displayName": "Altoviz",
+  "description": "Online invoicing and billing software for small businesses and freelancers.",
+  "npmPackageName": "@corsair-dev/altoviz",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 67,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "altoviz.api.account.getClassifications",
+      "shortPath": "account.getClassifications",
+      "description": "List accounting classifications, optionally filtered by type (Sale | Expense | Other)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Sale | Expense | Other"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, label?: string | null, description?: string | null, type?: string | null, accountNumber?: string | null, isProduct?: boolean | null, isService?: boolean | null, defaultVat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, microBusinessDeclarationType?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.account.getCurrentUser",
+      "shortPath": "account.getCurrentUser",
+      "description": "Get the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.account.getSettings",
+      "shortPath": "account.getSettings",
+      "description": "Get accounting, company, emailing, sales, social and VAT settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "altoviz.api.account.getUnits",
+      "shortPath": "account.getUnits",
+      "description": "List measurement units - reference data, mirrored",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, code?: string | null, name?: string | null, type?: string | null, conversion?: number | null, decimals?: number | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.account.getVats",
+      "shortPath": "account.getVats",
+      "description": "List VAT rates - reference data, mirrored",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ default?: boolean | null, id: number, label?: string | null, rate?: number | null, region?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.account.testApiKey",
+      "shortPath": "account.testApiKey",
+      "description": "Verify the API key and get the account identity - takes no parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apiKeyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "serverTimestamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.colleagues.delete",
+      "shortPath": "colleagues.delete",
+      "description": "Delete a colleague",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "colleagueId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.colleagues.get",
+      "shortPath": "colleagues.get",
+      "description": "Get a colleague by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "colleagueId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPartner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initialPartnerBalance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "homecareServiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadatas",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.colleagues.list",
+      "shortPath": "colleagues.list",
+      "description": "List colleagues, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, isPartner?: boolean | null, initialPartnerBalance?: number | null, homecareServiceNumber?: string | null, userId?: string | null, metadatas?: {} | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.colleagues.update",
+      "shortPath": "colleagues.update",
+      "description": "Update a colleague. Read-modify-write internally - a partial body is a 500 on this route, not just a clearing PUT.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "colleagueId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPartner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initialPartnerBalance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "homecareServiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadatas",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isPartner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "initialPartnerBalance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "homecareServiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadatas",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a standalone contact. There is no customerId field on this route - it cannot be attached to a customer here.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invertedDisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invertedDisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isMain",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.contacts.find",
+      "shortPath": "contacts.find",
+      "description": "Find contacts by email or internalId - returns an array, possibly empty",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, displayName?: string | null, invertedDisplayName?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, function?: string | null, service?: string | null, title?: string | null, internalId?: string | null, isMain?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invertedDisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "function",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "service",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isMain",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts, paged. Includes shadow contacts auto-created by customer/supplier/colleague writes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, displayName?: string | null, invertedDisplayName?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, function?: string | null, service?: string | null, title?: string | null, internalId?: string | null, isMain?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.customerFamilies.create",
+      "shortPath": "customerFamilies.create",
+      "description": "Create a customer family (segment)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customerFamilies.delete",
+      "shortPath": "customerFamilies.delete",
+      "description": "Delete a customer family. Refused with a conflict if it still has members - it does not cascade.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "familyId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customerFamilies.get",
+      "shortPath": "customerFamilies.get",
+      "description": "Get a customer family by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "familyId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customerFamilies.list",
+      "shortPath": "customerFamilies.list",
+      "description": "List customer families, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, label?: string | null, number?: string | null, internalId?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.customers.create",
+      "shortPath": "customers.create",
+      "description": "Create a customer. type is Business | Consumer | Government - NOT the Company/Individual the catalog description documents.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Business | Consumer | Government"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, zipCode?: string, city?: string, countryCode?: string }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, zipCode?: string, city?: string, countryCode?: string }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "familyId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Delete a customer. Evicts the auto-created contact from the mirror if one is cached.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customers.find",
+      "shortPath": "customers.find",
+      "description": "Find customers by email, internalId or number - returns an array, possibly empty",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: {} | null, companyInformations?: {} | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get a customer by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customers.getByInternalId",
+      "shortPath": "customers.getByInternalId",
+      "description": "Get a customer by the caller-supplied internalId",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "internalId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.customers.getContacts",
+      "shortPath": "customers.getContacts",
+      "description": "List a customer's contacts, including the one auto-created when the customer was created",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, displayName?: string | null, invertedDisplayName?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, function?: string | null, service?: string | null, title?: string | null, internalId?: string | null, isMain?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers, paged (PageIndex is 1-based)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, type?: string | null, companyName?: string | null, firstName?: string | null, lastName?: string | null, name?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingOptions?: {} | null, companyInformations?: {} | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update a customer. Read-modify-write internally, because Altoviz PUT clears any field the caller omits.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Business | Consumer | Government"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, zipCode?: string, city?: string, countryCode?: string }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, zipCode?: string, city?: string, countryCode?: string }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "familyId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingOptions",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.productFamilies.create",
+      "shortPath": "productFamilies.create",
+      "description": "Create a product family",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.productFamilies.delete",
+      "shortPath": "productFamilies.delete",
+      "description": "Delete a product family. Refused with a conflict if it still has members.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "familyId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.productFamilies.get",
+      "shortPath": "productFamilies.get",
+      "description": "Get a product family by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "familyId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.productFamilies.list",
+      "shortPath": "productFamilies.list",
+      "description": "List product families, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, label?: string | null, number?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product. unit/vat/family are resolved from an id to their value form before the request is sent.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Product | Service | Text"
+          },
+          {
+            "key": "unitPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchasePrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isUnitPriceTaxIncluded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultQuantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unitId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vatId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "familyId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchasePrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isUnitPriceTaxIncluded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultQuantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null }"
+          },
+          {
+            "key": "vat",
+            "optional": true,
+            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null }"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Delete a product",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.products.find",
+      "shortPath": "products.find",
+      "description": "Find a product by number - returns an array",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, number?: string | null, description?: string | null, type?: string | null, unitPrice?: number | null, purchasePrice?: number | null, isUnitPriceTaxIncluded?: boolean | null, defaultQuantity?: number | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.products.findByNumberOrId",
+      "shortPath": "products.findByNumberOrId",
+      "description": "Find a product by number or internalId - same route as products.find, superset of parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, number?: string | null, description?: string | null, type?: string | null, unitPrice?: number | null, purchasePrice?: number | null, isUnitPriceTaxIncluded?: boolean | null, defaultQuantity?: number | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get a product by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "productId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unitPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "purchasePrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isUnitPriceTaxIncluded",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultQuantity",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "{ code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null }"
+          },
+          {
+            "key": "vat",
+            "optional": true,
+            "type": "{ default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null }"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: number | null, label?: string | null, number?: string | null }"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.purchaseInvoices.download",
+      "shortPath": "purchaseInvoices.download",
+      "description": "Download a purchase invoice as PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "purchaseInvoiceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts."
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.purchaseInvoices.upload",
+      "shortPath": "purchaseInvoices.upload",
+      "description": "Upload a purchase invoice file (PDF or image). There is no delete for this anywhere in the API - only the Altoviz UI can remove it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supplier",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.create",
+      "shortPath": "receipts.create",
+      "description": "Create a receipt. links to a draft document are refused - the document must be finalized first, which is outside this plugin.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paymentMethod",
+            "optional": false,
+            "type": "Transfer | Order | Check | Cash | Card | Bill | Usec | Other"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Success | Pending | Failed"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerInternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type: Commitment | Invoice | Credit, id: number }[]"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerInternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.delete",
+      "shortPath": "receipts.delete",
+      "description": "Delete a receipt",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receiptId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.find",
+      "shortPath": "receipts.find",
+      "description": "Find receipts by the receipt's own internalId - returns an array",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: {}[] | null, metadata?: {} | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.get",
+      "shortPath": "receipts.get",
+      "description": "Get a receipt by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receiptId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerInternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.list",
+      "shortPath": "receipts.list",
+      "description": "List receipts, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, amount?: number | null, date?: string | null, paymentMethod?: string | null, status?: string | null, reference?: string | null, notes?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerInternalId?: string | null, internalId?: string | null, links?: {}[] | null, metadata?: {} | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.receipts.update",
+      "shortPath": "receipts.update",
+      "description": "Update a receipt. Read-modify-write internally; a customer reference is required even on update.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receiptId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentMethod",
+            "optional": true,
+            "type": "Transfer | Order | Check | Cash | Card | Bill | Usec | Other"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Success | Pending | Failed"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ type: Commitment | Invoice | Credit, id: number }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerInternalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.create",
+      "shortPath": "saleCredits.create",
+      "description": "Create a draft credit note (avoir)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cancelledInvoicetId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancelledInvoicetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": false,
+            "type": "{ type: Empty | Product | Service | Subtotal | Text | NewPage, productId?: number, description?: string, quantity?: number, taxExcludedPrice?: number, unitId?: number, vatId?: number, classificationId?: number }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type: Percent | Fixed, value: number }"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "Auto | Debit | Collection"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "FR | EU | IE | DOM | Corse | Monaco"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerElectronicAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrderReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerSiret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerVatNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "shippingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type?: string | null, value?: number | null }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingVat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grossTaxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatNote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vats",
+            "optional": true,
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commitments",
+            "optional": true,
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+          },
+          {
+            "key": "overdue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vendorReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancelledInvoicetId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancelledInvoicetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationInvoiceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellationInvoiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacedBy",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.delete",
+      "shortPath": "saleCredits.delete",
+      "description": "Delete a draft sale credit. Drafts only.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creditId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.download",
+      "shortPath": "saleCredits.download",
+      "description": "Download a sale credit as PDF. May not be byte-exact - see the core text-decoding note.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creditId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts."
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.find",
+      "shortPath": "saleCredits.find",
+      "description": "Find sale credits by internalId - returns an array",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.get",
+      "shortPath": "saleCredits.get",
+      "description": "Get a sale credit by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creditId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerElectronicAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrderReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerSiret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerVatNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "shippingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type?: string | null, value?: number | null }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingVat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grossTaxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatNote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vats",
+            "optional": true,
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commitments",
+            "optional": true,
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+          },
+          {
+            "key": "overdue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vendorReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancelledInvoicetId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancelledInvoicetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationInvoiceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellationInvoiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacedBy",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.list",
+      "shortPath": "saleCredits.list",
+      "description": "List sale credits, paged, filterable by date range and customer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, cancelledInvoicetId?: number | null, cancelledInvoicetNumber?: string | null, cancellationInvoiceId?: number | null, cancellationInvoiceNumber?: string | null, replacedBy?: any | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.saleCredits.update",
+      "shortPath": "saleCredits.update",
+      "description": "Update a draft credit note. Drafts only; lines must be resent in full or the credit is emptied.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creditId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": false,
+            "type": "{ type: Empty | Product | Service | Subtotal | Text | NewPage, productId?: number, description?: string, quantity?: number, taxExcludedPrice?: number, unitId?: number, vatId?: number, classificationId?: number }[]"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerElectronicAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrderReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerSiret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerVatNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "shippingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type?: string | null, value?: number | null }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingVat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grossTaxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatNote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vats",
+            "optional": true,
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commitments",
+            "optional": true,
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+          },
+          {
+            "key": "overdue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vendorReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancelledInvoicetId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancelledInvoicetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationInvoiceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellationInvoiceNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacedBy",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.create",
+      "shortPath": "saleInvoices.create",
+      "description": "Create a draft sale invoice. Lines use taxExcludedPrice, never unitPrice - unitPrice is silently ignored and prices the line at zero.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": false,
+            "type": "{ type: Empty | Product | Service | Subtotal | Text | NewPage, productId?: number, description?: string, quantity?: number, taxExcludedPrice?: number, unitId?: number, vatId?: number, classificationId?: number }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type: Percent | Fixed, value: number }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "Auto | Debit | Collection"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "FR | EU | IE | DOM | Corse | Monaco"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerElectronicAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrderReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerSiret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerVatNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "shippingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type?: string | null, value?: number | null }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingVat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grossTaxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatNote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vats",
+            "optional": true,
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commitments",
+            "optional": true,
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+          },
+          {
+            "key": "overdue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vendorReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isProforma",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancellationCreditId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellationCreditNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelledCreditId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "cancelledCreditNumber",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingInvoiceId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingProviderId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingStatus",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "replacedBy",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.delete",
+      "shortPath": "saleInvoices.delete",
+      "description": "Delete a draft sale invoice. Drafts only.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.download",
+      "shortPath": "saleInvoices.download",
+      "description": "Download a sale invoice as PDF. May not be byte-exact - see the core text-decoding note.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "PDF bytes decoded through response.text() by the shared transport - may not be byte-exact. See the core-limitation note in client.ts."
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.find",
+      "shortPath": "saleInvoices.find",
+      "description": "Find sale invoices by internalId - returns an array",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.get",
+      "shortPath": "saleInvoices.get",
+      "description": "Get a sale invoice by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoiceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerElectronicAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerOrderReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerSiret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerVatNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "billingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "shippingAddress",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "billingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "shippingContact",
+            "optional": true,
+            "type": "{ cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null }"
+          },
+          {
+            "key": "headerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "footerNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lines",
+            "optional": true,
+            "type": "{ classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[]"
+          },
+          {
+            "key": "globalDiscount",
+            "optional": true,
+            "type": "{ type?: string | null, value?: number | null }"
+          },
+          {
+            "key": "shippingAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shippingVat",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "grossTaxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxExcludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxIncludedAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "useTaxIncludedPrices",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "liableToVat",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vatMode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatNote",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vatReverseCharge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vats",
+            "optional": true,
+            "type": "{ taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pdfUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "publicLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sentAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commitments",
+            "optional": true,
+            "type": "{ amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[]"
+          },
+          {
+            "key": "overdue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vendorReference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isDraft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isPaid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isProforma",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cancellationCreditId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cancellationCreditNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancelledCreditId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "cancelledCreditNumber",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingInvoiceId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingProviderId",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "eInvoicingStatus",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "replacedBy",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleInvoices.list",
+      "shortPath": "saleInvoices.list",
+      "description": "List sale invoices, paged, filterable by date range, customer and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Draft | Incoming | Expired | Paid | ToSend"
+          },
+          {
+            "key": "includeCancelled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, isDraft?: boolean | null, isPaid?: boolean | null, isCancelled?: boolean | null, isProforma?: boolean | null, cancellationCreditId?: number | null, cancellationCreditNumber?: string | null, cancelledCreditId?: any | null, cancelledCreditNumber?: any | null, eInvoicingInvoiceId?: any | null, eInvoicingProviderId?: any | null, eInvoicingStatus?: any | null, replacedBy?: number | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.saleQuotes.delete",
+      "shortPath": "saleQuotes.delete",
+      "description": "Delete a sale quote. Deleting a quote that does not exist also returns 200.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quoteId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.saleQuotes.find",
+      "shortPath": "saleQuotes.find",
+      "description": "Find sale quotes by internalId - returns an array",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.saleQuotes.list",
+      "shortPath": "saleQuotes.list",
+      "description": "List sale quotes, paged, filterable by date range and customer. No working status filter - the spec one is a generator artefact.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, number?: string | null, internalId?: string | null, date?: string | null, subject?: string | null, customerId?: number | null, customerName?: string | null, customerNumber?: string | null, customerType?: string | null, customerElectronicAddress?: string | null, customerOrderReference?: string | null, customerSiret?: string | null, customerVatNumber?: string | null, billingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, shippingAddress?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, billingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, shippingContact?: { cellPhone?: string | null, companyName?: string | null, displayName?: string | null, email?: string | null, firstName?: string | null, function?: string | null, invertedDisplayName?: string | null, lastName?: string | null, phone?: string | null, service?: string | null, title?: string | null } | null, headerNotes?: string | null, footerNotes?: string | null, internalNotes?: string | null, lines?: { classificationId?: number | null, date?: string | null, description?: string | null, discount?: { type?: string | null, value?: number | null } | null, id?: number | null, marginAmount?: number | null, marginRate?: number | null, product?: { active?: boolean | null, defaultQuantity?: number | null, description?: string | null, family?: { id?: number | null, label?: string | null, number?: string | null } | null, id?: number | null, imageUrl?: string | null, internalId?: string | null, internalNotes?: string | null, isUnitPriceTaxIncluded?: boolean | null, name?: string | null, number?: string | null, purchasePrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, unitPrice?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null } | null, productId?: number | null, productInternalId?: string | null, productNumber?: string | null, purchasePrice?: number | null, quantity?: number | null, taxExcludedAmount?: number | null, taxExcludedPrice?: number | null, taxIncludedAmount?: number | null, taxIncludedPrice?: number | null, type?: string | null, unit?: { code?: string | null, conversion?: number | null, decimals?: number | null, id?: number | null, name?: string | null, type?: string | null } | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null }[] | null, globalDiscount?: { type?: string | null, value?: number | null } | null, shippingAmount?: number | null, shippingVat?: any | null, balance?: number | null, grossTaxExcludedAmount?: number | null, taxAmount?: number | null, taxExcludedAmount?: number | null, taxIncludedAmount?: number | null, useTaxIncludedPrices?: boolean | null, liableToVat?: boolean | null, vatMode?: string | null, vatNote?: string | null, vatReverseCharge?: boolean | null, region?: string | null, vats?: { taxExcludedAmount?: number | null, vat?: { default?: boolean | null, id?: number | null, label?: string | null, rate?: number | null, region?: string | null } | null, vatAmount?: number | null }[] | null, metadata?: {} | null, pdfUrl?: string | null, publicLink?: string | null, sentAt?: string | null, commitments?: { amount?: number | null, date?: string | null, dueAmount?: number | null, id?: number | null, thirdId?: number | null }[] | null, overdue?: number | null, vendorReference?: string | null, status?: string | null, validityDate?: string | null, deposit?: { type?: string | null, value?: number | null } | null, acceptedAt?: string | null, refusedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.suppliers.delete",
+      "shortPath": "suppliers.delete",
+      "description": "Delete a supplier. Evicts the auto-created contact from the mirror if one is cached.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.suppliers.get",
+      "shortPath": "suppliers.get",
+      "description": "Get a supplier by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "defaultPaymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdById",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedById",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.suppliers.getContacts",
+      "shortPath": "suppliers.getContacts",
+      "description": "List a supplier's contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, displayName?: string | null, invertedDisplayName?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, function?: string | null, service?: string | null, title?: string | null, internalId?: string | null, isMain?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.suppliers.list",
+      "shortPath": "suppliers.list",
+      "description": "List suppliers, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageIndex",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, phone?: string | null, cellPhone?: string | null, title?: string | null, number?: string | null, internalId?: string | null, internalNotes?: string | null, active?: boolean | null, address?: { city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null } | null, defaultPaymentMethod?: string | null, companyInformations?: {} | null, createdAt?: string | null, createdById?: string | null, updatedAt?: string | null, updatedById?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.suppliers.update",
+      "shortPath": "suppliers.update",
+      "description": "Update a supplier. Read-modify-write internally, same clearing-PUT behaviour as customers.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ line1?: string, line2?: string, zipCode?: string, city?: string, countryCode?: string }"
+          },
+          {
+            "key": "defaultPaymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cellPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "internalNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ city?: string | null, countryIso?: string | null, countryName?: string | null, formattedAddress?: string | null, inlineAddress?: string | null, street?: string | null, zipcode?: string | null }"
+          },
+          {
+            "key": "defaultPaymentMethod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyInformations",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdById",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedById",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.webhookSubscriptions.list",
+      "shortPath": "webhookSubscriptions.list",
+      "description": "List registered webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string | null, url?: string | null, types?: string[] | null, secretKey?: string | null }[]"
+      }
+    },
+    {
+      "path": "altoviz.api.webhookSubscriptions.register",
+      "shortPath": "webhookSubscriptions.register",
+      "description": "Register a webhook subscription. The response id is 0 - list immediately after to get the real id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": false,
+            "type": "CustomerCreated | CustomerUpdated | CustomerDeleted | ContactCreated | ContactUpdated | ContactDeleted | ProductCreated | ProductUpdated | ProductDeleted | InvoiceCreated | InvoiceUpdated | InvoiceDeleted | QuoteCreated | QuoteUpdated | QuoteDeleted[]"
+          },
+          {
+            "key": "secretKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "secretKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "altoviz.api.webhookSubscriptions.unregister",
+      "shortPath": "webhookSubscriptions.unregister",
+      "description": "Unregister a webhook subscription by id or url. Exactly one of the two is required.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "altoviz.db.classifications.search",
+      "entityName": "classifications",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "accountNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isProduct",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isService",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "microBusinessDeclarationType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "cellPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "function",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invertedDisplayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "service",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.customerFamilies.search",
+      "entityName": "customerFamilies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "internalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "cellPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalNotes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.productFamilies.search",
+      "entityName": "productFamilies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.products.search",
+      "entityName": "products",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "defaultQuantity",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "imageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "internalNotes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isUnitPriceTaxIncluded",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "purchasePrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unitPrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.units.search",
+      "entityName": "units",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversion",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "decimals",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "altoviz.db.vats.search",
+      "entityName": "vats",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "region",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

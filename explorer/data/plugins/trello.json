@@ -1,0 +1,2473 @@
+{
+  "id": "trello",
+  "displayName": "Trello",
+  "description": "Kanban board tool for organizing tasks, cards, lists, and lightweight project management.",
+  "npmPackageName": "@corsair-dev/trello",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 6,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "idModel"]
+    }
+  ],
+  "api": [
+    {
+      "path": "trello.api.boards.create",
+      "shortPath": "boards.create",
+      "description": "Create a new board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idOrganization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoardSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keepFromSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "powerUps",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_permissionLevel",
+            "optional": true,
+            "type": "org | private | public"
+          },
+          {
+            "key": "prefs_voting",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_invitations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_selfJoin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prefs_cardCovers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prefs_background",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_cardAging",
+            "optional": true,
+            "type": "pirate | regular"
+          },
+          {
+            "key": "defaultLabels",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "defaultLists",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrganization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idEnterprise",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs",
+            "optional": true,
+            "type": "{ permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }"
+          },
+          {
+            "key": "labelNames",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.boards.delete",
+      "shortPath": "boards.delete",
+      "description": "Delete a board",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.boards.get",
+      "shortPath": "boards.get",
+      "description": "Get a board by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrganization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idEnterprise",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs",
+            "optional": true,
+            "type": "{ permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }"
+          },
+          {
+            "key": "labelNames",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.boards.list",
+      "shortPath": "boards.list",
+      "description": "List boards for a member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memberId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all | closed | members | open | organization | public | starred"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, desc?: string, descData?: any | null, closed?: boolean, idOrganization?: string | null, idEnterprise?: string | null, pinned?: boolean, url?: string, shortUrl?: string, prefs?: { permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }, labelNames?: {}, starred?: boolean, memberships?: any[] }[]"
+      }
+    },
+    {
+      "path": "trello.api.boards.update",
+      "shortPath": "boards.update",
+      "description": "Update a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrganization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs_permissionLevel",
+            "optional": true,
+            "type": "org | private | public"
+          },
+          {
+            "key": "prefs_selfJoin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prefs_cardCovers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prefs_cardAging",
+            "optional": true,
+            "type": "pirate | regular"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idOrganization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idEnterprise",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pinned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefs",
+            "optional": true,
+            "type": "{ permissionLevel?: string, hideVotes?: boolean, voting?: string, comments?: string, invitations?: string, selfJoin?: boolean, cardCovers?: boolean, isTemplate?: boolean, cardAging?: string, calendarFeedEnabled?: boolean, background?: string | null, backgroundImage?: string | null, backgroundTile?: boolean, backgroundBrightness?: string, canBePublic?: boolean, canBeOrg?: boolean, canBePrivate?: boolean, canInvite?: string | boolean }"
+          },
+          {
+            "key": "labelNames",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "memberships",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.cards.create",
+      "shortPath": "cards.create",
+      "description": "Create a new card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idList",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idCardSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keepFromSource",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "{ votes?: number, viewingMemberVoted?: boolean, subscribed?: boolean, fogbugz?: string, checkItems?: number, checkItemsChecked?: number, comments?: number, attachments?: number, description?: boolean, due?: string | null, dueComplete?: boolean }"
+          },
+          {
+            "key": "checkItemStates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateLastActivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dueReminder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idChecklists",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idMembersVoted",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idShort",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "idAttachmentCover",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id: string, idBoard?: string, name?: string, color?: string | null }[]"
+          },
+          {
+            "key": "manualCoverAttachment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shortLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.cards.delete",
+      "shortPath": "cards.delete",
+      "description": "Delete a card",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.cards.get",
+      "shortPath": "cards.get",
+      "description": "Get a card by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "{ votes?: number, viewingMemberVoted?: boolean, subscribed?: boolean, fogbugz?: string, checkItems?: number, checkItemsChecked?: number, comments?: number, attachments?: number, description?: boolean, due?: string | null, dueComplete?: boolean }"
+          },
+          {
+            "key": "checkItemStates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateLastActivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dueReminder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idChecklists",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idMembersVoted",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idShort",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "idAttachmentCover",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id: string, idBoard?: string, name?: string, color?: string | null }[]"
+          },
+          {
+            "key": "manualCoverAttachment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shortLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.cards.list",
+      "shortPath": "cards.list",
+      "description": "List cards in a list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all | closed | none | open | visible"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, badges?: { votes?: number, viewingMemberVoted?: boolean, subscribed?: boolean, fogbugz?: string, checkItems?: number, checkItemsChecked?: number, comments?: number, attachments?: number, description?: boolean, due?: string | null, dueComplete?: boolean }, checkItemStates?: any[] | null, closed?: boolean, dateLastActivity?: string, desc?: string, descData?: any | null, due?: string | null, dueComplete?: boolean, dueReminder?: number | null, email?: string | null, idBoard?: string, idChecklists?: string[], idLabels?: string[], idList?: string, idMembers?: string[], idMembersVoted?: string[], idShort?: number, idAttachmentCover?: string | null, labels?: { id: string, idBoard?: string, name?: string, color?: string | null }[], manualCoverAttachment?: boolean, name?: string, pos?: number, shortLink?: string, shortUrl?: string, start?: string | null, subscribed?: boolean, url?: string, cover?: any | null }[]"
+      }
+    },
+    {
+      "path": "trello.api.cards.move",
+      "shortPath": "cards.move",
+      "description": "Move a card to a different list or board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idList",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "{ votes?: number, viewingMemberVoted?: boolean, subscribed?: boolean, fogbugz?: string, checkItems?: number, checkItemsChecked?: number, comments?: number, attachments?: number, description?: boolean, due?: string | null, dueComplete?: boolean }"
+          },
+          {
+            "key": "checkItemStates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateLastActivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dueReminder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idChecklists",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idMembersVoted",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idShort",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "idAttachmentCover",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id: string, idBoard?: string, name?: string, color?: string | null }[]"
+          },
+          {
+            "key": "manualCoverAttachment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shortLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.cards.update",
+      "shortPath": "cards.update",
+      "description": "Update a card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idAttachmentCover",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "badges",
+            "optional": true,
+            "type": "{ votes?: number, viewingMemberVoted?: boolean, subscribed?: boolean, fogbugz?: string, checkItems?: number, checkItemsChecked?: number, comments?: number, attachments?: number, description?: boolean, due?: string | null, dueComplete?: boolean }"
+          },
+          {
+            "key": "checkItemStates",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dateLastActivity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descData",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "due",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueComplete",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dueReminder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idChecklists",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idLabels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idList",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idMembers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idMembersVoted",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "idShort",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "idAttachmentCover",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id: string, idBoard?: string, name?: string, color?: string | null }[]"
+          },
+          {
+            "key": "manualCoverAttachment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "shortLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.checklists.create",
+      "shortPath": "checklists.create",
+      "description": "Create a checklist on a card",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "idCard",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          },
+          {
+            "key": "idChecklistSource",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idCard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "checkItems",
+            "optional": true,
+            "type": "{ id: string, idChecklist?: string, name?: string, nameData?: any | null, pos?: number, state?: incomplete | complete, due?: string | null, dueReminder?: any | null, idMember?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.checklists.delete",
+      "shortPath": "checklists.delete",
+      "description": "Delete a checklist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklistId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.checklists.get",
+      "shortPath": "checklists.get",
+      "description": "Get a checklist by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checklistId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkItems",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkItem_fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idCard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "checkItems",
+            "optional": true,
+            "type": "{ id: string, idChecklist?: string, name?: string, nameData?: any | null, pos?: number, state?: incomplete | complete, due?: string | null, dueReminder?: any | null, idMember?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a label on a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a label",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labelId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_value",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.labels.list",
+      "shortPath": "labels.list",
+      "description": "List labels on a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, idBoard?: string, name?: string, color?: string | null }[]"
+      }
+    },
+    {
+      "path": "trello.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update a label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labelId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.lists.archive",
+      "shortPath": "lists.archive",
+      "description": "Archive (close) a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "softLimit",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a new list on a board",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idBoard",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "idListSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "softLimit",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get a list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "softLimit",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List all lists on a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all | closed | none | open"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, closed?: boolean, idBoard?: string, pos?: number, subscribed?: boolean, softLimit?: any | null }[]"
+      }
+    },
+    {
+      "path": "trello.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number | top | bottom"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idBoard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "softLimit",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get a member by ID or username",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "activityBlocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "avatarHash",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatarUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confirmed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idEnterprise",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idMemberReferrer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idOrganizations",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "initials",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "memberType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nonPublic",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "nonPublicAvailable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "trello.api.members.list",
+      "shortPath": "members.list",
+      "description": "List members of a board",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "boardId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "admins | all | none | normal | owners"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, bio?: string, confirmed?: boolean, email?: string | null, fullName?: string, idEnterprise?: string | null, idMemberReferrer?: string | null, idOrganizations?: string[], initials?: string, memberType?: string, nonPublic?: any, nonPublicAvailable?: boolean, products?: number[], url?: string, username?: string }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "trello.webhooks.cards.cardCreated",
+      "shortPath": "cards.cardCreated",
+      "description": "A card was created on a board",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: createCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number } } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: createCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number } } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        cards: {\n            cardCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "trello.webhooks.cards.cardUpdated",
+      "shortPath": "cards.cardUpdated",
+      "description": "A card was updated (name, desc, due date, labels, etc.)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: {} } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, listBefore?: { id: string, name?: string }, listAfter?: { id: string, name?: string }, old?: {} } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        cards: {\n            cardUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "trello.webhooks.comments.commentCreated",
+      "shortPath": "comments.commentCreated",
+      "description": "A comment was added to a card",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: commentCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, list?: { id: string, name?: string }, text?: string, textData?: any | null } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: commentCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, list?: { id: string, name?: string }, text?: string, textData?: any | null } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        comments: {\n            commentCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "trello.webhooks.lists.listCreated",
+      "shortPath": "lists.listCreated",
+      "description": "A new list was created on a board",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: createList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string } } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: createList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string } } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        lists: {\n            listCreated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "trello.webhooks.lists.listUpdated",
+      "shortPath": "lists.listUpdated",
+      "description": "A list was updated (name, closed status, etc.)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: {} } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: updateList, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, list?: { id: string, name?: string }, old?: {} } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        lists: {\n            listUpdated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "trello.webhooks.members.memberAddedToCard",
+      "shortPath": "members.memberAddedToCard",
+      "description": "A member was added to a card",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "action",
+            "optional": false,
+            "type": "{ id: string, idMemberCreator: string, type: addMemberToCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, idMember?: string, member?: { id: string, username?: string, fullName?: string, avatarUrl?: string | null, initials?: string } } }"
+          },
+          {
+            "key": "model",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "responseType": "{ action: { id: string, idMemberCreator: string, type: addMemberToCard, date: string, memberCreator?: { id: string, activityBlocked?: boolean, avatarHash?: string | null, avatarUrl?: string | null, fullName?: string, idMemberReferrer?: string | null, initials?: string, nonPublicAvailable?: boolean, username?: string }, data: { board?: { id: string, name?: string, shortLink?: string }, card?: { id: string, name?: string, idList?: string, idBoard?: string, idShort?: number, shortLink?: string, desc?: string, due?: string | null, dueComplete?: boolean, closed?: boolean, pos?: number }, idMember?: string, member?: { id: string, username?: string, fullName?: string, avatarUrl?: string | null, initials?: string } } }, model: {} }",
+      "usageExample": "trello({\n    webhookHooks: {\n        members: {\n            memberAddedToCard: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "trello.db.boards.search",
+      "entityName": "boards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "desc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "idOrganization",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "trello.db.cards.search",
+      "entityName": "cards",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "desc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "idBoard",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idList",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pos",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "due",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueComplete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "trello.db.labels.search",
+      "entityName": "labels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "idBoard",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "trello.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "idBoard",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pos",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "trello.db.members.search",
+      "entityName": "members",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fullName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatarUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "initials",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

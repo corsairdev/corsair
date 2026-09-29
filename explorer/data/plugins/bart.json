@@ -1,0 +1,769 @@
+{
+  "id": "bart",
+  "displayName": "BART",
+  "description": "Bay Area Rapid Transit API for schedules, arrivals, and public transit route data.",
+  "npmPackageName": "@corsair-dev/bart",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bart.api.advisories.elevators",
+      "shortPath": "advisories.elevators",
+      "description": "Get current elevator status and elevator outage advisories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bsa",
+            "optional": true,
+            "type": "{ station?: string, type?: string, description?: string | { #cdata-section: string }, sms_text?: string | { #cdata-section: string }, posted?: string, expires?: string }[] | { station?: string, type?: string, description?: string | { #cdata-section: string }, sms_text?: string | { #cdata-section: string }, posted?: string, expires?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.advisories.list",
+      "shortPath": "advisories.list",
+      "description": "Get current BART system advisories and service delays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bsa",
+            "optional": true,
+            "type": "{ station?: string, type?: string, description?: string | { #cdata-section: string }, sms_text?: string | { #cdata-section: string }, posted?: string, expires?: string }[] | { station?: string, type?: string, description?: string | { #cdata-section: string }, sms_text?: string | { #cdata-section: string }, posted?: string, expires?: string }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.advisories.trainCount",
+      "shortPath": "advisories.trainCount",
+      "description": "Get the number of trains currently active in the BART system",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "traincount",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.etd.station",
+      "shortPath": "etd.station",
+      "description": "Get real-time estimated departure times for a BART station",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "plat",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "dir",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "station",
+            "optional": false,
+            "type": "{ name: string, abbr: string, etd?: { destination: string, abbreviation: string, limited?: string, estimate: { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string }[] | { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string } }[] | { destination: string, abbreviation: string, limited?: string, estimate: { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string }[] | { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string } } }[] | { name: string, abbr: string, etd?: { destination: string, abbreviation: string, limited?: string, estimate: { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string }[] | { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string } }[] | { destination: string, abbreviation: string, limited?: string, estimate: { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string }[] | { minutes: string, platform?: string, direction?: string, length?: string, color?: string, hexcolor?: string, bikeflag?: string, delay?: string, cancelflag?: string, dynamicflag?: string } } }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.fares.calculate",
+      "shortPath": "fares.calculate",
+      "description": "Calculate transit fares and ticket prices between two BART stations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dest",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sched_num",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trip",
+            "optional": true,
+            "type": "{ fare?: string, discount?: {} }"
+          },
+          {
+            "key": "fares",
+            "optional": true,
+            "type": "{ fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.routes.info",
+      "shortPath": "routes.info",
+      "description": "Get detailed information about a specific BART transit route",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routes",
+            "optional": false,
+            "type": "{ route: { name: string, abbr: string, routeID: string, number: string, origin?: string, destination?: string, direction?: string, color?: string, hexcolor?: string, holidays?: string, numStns?: string, config?: { station?: string[] | string } }[] | { name: string, abbr: string, routeID: string, number: string, origin?: string, destination?: string, direction?: string, color?: string, hexcolor?: string, holidays?: string, numStns?: string, config?: { station?: string[] | string } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.routes.list",
+      "shortPath": "routes.list",
+      "description": "Get the list of all current BART transit routes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sched",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "routes",
+            "optional": false,
+            "type": "{ route: { name: string, abbr: string, routeID: string, number: string, hexcolor?: string, color?: string }[] | { name: string, abbr: string, routeID: string, number: string, hexcolor?: string, color?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.schedules.arrivals",
+      "shortPath": "schedules.arrivals",
+      "description": "Get scheduled arrivals and trip itinerary between two BART stations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dest",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "b",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "a",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: {} }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
+          },
+          {
+            "key": "schedule_files",
+            "optional": true,
+            "type": "{ file?: {}[] | {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.schedules.departures",
+      "shortPath": "schedules.departures",
+      "description": "Get scheduled departures and trip itinerary between two BART stations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dest",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "b",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "a",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: {} }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
+          },
+          {
+            "key": "schedule_files",
+            "optional": true,
+            "type": "{ file?: {}[] | {} }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.schedules.routes",
+      "shortPath": "schedules.routes",
+      "description": "Get the full timetable and stop schedule for a specific BART route",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "route",
+            "optional": true,
+            "type": "{ train?: { @trainIdx?: string, @trainHeadStation?: string, stop?: { @station?: string, @origTime?: string, @bikeflag?: string, @load?: string }[] | { @station?: string, @origTime?: string, @bikeflag?: string, @load?: string } }[] | { @trainIdx?: string, @trainHeadStation?: string, stop?: { @station?: string, @origTime?: string, @bikeflag?: string, @load?: string }[] | { @station?: string, @origTime?: string, @bikeflag?: string, @load?: string } } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.stations.access",
+      "shortPath": "stations.access",
+      "description": "Get station access details including parking, lockers, and transit connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "l",
+            "optional": true,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ station: { name: string, abbr: string, entering?: string | { #cdata-section: string }, exiting?: string | { #cdata-section: string }, parking?: string | { #cdata-section: string }, fill_time?: string | { #cdata-section: string }, car_share?: string | { #cdata-section: string }, lockers?: string | { #cdata-section: string }, bike_station_text?: string | { #cdata-section: string }, dest_stations?: string | { #cdata-section: string }, transit_info?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }[] | { name: string, abbr: string, entering?: string | { #cdata-section: string }, exiting?: string | { #cdata-section: string }, parking?: string | { #cdata-section: string }, fill_time?: string | { #cdata-section: string }, car_share?: string | { #cdata-section: string }, lockers?: string | { #cdata-section: string }, bike_station_text?: string | { #cdata-section: string }, dest_stations?: string | { #cdata-section: string }, transit_info?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } } }"
+          },
+          {
+            "key": "station",
+            "optional": true,
+            "type": "{ name: string, abbr: string, entering?: string | { #cdata-section: string }, exiting?: string | { #cdata-section: string }, parking?: string | { #cdata-section: string }, fill_time?: string | { #cdata-section: string }, car_share?: string | { #cdata-section: string }, lockers?: string | { #cdata-section: string }, bike_station_text?: string | { #cdata-section: string }, dest_stations?: string | { #cdata-section: string }, transit_info?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }[] | { name: string, abbr: string, entering?: string | { #cdata-section: string }, exiting?: string | { #cdata-section: string }, parking?: string | { #cdata-section: string }, fill_time?: string | { #cdata-section: string }, car_share?: string | { #cdata-section: string }, lockers?: string | { #cdata-section: string }, bike_station_text?: string | { #cdata-section: string }, dest_stations?: string | { #cdata-section: string }, transit_info?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.stations.info",
+      "shortPath": "stations.info",
+      "description": "Get detailed station information, connections, and platforms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orig",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": true,
+            "type": "{ station: { name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string, north_routes?: { route?: string[] | string }, south_routes?: { route?: string[] | string }, north_platforms?: { platform?: string[] | string }, south_platforms?: { platform?: string[] | string }, platform_info?: string, intro?: string | { #cdata-section: string }, cross_street?: string | { #cdata-section: string }, food?: string | { #cdata-section: string }, shopping?: string | { #cdata-section: string }, attraction?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }[] | { name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string, north_routes?: { route?: string[] | string }, south_routes?: { route?: string[] | string }, north_platforms?: { platform?: string[] | string }, south_platforms?: { platform?: string[] | string }, platform_info?: string, intro?: string | { #cdata-section: string }, cross_street?: string | { #cdata-section: string }, food?: string | { #cdata-section: string }, shopping?: string | { #cdata-section: string }, attraction?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } } }"
+          },
+          {
+            "key": "station",
+            "optional": true,
+            "type": "{ name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string, north_routes?: { route?: string[] | string }, south_routes?: { route?: string[] | string }, north_platforms?: { platform?: string[] | string }, south_platforms?: { platform?: string[] | string }, platform_info?: string, intro?: string | { #cdata-section: string }, cross_street?: string | { #cdata-section: string }, food?: string | { #cdata-section: string }, shopping?: string | { #cdata-section: string }, attraction?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }[] | { name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string, north_routes?: { route?: string[] | string }, south_routes?: { route?: string[] | string }, north_platforms?: { platform?: string[] | string }, south_platforms?: { platform?: string[] | string }, platform_info?: string, intro?: string | { #cdata-section: string }, cross_street?: string | { #cdata-section: string }, food?: string | { #cdata-section: string }, shopping?: string | { #cdata-section: string }, attraction?: string | { #cdata-section: string }, link?: string | { #cdata-section: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bart.api.stations.list",
+      "shortPath": "stations.list",
+      "description": "Get list of all BART stations with geographic coordinates and addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stations",
+            "optional": false,
+            "type": "{ station: { name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string }[] | { name: string, abbr: string, gtfs_latitude?: string, gtfs_longitude?: string, address?: string, city?: string, county?: string, state?: string, zipcode?: string } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "bart.db.advisories.search",
+      "entityName": "advisories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "station",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sms_text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bart.db.routes.search",
+      "entityName": "routes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "routeID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "destination",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hexcolor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "holidays",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numStns",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "bart.db.stations.search",
+      "entityName": "stations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "abbr",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gtfs_latitude",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gtfs_longitude",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "county",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zipcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

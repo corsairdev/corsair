@@ -1,0 +1,909 @@
+{
+  "id": "ticktick",
+  "displayName": "TickTick",
+  "description": "Task and habit manager for to-do lists, calendars, reminders, and personal productivity.",
+  "npmPackageName": "@corsair-dev/ticktick",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "ticktick.api.oauth.generateAuthUrl",
+      "shortPath": "oauth.generateAuthUrl",
+      "description": "Generate TickTick OAuth2 authorization URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewMode",
+            "optional": true,
+            "type": "list | kanban | timeline"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "TASK | NOTE"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewMode",
+            "optional": true,
+            "type": "list | kanban | timeline"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "TASK | NOTE"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permission",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Permanently delete a project and its tasks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewMode",
+            "optional": true,
+            "type": "list | kanban | timeline"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "TASK | NOTE"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permission",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.projects.getData",
+      "shortPath": "projects.getData",
+      "description": "Get a project with its tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id: string, name: string, color?: string | null, sortOrder?: number | null, closed?: boolean | null, viewMode?: list | kanban | timeline | null, kind?: TASK | NOTE | null, groupId?: string | null, permission?: string | null }"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: string, projectId?: string | null, title: string, content?: string | null, desc?: string | null, priority?: number | null, status?: -1 | 0 | 2 | null, dueDate?: string | null, startDate?: string | null, completedTime?: string | null, timeZone?: string | null, isAllDay?: boolean | null, columnId?: string | null, parentId?: string | null, sortOrder?: number | null, reminders?: string[] | null, tags?: string[] | null, repeatFlag?: string | null, items?: { id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[] | null }[]"
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "{ id: string, name: string, sortOrder?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.projects.getMany",
+      "shortPath": "projects.getMany",
+      "description": "Get user projects (TickTick omits Inbox)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, color?: string | null, sortOrder?: number | null, closed?: boolean | null, viewMode?: list | kanban | timeline | null, kind?: TASK | NOTE | null, groupId?: string | null, permission?: string | null }[]"
+      }
+    },
+    {
+      "path": "ticktick.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update project details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "viewMode",
+            "optional": true,
+            "type": "list | kanban | timeline"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "TASK | NOTE"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "viewMode",
+            "optional": true,
+            "type": "list | kanban | timeline"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "TASK | NOTE"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "permission",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.complete",
+      "shortPath": "tasks.complete",
+      "description": "Mark a task as complete",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number",
+            "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 datetime, e.g. '2019-11-13T03:00:00+0000'"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number",
+            "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "-1 | 0 | 2",
+            "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "columnId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "repeatFlag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Permanently delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by project and ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number",
+            "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "-1 | 0 | 2",
+            "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "columnId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "repeatFlag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.listAll",
+      "shortPath": "tasks.listAll",
+      "description": "List open tasks across listed user projects (excludes Inbox)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, projectId?: string | null, title: string, content?: string | null, desc?: string | null, priority?: number | null, status?: -1 | 0 | 2 | null, dueDate?: string | null, startDate?: string | null, completedTime?: string | null, timeZone?: string | null, isAllDay?: boolean | null, columnId?: string | null, parentId?: string | null, sortOrder?: number | null, reminders?: string[] | null, tags?: string[] | null, repeatFlag?: string | null, items?: { id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[] | null }[]"
+      }
+    },
+    {
+      "path": "ticktick.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update an existing task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number",
+            "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number",
+            "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "columnId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number",
+            "description": "0 (None), 1 (Low), 3 (Medium), 5 (High)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "-1 | 0 | 2",
+            "description": "-1 (Abandoned), 0 (Undone), 2 (Completed)"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAllDay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "columnId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "repeatFlag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: string, title: string, status: number, startDate?: string, isAllDay?: boolean }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
