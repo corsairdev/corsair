@@ -27,7 +27,7 @@
     "fetch:plugin-icons": "tsx scripts/fetch-plugin-icons.ts",
     "validate:plugins": "tsx scripts/validate-plugins.ts",
     "validate:docs": "tsx scripts/lint-docs-imports.ts",
-    "prepare": "simple-git-hooks"
+    "prepare": "node scripts/ci-install-adapters.mjs && simple-git-hooks"
   },
   "pnpm": {
     "overrides": {
