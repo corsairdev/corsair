@@ -86,6 +86,8 @@ describe('twilio keyBuilder authentication', () => {
 	});
 
 	it('reports twilio / api_key on the thrown error', async () => {
+		// The rejection value carries no static type, so it stays unknown
+		// here until instanceof narrows it to AuthMissingError below.
 		const err: unknown = await resolveKey(
 			plugin,
 			stubCtx(emptyStore()),
