@@ -35,13 +35,13 @@ describe('Daffy error handlers', () => {
 		expect(result).toEqual({ maxRetries: 0 });
 	});
 
-	it('retries read operations and forwards Retry-After', async () => {
+	it('does not replay read operations after transport retries', async () => {
 		const error = rateLimitError(2000);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 			error,
 			context('gifts.list', error),
 		);
-		expect(result).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+		expect(result).toEqual({ maxRetries: 0, headersRetryAfterMs: 2000 });
 	});
 
 	it('classifies only gift creation as non-idempotent', () => {
