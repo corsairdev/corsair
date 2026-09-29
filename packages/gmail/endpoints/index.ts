@@ -2,6 +2,7 @@ import * as Drafts from './drafts';
 import * as Labels from './labels';
 import * as Messages from './messages';
 import * as Threads from './threads';
+import * as Users from './users';
 
 export const MessagesEndpoints = {
 	list: Messages.list,
@@ -36,6 +37,10 @@ export const ThreadsEndpoints = {
 	modify: Threads.modify,
 	trash: Threads.trash,
 	untrash: Threads.untrash,
+};
+
+export const UsersEndpoints = {
+	getProfile: Users.getProfile,
 };
 
 export * from './types';
