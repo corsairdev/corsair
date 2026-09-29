@@ -30,10 +30,10 @@ await corsair.daffy.api.accounts.getBalance({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `amount` | `number` | Yes | Total fund amount. |
-| `pending_deposit_balance` | `number` | Yes | Deposits not yet available in the fund. |
-| `portfolio_balance` | `number` | Yes | Fund amount invested in the portfolio. |
-| `available_balance` | `number` | Yes | Amount currently available for donations. |
+| `amount` | `number` | Yes | — |
+| `pending_deposit_balance` | `number` | Yes | — |
+| `portfolio_balance` | `number` | Yes | — |
+| `available_balance` | `number` | Yes | — |
 
 
 
@@ -48,14 +48,14 @@ List contributions made to the authenticated fund.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getContributions({});
+await corsair.daffy.api.accounts.getContributions({ page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | One-based page number. |
+| `page` | `number` | No | — |
 
 
 
@@ -110,14 +110,14 @@ List donations made by the authenticated user.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getDonations({});
+await corsair.daffy.api.accounts.getDonations({ page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | One-based page number. |
+| `page` | `number` | No | — |
 
 
 
@@ -153,13 +153,14 @@ await corsair.daffy.api.accounts.getDonations({});
     latitude?: number | null,
     longitude?: number | null,
     logo?: string | null,
-    cause: {
+    cause_id?: number,
+    cause?: {
       id: number,
       name: string,
       logo?: string | null,
       color: string
     },
-    causes: {
+    causes?: {
       id: number,
       name: string,
       logo?: string | null,
@@ -206,14 +207,14 @@ Retrieve a public user profile by username.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getUserByUsername({});
+await corsair.daffy.api.accounts.getUserByUsername({ username: 'api-user' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | Public Daffy username. |
+| `username` | `string` | Yes | — |
 
 
 
@@ -277,7 +278,7 @@ await corsair.daffy.api.accounts.getUserCauses({ userId: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `userId` | `number` | Yes | Daffy user ID. |
+| `userId` | `number` | Yes | — |
 
 
 
@@ -309,15 +310,15 @@ Retrieve a user's public donations.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.accounts.getUserDonations({ userId: 1 });
+await corsair.daffy.api.accounts.getUserDonations({ userId: 1, page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | One-based page number. |
-| `userId` | `number` | Yes | Daffy user ID. |
+| `page` | `number` | No | — |
+| `userId` | `number` | Yes | — |
 
 
 
@@ -353,13 +354,14 @@ await corsair.daffy.api.accounts.getUserDonations({ userId: 1 });
     latitude?: number | null,
     longitude?: number | null,
     logo?: string | null,
-    cause: {
+    cause_id?: number,
+    cause?: {
       id: number,
       name: string,
       logo?: string | null,
       color: string
     },
-    causes: {
+    causes?: {
       id: number,
       name: string,
       logo?: string | null,
@@ -474,8 +476,8 @@ await corsair.daffy.api.gifts.create({ name: 'Jamie', amount: 18 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | Gift beneficiary name. |
-| `amount` | `number` | Yes | Gift amount in US dollars, minimum 18. |
+| `name` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
 
 
 
@@ -508,14 +510,14 @@ Retrieve a gift by its unique code.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.gifts.getByCode({});
+await corsair.daffy.api.gifts.getByCode({ code: '6ba7b810-9dad-11d1-80b4-00c04fd430c8' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `code` | `string` | Yes | Unique gift UUID. |
+| `code` | `string` | Yes | — |
 
 
 
@@ -548,14 +550,14 @@ List gifts associated with the authenticated user.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.gifts.list({});
+await corsair.daffy.api.gifts.list({ page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | One-based page number. |
+| `page` | `number` | No | — |
 
 
 
@@ -613,14 +615,14 @@ Retrieve a nonprofit organization by EIN.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.nonProfits.getByEin({});
+await corsair.daffy.api.nonProfits.getByEin({ ein: '261544963' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ein` | `string` | Yes | Nonprofit employer identification number. |
+| `ein` | `string` | Yes | — |
 
 
 
@@ -680,16 +682,16 @@ Search nonprofit organizations by cause or text.
 **Risk:** `read`
 
 ```ts
-await corsair.daffy.api.nonProfits.search({});
+await corsair.daffy.api.nonProfits.search({ query: 'education', page: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | One-based page number. |
-| `causeId` | `number` | No | Daffy cause ID. |
-| `query` | `string` | No | Nonprofit name or keyword. |
+| `page` | `number` | No | — |
+| `causeId` | `number` | No | — |
+| `query` | `string` | No | — |
 
 
 
@@ -746,3 +748,4 @@ await corsair.daffy.api.nonProfits.search({});
 
 
 ---
+
