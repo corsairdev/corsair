@@ -38,6 +38,10 @@ function isWwwFile(file: string): boolean {
 	return file === 'www' || file.startsWith('www/');
 }
 
+function isGithubConfigFile(file: string): boolean {
+	return file.startsWith('.github/');
+}
+
 export function isGitZeroOid(oid: string): boolean {
 	return oid.length > 0 && /^0+$/.test(oid);
 }
@@ -109,6 +113,10 @@ export function classifyPrScope(changedFiles: string[]): PrScope {
 	}
 
 	if (changedFiles.length > 0 && changedFiles.every(isDocumentationOnlyFile)) {
+		return { lane: 'skip-heavy' };
+	}
+
+	if (changedFiles.length > 0 && changedFiles.every(isGithubConfigFile)) {
 		return { lane: 'skip-heavy' };
 	}
 

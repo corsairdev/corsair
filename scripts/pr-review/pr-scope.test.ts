@@ -85,6 +85,16 @@ test('skips heavy checks for explorer and documentation-only changes', () => {
 	);
 });
 
+test('skips heavy checks for workflow-only changes', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'.github/workflows/pr-checks.yml',
+			'.github/workflows/deploy.yml',
+		]),
+		{ lane: 'skip-heavy' },
+	);
+});
+
 test('uses the www lane for www-only changes', () => {
 	assert.deepEqual(classifyPrScope(['www/src/app/page.tsx']), {
 		lane: 'www',
