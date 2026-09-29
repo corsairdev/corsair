@@ -32,6 +32,21 @@ export function getCodeInterpreterBaseUrl(overrideBaseUrl?: string): string {
 	return base.endsWith('/') ? base : `${base}/`;
 }
 
+function decodeBase64Content(content: string): Buffer {
+	const normalized = content.replace(/\s/g, '');
+	if (!normalized) {
+		throw new CodeInterpreterAPIError('Invalid base64 content');
+	}
+	const decoded = Buffer.from(normalized, 'base64');
+	const roundTrip = decoded.toString('base64');
+	const pad = (value: string) =>
+		value + '='.repeat((4 - (value.length % 4)) % 4);
+	if (pad(roundTrip) !== pad(normalized)) {
+		throw new CodeInterpreterAPIError('Invalid base64 content');
+	}
+	return decoded;
+}
+
 export function parseRetryAfterMs(header: string | null): number | undefined {
 	if (!header) return undefined;
 	const seconds = Number(header);
@@ -112,8 +127,10 @@ export async function makeCodeInterpreterUpload<T>(
 		url.searchParams.set('session_id', options.sessionId);
 	}
 
-	const encoding = fileData.contentEncoding === 'base64' ? 'base64' : 'utf8';
-	const binaryContent = Buffer.from(fileData.content, encoding);
+	const binaryContent =
+		fileData.contentEncoding === 'base64'
+			? decodeBase64Content(fileData.content)
+			: Buffer.from(fileData.content, 'utf8');
 
 	const formData = new FormData();
 	const blob = new Blob([binaryContent], {

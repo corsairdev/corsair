@@ -98,6 +98,20 @@ describe('makeCodeInterpreterUpload', () => {
 		expect(firstUpload).toBeDefined();
 		expect(Buffer.from(firstUpload!)).toEqual(binary);
 	});
+
+	it('rejects malformed base64 content', async () => {
+		await expect(
+			makeCodeInterpreterUpload(
+				'test-key',
+				{
+					filename: 'image.png',
+					content: 'not!!!valid-base64',
+					contentEncoding: 'base64',
+				},
+				{ baseUrl: 'https://ci.example.com' },
+			),
+		).rejects.toThrow('Invalid base64 content');
+	});
 });
 
 describe('makeCodeInterpreterDownload', () => {
