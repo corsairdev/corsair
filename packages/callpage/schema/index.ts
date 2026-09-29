@@ -1,4 +1,4 @@
 export const CallPageSchema = {
-  version: '1.0.0',
-  entities: {},
+	version: '1.0.0',
+	entities: {},
 } as const;
