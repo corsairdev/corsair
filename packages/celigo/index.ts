@@ -93,6 +93,11 @@ export type BaseCeligoPlugin<T extends CeligoPluginOptions> = CorsairPlugin<
 	typeof defaultAuthType
 >;
 
+/**
+ * We have to type the internal plugin separately from the external plugin
+ * Because the internal plugin has to provide options for all possible auth methods
+ * The external plugin has to provide options for the auth method the user has selected
+ */
 export type InternalCeligoPlugin = BaseCeligoPlugin<CeligoPluginOptions>;
 
 export type ExternalCeligoPlugin<T extends CeligoPluginOptions> =
