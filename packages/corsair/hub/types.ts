@@ -1,4 +1,4 @@
-export type HubEnvironmentSlug = 'development' | 'production';
+export type HubEnvironmentSlug = 'development' | 'production' | 'cloud';
 
 export type HubOAuthMode = 'byo' | 'managed';
 
@@ -6,8 +6,14 @@ export const DEFAULT_HUB_API_URL = 'https://auth.corsair.dev';
 
 export type HubConfigInput = {
 	projectApiKey: string;
-	signingSecret: string;
+	/** Required for dev/prod keys — validated by `resolveHubConfigInput`. Not used in cloud mode (`ck_cloud_`). */
+	signingSecret?: string;
 	apiUrl?: string;
+	/**
+	 * Corsair Cloud VM base URL (`ck_cloud_` keys only) — distinct from `apiUrl`,
+	 * which is the Hub API host. Falls back to `CORSAIR_CLOUD_URL` when omitted.
+	 */
+	baseUrl?: string;
 	oauthCallbackUrl?: string;
 	/** URL the connect/approve pages send the user back to when they're done. */
 	redirectURL?: string;
@@ -31,7 +37,7 @@ export type HubConfigInput = {
  * with the SDK (override with `CORSAIR_FRP_BIN`); this only tunes the URL zone.
  */
 export type TunnelConfig = {
-	/** DNS zone of the tunnel URL, e.g. `'corsair.cloud'` (the default). */
+	/** DNS zone of the tunnel URL, e.g. `'corsair.run'` (the default). */
 	shareHost?: string;
 };
 

@@ -15,7 +15,7 @@
 
 import { act, render, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
-import { CorsairProvider, useCorsair } from '../client/react/provider';
+import { CorsairProvider, useCorsairContext } from '../client/react/provider';
 import type { CorsairManagementClient } from '../client/types';
 
 jest.mock('../client/index', () => ({
@@ -48,10 +48,10 @@ function makeClient(): CorsairManagementClient {
 }
 
 let client: CorsairManagementClient;
-let ctx: ReturnType<typeof useCorsair> | undefined;
+let ctx: ReturnType<typeof useCorsairContext> | undefined;
 
 function Capture(): null {
-	ctx = useCorsair();
+	ctx = useCorsairContext();
 	return null;
 }
 

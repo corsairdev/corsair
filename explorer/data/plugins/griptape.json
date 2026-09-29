@@ -1,0 +1,3556 @@
+{
+  "id": "griptape",
+  "displayName": "Griptape",
+  "description": "Griptape plugin for Corsair",
+  "npmPackageName": "@corsair-dev/griptape",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 140,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "griptape.api.assistant.create",
+      "shortPath": "assistant.create",
+      "description": "Create an assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.assistant.delete",
+      "shortPath": "assistant.delete",
+      "description": "Delete an assistant",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.assistant.get",
+      "shortPath": "assistant.get",
+      "description": "Get an assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "knowledge_base_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retriever_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "ruleset_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "structure_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "tool_ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.assistant.list",
+      "shortPath": "assistant.list",
+      "description": "List assistants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistants",
+            "optional": false,
+            "type": "{ assistant_id: string, created_at: string, created_by: string, description: string, input?: string, knowledge_base_ids: string[], model?: string, name: string, organization_id: string, retriever_ids: string[], ruleset_ids: string[], structure_ids: string[], tool_ids: string[], updated_at: string }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.assistant.update",
+      "shortPath": "assistant.update",
+      "description": "Update an assistant",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.assistantRun.cancel",
+      "shortPath": "assistantRun.cancel",
+      "description": "Cancel an assistant run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.assistantRun.create",
+      "shortPath": "assistantRun.create",
+      "description": "Create an assistant run",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "additional_knowledge_base_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "additional_retriever_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "additional_ruleset_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "additional_structure_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "additional_tool_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "knowledge_base_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "new_thread",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retriever_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "ruleset_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "structure_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "thread_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tool_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.assistantRun.events",
+      "shortPath": "assistantRun.events",
+      "description": "List events for an assistant run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_run_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.assistantRun.get",
+      "shortPath": "assistantRun.get",
+      "description": "Retrieve an assistant run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_run_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.assistantRun.list",
+      "shortPath": "assistantRun.list",
+      "description": "List runs for an assistant",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assistant_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.billing.managementUrl",
+      "shortPath": "billing.managementUrl",
+      "description": "Get the billing management URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.assetUrl",
+      "shortPath": "bucket.assetUrl",
+      "description": "Get a signed bucket asset URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.create",
+      "shortPath": "bucket.create",
+      "description": "Create a bucket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.createAsset",
+      "shortPath": "bucket.createAsset",
+      "description": "Create a bucket asset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.delete",
+      "shortPath": "bucket.delete",
+      "description": "Delete a bucket",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.bucket.deleteAsset",
+      "shortPath": "bucket.deleteAsset",
+      "description": "Delete a bucket asset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.bucket.get",
+      "shortPath": "bucket.get",
+      "description": "Get a bucket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.getAsset",
+      "shortPath": "bucket.getAsset",
+      "description": "Get a bucket asset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.bucket.list",
+      "shortPath": "bucket.list",
+      "description": "List buckets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.bucket.listAssets",
+      "shortPath": "bucket.listAssets",
+      "description": "List assets in a bucket",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "postfix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.bucket.update",
+      "shortPath": "bucket.update",
+      "description": "Update a bucket",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "bucket_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.config.get",
+      "shortPath": "config.get",
+      "description": "Get Cloud configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.connection.list",
+      "shortPath": "connection.list",
+      "description": "List connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.credits.balance",
+      "shortPath": "credits.balance",
+      "description": "Get the credits balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.create",
+      "shortPath": "dataConnector.create",
+      "description": "Create a data connector",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.createJob",
+      "shortPath": "dataConnector.createJob",
+      "description": "Create a data connector job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data_connector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.delete",
+      "shortPath": "dataConnector.delete",
+      "description": "Delete a data connector",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_connector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.get",
+      "shortPath": "dataConnector.get",
+      "description": "Get a data connector",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_connector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.list",
+      "shortPath": "dataConnector.list",
+      "description": "List data connectors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.dataConnector.update",
+      "shortPath": "dataConnector.update",
+      "description": "Update a data connector",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data_connector_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataJob.cancel",
+      "shortPath": "dataJob.cancel",
+      "description": "Cancel a data job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.dataJob.get",
+      "shortPath": "dataJob.get",
+      "description": "Get a data job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.exportJob.create",
+      "shortPath": "exportJob.create",
+      "description": "Create an export job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.exportJob.get",
+      "shortPath": "exportJob.get",
+      "description": "Get an export job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "export_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.exportJob.list",
+      "shortPath": "exportJob.list",
+      "description": "List export jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.function.create",
+      "shortPath": "function.create",
+      "description": "Create a function",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.function.createDeployment",
+      "shortPath": "function.createDeployment",
+      "description": "Create a function deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "function_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.function.delete",
+      "shortPath": "function.delete",
+      "description": "Delete a function",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "function_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.function.get",
+      "shortPath": "function.get",
+      "description": "Get a function",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "function_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.function.list",
+      "shortPath": "function.list",
+      "description": "List functions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.function.listDeployments",
+      "shortPath": "function.listDeployments",
+      "description": "List deployments for a function",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "function_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.function.update",
+      "shortPath": "function.update",
+      "description": "Update a function",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "function_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.importJob.create",
+      "shortPath": "importJob.create",
+      "description": "Create an import job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.importJob.get",
+      "shortPath": "importJob.get",
+      "description": "Get an import job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.importJob.list",
+      "shortPath": "importJob.list",
+      "description": "List import jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.integration.create",
+      "shortPath": "integration.create",
+      "description": "Create an integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.integration.delete",
+      "shortPath": "integration.delete",
+      "description": "Delete an integration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.integration.get",
+      "shortPath": "integration.get",
+      "description": "Get an integration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.integration.list",
+      "shortPath": "integration.list",
+      "description": "List integrations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.integration.update",
+      "shortPath": "integration.update",
+      "description": "Update an integration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "integration_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.create",
+      "shortPath": "knowledgeBase.create",
+      "description": "Create a knowledge base",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.createJob",
+      "shortPath": "knowledgeBase.createJob",
+      "description": "Create a knowledge base ingestion job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.delete",
+      "shortPath": "knowledgeBase.delete",
+      "description": "Delete a knowledge base",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.get",
+      "shortPath": "knowledgeBase.get",
+      "description": "Get a knowledge base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.getJob",
+      "shortPath": "knowledgeBase.getJob",
+      "description": "Get a knowledge base job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_job_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.getSearch",
+      "shortPath": "knowledgeBase.getSearch",
+      "description": "Get a knowledge base search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_search_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.list",
+      "shortPath": "knowledgeBase.list",
+      "description": "List knowledge bases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.listJobs",
+      "shortPath": "knowledgeBase.listJobs",
+      "description": "List knowledge base jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.listQueries",
+      "shortPath": "knowledgeBase.listQueries",
+      "description": "List queries for a knowledge base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.listSearches",
+      "shortPath": "knowledgeBase.listSearches",
+      "description": "List searches for a knowledge base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.query",
+      "shortPath": "knowledgeBase.query",
+      "description": "Semantic search against a knowledge base",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_args",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.search",
+      "shortPath": "knowledgeBase.search",
+      "description": "Search a knowledge base with a synthesized answer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query_args",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.knowledgeBase.update",
+      "shortPath": "knowledgeBase.update",
+      "description": "Update a knowledge base",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "knowledge_base_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.library.create",
+      "shortPath": "library.create",
+      "description": "Create a library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.library.delete",
+      "shortPath": "library.delete",
+      "description": "Delete a library",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "library_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.library.get",
+      "shortPath": "library.get",
+      "description": "Get a library",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "library_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.library.list",
+      "shortPath": "library.list",
+      "description": "List libraries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.library.update",
+      "shortPath": "library.update",
+      "description": "Update a library",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "library_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.message.delete",
+      "shortPath": "message.delete",
+      "description": "Delete a message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.message.get",
+      "shortPath": "message.get",
+      "description": "Get a message",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.message.update",
+      "shortPath": "message.update",
+      "description": "Update a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "message_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.create",
+      "shortPath": "model.create",
+      "description": "Create a model configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.createAuthConfig",
+      "shortPath": "model.createAuthConfig",
+      "description": "Create a model auth config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.delete",
+      "shortPath": "model.delete",
+      "description": "Delete a model configuration",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.model.deleteAuthConfig",
+      "shortPath": "model.deleteAuthConfig",
+      "description": "Delete a model auth config",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth_config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.model.get",
+      "shortPath": "model.get",
+      "description": "Get a model configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model_config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.getAuthConfig",
+      "shortPath": "model.getAuthConfig",
+      "description": "Get a model auth config",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth_config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.list",
+      "shortPath": "model.list",
+      "description": "List models",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.model.listAuthConfigs",
+      "shortPath": "model.listAuthConfigs",
+      "description": "List model auth configs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.model.update",
+      "shortPath": "model.update",
+      "description": "Update a model configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model_config_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.model.updateAuthConfig",
+      "shortPath": "model.updateAuthConfig",
+      "description": "Update a model auth config",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auth_config_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.organization.createApiKey",
+      "shortPath": "organization.createApiKey",
+      "description": "Create an organization API key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.organization.get",
+      "shortPath": "organization.get",
+      "description": "Get an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.organization.list",
+      "shortPath": "organization.list",
+      "description": "List organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.organization.listApiKeys",
+      "shortPath": "organization.listApiKeys",
+      "description": "List API keys for an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.organization.update",
+      "shortPath": "organization.update",
+      "description": "Update an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retriever.create",
+      "shortPath": "retriever.create",
+      "description": "Create a retriever",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retriever.get",
+      "shortPath": "retriever.get",
+      "description": "Get a retriever",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "retriever_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retriever.list",
+      "shortPath": "retriever.list",
+      "description": "List retrievers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.retriever.query",
+      "shortPath": "retriever.query",
+      "description": "Query a retriever",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retriever_components_query_args",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "retriever_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retriever.update",
+      "shortPath": "retriever.update",
+      "description": "Update a retriever",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "retriever_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retrieverComponent.create",
+      "shortPath": "retrieverComponent.create",
+      "description": "Create a retriever component",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retrieverComponent.get",
+      "shortPath": "retrieverComponent.get",
+      "description": "Get a retriever component",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "retriever_component_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.retrieverComponent.list",
+      "shortPath": "retrieverComponent.list",
+      "description": "List retriever components",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.retrieverComponent.update",
+      "shortPath": "retrieverComponent.update",
+      "description": "Update a retriever component",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "retriever_component_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.rule.create",
+      "shortPath": "rule.create",
+      "description": "Create a rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.rule.delete",
+      "shortPath": "rule.delete",
+      "description": "Delete a rule",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.rule.get",
+      "shortPath": "rule.get",
+      "description": "Get a rule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rule_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.rule.list",
+      "shortPath": "rule.list",
+      "description": "List rules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.rule.update",
+      "shortPath": "rule.update",
+      "description": "Update a rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "rule_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.ruleset.create",
+      "shortPath": "ruleset.create",
+      "description": "Create a ruleset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.ruleset.delete",
+      "shortPath": "ruleset.delete",
+      "description": "Delete a ruleset",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ruleset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.ruleset.get",
+      "shortPath": "ruleset.get",
+      "description": "Get a ruleset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ruleset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.ruleset.getByAlias",
+      "shortPath": "ruleset.getByAlias",
+      "description": "Get a ruleset by alias",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.ruleset.update",
+      "shortPath": "ruleset.update",
+      "description": "Update a ruleset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "ruleset_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.secret.create",
+      "shortPath": "secret.create",
+      "description": "Create a secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.secret.delete",
+      "shortPath": "secret.delete",
+      "description": "Delete a secret",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.secret.get",
+      "shortPath": "secret.get",
+      "description": "Get a secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.secret.list",
+      "shortPath": "secret.list",
+      "description": "List secrets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.secret.update",
+      "shortPath": "secret.update",
+      "description": "Update a secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "secret_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.structure.create",
+      "shortPath": "structure.create",
+      "description": "Create a structure",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.structure.createDeployment",
+      "shortPath": "structure.createDeployment",
+      "description": "Create a structure deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.structure.dashboard",
+      "shortPath": "structure.dashboard",
+      "description": "Get structure dashboard metrics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structure_ids",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.structure.delete",
+      "shortPath": "structure.delete",
+      "description": "Delete a structure",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.structure.get",
+      "shortPath": "structure.get",
+      "description": "Get a structure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.structure.list",
+      "shortPath": "structure.list",
+      "description": "List structures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.structure.listDeployments",
+      "shortPath": "structure.listDeployments",
+      "description": "List deployments for a structure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.structure.listRuns",
+      "shortPath": "structure.listRuns",
+      "description": "List runs for a structure",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.structure.update",
+      "shortPath": "structure.update",
+      "description": "Update a structure",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "structure_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.thread.create",
+      "shortPath": "thread.create",
+      "description": "Create a thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.thread.delete",
+      "shortPath": "thread.delete",
+      "description": "Delete a thread",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.thread.get",
+      "shortPath": "thread.get",
+      "description": "Get a thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.thread.list",
+      "shortPath": "thread.list",
+      "description": "List threads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "starts_with",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.thread.update",
+      "shortPath": "thread.update",
+      "description": "Update a thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.threadMessage.create",
+      "shortPath": "threadMessage.create",
+      "description": "Create a message in a thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "input",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.threadMessage.list",
+      "shortPath": "threadMessage.list",
+      "description": "List messages in a thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "thread_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.tool.create",
+      "shortPath": "tool.create",
+      "description": "Create a tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.tool.createDeployment",
+      "shortPath": "tool.createDeployment",
+      "description": "Create a tool deployment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.tool.delete",
+      "shortPath": "tool.delete",
+      "description": "Delete a tool",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.tool.deploymentStatus",
+      "shortPath": "tool.deploymentStatus",
+      "description": "Get a tool deployment status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deployment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.tool.get",
+      "shortPath": "tool.get",
+      "description": "Get a tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.tool.list",
+      "shortPath": "tool.list",
+      "description": "List tools",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.tool.listDeployments",
+      "shortPath": "tool.listDeployments",
+      "description": "List deployments for a tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.tool.listRuns",
+      "shortPath": "tool.listRuns",
+      "description": "List runs for a tool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "griptape.api.tool.update",
+      "shortPath": "tool.update",
+      "description": "Update a tool",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "tool_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Get usage statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.user.deleteApiKey",
+      "shortPath": "user.deleteApiKey",
+      "description": "Delete an API key",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "griptape.api.user.get",
+      "shortPath": "user.get",
+      "description": "Get a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.user.getApiKey",
+      "shortPath": "user.getApiKey",
+      "description": "Get an API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_key_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "griptape.api.user.list",
+      "shortPath": "user.list",
+      "description": "List users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next_page?: number, page_number: number, page_size: number, previous_page?: number, total_count: number, total_pages: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
