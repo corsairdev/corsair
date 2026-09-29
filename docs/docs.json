@@ -1187,6 +1187,15 @@
                 ]
               },
               {
+                "group": "Cloudcart",
+                "pages": [
+                  "plugins/cloudcart/overview",
+                  "plugins/cloudcart/api",
+                  "plugins/cloudcart/database",
+                  "plugins/cloudcart/webhooks"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
