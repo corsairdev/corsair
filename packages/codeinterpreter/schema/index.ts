@@ -12,4 +12,3 @@ export const CodeInterpreterSchema = {
 		executions: CodeInterpreterExecution,
 	},
 } as const;
-

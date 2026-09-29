@@ -1,12 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodeInterpreterWebhooks } from '..';
-import { createCodeInterpreterMatch, verifyCodeInterpreterWebhookSignature } from './types';
+import {
+	createCodeInterpreterMatch,
+	verifyCodeInterpreterWebhookSignature,
+} from './types';
 
 export const executionFailed: CodeInterpreterWebhooks['executionFailed'] = {
 	match: createCodeInterpreterMatch('execution.failed'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyCodeInterpreterWebhookSignature(request, ctx.key);
+		const verification = verifyCodeInterpreterWebhookSignature(
+			request,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -20,7 +26,12 @@ export const executionFailed: CodeInterpreterWebhooks['executionFailed'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'codeinterpreter.execution.failed', { ...event }, 'failed');
+		await logEventFromContext(
+			ctx,
+			'codeinterpreter.execution.failed',
+			{ ...event },
+			'failed',
+		);
 
 		return { success: true, data: event };
 	},

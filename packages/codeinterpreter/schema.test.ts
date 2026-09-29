@@ -1,21 +1,21 @@
-import { CodeInterpreterSchema } from './schema';
 import {
-	CodeInterpreterSession,
-	CodeInterpreterFile,
-	CodeInterpreterExecution,
-} from './schema/database';
-import {
-	ExecuteCodeInputSchema,
-	ExecuteCodeResponseSchema,
-	UploadFileInputSchema,
-	UploadFileResponseSchema,
-	ListFilesInputSchema,
-	ListFilesResponseSchema,
-	DownloadFileInputSchema,
-	DownloadFileResponseSchema,
 	DeleteFileInputSchema,
 	DeleteFileResponseSchema,
+	DownloadFileInputSchema,
+	DownloadFileResponseSchema,
+	ExecuteCodeInputSchema,
+	ExecuteCodeResponseSchema,
+	ListFilesInputSchema,
+	ListFilesResponseSchema,
+	UploadFileInputSchema,
+	UploadFileResponseSchema,
 } from './endpoints/types';
+import { CodeInterpreterSchema } from './schema';
+import {
+	CodeInterpreterExecution,
+	CodeInterpreterFile,
+	CodeInterpreterSession,
+} from './schema/database';
 import {
 	ExecutionCompletedEventSchema,
 	ExecutionFailedEventSchema,
@@ -30,9 +30,13 @@ describe('CodeInterpreter schema', () => {
 
 	it('declares registered entity schemas', () => {
 		expect(typeof CodeInterpreterSchema.entities).toBe('object');
-		expect(CodeInterpreterSchema.entities.sessions).toBe(CodeInterpreterSession);
+		expect(CodeInterpreterSchema.entities.sessions).toBe(
+			CodeInterpreterSession,
+		);
 		expect(CodeInterpreterSchema.entities.files).toBe(CodeInterpreterFile);
-		expect(CodeInterpreterSchema.entities.executions).toBe(CodeInterpreterExecution);
+		expect(CodeInterpreterSchema.entities.executions).toBe(
+			CodeInterpreterExecution,
+		);
 	});
 });
 
@@ -43,7 +47,9 @@ describe('Database Entity Schemas', () => {
 			status: 'active',
 			language: 'python',
 		};
-		expect(CodeInterpreterSession.parse(validSession)).toMatchObject(validSession);
+		expect(CodeInterpreterSession.parse(validSession)).toMatchObject(
+			validSession,
+		);
 
 		const invalidSession = { id: 'sess-123', status: 'unknown_status' };
 		expect(() => CodeInterpreterSession.parse(invalidSession)).toThrow();
@@ -100,7 +106,11 @@ describe('Endpoint Input/Output Schemas', () => {
 		const input = { file_id: 'f-1' };
 		expect(DownloadFileInputSchema.parse(input)).toMatchObject(input);
 
-		const response = { file_id: 'f-1', filename: 'test.py', content: 'print(1)' };
+		const response = {
+			file_id: 'f-1',
+			filename: 'test.py',
+			content: 'print(1)',
+		};
 		expect(DownloadFileResponseSchema.parse(response)).toMatchObject(response);
 	});
 

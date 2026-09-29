@@ -1,10 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodeInterpreterEndpoints } from '..';
-import type { CodeInterpreterEndpointOutputs } from './types';
 import { makeCodeInterpreterUpload } from '../client';
+import type { CodeInterpreterEndpointOutputs } from './types';
 
-export const uploadFile: CodeInterpreterEndpoints['uploadFile'] = async (ctx, input) => {
-	const response = await makeCodeInterpreterUpload<CodeInterpreterEndpointOutputs['uploadFile']>(
+export const uploadFile: CodeInterpreterEndpoints['uploadFile'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeCodeInterpreterUpload<
+		CodeInterpreterEndpointOutputs['uploadFile']
+	>(
 		ctx.key,
 		{
 			filename: input.filename,
@@ -16,6 +21,11 @@ export const uploadFile: CodeInterpreterEndpoints['uploadFile'] = async (ctx, in
 		},
 	);
 
-	await logEventFromContext(ctx, 'codeinterpreter.file.upload', { filename: input.filename }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'codeinterpreter.file.upload',
+		{ filename: input.filename },
+		'completed',
+	);
 	return response;
 };

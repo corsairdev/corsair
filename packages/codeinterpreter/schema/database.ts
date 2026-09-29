@@ -34,10 +34,14 @@ export const CodeInterpreterExecution = z.object({
 	stdout: z.string().optional(),
 	stderr: z.string().optional(),
 	logs: z.string().optional(),
-	output_files: z.array(z.object({
-		id: z.string(),
-		name: z.string(),
-	})).optional(),
+	output_files: z
+		.array(
+			z.object({
+				id: z.string(),
+				name: z.string(),
+			}),
+		)
+		.optional(),
 	session_id: z.string().optional(),
 	created_at: z.coerce.date().nullable().optional(),
 });
