@@ -1,0 +1,13 @@
+displayName: Leexi
+description: AI notetaker for calls and meetings — transcribe, analyse, and summarize conversations.
+recommendedAuth: api_key
+examples:
+  read:
+    path: calls.list
+    title: List calls
+  write:
+    path: calls.requestPresignedUrl
+    title: Request a presigned upload URL
+    # No args: the endpoint defaults to `.mp4` when extension is omitted.
+    # (Args are omitted because the docs validator cannot match string
+    # values against enum-typed fields — see valueMatchesDocType.)

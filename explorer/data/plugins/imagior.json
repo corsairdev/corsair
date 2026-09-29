@@ -1,0 +1,99 @@
+{
+  "id": "imagior",
+  "displayName": "Imagior",
+  "description": "Template-based image generation API for retrieving account details and design templates.",
+  "npmPackageName": "@corsair-dev/imagior",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "imagior.api.account.get",
+      "shortPath": "account.get",
+      "description": "Retrieve the authenticated Imagior account details and remaining credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statusCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "usage",
+            "optional": false,
+            "type": "{ remainingCredits: number }"
+          },
+          {
+            "key": "requestCompletionTime",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagior.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List all design templates owned by the authenticated Imagior account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "createdAt | updatedAt"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, createdAt: string, updatedAt: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,1036 @@
+---
+title: API
+description: "API reference for Tripadvisor: every `tripadvisor.api.*` operation with input and output types."
+---
+
+Every `tripadvisor.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Catalog
+
+### locationsNearby
+
+`catalog.locationsNearby`
+
+Search nearby Tripadvisor catalog locations by coordinates or location ID
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.catalog.locationsNearby({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `radius` | `number` | No | — |
+| `unit` | `MI \| KM` | No | — |
+| `sw_lat` | `number` | No | — |
+| `sw_lon` | `number` | No | — |
+| `ne_lat` | `number` | No | — |
+| `ne_lon` | `number` | No | — |
+| `category` | `RESTAURANT \| ATTRACTION \| HOTEL` | No | — |
+| `min_rating` | `number` | No | — |
+| `locale` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `sort` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  bearing?: number,
+  distance_kilometers?: number,
+  distance_miles?: number,
+  location: {
+    addresses?: {
+      city?: string,
+      country_code?: string,
+      country_name?: string,
+      formatted?: string,
+      language?: string,
+      postal_code?: string,
+      state?: string,
+      street_address?: string,
+      street_address2?: string
+    }[],
+    coordinates?: {
+      latitude: number,
+      longitude: number
+    },
+    descriptions: {
+      language: string,
+      value: string
+    }[],
+    geo: string,
+    geo_id: number,
+    id: number,
+    names: {
+      language: string,
+      value: string,
+      primary?: boolean
+    }[],
+    overall_rating?: {
+      count?: number,
+      icon_url?: string,
+      rating?: number
+    },
+    urls?: {
+      android_intent?: string,
+      menu?: string,
+      official?: string,
+      tripadvisor?: {
+        main?: string,
+        photos?: string,
+        questions_answers?: string,
+        write_review?: string
+      }
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number,
+  total_elements?: number,
+  total_pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geo
+
+### details
+
+`geo.details`
+
+Get factual and hierarchy details for a Tripadvisor geo
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.geo.details({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `locale` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `abbreviation` | `string` | No | — |
+| `awards` | `object[]` | No | — |
+| `collections` | `object[]` | No | — |
+| `coordinates` | `object` | No | — |
+| `descriptions` | `object[]` | Yes | — |
+| `forum_faqs` | `object[]` | No | — |
+| `hierarchy` | `object` | No | — |
+| `id` | `number` | Yes | — |
+| `names` | `object[]` | Yes | — |
+| `suggested_itineraries` | `object[]` | No | — |
+| `type` | `object` | Yes | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="awards full type">
+
+```ts
+{
+  category?: string,
+  geo?: string,
+  image?: {
+    key?: string,
+    url?: string
+  },
+  name?: string,
+  type?: Certificate of Excellence | Travelers' Choice,
+  year?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="coordinates full type">
+
+```ts
+{
+  latitude: number,
+  longitude: number
+}
+```
+</Accordion>
+
+<Accordion title="descriptions full type">
+
+```ts
+{
+  language: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="forum_faqs full type">
+
+```ts
+{
+  answers?: {
+    text?: string,
+    title?: string
+  }[],
+  language?: string,
+  question?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="hierarchy full type">
+
+```ts
+{
+  ancestors?: {
+    geo_id?: number,
+    name?: string,
+    rank?: number
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  language: string,
+  value: string,
+  primary?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="suggested_itineraries full type">
+
+```ts
+{
+  itinerary?: {
+    day?: number,
+    description?: string,
+    location_ids?: {
+      id?: number,
+      rank?: number
+    }[]
+  }[],
+  trip_creation_method?: string,
+  trip_id?: number,
+  trip_interest_tags?: string[],
+  trip_title?: string,
+  trip_url?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="type full type">
+
+```ts
+{
+  id: number,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  flights?: string,
+  geo_page?: string,
+  hotels?: string,
+  restaurants?: string,
+  things_to_do?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Location
+
+### details
+
+`location.details`
+
+Get full details, ratings, rankings and awards for a Tripadvisor location
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.location.details({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `locale` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accommodation` | `object` | No | — |
+| `addresses` | `object[]` | No | — |
+| `attributes` | `object[]` | No | — |
+| `awards` | `object[]` | No | — |
+| `categories` | `object[]` | No | — |
+| `coordinates` | `object` | No | — |
+| `descriptions` | `object[]` | Yes | — |
+| `geo` | `string` | Yes | — |
+| `geo_id` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+| `names` | `object[]` | Yes | — |
+| `neighborhoods` | `object[]` | No | — |
+| `official_email` | `string` | No | — |
+| `opening_hours` | `object` | No | — |
+| `phone_numbers` | `object[]` | No | — |
+| `photos` | `object` | Yes | — |
+| `price_level` | `string` | No | — |
+| `rankings` | `object[]` | No | — |
+| `recommended_visit_length` | `number` | No | — |
+| `status` | `object` | Yes | — |
+| `traveler_ratings` | `object` | No | — |
+| `urls` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="accommodation full type">
+
+```ts
+{
+  brand?: string,
+  chain?: string,
+  prices?: {
+    currency?: string,
+    max_rate?: number,
+    min_rate?: number
+  }[],
+  room_count?: number,
+  star_rating?: number
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  city?: string,
+  country_code?: string,
+  country_name?: string,
+  formatted?: string,
+  language?: string,
+  postal_code?: string,
+  state?: string,
+  street_address?: string,
+  street_address2?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: string,
+  type_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="awards full type">
+
+```ts
+{
+  category?: string,
+  geo?: string,
+  image?: {
+    key?: string,
+    url?: string
+  },
+  name?: string,
+  type?: Certificate of Excellence | Travelers' Choice,
+  year?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  display_name?: string,
+  hierarchy?: string,
+  id: string,
+  parent_category?: {
+    display_name?: string,
+    id?: string,
+    parent_category?: {
+    }
+  },
+  top_level_category?: Accommodation | Experience | Attraction | Eat & Drink
+}[]
+```
+</Accordion>
+
+<Accordion title="coordinates full type">
+
+```ts
+{
+  latitude: number,
+  longitude: number
+}
+```
+</Accordion>
+
+<Accordion title="descriptions full type">
+
+```ts
+{
+  language: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="names full type">
+
+```ts
+{
+  language: string,
+  value: string,
+  primary?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="neighborhoods full type">
+
+```ts
+{
+  geo_id?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="opening_hours full type">
+
+```ts
+{
+  formatted?: string[],
+  periods?: {
+    closes?: string,
+    day_of_week?: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday,
+    opens?: string
+  }[],
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="phone_numbers full type">
+
+```ts
+{
+  type: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="photos full type">
+
+```ts
+{
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="rankings full type">
+
+```ts
+{
+  category?: string,
+  category_id?: string,
+  display_text?: string,
+  geo?: string,
+  geo_id?: number,
+  rank?: number,
+  total?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  closed_date?: string,
+  reopen_date?: string,
+  value: OPEN | CLOSED | TEMPORARILY_CLOSED
+}
+```
+</Accordion>
+
+<Accordion title="traveler_ratings full type">
+
+```ts
+{
+  breakdowns?: {
+    count?: number,
+    rating?: number,
+    rating_name?: string
+  }[],
+  language_counts?: {
+    count?: number,
+    language?: string
+  }[],
+  overall?: {
+    count?: number,
+    icon_url?: string,
+    rating?: number
+  },
+  subratings?: {
+    count?: number,
+    icon_url?: string,
+    rating?: number,
+    type?: string,
+    type_name?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  android_intent?: string,
+  menu?: string,
+  official?: string,
+  tripadvisor?: {
+    main?: string,
+    photos?: string,
+    questions_answers?: string,
+    write_review?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### photos
+
+`location.photos`
+
+Get photos for a Tripadvisor location
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.location.photos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `locale` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `sort` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  caption?: string,
+  cv_metadata?: {
+    attractiveness_score?: number,
+    scene?: string
+  },
+  id: number,
+  location_id: number,
+  photo: {
+    key?: string,
+    media_type?: string,
+    original_height?: number,
+    original_size_url?: string,
+    original_width?: number
+  },
+  publish_ts: string,
+  source: {
+    name: Management | Traveler
+  },
+  user?: {
+    avatar_url?: {
+      key?: string,
+      url?: string
+    },
+    geo?: string,
+    geo_id?: number,
+    username?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number,
+  total_elements?: number,
+  total_pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviews
+
+`location.reviews`
+
+Get traveler reviews for a Tripadvisor location
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.location.reviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `rating_min` | `number` | No | — |
+| `trip_type` | `string` | No | — |
+| `published_after_ts` | `string` | No | — |
+| `sort_by` | `MOST_RECENT \| HIGHEST_RATED` | No | — |
+| `published_after_review_id` | `string` | No | — |
+| `language` | `string` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  owner_response?: {
+    author_connection?: string,
+    avatar_url?: {
+      key?: string,
+      url?: string
+    },
+    geo_id?: number,
+    id?: number,
+    publish_date?: string,
+    text?: {
+      language: string,
+      value: string,
+      primary?: boolean
+    }[],
+    username?: string
+  },
+  photos?: {
+    key?: string,
+    media_type?: string,
+    original_height?: number,
+    original_size_url?: string,
+    original_width?: number
+  }[],
+  publish_ts: string,
+  rating: number,
+  rating_icon_url?: {
+    key?: string,
+    url?: string
+  },
+  subratings: {
+    icon_url: {
+      key?: string,
+      url?: string
+    },
+    rating: number,
+    type: string,
+    type_name: string
+  }[],
+  text: {
+    language: string,
+    value: string,
+    primary?: boolean
+  }[],
+  title: {
+    language: string,
+    value: string,
+    primary?: boolean
+  }[],
+  travel_date: string,
+  trip_type: BUSINESS | COUPLES | FAMILY | FRIENDS | SOLO | NONE,
+  url?: string,
+  user?: {
+    avatar_url?: {
+      key?: string,
+      url?: string
+    },
+    geo?: string,
+    geo_id?: number,
+    username?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number,
+  total_elements?: number,
+  total_pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### nearby
+
+`locations.nearby`
+
+Find full location representations near an area; filter category HOTEL to list nearby hotels
+
+**Risk:** `read`
+
+```ts
+await corsair.tripadvisor.api.locations.nearby({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `string` | No | — |
+| `lat` | `number` | No | — |
+| `lon` | `number` | No | — |
+| `radius` | `number` | No | — |
+| `unit` | `MI \| KM` | No | — |
+| `sw_lat` | `number` | No | — |
+| `sw_lon` | `number` | No | — |
+| `ne_lat` | `number` | No | — |
+| `ne_lon` | `number` | No | — |
+| `category` | `RESTAURANT \| ATTRACTION \| HOTEL` | No | — |
+| `min_rating` | `number` | No | — |
+| `locale` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `sort` | `string[]` | No | — |
+| `include_photo` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  bearing?: number,
+  distance_kilometers?: number,
+  distance_miles?: number,
+  location: {
+    accommodation?: {
+      brand?: string,
+      chain?: string,
+      prices?: {
+        currency?: string,
+        max_rate?: number,
+        min_rate?: number
+      }[],
+      room_count?: number,
+      star_rating?: number
+    },
+    addresses?: {
+      city?: string,
+      country_code?: string,
+      country_name?: string,
+      formatted?: string,
+      language?: string,
+      postal_code?: string,
+      state?: string,
+      street_address?: string,
+      street_address2?: string
+    }[],
+    attributes?: {
+      id?: string,
+      name?: string,
+      type?: string,
+      type_id?: string
+    }[],
+    awards?: {
+      category?: string,
+      geo?: string,
+      image?: {
+        key?: string,
+        url?: string
+      },
+      name?: string,
+      type?: Certificate of Excellence | Travelers' Choice,
+      year?: number
+    }[],
+    categories?: {
+      display_name?: string,
+      hierarchy?: string,
+      id: string,
+      parent_category?: {
+        display_name?: string,
+        id?: string,
+        parent_category?: {
+        }
+      },
+      top_level_category?: Accommodation | Experience | Attraction | Eat & Drink
+    }[],
+    coordinates?: {
+      latitude: number,
+      longitude: number
+    },
+    descriptions: {
+      language: string,
+      value: string
+    }[],
+    geo: string,
+    geo_id: number,
+    id: number,
+    names: {
+      language: string,
+      value: string,
+      primary?: boolean
+    }[],
+    neighborhoods?: {
+      geo_id?: string,
+      name?: string
+    }[],
+    official_email?: string,
+    opening_hours?: {
+      formatted?: string[],
+      periods?: {
+        closes?: string,
+        day_of_week?: Monday | Tuesday | Wednesday | Thursday | Friday | Saturday | Sunday,
+        opens?: string
+      }[],
+      timezone?: string
+    },
+    phone_numbers?: {
+      type: string,
+      value: string
+    }[],
+    photos: {
+      total_count?: number
+    },
+    price_level?: string,
+    rankings?: {
+      category?: string,
+      category_id?: string,
+      display_text?: string,
+      geo?: string,
+      geo_id?: number,
+      rank?: number,
+      total?: number
+    }[],
+    recommended_visit_length?: number,
+    status: {
+      closed_date?: string,
+      reopen_date?: string,
+      value: OPEN | CLOSED | TEMPORARILY_CLOSED
+    },
+    traveler_ratings?: {
+      breakdowns?: {
+        count?: number,
+        rating?: number,
+        rating_name?: string
+      }[],
+      language_counts?: {
+        count?: number,
+        language?: string
+      }[],
+      overall?: {
+        count?: number,
+        icon_url?: string,
+        rating?: number
+      },
+      subratings?: {
+        count?: number,
+        icon_url?: string,
+        rating?: number,
+        type?: string,
+        type_name?: string
+      }[]
+    },
+    urls?: {
+      android_intent?: string,
+      menu?: string,
+      official?: string,
+      tripadvisor?: {
+        main?: string,
+        photos?: string,
+        questions_answers?: string,
+        write_review?: string
+      }
+    }
+  },
+  photo?: {
+    caption?: string,
+    cv_metadata?: {
+      attractiveness_score?: number,
+      scene?: string
+    },
+    id: number,
+    location_id: number,
+    photo: {
+      key?: string,
+      media_type?: string,
+      original_height?: number,
+      original_size_url?: string,
+      original_width?: number
+    },
+    publish_ts: string,
+    source: {
+      name: Management | Traveler
+    },
+    user?: {
+      avatar_url?: {
+        key?: string,
+        url?: string
+      },
+      geo?: string,
+      geo_id?: number,
+      username?: string
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number,
+  total_elements?: number,
+  total_pages?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
