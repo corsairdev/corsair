@@ -26,7 +26,7 @@ import { errorHandlers } from './error-handlers';
 import { CodaSchema } from './schema';
 
 export type CodaPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalCodaPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -118,9 +118,6 @@ export const codaAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCodaPlugin<T extends CodaPluginOptions> = CorsairPlugin<
@@ -166,11 +163,6 @@ export function coda<const T extends CodaPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
