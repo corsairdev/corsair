@@ -5,6 +5,27 @@ import type { AnthropicAdministratorContext } from '../index';
 
 const INFERENCE_KEY_MISSING =
 	'Standard Anthropic API key (inference_key) is required for Messages and Models endpoints.';
+const ADMIN_KEY_MISSING =
+	'An Admin API credential is required for this endpoint.';
+
+async function resolveAdminKey(
+	ctx: AnthropicAdministratorContext,
+): Promise<string> {
+	if (ctx.options?.key) return ctx.options.key;
+
+	const authType = ctx.options?.authType ?? 'api_key';
+	const key =
+		authType === 'oauth_2'
+			? await ctx.keys?.get_access_token()
+			: await ctx.keys?.get_api_key();
+	if (key) return key;
+
+	throw new AuthMissingError(
+		'anthropicadministrator',
+		authType,
+		ADMIN_KEY_MISSING,
+	);
+}
 
 /** Tenant-scoped standard API key (`sk-ant-api…`) for Messages and Models. */
 export async function resolveInferenceKey(
@@ -124,10 +145,14 @@ export async function callAdminApi<T>(
 	options: AnthropicAdministratorRequestOptions = {},
 	logPayload: Record<string, unknown> = {},
 ): Promise<T> {
-	const response = await makeAnthropicAdministratorRequest<T>(path, ctx.key, {
-		...options,
-		authType: ctx.options?.authType,
-	});
+	const response = await makeAnthropicAdministratorRequest<T>(
+		path,
+		await resolveAdminKey(ctx),
+		{
+			...options,
+			authType: ctx.options?.authType,
+		},
+	);
 
 	// The remote call already succeeded; a telemetry failure must not turn that
 	// into a thrown error for the caller.

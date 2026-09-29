@@ -139,7 +139,12 @@ describe('request path bounds', () => {
 		const getUser = groups.users?.getUser;
 		if (!getUser) throw new Error('missing endpoint');
 		await getUser(
-			{ key: 'k', options: {}, db: {} },
+			{
+				key: 'k',
+				options: {},
+				keys: { get_api_key: async () => 'k' },
+				db: {},
+			},
 			{ user_id: '{a'.repeat(50) },
 		);
 

@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import { request } from 'corsair/http';
 import { CreateMessageInputSchema } from './endpoints/types/inputs';
 import type { AnthropicAdministratorContext } from './index';
@@ -33,6 +34,10 @@ function entity(name: string) {
 const ctx = {
 	key: 'sk-ant-admin-test',
 	options: { inferenceKey: 'sk-ant-api-test' },
+	keys: {
+		get_api_key: async () => 'sk-ant-admin-test',
+		get_inference_key: async () => 'sk-ant-api-test',
+	},
 	db: {
 		users: entity('users'),
 		invites: entity('invites'),
@@ -141,7 +146,8 @@ describe('Admin API transport', () => {
 		>;
 		const oauthCtx = {
 			key: 'oauth-access-token',
-			options: { authType: 'oauth_2' },
+			options: { authType: 'oauth_2', key: 'oauth-access-token' },
+			keys: { get_access_token: async () => 'oauth-access-token' },
 			db: {},
 		} as unknown as AnthropicAdministratorContext;
 
@@ -342,6 +348,25 @@ describe('Admin API routes', () => {
 			roles: ['admin', 'developer'],
 		});
 	});
+
+	it('rejects Admin calls when only an inference key is available', async () => {
+		const inferenceOnlyCtx = {
+			key: 'sk-ant-api-inference',
+			options: {},
+			keys: {
+				get_api_key: async () => undefined,
+				get_inference_key: async () => 'sk-ant-api-inference',
+			},
+			db: {},
+		} as unknown as AnthropicAdministratorContext;
+		const fn = ops().users?.listUsers;
+		if (!fn) throw new Error('missing endpoint');
+
+		await expect(fn(inferenceOnlyCtx, {})).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('Messages and Models API transport', () => {
@@ -477,6 +502,7 @@ describe('Admin API cache mirroring', () => {
 		const bare = {
 			key: 'k',
 			options: {},
+			keys: { get_api_key: async () => 'k' },
 		} as unknown as AnthropicAdministratorContext;
 		mockRequest.mockResolvedValueOnce(WORKSPACE);
 		const fn = ops().workspaces?.getWorkspace;
