@@ -107,6 +107,34 @@ describe('Gmail users.getProfile', () => {
 		);
 	});
 
+	it('rejects input that does not match the input schema', async () => {
+		await expect(
+			// Deliberately malformed input to exercise runtime validation
+			UsersEndpoints.getProfile(createContext(), { userId: 42 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a response that does not match the profile schema', async () => {
+		mockRequest.mockResolvedValue({ emailAddress: 123, messagesTotal: 'many' });
+
+		await expect(
+			UsersEndpoints.getProfile(createContext(), {}),
+		).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('returns only the validated profile', async () => {
+		mockRequest.mockResolvedValue(PROFILE);
+
+		const result = await UsersEndpoints.getProfile(createContext(), {});
+
+		expect(result).toEqual(
+			GmailEndpointOutputSchemas.usersGetProfile.parse(PROFILE),
+		);
+	});
+
 	it('propagates request failures without logging', async () => {
 		mockRequest.mockRejectedValue(new Error('boom'));
 
@@ -137,6 +165,21 @@ describe('Gmail plugin registration', () => {
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(
 			endpointPaths,
 		);
+	});
+
+	it('registers the plugin error handlers, including rate limits', () => {
+		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBeDefined();
+		expect(plugin.errorHandlers?.DEFAULT).toBeDefined();
+	});
+
+	it('lets callers override an error handler', () => {
+		const custom = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 1 }),
+		};
+		const overridden = gmail({ errorHandlers: { RATE_LIMIT_ERROR: custom } });
+		expect(overridden.errorHandlers?.RATE_LIMIT_ERROR).toBe(custom);
+		expect(overridden.errorHandlers?.SERVER_ERROR).toBeDefined();
 	});
 
 	it('marks users.getProfile as a read endpoint', () => {

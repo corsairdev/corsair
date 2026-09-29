@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -25,6 +26,7 @@ import {
 	GmailEndpointInputSchemas,
 	GmailEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import { gmailSubscribe } from './subscribe';
@@ -266,6 +268,7 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Which Gmail webhook event types to process and store.
 	 * When omitted, all event types are processed (default).
@@ -435,6 +438,10 @@ export function gmail<const T extends GmailPluginOptions>(
 		endpointMeta: gmailEndpointMeta,
 		endpointSchemas: gmailEndpointSchemas,
 		webhookSchemas: gmailWebhookSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			const authType = ctx.authType;
 
