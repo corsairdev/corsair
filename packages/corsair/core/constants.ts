@@ -105,6 +105,7 @@ export const BaseProviders = [
 	'bugsnag',
 	'buildkite',
 	'cal',
+	'callpage',
 	'calendly',
 	'canva',
 	'canvas',
@@ -371,6 +372,7 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	buildkite: 'Buildkite',
 	cal: 'Cal',
+	callpage: 'CallPage',
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
@@ -644,6 +646,7 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'buildkite'
 	| 'cal'
+	| 'callpage'
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
