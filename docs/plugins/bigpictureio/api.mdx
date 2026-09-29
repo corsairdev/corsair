@@ -1,0 +1,421 @@
+---
+title: API
+description: "API reference for BigPicture.io: every `bigpictureio.api.*` operation with input and output types."
+---
+
+Every `bigpictureio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Company
+
+### find
+
+`company.find`
+
+Find detailed company information by domain
+
+**Risk:** `read`
+
+```ts
+await corsair.bigpictureio.api.company.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `webhookUrl` | `string` | No | — |
+| `webhookId` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  legalName?: string,
+  domain?: string,
+  url?: string,
+  logo?: string,
+  type?: string,
+  phone?: string,
+  ticker?: string,
+  description?: string,
+  foundedYear?: number,
+  tags?: string[],
+  tech?: string[],
+  aliases?: string[],
+  domainAliases?: string[],
+  category?: {
+    sector?: string,
+    industryGroup?: string,
+    industry?: string,
+    subIndustry?: string,
+    naicsCode?: string
+  },
+  metrics?: {
+    raised?: number,
+    employees?: number,
+    marketCap?: number,
+    trancoRank?: number,
+    alexaUsRank?: number,
+    annualRevenue?: number,
+    employeesRange?: string,
+    alexaGlobalRank?: number,
+    estimatedAnnualRevenue?: string
+  },
+  location?: string,
+  geo?: {
+    streetNumber?: string | null,
+    streetName?: string | null,
+    subPremise?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postalCode?: string | null,
+    stateCode?: string | null,
+    country?: string | null,
+    countryCode?: string | null
+  },
+  facebook?: {
+    handle?: string
+  },
+  linkedin?: {
+    handle?: string,
+    industry?: string
+  },
+  twitter?: {
+    id?: string,
+    bio?: string,
+    site?: string,
+    avatar?: string,
+    handle?: string,
+    location?: string,
+    followers?: number,
+    following?: number
+  },
+  crunchbase?: {
+    handle?: string
+  },
+  emailProvider?: boolean,
+  indexedAt?: string
+} | {
+  pending: true,
+  webhookUrl: string,
+  webhookId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### stream
+
+`company.stream`
+
+Hold the company lookup open until BigPicture finishes
+
+**Risk:** `read`
+
+```ts
+await corsair.bigpictureio.api.company.stream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `legalName` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `url` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `type` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `ticker` | `string` | No | — |
+| `description` | `string` | No | — |
+| `foundedYear` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `tech` | `string[]` | No | — |
+| `aliases` | `string[]` | No | — |
+| `domainAliases` | `string[]` | No | — |
+| `category` | `object` | No | — |
+| `metrics` | `object` | No | — |
+| `location` | `string` | No | — |
+| `geo` | `object` | No | — |
+| `facebook` | `object` | No | — |
+| `linkedin` | `object` | No | — |
+| `twitter` | `object` | No | — |
+| `crunchbase` | `object` | No | — |
+| `emailProvider` | `boolean` | No | — |
+| `indexedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="category full type">
+
+```ts
+{
+  sector?: string,
+  industryGroup?: string,
+  industry?: string,
+  subIndustry?: string,
+  naicsCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  raised?: number,
+  employees?: number,
+  marketCap?: number,
+  trancoRank?: number,
+  alexaUsRank?: number,
+  annualRevenue?: number,
+  employeesRange?: string,
+  alexaGlobalRank?: number,
+  estimatedAnnualRevenue?: string
+}
+```
+</Accordion>
+
+<Accordion title="geo full type">
+
+```ts
+{
+  streetNumber?: string | null,
+  streetName?: string | null,
+  subPremise?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postalCode?: string | null,
+  stateCode?: string | null,
+  country?: string | null,
+  countryCode?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="facebook full type">
+
+```ts
+{
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="linkedin full type">
+
+```ts
+{
+  handle?: string,
+  industry?: string
+}
+```
+</Accordion>
+
+<Accordion title="twitter full type">
+
+```ts
+{
+  id?: string,
+  bio?: string,
+  site?: string,
+  avatar?: string,
+  handle?: string,
+  location?: string,
+  followers?: number,
+  following?: number
+}
+```
+</Accordion>
+
+<Accordion title="crunchbase full type">
+
+```ts
+{
+  handle?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip
+
+### find
+
+`ip.find`
+
+Find the company associated with an IP address
+
+**Risk:** `read`
+
+```ts
+await corsair.bigpictureio.api.ip.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `fuzzy` | `boolean` | No | — |
+| `confidence` | `number` | No | — |
+| `geo` | `object` | No | — |
+| `company` | `object` | No | — |
+| `whois` | `object` | No | — |
+| `asn` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="geo full type">
+
+```ts
+{
+  city?: string,
+  state?: string,
+  stateCode?: string,
+  country?: string,
+  countryCode?: string,
+  continent?: string,
+  continentCode?: string,
+  isEU?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  legalName?: string,
+  domain?: string,
+  url?: string,
+  logo?: string,
+  type?: string,
+  phone?: string,
+  ticker?: string,
+  description?: string,
+  foundedYear?: number,
+  tags?: string[],
+  tech?: string[],
+  aliases?: string[],
+  domainAliases?: string[],
+  category?: {
+    sector?: string,
+    industryGroup?: string,
+    industry?: string,
+    subIndustry?: string,
+    naicsCode?: string
+  },
+  metrics?: {
+    raised?: number,
+    employees?: number,
+    marketCap?: number,
+    trancoRank?: number,
+    alexaUsRank?: number,
+    annualRevenue?: number,
+    employeesRange?: string,
+    alexaGlobalRank?: number,
+    estimatedAnnualRevenue?: string
+  },
+  location?: string,
+  geo?: {
+    streetNumber?: string | null,
+    streetName?: string | null,
+    subPremise?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postalCode?: string | null,
+    stateCode?: string | null,
+    country?: string | null,
+    countryCode?: string | null
+  },
+  facebook?: {
+    handle?: string
+  },
+  linkedin?: {
+    handle?: string,
+    industry?: string
+  },
+  twitter?: {
+    id?: string,
+    bio?: string,
+    site?: string,
+    avatar?: string,
+    handle?: string,
+    location?: string,
+    followers?: number,
+    following?: number
+  },
+  crunchbase?: {
+    handle?: string
+  },
+  emailProvider?: boolean,
+  indexedAt?: string
+}
+```
+</Accordion>
+
+<Accordion title="whois full type">
+
+```ts
+{
+  domain?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="asn full type">
+
+```ts
+{
+  asn?: string,
+  name?: string,
+  route?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
