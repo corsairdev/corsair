@@ -118,6 +118,7 @@ describe('CodeInterpreter endpoints', () => {
 			{
 				filename: 'test.py',
 				content: 'print(1)',
+				contentEncoding: undefined,
 				mimeType: 'text/x-python',
 			},
 			{ sessionId: 'sess-1', baseUrl: 'https://ci.example.com' },
