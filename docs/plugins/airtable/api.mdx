@@ -450,10 +450,23 @@ Get webhook payloads
 await corsair.airtable.api.webhooks.getPayloads({});
 ```
 
-**Input:** `unknown`
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `baseId` | `string` | Yes | — |
+| `webhookId` | `string` | Yes | — |
+| `cursor` | `number` | No | — |
 
 
-**Output:** `unknown`
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursorForNextPayload` | `number` | No | — |
+| `payloads` | `any[]` | Yes | — |
+
 
 
 ---
