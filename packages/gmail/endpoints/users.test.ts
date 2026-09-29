@@ -74,7 +74,20 @@ describe('Gmail users.getProfile', () => {
 		await UsersEndpoints.getProfile(ctx, { userId: 'someone@example.com' });
 
 		expect(mockRequest).toHaveBeenCalledWith(
-			'/users/someone@example.com/profile',
+			'/users/someone%40example.com/profile',
+			ctx,
+			{ method: 'GET' },
+		);
+	});
+
+	it('encodes a userId so it stays one path segment', async () => {
+		mockRequest.mockResolvedValue(PROFILE);
+		const ctx = createContext();
+
+		await UsersEndpoints.getProfile(ctx, { userId: '../me/messages?x={a}' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/users/..%2Fme%2Fmessages%3Fx%3D%7Ba%7D/profile',
 			ctx,
 			{ method: 'GET' },
 		);
