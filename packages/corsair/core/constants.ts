@@ -143,6 +143,8 @@ export const BaseProviders = [
 	'cloudflareapikey',
 	'cloudinary',
 	'coda',
+	'cody',
+	'coinbase',
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
@@ -490,6 +492,8 @@ export const ProviderDisplayNames = {
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
 	coda: 'Coda',
+	cody: 'Cody',
+	coinbase: 'Coinbase',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -780,7 +784,6 @@ export type AllProviders =
 	| 'bestbuy'
 	| 'bettercontact'
 	| 'betterproposals'
-	| 'betterproposals'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -845,6 +848,8 @@ export type AllProviders =
 	| 'cloudflareapikey'
 	| 'cloudinary'
 	| 'coda'
+	| 'cody'
+	| 'coinbase'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
