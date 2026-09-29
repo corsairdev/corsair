@@ -19,6 +19,7 @@ import {
 	LabelsEndpoints,
 	MessagesEndpoints,
 	ThreadsEndpoints,
+	UsersEndpoints,
 } from './endpoints';
 import {
 	GmailEndpointInputSchemas,
@@ -151,6 +152,9 @@ export const gmailEndpointsNested = {
 		trash: ThreadsEndpoints.trash,
 		untrash: ThreadsEndpoints.untrash,
 	},
+	users: {
+		getProfile: UsersEndpoints.getProfile,
+	},
 } as const;
 
 export const gmailEndpointSchemas = {
@@ -245,6 +249,10 @@ export const gmailEndpointSchemas = {
 	'threads.untrash': {
 		input: GmailEndpointInputSchemas.threadsUntrash,
 		output: GmailEndpointOutputSchemas.threadsUntrash,
+	},
+	'users.getProfile': {
+		input: GmailEndpointInputSchemas.usersGetProfile,
+		output: GmailEndpointOutputSchemas.usersGetProfile,
 	},
 } as const;
 
@@ -370,6 +378,10 @@ const gmailEndpointMeta = {
 	'threads.untrash': {
 		riskLevel: 'write',
 		description: 'Restore a thread from the trash',
+	},
+	'users.getProfile': {
+		riskLevel: 'read',
+		description: 'Get the mailbox profile for the authenticated user',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof gmailEndpointsNested>;
 
