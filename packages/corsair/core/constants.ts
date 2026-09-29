@@ -135,7 +135,7 @@ export const BaseProviders = [
 	'circleci',
 	'classmarker',
 	'clickhouse',
-	'clickmeeting',
+	'clicksend',
 	'clientary',
 	'clockify',
 	'cloudcart',
@@ -483,7 +483,7 @@ export const ProviderDisplayNames = {
 	circleci: 'CircleCI',
 	classmarker: 'ClassMarker',
 	clickhouse: 'Clickhouse',
-	clickmeeting: 'ClickMeeting',
+	clicksend: 'ClickSend',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudcart: 'CloudCart',
@@ -838,7 +838,7 @@ export type AllProviders =
 	| 'circleci'
 	| 'classmarker'
 	| 'clickhouse'
-	| 'clickmeeting'
+	| 'clicksend'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudcart'

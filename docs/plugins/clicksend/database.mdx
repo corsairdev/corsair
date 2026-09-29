@@ -1,0 +1,72 @@
+---
+title: Database
+description: "ClickSend local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The ClickSend plugin syncs data locally. Use `corsair.clicksend.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Contacts
+
+Path: `clicksend.db.contacts.search`
+
+```ts
+const rows = await corsair.clicksend.db.contacts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `contact_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `list_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `clicksend.db.messages.search`
+
+```ts
+const rows = await corsair.clicksend.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `message_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `to` | `string` | equals, contains, startsWith, endsWith, in |
+| `from` | `string` | equals, contains, startsWith, endsWith, in |
+| `body` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `direction` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_sent` | `string` | equals, contains, startsWith, endsWith, in |
+| `price` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
