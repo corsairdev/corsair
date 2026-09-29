@@ -142,8 +142,7 @@ export const BaseProviders = [
 	'cloudflare',
 	'cloudflareapikey',
 	'cloudinary',
-	'cody',
-	'coinbase',
+	'codeinterpreter',
 	'collegefootballdata',
 	'confluence',
 	'connecteam',
@@ -490,8 +489,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
 	cloudinary: 'Cloudinary',
-	cody: 'Cody',
-	coinbase: 'Coinbase',
+	codeinterpreter: 'CodeInterpreter',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -845,8 +843,7 @@ export type AllProviders =
 	| 'cloudflare'
 	| 'cloudflareapikey'
 	| 'cloudinary'
-	| 'cody'
-	| 'coinbase'
+	| 'codeinterpreter'
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'connecteam'
