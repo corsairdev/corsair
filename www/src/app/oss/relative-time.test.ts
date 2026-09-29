@@ -46,10 +46,8 @@ describe('formatRelativeTime', () => {
 		assert.equal(formatRelativeTime(secondsAgo(365 * 86_400), NOW), '1y ago');
 	});
 
-	it('keeps using the default clock when now is omitted', () => {
-		assert.equal(
-			formatRelativeTime(new Date(Date.now() - 30_000).toISOString()),
-			'30s ago',
-		);
+	it('keeps using the default clock when now is omitted', (t) => {
+		t.mock.method(Date, 'now', () => NOW);
+		assert.equal(formatRelativeTime(secondsAgo(30)), '30s ago');
 	});
 });
