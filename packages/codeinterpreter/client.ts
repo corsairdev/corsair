@@ -1,6 +1,5 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class CodeInterpreterAPIError extends Error {
 	constructor(
@@ -29,7 +28,17 @@ const DEFAULT_CODEINTERPRETER_API_BASE = 'https://code.librechat.ai';
 const REQUEST_TIMEOUT_MS = 120_000;
 
 export function getCodeInterpreterBaseUrl(overrideBaseUrl?: string): string {
-	return overrideBaseUrl ?? DEFAULT_CODEINTERPRETER_API_BASE;
+	const base = overrideBaseUrl ?? DEFAULT_CODEINTERPRETER_API_BASE;
+	return base.endsWith('/') ? base : `${base}/`;
+}
+
+export function parseRetryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const seconds = Number(header);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const date = Date.parse(header);
+	if (Number.isNaN(date)) return undefined;
+	return Math.max(0, date - Date.now());
 }
 
 export async function makeCodeInterpreterRequest<T>(
@@ -70,6 +79,8 @@ export async function makeCodeInterpreterRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// ApiError carries status and retryAfter, which error-handlers.ts needs.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) {
 			throw new CodeInterpreterAPIError(error.message);
 		}
@@ -95,7 +106,7 @@ export async function makeCodeInterpreterUpload<T>(
 	} = {},
 ): Promise<T> {
 	const base = getCodeInterpreterBaseUrl(options.baseUrl);
-	const url = new URL('/upload', base);
+	const url = new URL('upload', base);
 	if (options.sessionId) {
 		url.searchParams.set('session_id', options.sessionId);
 	}
@@ -128,9 +139,10 @@ export async function makeCodeInterpreterUpload<T>(
 	}
 
 	if (res.status === 429) {
-		const retryAfter = res.headers.get('Retry-After');
-		const retryAfterMs = retryAfter ? Number(retryAfter) * 1000 : undefined;
-		throw new CodeInterpreterRateLimitError(undefined, retryAfterMs);
+		throw new CodeInterpreterRateLimitError(
+			undefined,
+			parseRetryAfterMs(res.headers.get('Retry-After')),
+		);
 	}
 
 	if (!res.ok) {
@@ -177,7 +189,10 @@ export async function makeCodeInterpreterDownload(
 	}
 
 	if (res.status === 429) {
-		throw new CodeInterpreterRateLimitError();
+		throw new CodeInterpreterRateLimitError(
+			undefined,
+			parseRetryAfterMs(res.headers.get('Retry-After')),
+		);
 	}
 
 	if (!res.ok) {
