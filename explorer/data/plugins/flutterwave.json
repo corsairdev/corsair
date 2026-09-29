@@ -1,0 +1,2912 @@
+{
+  "id": "flutterwave",
+  "displayName": "Flutterwave",
+  "description": "Flutterwave plugin for Corsair",
+  "npmPackageName": "@corsair-dev/flutterwave",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 53,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "flutterwave.api.banks.getBranches",
+      "shortPath": "banks.getBranches",
+      "description": "Get branches for a bank.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, branch_name?: string, branch_code?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.banks.getByCountry",
+      "shortPath": "banks.getByCountry",
+      "description": "Get banks by country.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "include_provider_type",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, code?: string, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.banks.resolveAccount",
+      "shortPath": "banks.resolveAccount",
+      "description": "Resolve bank account details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_number: string, account_bank: string, query?: {}, body?: {} } | { query?: {}, body: { account_number: string, account_bank: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ account_number?: string, account_name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.beneficiaries.create",
+      "shortPath": "beneficiaries.create",
+      "description": "Create a transfer beneficiary.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ body: { account_number: string, account_bank: string, beneficiary_name: string }, query?: {} } | { account_number: string, account_bank: string, beneficiary_name: string, query?: {}, body?: {} }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, bank_name?: string, full_name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.beneficiaries.delete",
+      "shortPath": "beneficiaries.delete",
+      "description": "Delete a beneficiary by ID.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.beneficiaries.get",
+      "shortPath": "beneficiaries.get",
+      "description": "Fetch a beneficiary by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, bank_name?: string, full_name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.beneficiaries.list",
+      "shortPath": "beneficiaries.list",
+      "description": "List all beneficiaries.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, bank_name?: string, full_name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bills.getCategories",
+      "shortPath": "bills.getCategories",
+      "description": "Get bill categories.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bills.listBillers",
+      "shortPath": "bills.listBillers",
+      "description": "List billers in a category.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "category",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ name?: string, biller_code?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bills.listProducts",
+      "shortPath": "bills.listProducts",
+      "description": "List biller products.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "biller_code",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ item_code?: string, name?: string, amount?: string | number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bills.listRecurring",
+      "shortPath": "bills.listRecurring",
+      "description": "List recurring bill payments.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bills.validateItem",
+      "shortPath": "bills.validateItem",
+      "description": "Validate a bill item before payment.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "item_code",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "{ email: string, name?: string, phonenumber?: string } | string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ response_code?: string, response_message?: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bulkTokenizedCharges.create",
+      "shortPath": "bulkTokenizedCharges.create",
+      "description": "Create a bulk tokenized charge batch.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ title: string, bulk_data: {}[], retry_strategy?: string, query?: {}, body?: {} } | { query?: {}, body: { title: string, bulk_data: {}[] } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bulkTokenizedCharges.get",
+      "shortPath": "bulkTokenizedCharges.get",
+      "description": "Get status of bulk tokenized charges.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulk_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, status?: string, pending?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bulkVirtualAccounts.create",
+      "shortPath": "bulkVirtualAccounts.create",
+      "description": "Create bulk virtual account numbers.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ body: { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean }, query?: {} } | { batch_ref: string, bulk_data: { firstname: string, lastname: string, email: string, bvn?: string, nin?: string }[], is_permanent?: boolean, query?: {}, body?: {} }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ batch_id?: string, response_code?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.bulkVirtualAccounts.get",
+      "shortPath": "bulkVirtualAccounts.get",
+      "description": "Get details for a bulk virtual account batch.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ batch_id?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.cards.resolveBin",
+      "shortPath": "cards.resolveBin",
+      "description": "Resolve card BIN details.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bin",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ issuing_country?: string, bin?: string, card_type?: string, issuer?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.chargebacks.list",
+      "shortPath": "chargebacks.list",
+      "description": "List chargebacks.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "flw_ref",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.charges.initiateMobileMoneyTanzania",
+      "shortPath": "charges.initiateMobileMoneyTanzania",
+      "description": "Initiate mobile money charge in Tanzania.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ type: string, tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string, query?: {}, body?: {} } | { type: string, query?: {}, body: { tx_ref: string, amount: string | number, currency: string, email: string, phone_number: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, tx_ref?: string, flw_ref?: string, status?: string, amount?: string | number, currency?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentLinks.create",
+      "shortPath": "paymentLinks.create",
+      "description": "Create a hosted payment link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string, currency?: string, redirect_url?: string, query?: {}, body?: {} } | { query?: {}, body: { tx_ref: string, amount: string | number, customer: { email: string, name?: string, phonenumber?: string } | string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ link?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentLinks.disable",
+      "shortPath": "paymentLinks.disable",
+      "description": "Disable an existing payment link.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentPlans.cancel",
+      "shortPath": "paymentPlans.cancel",
+      "description": "Cancel a Flutterwave payment plan by ID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, amount?: string | number, interval?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentPlans.create",
+      "shortPath": "paymentPlans.create",
+      "description": "Create a payment plan.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ amount: string | number, name: string, interval: string, query?: {}, body?: {} } | { query?: {}, body: { amount: string | number, name: string, interval: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, amount?: string | number, interval?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentPlans.get",
+      "shortPath": "paymentPlans.get",
+      "description": "Get a payment plan by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, amount?: string | number, interval?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentPlans.list",
+      "shortPath": "paymentPlans.list",
+      "description": "List payment plans.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, amount?: string | number, interval?: string, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.paymentPlans.update",
+      "shortPath": "paymentPlans.update",
+      "description": "Update a payment plan.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, name?: string, amount?: string | number, interval?: string, status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.payoutSubaccounts.list",
+      "shortPath": "payoutSubaccounts.list",
+      "description": "List payout subaccounts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_reference?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.payoutSubaccounts.listRefunds",
+      "shortPath": "payoutSubaccounts.listRefunds",
+      "description": "List payout subaccount refunds.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string, tx_id?: string | number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.refunds.create",
+      "shortPath": "refunds.create",
+      "description": "Create a refund for a transaction.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string, tx_id?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.refunds.get",
+      "shortPath": "refunds.get",
+      "description": "Get refund details by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string, tx_id?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.refunds.list",
+      "shortPath": "refunds.list",
+      "description": "List refund transactions with filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "flw_ref",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string, tx_id?: string | number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.settlements.list",
+      "shortPath": "settlements.list",
+      "description": "List settlements.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "subaccount_id",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "disburse_ref",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subaccounts.create",
+      "shortPath": "subaccounts.create",
+      "description": "Create a subaccount.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string, query?: {}, body?: {} } | { query?: {}, body: { account_bank: string, account_number: string, business_name: string, split_value: number, country: string, business_mobile: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, business_name?: string, split_value?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subaccounts.delete",
+      "shortPath": "subaccounts.delete",
+      "description": "Delete a subaccount by ID.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subaccounts.get",
+      "shortPath": "subaccounts.get",
+      "description": "Fetch a subaccount by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, business_name?: string, split_value?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subaccounts.list",
+      "shortPath": "subaccounts.list",
+      "description": "List all subaccounts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_bank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "account_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bank_name",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, business_name?: string, split_value?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subaccounts.update",
+      "shortPath": "subaccounts.update",
+      "description": "Update a subaccount.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "business_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "split_value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, account_number?: string, business_name?: string, split_value?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "Get all subscriptions, including cancelled.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_id",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "subscribed_from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "subscribed_to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "next_due_from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "next_due_to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, status?: string, customer?: any, plan?: string | number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.generateReference",
+      "shortPath": "transactions.generateReference",
+      "description": "Generate a unique transaction reference.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prefix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "length",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tx_ref?: string, reference?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Get a transaction by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, tx_ref?: string, flw_ref?: string, status?: string, amount?: string | number, currency?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.getFee",
+      "shortPath": "transactions.getFee",
+      "description": "Get transaction fee estimate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payment_type",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "card_first6digits",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ charge_amount?: string | number, fee?: string | number, merchant_fee?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "Retrieve all transactions.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "tx_ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer_email",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, tx_ref?: string, flw_ref?: string, status?: string, amount?: string | number, currency?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.verifyByReference",
+      "shortPath": "transactions.verifyByReference",
+      "description": "Verify a transaction by tx_ref.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tx_ref",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, tx_ref?: string, flw_ref?: string, status?: string, amount?: string | number, currency?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transactions.viewTimeline",
+      "shortPath": "transactions.viewTimeline",
+      "description": "View transaction timeline.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ note?: string, action?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transfers.getFee",
+      "shortPath": "transfers.getFee",
+      "description": "Get transfer fee estimate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ fee?: string | number, currency?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transfers.getRates",
+      "shortPath": "transfers.getRates",
+      "description": "Get transfer exchange rates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "destination_currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ rate?: string | number, source?: any, destination?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.transfers.list",
+      "shortPath": "transfers.list",
+      "description": "List transfers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number, amount?: string | number, status?: string, reference?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.verification.initiateBvn",
+      "shortPath": "verification.initiateBvn",
+      "description": "Initiate BVN verification.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ bvn: string, firstname: string, lastname: string, redirect_url?: string, query?: {}, body?: {} } | { query?: {}, body: { bvn: string, firstname: string, lastname: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url?: string, reference?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.virtualAccounts.create",
+      "shortPath": "virtualAccounts.create",
+      "description": "Create a virtual account number.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ email: string, firstname: string, lastname: string, tx_ref?: string, amount?: string | number, narration?: string, query?: {}, body?: {} } | { query?: {}, body: { email: string, firstname: string, lastname: string } }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ account_number?: string, bank_name?: string, order_ref?: string, flw_ref?: string, amount?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.virtualAccounts.get",
+      "shortPath": "virtualAccounts.get",
+      "description": "Get virtual account number details by order reference.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order_ref",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ account_number?: string, bank_name?: string, order_ref?: string, flw_ref?: string, amount?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.wallets.getBalanceByCurrency",
+      "shortPath": "wallets.getBalanceByCurrency",
+      "description": "Get wallet balance by currency.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ currency?: string, available_balance?: string | number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.wallets.getStatement",
+      "shortPath": "wallets.getStatement",
+      "description": "Get wallet statement.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ type?: string, amount?: string | number, currency?: string, created_at?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "flutterwave.api.wallets.listBalances",
+      "shortPath": "wallets.listBalances",
+      "description": "Get wallet balances across currencies.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ currency?: string, available_balance?: string | number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

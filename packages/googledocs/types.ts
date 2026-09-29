@@ -226,3 +226,10 @@ export type SpreadsheetChartsResponse = {
 	spreadsheetId?: string;
 	sheets?: SpreadsheetSheet[];
 };
+
+/** Subset of spreadsheets.values.get (Sheets API). */
+export type ValueRange = {
+	range?: string;
+	majorDimension?: 'ROWS' | 'COLUMNS' | 'DIMENSION_UNSPECIFIED';
+	values?: Array<Array<string | number | boolean | null>>;
+};

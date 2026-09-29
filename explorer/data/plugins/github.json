@@ -6,7 +6,7 @@
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 52,
+    "api": 53,
     "webhooks": 100,
     "db": 11
   },
@@ -731,6 +731,152 @@
       "output": {
         "kind": "inline",
         "type": "{ id: string, type: string, actor?: { name?: string | null, email?: string | null, login: string, id: number, nodeId?: string, avatarUrl?: string, gravatarId?: string | null, url?: string, htmlUrl?: string, followersUrl?: string, followingUrl?: string, gistsUrl?: string, starredUrl?: string, subscriptionsUrl?: string, organizationsUrl?: string, reposUrl?: string, eventsUrl?: string, receivedEventsUrl?: string, type?: string, siteAdmin?: boolean, starredAt?: Date | null, userViewType?: string }, repo?: { id: number, name: string, url?: string }, org?: { name?: string | null, email?: string | null, login: string, id: number, nodeId?: string, avatarUrl?: string, gravatarId?: string | null, url?: string, htmlUrl?: string, followersUrl?: string, followingUrl?: string, gistsUrl?: string, starredUrl?: string, subscriptionsUrl?: string, organizationsUrl?: string, reposUrl?: string, eventsUrl?: string, receivedEventsUrl?: string, type?: string, siteAdmin?: boolean, starredAt?: Date | null, userViewType?: string }, payload?: {}, public?: boolean, createdAt?: Date | null }[]"
+      }
+    },
+    {
+      "path": "github.api.forks.create",
+      "shortPath": "forks.create",
+      "description": "Create a fork of a repository",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "repo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultBranchOnly",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "nodeId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "private",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "htmlUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fork",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "pushedAt",
+            "optional": true,
+            "type": "Date"
+          },
+          {
+            "key": "defaultBranch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stargazersCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "watchersCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forksCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "openIssuesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ name?: string | null, email?: string | null, login: string, id: number, nodeId?: string, avatarUrl?: string, gravatarId?: string | null, url?: string, htmlUrl?: string, followersUrl?: string, followingUrl?: string, gistsUrl?: string, starredUrl?: string, subscriptionsUrl?: string, organizationsUrl?: string, reposUrl?: string, eventsUrl?: string, receivedEventsUrl?: string, type?: string, siteAdmin?: boolean, starredAt?: Date | null, userViewType?: string }"
+          }
+        ]
       }
     },
     {

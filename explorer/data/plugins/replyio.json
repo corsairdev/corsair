@@ -1,0 +1,2077 @@
+{
+  "id": "replyio",
+  "displayName": "Reply.io",
+  "description": "AI-powered sales engagement platform for contacts, multichannel sequences, email accounts, and sending schedules.",
+  "npmPackageName": "@corsair-dev/replyio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "replyio.api.contactLists.list",
+      "shortPath": "contactLists.list",
+      "description": "List contact lists with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, name: string, isShared: boolean }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.clearStatus",
+      "shortPath": "contacts.clearStatus",
+      "description": "Clear clearable contact statuses (opt-out, replied, bounced)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "statuses",
+            "optional": true,
+            "type": "optedOut | replied | bounced[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "replyio.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new contact in Reply.io",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companySize",
+            "optional": true,
+            "type": "Empty | SelfEmployed | Ten | Fifty | TwoHundred | FiveHundred | OneThousand | FiveThousand | TenThousand | OverTenThousand"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZoneId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInSalesNavigatorUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInRecruiterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ key: string, value?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companySize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZoneId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInSalesNavigatorUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInRecruiterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneStatus",
+            "optional": true,
+            "type": "pending | invalid | valid | validationFailed | notValidated"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOptedOut",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callStatus",
+            "optional": true,
+            "type": "none | toCall | called"
+          },
+          {
+            "key": "meetingStatus",
+            "optional": true,
+            "type": "none | meetingBooked"
+          },
+          {
+            "key": "addingDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ key: string, value?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companySize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZoneId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInSalesNavigatorUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInRecruiterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneStatus",
+            "optional": true,
+            "type": "pending | invalid | valid | validationFailed | notValidated"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOptedOut",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callStatus",
+            "optional": true,
+            "type": "none | toCall | called"
+          },
+          {
+            "key": "meetingStatus",
+            "optional": true,
+            "type": "none | meetingBooked"
+          },
+          {
+            "key": "addingDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ key: string, value?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.getStatus",
+      "shortPath": "contacts.getStatus",
+      "description": "Get a contact's statuses across sequences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "isOptedOut",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "callStatus",
+            "optional": false,
+            "type": "none | toCall | called"
+          },
+          {
+            "key": "meetingStatus",
+            "optional": false,
+            "type": "none | meetingBooked"
+          },
+          {
+            "key": "sequences",
+            "optional": false,
+            "type": "{ sequenceId: number, sequenceName: string, statusInSequence: active | paused | inactive | invalidEmail | outOfOffice | finished | contacted | opened | clicked | autoReplied | bounced | replied, emailDisposition: { isReplied: boolean, isBounced: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with pagination and optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedIn",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, domain?: string | null, firstName?: string | null, lastName?: string | null, phone?: string | null, title?: string | null, company?: string | null, companySize?: string | null, industry?: string | null, city?: string | null, state?: string | null, country?: string | null, timeZoneId?: string | null, linkedInUrl?: string | null, linkedInSalesNavigatorUrl?: string | null, linkedInRecruiterUrl?: string | null, phoneStatus?: pending | invalid | valid | validationFailed | notValidated | null, notes?: string | null, ownerUserId?: number | null, accountId?: number | null, isOptedOut?: boolean, callStatus?: none | toCall | called | null, meetingStatus?: none | meetingBooked | null, addingDate?: string | null, createdAt?: string | null, lastModifiedAt?: string | null, customFields?: { key: string, value?: string | null }[] }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.searchByEmail",
+      "shortPath": "contacts.searchByEmail",
+      "description": "Search contacts by exact email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, email?: string | null, domain?: string | null, firstName?: string | null, lastName?: string | null, phone?: string | null, title?: string | null, company?: string | null, companySize?: string | null, industry?: string | null, city?: string | null, state?: string | null, country?: string | null, timeZoneId?: string | null, linkedInUrl?: string | null, linkedInSalesNavigatorUrl?: string | null, linkedInRecruiterUrl?: string | null, phoneStatus?: pending | invalid | valid | validationFailed | notValidated | null, notes?: string | null, ownerUserId?: number | null, accountId?: number | null, isOptedOut?: boolean, callStatus?: none | toCall | called | null, meetingStatus?: none | meetingBooked | null, addingDate?: string | null, createdAt?: string | null, lastModifiedAt?: string | null, customFields?: { key: string, value?: string | null }[] }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.contacts.setStatus",
+      "shortPath": "contacts.setStatus",
+      "description": "Set contacts' in-sequence status in bulk",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "statusInSequence",
+            "optional": false,
+            "type": "active | paused | finished | outOfOffice"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "replyio.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companySize",
+            "optional": true,
+            "type": "Empty | SelfEmployed | Ten | Fifty | TwoHundred | FiveHundred | OneThousand | FiveThousand | TenThousand | OverTenThousand"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZoneId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInSalesNavigatorUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInRecruiterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOptedOut",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callStatus",
+            "optional": true,
+            "type": "none | toCall | called"
+          },
+          {
+            "key": "meetingStatus",
+            "optional": true,
+            "type": "none | meetingBooked"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ id?: number, name?: string, value?: string | null }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companySize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeZoneId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInSalesNavigatorUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedInRecruiterUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneStatus",
+            "optional": true,
+            "type": "pending | invalid | valid | validationFailed | notValidated"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "isOptedOut",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callStatus",
+            "optional": true,
+            "type": "none | toCall | called"
+          },
+          {
+            "key": "meetingStatus",
+            "optional": true,
+            "type": "none | meetingBooked"
+          },
+          {
+            "key": "addingDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastModifiedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ key: string, value?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.connectGmail",
+      "shortPath": "emailAccounts.connectGmail",
+      "description": "Get the Gmail OAuth connect URL for the user to open",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "gmail"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.connectOffice365",
+      "shortPath": "emailAccounts.connectOffice365",
+      "description": "Get the Microsoft 365 OAuth connect URL for the user to open",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "office-365"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.delete",
+      "shortPath": "emailAccounts.delete",
+      "description": "Delete an email account [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.list",
+      "shortPath": "emailAccounts.list",
+      "description": "List email accounts with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "my",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, ownerUserId?: number | null, email: string, senderName?: string | null, emailAccountType: custom | gmail | outlook | exchange | exchangeOnPremise, isDefault?: boolean, dailyLimit?: number | null, connectionStatus: unknown | connected | disconnected, tags?: string[] }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.listDisconnected",
+      "shortPath": "emailAccounts.listDisconnected",
+      "description": "List email accounts disconnected by auth or connection errors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, ownerUserId?: number | null, email: string, senderName?: string | null, emailAccountType: custom | gmail | outlook | exchange | exchangeOnPremise, isDefault?: boolean, dailyLimit?: number | null, connectionStatus: unknown | connected | disconnected, tags?: string[] }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.emailAccounts.update",
+      "shortPath": "emailAccounts.update",
+      "description": "Update an email account with custom SMTP/IMAP settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "connection",
+            "optional": true,
+            "type": "{ email?: string, senderName?: string, smtpHost?: string, smtpPort?: number, smtpPassword?: string, smtpSsl?: boolean, imapHost?: string, imapPort?: number, imapPassword?: string, imapSsl?: boolean }"
+          },
+          {
+            "key": "safety",
+            "optional": true,
+            "type": "{ dailyLimit?: number, isEmailsThrottlingEnabled?: boolean, emailsPerInterval?: number, emailsThrottlingSecondsInterval?: number, isSendingDelayEnabled?: boolean, maxSendingDelaySeconds?: number, minSendingDelaySeconds?: number }"
+          },
+          {
+            "key": "signature",
+            "optional": true,
+            "type": "{ signature?: string }"
+          },
+          {
+            "key": "optOut",
+            "optional": true,
+            "type": "{ message?: string, emailFooter?: string, isOptOutLinkEnabled?: boolean, optOutTextBlock?: string }"
+          },
+          {
+            "key": "rampUp",
+            "optional": true,
+            "type": "{ enabled?: boolean, startValue?: number, incrementValue?: number }"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "senderName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAccountType",
+            "optional": false,
+            "type": "custom | gmail | outlook | exchange | exchangeOnPremise"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dailyLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "connectionStatus",
+            "optional": false,
+            "type": "unknown | connected | disconnected"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "isInUse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sendingConnectivityError",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "receivingConnectivityError",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sendingLockedByProvider",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.schedules.delete",
+      "shortPath": "schedules.delete",
+      "description": "Delete a sending schedule [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequenceContacts.add",
+      "shortPath": "sequenceContacts.add",
+      "description": "Add contacts to a sequence in bulk",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "removeFromExisting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startStepId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ignoreStepDelay",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startFrom",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "added",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "notProcessed",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequenceContacts.bulkRemove",
+      "shortPath": "sequenceContacts.bulkRemove",
+      "description": "Remove multiple contacts from a sequence at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requested",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "notFound",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "notInSequence",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "removedIds",
+            "optional": false,
+            "type": "number[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequenceContacts.listExtended",
+      "shortPath": "sequenceContacts.listExtended",
+      "description": "List sequence contacts with extended engagement state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "additionalColumns",
+            "optional": true,
+            "type": "CurrentStep | LastStepCompletedAt | Status[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ contactId: number, email?: string | null, firstName?: string | null, lastName?: string | null, title?: string | null, addedAt?: string | null, currentStep?: { stepId: number, displayStepNumber?: string | null, stepNumber?: number | null } | null, lastStepCompletedAt?: string | null, status?: { status: string, replied?: boolean, delivered?: boolean, bounced?: boolean, opened?: boolean, clicked?: boolean } | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequenceContacts.remove",
+      "shortPath": "sequenceContacts.remove",
+      "description": "Remove a contact from a sequence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequenceContacts.setStatus",
+      "shortPath": "sequenceContacts.setStatus",
+      "description": "Set contacts' status for enrollments in a specific sequence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "statusInSequence",
+            "optional": false,
+            "type": "active | paused | finished | outOfOffice"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "replyio.api.sequences.archive",
+      "shortPath": "sequences.archive",
+      "description": "Archive a sequence and remove its contacts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | active | paused"
+          },
+          {
+            "key": "isArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "health",
+            "optional": true,
+            "type": "healthy | stalled | degraded | blocked"
+          },
+          {
+            "key": "scheduleId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailAccounts",
+            "optional": true,
+            "type": "{ id: number, email: string }[]"
+          },
+          {
+            "key": "linkedInAccounts",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, profileUrl?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequences.delete",
+      "shortPath": "sequences.delete",
+      "description": "Delete a sequence [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequences.get",
+      "shortPath": "sequences.get",
+      "description": "Get a sequence by ID with settings and steps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | active | paused"
+          },
+          {
+            "key": "isArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "health",
+            "optional": true,
+            "type": "healthy | stalled | degraded | blocked"
+          },
+          {
+            "key": "scheduleId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailAccounts",
+            "optional": true,
+            "type": "{ id: number, email: string }[]"
+          },
+          {
+            "key": "linkedInAccounts",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, profileUrl?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequences.list",
+      "shortPath": "sequences.list",
+      "description": "List sequences with pagination and optional filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | paused | new"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "folderId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "created | name | status"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, ownerUserId?: number | null, name: string, created?: string | null, status: new | active | paused, isArchived: boolean, health?: healthy | stalled | degraded | blocked | null }[]"
+          },
+          {
+            "key": "hasMore",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequences.pause",
+      "shortPath": "sequences.pause",
+      "description": "Pause a running sequence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | active | paused"
+          },
+          {
+            "key": "isArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "health",
+            "optional": true,
+            "type": "healthy | stalled | degraded | blocked"
+          },
+          {
+            "key": "scheduleId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailAccounts",
+            "optional": true,
+            "type": "{ id: number, email: string }[]"
+          },
+          {
+            "key": "linkedInAccounts",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, profileUrl?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.sequences.start",
+      "shortPath": "sequences.start",
+      "description": "Start a sequence in New or Paused status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ownerUserId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "new | active | paused"
+          },
+          {
+            "key": "isArchived",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "health",
+            "optional": true,
+            "type": "healthy | stalled | degraded | blocked"
+          },
+          {
+            "key": "scheduleId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "emailAccounts",
+            "optional": true,
+            "type": "{ id: number, email: string }[]"
+          },
+          {
+            "key": "linkedInAccounts",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, profileUrl?: string | null, status?: string | null }[]"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "{ id?: number, type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.steps.create",
+      "shortPath": "steps.create",
+      "description": "Add a new step to a sequence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "step",
+            "optional": false,
+            "type": "{ type: email, delayInMinutes: number, executionMode: automatic | manual, variants: { subject?: string, message?: string, attachmentIds?: number[] }[] } | { type: linkedIn, actionType: message | connect | inMail | viewProfile | endorseSkills | voiceMessage | likeRecentPosts | followProfile | commentOnRecentPost, delayInMinutes: number } | { type: call, delayInMinutes: number } | { type: sms, delayInMinutes: number, executionMode: automatic | manual, message: string } | { type: whatsApp, delayInMinutes: number, message: string } | { type: zapier, delayInMinutes: number, name: string, action: immediately | wait } | { type: task, delayInMinutes: number, actionType: toDo | meeting, description: string } | { type: condition, delayInMinutes: number, waitInMinutes: number, conditions: { property: string, rules: { operator: string, value: string }[] }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | linkedIn | call | sms | whatsApp | zapier | task | condition"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ifConditionPositive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delayInMinutes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.steps.get",
+      "shortPath": "steps.get",
+      "description": "Get a sequence step by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stepId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "email | linkedIn | call | sms | whatsApp | zapier | task | condition"
+          },
+          {
+            "key": "parentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ifConditionPositive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "delayInMinutes",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.steps.list",
+      "shortPath": "steps.list",
+      "description": "List all steps in a sequence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sequenceId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, type: email | linkedIn | call | sms | whatsApp | zapier | task | condition, parentId?: number | null, ifConditionPositive?: boolean | null, delayInMinutes?: number | null }[]"
+      }
+    },
+    {
+      "path": "replyio.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the current authenticated user and verify the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "replyio.api.users.listTeam",
+      "shortPath": "users.listTeam",
+      "description": "List users on the current team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ teamId: number, teamName: string, userId: number, userName: string, userEmail: string }[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

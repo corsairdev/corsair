@@ -1,0 +1,2207 @@
+{
+  "id": "phantombuster",
+  "displayName": "PhantomBuster",
+  "description": "Web automation and data extraction platform for scraping websites and automating workflows.",
+  "npmPackageName": "@corsair-dev/phantombuster",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 56,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "phantombuster.api.agents.delete",
+      "shortPath": "agents.delete",
+      "description": "Delete a PhantomBuster agent by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.fetch",
+      "shortPath": "agents.fetch",
+      "description": "Get details for a specific PhantomBuster agent by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scriptOrgName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scriptId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "staging | release"
+          },
+          {
+            "key": "argument",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastEndType",
+            "optional": true,
+            "type": "finished | killed | global timeout | org timeout | agent timeout | unknown | no log timeout"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.fetchAll",
+      "shortPath": "agents.fetchAll",
+      "description": "Get all PhantomBuster agents (Phantoms) in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, scriptId?: string | null, scriptName?: string | null, status?: idle | running | launching | error, nbLaunches?: number, fileMgmt?: string, fileMgmtValue?: number, launchType?: string, launchTimes?: string[], launchTimezone?: string | null, cronString?: string | null, loadChrome?: boolean, disableWebSecurity?: boolean, ignoreSslErrors?: boolean, argument?: string | {}, createdAt?: string, updatedAt?: string }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.fetchDeleted",
+      "shortPath": "agents.fetchDeleted",
+      "description": "Get all deleted agents in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, createdAt: number, deletedAt: number, deletedBy?: string | null, nbContainersRunning: number }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.fetchOutput",
+      "shortPath": "agents.fetchOutput",
+      "description": "Get the output of the most recent container for an agent, including status, progress, console log, and result object",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromOutputPos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "prevContainerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prevStatus",
+            "optional": true,
+            "type": "starting | running | finished | unknown | launch error | never launched"
+          },
+          {
+            "key": "prevRuntimeEventIndex",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "starting | running | finished | unknown | launch error | never launched"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "outputPos",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mostRecentEndedAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "progressLabel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isAgentRunning",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "canSoftAbort",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.launch",
+      "shortPath": "agents.launch",
+      "description": "Add a PhantomBuster agent to the launch queue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "argument",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "bonusArgument",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "saveArgument",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saveArguments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "manualLaunch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxInstanceCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.launchSoon",
+      "shortPath": "agents.launchSoon",
+      "description": "Schedule a PhantomBuster agent to launch before a specific time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "minutes",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "argument",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "arguments",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "saveArgument",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "saveArguments",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.save",
+      "shortPath": "agents.save",
+      "description": "Create a new agent or update an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "org",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "script",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "staging | release"
+          },
+          {
+            "key": "argument",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "launchType",
+            "optional": true,
+            "type": "manually | repeatedly | once | after agent"
+          },
+          {
+            "key": "launchTimes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "launchTimezone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cronString",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fileMgmt",
+            "optional": true,
+            "type": "folders | mix | delete"
+          },
+          {
+            "key": "fileMgmtValue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "loadChrome",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableWebSecurity",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ignoreSslErrors",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.stop",
+      "shortPath": "agents.stop",
+      "description": "Stop a currently running PhantomBuster agent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "softAbort",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cascadeToAllSlaves",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dontLaunchSoon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "switchToManualLaunch",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "containerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.agents.unscheduleAll",
+      "shortPath": "agents.unscheduleAll",
+      "description": "Disable automatic launch for all agents in the organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.branches.create",
+      "shortPath": "branches.create",
+      "description": "Create a new branch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.branches.delete",
+      "shortPath": "branches.delete",
+      "description": "Delete a branch by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.branches.fetchAll",
+      "shortPath": "branches.fetchAll",
+      "description": "Fetch all branches in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, created_at: number }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.branches.fetchDiff",
+      "shortPath": "branches.fetchDiff",
+      "description": "Get the staging/release diff for script branches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, diffLength: number, stagingVisibility: private | semi public | public | semi open source | open source, releaseVisibility?: private | semi public | public | semi open source | open source, stagingAccessList?: string[] | null, releaseAccessList?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.branches.release",
+      "shortPath": "branches.release",
+      "description": "Release a script branch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scriptIds",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.containers.fetch",
+      "shortPath": "containers.fetch",
+      "description": "Get details for a specific run container by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "withResultObject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withOutput",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withRuntimeEvents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withNewerAndOlderContainerId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exitCode",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultObject",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.containers.fetchAll",
+      "shortPath": "containers.fetchAll",
+      "description": "Get all run containers for a specific agent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "beforeEndedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "all | finalized"
+          },
+          {
+            "key": "withRuntimeEvents",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maxLimitReached",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "containers",
+            "optional": false,
+            "type": "{ id: string, agentId?: string, status?: string, exitCode?: number | null, duration?: number | null, startTime?: number | null, endTime?: number | null, output?: string | null, resultObject?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.containers.fetchOutput",
+      "shortPath": "containers.fetchOutput",
+      "description": "Get the console output for a specific container",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "json | raw"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "output",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.containers.fetchResultObject",
+      "shortPath": "containers.fetchResultObject",
+      "description": "Get the result object (JSON data) from a specific container",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resultObject",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.identities.generateToken",
+      "shortPath": "identities.generateToken",
+      "description": "Generate an identity token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.identities.saveEvent",
+      "shortPath": "identities.saveEvent",
+      "description": "Save an identity event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "profile_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.leads.deleteMany",
+      "shortPath": "leads.deleteMany",
+      "description": "Delete multiple leads by their IDs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deletedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.leads.fetchByList",
+      "shortPath": "leads.fetchByList",
+      "description": "Fetch leads belonging to a specific lead list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paginationOptions",
+            "optional": true,
+            "type": "{ paginationOrder?: ASC | DESC, paginationSize?: number, paginationOffset?: number, paginationProperty?: string, includeTotalCount?: boolean }"
+          },
+          {
+            "key": "withLeadObjectsOfTypes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "withCompanies",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ linkedinProfileUrl: string, firstName?: string, lastName?: string, companyName?: string }[]"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.leads.save",
+      "shortPath": "leads.save",
+      "description": "Save a single lead to PhantomBuster org storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ linkedinProfileUrl: string, firstName?: string, lastName?: string, companyName?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "linkedinProfileSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isCreation",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.leads.saveMany",
+      "shortPath": "leads.saveMany",
+      "description": "Bulk-save multiple leads to PhantomBuster org storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ linkedinProfileUrl: string, firstName?: string, lastName?: string, companyName?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ linkedinProfileUrl: string, status: success, isCreation: boolean } | { linkedinProfileUrl: string, status: error, error: string })[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a lead list by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.lists.fetch",
+      "shortPath": "lists.fetch",
+      "description": "Get details for a specific lead list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalLeads",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.lists.fetchAll",
+      "shortPath": "lists.fetchAll",
+      "description": "Get all lead lists in the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string, description?: string | null, totalLeads?: number, createdAt?: string, updatedAt?: string }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.lists.save",
+      "shortPath": "lists.save",
+      "description": "Create a new lead list or update an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.misc.fetchIpLocation",
+      "shortPath": "misc.fetchIpLocation",
+      "description": "Retrieve the country of an IP address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.misc.requestAiCompletion",
+      "shortPath": "misc.requestAiCompletion",
+      "description": "Request a text completion from the AI module",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: system | assistant | user, content: string }[]"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "gpt-35-turbo | gpt-4 | gpt-4o | gpt-4o-mini | gpt-4.1-mini | gpt-5.1"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "creditsCost",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.misc.solveHCaptcha",
+      "shortPath": "misc.solveHCaptcha",
+      "description": "Solve an hCaptcha challenge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.misc.solveRecaptcha",
+      "shortPath": "misc.solveRecaptcha",
+      "description": "Solve a reCAPTCHA challenge (v2 or v3)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "v2 | v3"
+          },
+          {
+            "key": "minScore",
+            "optional": true,
+            "type": "0.3 | 0.7 | 0.9"
+          },
+          {
+            "key": "pageAction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enterprise",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.exportAgentUsage",
+      "shortPath": "orgs.exportAgentUsage",
+      "description": "Export agent usage CSV for the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.exportContainerUsage",
+      "shortPath": "orgs.exportContainerUsage",
+      "description": "Export container usage CSV for the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.fetch",
+      "shortPath": "orgs.fetch",
+      "description": "Get the current organization info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "withGlobalObject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withProxies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withCrmIntegrations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withCustomPrompts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.fetchAgentGroups",
+      "shortPath": "orgs.fetchAgentGroups",
+      "description": "Get agent groups and order for the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(string | { id: string, name: string, agents: string[] })[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.fetchResources",
+      "shortPath": "orgs.fetchResources",
+      "description": "Get the organization resource usage (slots, limits)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dailyExecutionTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dailyMail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dailyCaptcha",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dailyDiscoveredMail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dailyAiCredit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dailySerpCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyExecutionTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyMail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyCaptcha",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyDiscoveredMail",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyAiCredit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlySerpCredits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "s3Storage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "agentCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "planName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dailyResourceNextResetAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monthlyResourceNextResetAt",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "planShouldCancelAt",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.fetchRunningContainers",
+      "shortPath": "orgs.fetchRunningContainers",
+      "description": "Get the organization's running containers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "containers",
+            "optional": false,
+            "type": "{ id: string, agentId: string, agentName?: string | null, createdAt: number, retryNumber: number, launchType: string, scriptSlug: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.orgs.saveAgentGroups",
+      "shortPath": "orgs.saveAgentGroups",
+      "description": "Update agent groups and order for the organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentGroups",
+            "optional": false,
+            "type": "(string | { id: string, name: string, agents: string[] })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentGroups",
+            "optional": false,
+            "type": "(string | { id: string, name: string, agents: string[] })[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.delete",
+      "shortPath": "scripts.delete",
+      "description": "Delete a script by ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "staging | release"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.fetch",
+      "shortPath": "scripts.fetch",
+      "description": "Fetch a script by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "staging | release"
+          },
+          {
+            "key": "withCode",
+            "optional": true,
+            "type": "staging | release"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": false,
+            "type": "staging | release"
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "private | semi public | public | semi open source | open source"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branches",
+            "optional": true,
+            "type": "{ id: string, name: string, visibility: private | semi public | public | semi open source | open source }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.fetchAll",
+      "shortPath": "scripts.fetchAll",
+      "description": "Fetch all scripts for the current user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "modules | non-modules"
+          },
+          {
+            "key": "scriptIds",
+            "optional": true,
+            "type": "string | string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, orgId: string, orgSlug: string, environment: staging | release, visibility: private | semi public | public | semi open source | open source, description?: string | null, code?: string | null, branch?: string | null, branches?: { id: string, name: string, visibility: private | semi public | public | semi open source | open source }[] }[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.fetchCode",
+      "shortPath": "scripts.fetchCode",
+      "description": "Get the code of a script",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "org",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "staging | release"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.save",
+      "shortPath": "scripts.save",
+      "description": "Create a new script or update an existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.updateAccessList",
+      "shortPath": "scripts.updateAccessList",
+      "description": "Update a script's access list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "add",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remove",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.scripts.updateVisibility",
+      "shortPath": "scripts.updateVisibility",
+      "description": "Update the visibility of a script",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": false,
+            "type": "private | semi public | public | semi open source | open source"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.deleteLeadObjects",
+      "shortPath": "storage.deleteLeadObjects",
+      "description": "Delete lead objects from organization storage",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadObjectId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deletedCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.saveCompanyObject",
+      "shortPath": "storage.saveCompanyObject",
+      "description": "Save a company object to organization storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkedinCompanyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "linkedinCompanyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "orgId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.saveLeadObject",
+      "shortPath": "storage.saveLeadObject",
+      "description": "Save a lead object to organization storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadObjectId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadUrn",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadUrn",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.saveManyCompanyObjects",
+      "shortPath": "storage.saveManyCompanyObjects",
+      "description": "Bulk-save company objects to organization storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ linkedinCompanyId: string, type: string, slug: string, properties: {} }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ status: success, slug: string, result: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null } } | { status: error, slug: string, error: string })[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.saveManyLeadObjects",
+      "shortPath": "storage.saveManyLeadObjects",
+      "description": "Bulk-save lead objects to organization storage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type: string, slug: string, properties: {}, agentId: string, leadObjectId?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ status: success, slug: string, id: string } | { status: error, slug: string, error: string })[]"
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.searchCompanyObjects",
+      "shortPath": "storage.searchCompanyObjects",
+      "description": "Search company objects in organization storage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null }[] | { companiesObjects: { id: string, linkedinCompanyId: string, type: string, slug: string, properties: {}, orgId?: string | null }[], totalCount: number }"
+      }
+    },
+    {
+      "path": "phantombuster.api.storage.searchLeadObjects",
+      "shortPath": "storage.searchLeadObjects",
+      "description": "Search lead objects in organization storage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, orgId: string, type: string, slug: string, properties: {}, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[] | { leadsObjects: { id: string, orgId: string, type: string, slug: string, properties: {}, leadId?: string | null, leadSlug?: string | null, leadUrn?: string | null }[], totalCount: number }"
+      }
+    },
+    {
+      "path": "phantombuster.api.users.fetchMe",
+      "shortPath": "users.fetchMe",
+      "description": "Get info about the currently authenticated PhantomBuster user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detailedOrgId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withCustomPrompts",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "zendeskToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: string, email: string, firstName: string, lastName: string, newsletter: boolean, isEmailValidated: boolean, createdAt: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "phantombuster.api.users.updateMe",
+      "shortPath": "users.updateMe",
+      "description": "Update the current user's info",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newsletter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "developerMode",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
