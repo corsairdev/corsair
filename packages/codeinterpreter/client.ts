@@ -97,7 +97,7 @@ export async function makeCodeInterpreterUpload<T>(
 	apiKey: string,
 	fileData: {
 		filename: string;
-		content: string; // base64 encoded
+		content: string;
 		mimeType?: string;
 	},
 	options: {
@@ -111,7 +111,7 @@ export async function makeCodeInterpreterUpload<T>(
 		url.searchParams.set('session_id', options.sessionId);
 	}
 
-	const binaryContent = Buffer.from(fileData.content, 'base64');
+	const binaryContent = Buffer.from(fileData.content, 'utf8');
 
 	const formData = new FormData();
 	const blob = new Blob([binaryContent], {

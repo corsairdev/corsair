@@ -12,6 +12,7 @@ export const executeCode: CodeInterpreterEndpoints['executeCode'] = async (
 	>('exec', ctx.key, {
 		method: 'POST',
 		body: input,
+		baseUrl: ctx.options.baseUrl,
 	});
 
 	await logEventFromContext(

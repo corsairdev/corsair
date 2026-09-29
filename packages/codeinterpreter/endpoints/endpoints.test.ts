@@ -1,17 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CodeInterpreterContext } from '..';
 import {
+	makeCodeInterpreterDownload,
 	makeCodeInterpreterRequest,
 	makeCodeInterpreterUpload,
 } from '../client';
 import { deleteFile } from './deleteFile';
+import { downloadFile } from './downloadFile';
 import { executeCode } from './executeCode';
+import { listFiles } from './listFiles';
 import { CodeInterpreterEndpointOutputSchemas } from './types';
 import { uploadFile } from './uploadFile';
 
 jest.mock('../client', () => ({
 	makeCodeInterpreterRequest: jest.fn(),
 	makeCodeInterpreterUpload: jest.fn(),
+	makeCodeInterpreterDownload: jest.fn(),
 }));
 
 jest.mock('corsair/core', () => ({
@@ -20,14 +24,19 @@ jest.mock('corsair/core', () => ({
 
 const mockedRequest = makeCodeInterpreterRequest as jest.Mock;
 const mockedUpload = makeCodeInterpreterUpload as jest.Mock;
+const mockedDownload = makeCodeInterpreterDownload as jest.Mock;
 const mockedLog = logEventFromContext as jest.Mock;
 
-const ctx = { key: 'test-api-key' } as CodeInterpreterContext;
+const ctx = {
+	key: 'test-api-key',
+	options: { baseUrl: 'https://ci.example.com' },
+} as CodeInterpreterContext;
 
 describe('CodeInterpreter endpoints', () => {
 	beforeEach(() => {
 		mockedRequest.mockReset();
 		mockedUpload.mockReset();
+		mockedDownload.mockReset();
 		mockedLog.mockReset();
 	});
 
@@ -49,6 +58,7 @@ describe('CodeInterpreter endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('exec', 'test-api-key', {
 			method: 'POST',
 			body: input,
+			baseUrl: 'https://ci.example.com',
 		});
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
@@ -76,6 +86,7 @@ describe('CodeInterpreter endpoints', () => {
 				file_id: 'file-1',
 				session_id: 'sess-1',
 			},
+			baseUrl: 'https://ci.example.com',
 		});
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
@@ -109,7 +120,7 @@ describe('CodeInterpreter endpoints', () => {
 				content: 'print(1)',
 				mimeType: 'text/x-python',
 			},
-			{ sessionId: 'sess-1' },
+			{ sessionId: 'sess-1', baseUrl: 'https://ci.example.com' },
 		);
 		expect(mockedLog).toHaveBeenCalledWith(
 			ctx,
@@ -118,6 +129,62 @@ describe('CodeInterpreter endpoints', () => {
 			'completed',
 		);
 		expect(result).toEqual(response);
+	});
+
+	it('listFiles calls GET /files with session_id query', async () => {
+		const response = {
+			files: [{ id: 'file-1', name: 'test.py', size: 8 }],
+		};
+		mockedRequest.mockResolvedValueOnce(response);
+
+		const input = { session_id: 'sess-1' };
+		const result = await listFiles(ctx, input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'files?session_id=sess-1',
+			'test-api-key',
+			{ method: 'GET', baseUrl: 'https://ci.example.com' },
+		);
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'codeinterpreter.file.list',
+			input,
+			'completed',
+		);
+		expect(result).toEqual(response);
+	});
+
+	it('downloadFile uses the byte-preserving download client', async () => {
+		mockedDownload.mockResolvedValueOnce({
+			base64: 'cHJpbnQoMSk=',
+			contentType: 'text/x-python',
+			filename: 'test.py',
+		});
+
+		const input = { file_id: 'file-1', session_id: 'sess-1' };
+		const result = await downloadFile(ctx, input);
+
+		expect(mockedDownload).toHaveBeenCalledWith(
+			'files/file-1?session_id=sess-1',
+			'test-api-key',
+			{ baseUrl: 'https://ci.example.com' },
+		);
+		expect(mockedLog).toHaveBeenCalledWith(
+			ctx,
+			'codeinterpreter.file.download',
+			{ file_id: 'file-1' },
+			'completed',
+		);
+		expect(result).toEqual({
+			file_id: 'file-1',
+			filename: 'test.py',
+			content: 'cHJpbnQoMSk=',
+			mime_type: 'text/x-python',
+		});
+		expect(
+			CodeInterpreterEndpointOutputSchemas.downloadFile.safeParse(result)
+				.success,
+		).toBe(true);
 	});
 
 	it('propagates errors from the underlying request', async () => {

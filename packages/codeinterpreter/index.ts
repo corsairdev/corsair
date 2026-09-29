@@ -44,6 +44,7 @@ import {
 export type CodeInterpreterPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	baseUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalCodeInterpreterPlugin['hooks'];
 	webhookHooks?: InternalCodeInterpreterPlugin['webhookHooks'];

@@ -12,7 +12,10 @@ export const listFiles: CodeInterpreterEndpoints['listFiles'] = async (
 		: '';
 	const response = await makeCodeInterpreterRequest<
 		CodeInterpreterEndpointOutputs['listFiles']
-	>(`files${query}`, ctx.key, { method: 'GET' });
+	>(`files${query}`, ctx.key, {
+		method: 'GET',
+		baseUrl: ctx.options.baseUrl,
+	});
 
 	await logEventFromContext(
 		ctx,

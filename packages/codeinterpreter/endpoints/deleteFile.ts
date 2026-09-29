@@ -15,6 +15,7 @@ export const deleteFile: CodeInterpreterEndpoints['deleteFile'] = async (
 			file_id: input.file_id,
 			session_id: input.session_id,
 		},
+		baseUrl: ctx.options.baseUrl,
 	});
 
 	await logEventFromContext(

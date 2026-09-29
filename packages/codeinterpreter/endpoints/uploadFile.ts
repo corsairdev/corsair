@@ -18,6 +18,7 @@ export const uploadFile: CodeInterpreterEndpoints['uploadFile'] = async (
 		},
 		{
 			sessionId: input.session_id,
+			baseUrl: ctx.options.baseUrl,
 		},
 	);
 
