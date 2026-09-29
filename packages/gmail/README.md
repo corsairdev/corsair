@@ -24,14 +24,12 @@ pnpm add @corsair-dev/gmail
 | `labels.list` | `gmail.api.labels.list` | `read` | List all labels in the mailbox |
 | `labels.update` | `gmail.api.labels.update` | `write` | Update an existing label |
 | `messages.batchModify` | `gmail.api.messages.batchModify` | `write` | Add or remove labels from multiple messages in bulk |
-| `messages.delete` | `gmail.api.messages.delete` | `destructive` | Permanently delete a message [DESTRUCTIVE · IRREVERSIBLE] |
 | `messages.get` | `gmail.api.messages.get` | `read` | Get a specific message |
 | `messages.list` | `gmail.api.messages.list` | `read` | List messages in a mailbox |
 | `messages.modify` | `gmail.api.messages.modify` | `write` | Add or remove labels from a message |
 | `messages.send` | `gmail.api.messages.send` | `write` | Send an email to one or more recipients |
 | `messages.trash` | `gmail.api.messages.trash` | `write` | Move a message to the trash |
 | `messages.untrash` | `gmail.api.messages.untrash` | `write` | Restore a message from the trash |
-| `threads.delete` | `gmail.api.threads.delete` | `destructive` | Permanently delete a thread [DESTRUCTIVE · IRREVERSIBLE] |
 | `threads.get` | `gmail.api.threads.get` | `read` | Get a specific thread |
 | `threads.list` | `gmail.api.threads.list` | `read` | List threads in the mailbox |
 | `threads.modify` | `gmail.api.threads.modify` | `write` | Add or remove labels from a thread |
