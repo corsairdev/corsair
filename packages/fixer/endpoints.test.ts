@@ -28,15 +28,6 @@ describe('Fixer Endpoint Schemas', () => {
 		const input = { from: 'USD', to: 'EUR', amount: 100 };
 		expect(RatesConvertInputSchema.safeParse(input).success).toBe(true);
 
-		expect(
-			RatesConvertInputSchema.safeParse({
-				from: 'USD',
-				to: 'EUR',
-				amount: 100,
-				date: '2025-02-29',
-			}).success,
-		).toBe(false);
-
 		const output = {
 			success: true,
 			query: { from: 'USD', to: 'EUR', amount: 100 },

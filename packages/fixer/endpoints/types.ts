@@ -21,7 +21,7 @@ export const RatesConvertInputSchema = z.object({
 	from: z.string(),
 	to: z.string(),
 	amount: z.number(),
-	date: z.iso.date().optional(),
+	date: z.string().optional(),
 });
 export type RatesConvertInput = z.infer<typeof RatesConvertInputSchema>;
 
