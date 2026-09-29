@@ -1,6 +1,6 @@
-import { executionCompleted } from './executionCompleted';
-import { executionFailed } from './executionFailed';
-import { fileReady } from './fileReady';
+import { executionCompleted } from './execution-completed';
+import { executionFailed } from './execution-failed';
+import { fileReady } from './file-ready';
 
 export const ExecutionWebhooks = {
 	completed: executionCompleted,
