@@ -1,5 +1,7 @@
 import * as ApiKeys from './api-keys';
 import * as Invites from './invites';
+import * as Messages from './messages';
+import * as Models from './models';
 import * as Organization from './organization';
 import * as Users from './users';
 import * as WorkspaceMembers from './workspace-members';
@@ -45,4 +47,7 @@ export const ApiKeysEndpoints = {
 	updateApiKey: ApiKeys.updateApiKey,
 };
 
-export * from './types';
+export const MessagesEndpoints = Messages.MessagesEndpoints;
+export const ModelsEndpoints = Models.ModelsEndpoints;
+
+export * from './types/index';
