@@ -1,9 +1,15 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-// Daffy does not provide an idempotency key for gift creation. A retry after a
-// rate-limit response could create a duplicate gift if the original request
-// was applied before the response reached Corsair.
+/**
+ * Operations that persist server-side state without an idempotency key.
+ *
+ * Corsair replays the whole endpoint when a handler requests a retry, so a 429
+ * raised after Daffy already created the gift would duplicate it on the next
+ * attempt. `makeDaffyRequest` disables transport retries for POSTs; this set
+ * ensures the plugin error policy also returns `maxRetries: 0` for gift
+ * creation.
+ */
 export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
 	'gifts.create',
 ]);
@@ -21,6 +27,9 @@ export const errorHandlers = {
 		},
 		handler: async (error: Error, context: ErrorContext) => {
 			if (isNonIdempotent(context.operation)) {
+				console.warn(
+					`[DAFFY:${context.operation}] Rate limited on a non-idempotent write - not retried because the write may already have been applied: ${error.message}`,
+				);
 				return { maxRetries: 0 };
 			}
 			let retryAfterMs: number | undefined;

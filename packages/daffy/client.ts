@@ -45,8 +45,9 @@ export async function makeDaffyRequest<T>(
 		mediaType: method === 'POST' ? 'application/json' : undefined,
 		query,
 	};
-	// Gift creation is a non-idempotent POST. Disable transport retries so a
-	// 429 is surfaced once; error-handlers.ts decides whether to replay reads.
+	// No transport retries on writes: a 429 POST is surfaced immediately so the
+	// plugin error policy (maxRetries: 0 for gifts.create) is the only policy
+	// that ever sees it. Reads keep the default retries — they are idempotent.
 	return await request<T>(config, requestOptions, {
 		rateLimitConfig:
 			method === 'POST'
