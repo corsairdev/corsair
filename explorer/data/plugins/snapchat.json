@@ -1,0 +1,3134 @@
+{
+  "id": "snapchat",
+  "displayName": "Snapchat",
+  "description": "Snapchat Marketing API and Ads Manager integration for creating and managing ad campaigns, analyzing performance metrics, and accessing business accounts.",
+  "npmPackageName": "@corsair-dev/snapchat",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 139,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "snapchat.api.actions.addSegmentUsers",
+      "shortPath": "actions.addSegmentUsers",
+      "description": "Add Segment Users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "string[] | string",
+            "description": "User identifiers (SHA-256 hashed email, phone, or mobile ad ID)"
+          },
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for segment_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.copyMedia",
+      "shortPath": "actions.copyMedia",
+      "description": "Copy Media",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_copy",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter media_copy"
+          },
+          {
+            "key": "destination_ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for destination_ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAccountRole",
+      "shortPath": "actions.createAccountRole",
+      "description": "Create Account Role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter roles"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdAccount",
+      "shortPath": "actions.createAdAccount",
+      "description": "Create Ad Account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adaccounts",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter adaccounts"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsAudienceSizeV2",
+      "shortPath": "actions.createAdaccountsAudienceSizeV2",
+      "description": "Create Adaccounts Audience Size V2",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targeting",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for targeting"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsCreativeElements",
+      "shortPath": "actions.createAdaccountsCreativeElements",
+      "description": "Create Adaccounts Creative Elements",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          },
+          {
+            "key": "creative_elements",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter creative_elements"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsDynamicTemplates",
+      "shortPath": "actions.createAdaccountsDynamicTemplates",
+      "description": "Create Adaccounts Dynamic Templates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adaccount_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for adaccount_id"
+          },
+          {
+            "key": "dynamic_templates",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter dynamic_templates"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsEventDetails",
+      "shortPath": "actions.createAdaccountsEventDetails",
+      "description": "Create Adaccounts Event Details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          },
+          {
+            "key": "event_details",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter event_details"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsInteractionZones",
+      "shortPath": "actions.createAdaccountsInteractionZones",
+      "description": "Create Adaccounts Interaction Zones",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          },
+          {
+            "key": "interaction_zones",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter interaction_zones"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsOfferDisclaimers",
+      "shortPath": "actions.createAdaccountsOfferDisclaimers",
+      "description": "Create Adaccounts Offer Disclaimers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          },
+          {
+            "key": "offer_disclaimers",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter offer_disclaimers"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsReservedForecasting",
+      "shortPath": "actions.createAdaccountsReservedForecasting",
+      "description": "Create Adaccounts Reserved Forecasting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          },
+          {
+            "key": "end_time",
+            "optional": false,
+            "type": "string | Date",
+            "description": "Timestamp for end_time"
+          },
+          {
+            "key": "targeting",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for targeting"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string | Date",
+            "description": "Timestamp for start_time"
+          },
+          {
+            "key": "placement_v2",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for placement_v2"
+          },
+          {
+            "key": "optimization_goal",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter optimization_goal"
+          },
+          {
+            "key": "delivery_constraint",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for delivery_constraint"
+          },
+          {
+            "key": "cap_and_exclusion_config",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for cap_and_exclusion_config"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdaccountsTargetingInsights",
+      "shortPath": "actions.createAdaccountsTargetingInsights",
+      "description": "Create Adaccounts Targeting Insights",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          },
+          {
+            "key": "base_spec",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for base_spec"
+          },
+          {
+            "key": "targeting_spec",
+            "optional": false,
+            "type": "{} | string",
+            "description": "Targeting or delivery specification for targeting_spec"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createAdSquad",
+      "shortPath": "actions.createAdSquad",
+      "description": "Create Ad Squad",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adsquads",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter adsquads"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createBillingCenter",
+      "shortPath": "actions.createBillingCenter",
+      "description": "Create Billing Center",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billingcenters",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter billingcenters"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCampaign",
+      "shortPath": "actions.createCampaign",
+      "description": "Create Campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Value for name"
+          },
+          {
+            "key": "start_time",
+            "optional": false,
+            "type": "string | Date",
+            "description": "Timestamp for start_time"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCatalogRole",
+      "shortPath": "actions.createCatalogRole",
+      "description": "Create Catalog Role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter roles"
+          },
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCatalogsFacets",
+      "shortPath": "actions.createCatalogsFacets",
+      "description": "Create Catalogs Facets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "facets",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter facets"
+          },
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCatalogsFlightsSearch",
+      "shortPath": "actions.createCatalogsFlightsSearch",
+      "description": "Create Catalogs Flights Search",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCatalogsProductFeeds",
+      "shortPath": "actions.createCatalogsProductFeeds",
+      "description": "Create Catalogs Product Feeds",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Value for name"
+          },
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          },
+          {
+            "key": "default_currency",
+            "optional": false,
+            "type": "string",
+            "description": "Value for default_currency"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createCatalogsProductSets",
+      "shortPath": "actions.createCatalogsProductSets",
+      "description": "Create Catalogs Product Sets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Value for name"
+          },
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createMedia",
+      "shortPath": "actions.createMedia",
+      "description": "Create Media",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter media"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createOrganizationsCatalogs",
+      "shortPath": "actions.createOrganizationsCatalogs",
+      "description": "Create Organizations Catalogs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalogs",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter catalogs"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createOrgRole",
+      "shortPath": "actions.createOrgRole",
+      "description": "Create Org Role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter roles"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.createSegment",
+      "shortPath": "actions.createSegment",
+      "description": "Create Segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segments",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter segments"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteAdaccountsOfferDisclaimers",
+      "shortPath": "actions.deleteAdaccountsOfferDisclaimers",
+      "description": "Delete Adaccounts Offer Disclaimers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          },
+          {
+            "key": "offer_disclaimer_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for offer_disclaimer_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteAdsquads",
+      "shortPath": "actions.deleteAdsquads",
+      "description": "Delete Adsquads",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteAllSegmentUsers",
+      "shortPath": "actions.deleteAllSegmentUsers",
+      "description": "Delete All Segment Users",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for segment_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteCampaign",
+      "shortPath": "actions.deleteCampaign",
+      "description": "Delete Campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteCatalogs",
+      "shortPath": "actions.deleteCatalogs",
+      "description": "Delete Catalogs",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteEventDetails",
+      "shortPath": "actions.deleteEventDetails",
+      "description": "Delete Event Details",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_details_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for event_details_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteMember",
+      "shortPath": "actions.deleteMember",
+      "description": "Delete Member",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for member_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteProductFeeds",
+      "shortPath": "actions.deleteProductFeeds",
+      "description": "Delete Product Feeds",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_feed_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for product_feed_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteRole",
+      "shortPath": "actions.deleteRole",
+      "description": "Delete Role",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for role_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteSegment",
+      "shortPath": "actions.deleteSegment",
+      "description": "Delete Segment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for segment_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.deleteSegmentUsers",
+      "shortPath": "actions.deleteSegmentUsers",
+      "description": "Delete Segment Users",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "string[] | string",
+            "description": "User identifiers (SHA-256 hashed email, phone, or mobile ad ID)"
+          },
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for segment_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdAccount",
+      "shortPath": "actions.getAdAccount",
+      "description": "Get Ad Account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsAdsquads",
+      "shortPath": "actions.getAdaccountsAdsquads",
+      "description": "Get Adaccounts Adsquads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsAdSquadUiRenderData",
+      "shortPath": "actions.getAdaccountsAdSquadUiRenderData",
+      "description": "Get Adaccounts Ad Squad Ui Render Data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsDynamicTemplates",
+      "shortPath": "actions.getAdaccountsDynamicTemplates",
+      "description": "Get Adaccounts Dynamic Templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsEventDetails",
+      "shortPath": "actions.getAdaccountsEventDetails",
+      "description": "Get Adaccounts Event Details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsInteractionZones",
+      "shortPath": "actions.getAdaccountsInteractionZones",
+      "description": "Get Adaccounts Interaction Zones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdAccountsLeadGenerationForms",
+      "shortPath": "actions.getAdAccountsLeadGenerationForms",
+      "description": "Get Ad Accounts Lead Generation Forms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsLeadsReport",
+      "shortPath": "actions.getAdaccountsLeadsReport",
+      "description": "Get Adaccounts Leads Report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          },
+          {
+            "key": "report_run_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for report_run_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsMobileApps",
+      "shortPath": "actions.getAdaccountsMobileApps",
+      "description": "Get Adaccounts Mobile Apps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsOfferDisclaimers",
+      "shortPath": "actions.getAdaccountsOfferDisclaimers",
+      "description": "Get Adaccounts Offer Disclaimers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsSpendGuidance",
+      "shortPath": "actions.getAdaccountsSpendGuidance",
+      "description": "Get Adaccounts Spend Guidance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdAccountsStats",
+      "shortPath": "actions.getAdAccountsStats",
+      "description": "Get Ad Accounts Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdaccountsStatsReport",
+      "shortPath": "actions.getAdaccountsStatsReport",
+      "description": "Get Adaccounts Stats Report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          },
+          {
+            "key": "report_run_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for report_run_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdSquad",
+      "shortPath": "actions.getAdSquad",
+      "description": "Get Ad Squad",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdSquadRestrictions",
+      "shortPath": "actions.getAdSquadRestrictions",
+      "description": "Get Ad Squad Restrictions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdsquadsAudienceSizeV2",
+      "shortPath": "actions.getAdsquadsAudienceSizeV2",
+      "description": "Get Adsquads Audience Size V2",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdsquadsStatsReport",
+      "shortPath": "actions.getAdsquadsStatsReport",
+      "description": "Get Adsquads Stats Report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          },
+          {
+            "key": "report_run_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for report_run_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdSquadStats",
+      "shortPath": "actions.getAdSquadStats",
+      "description": "Get Ad Squad Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdSquadTargeting",
+      "shortPath": "actions.getAdSquadTargeting",
+      "description": "Get Ad Squad Targeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAdStats",
+      "shortPath": "actions.getAdStats",
+      "description": "Get Ad Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getAuthenticatedUser",
+      "shortPath": "actions.getAuthenticatedUser",
+      "description": "Get Authenticated User",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getBillingCenter",
+      "shortPath": "actions.getBillingCenter",
+      "description": "Get Billing Center",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billing_center_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for billing_center_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCampaign",
+      "shortPath": "actions.getCampaign",
+      "description": "Get Campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCampaignChangelog",
+      "shortPath": "actions.getCampaignChangelog",
+      "description": "Get Campaign Changelog",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCampaignsByIds",
+      "shortPath": "actions.getCampaignsByIds",
+      "description": "Get Campaigns By Ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_ids",
+            "optional": false,
+            "type": "string[] | string",
+            "description": "List of entity identifiers or single identifier"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCampaignStats",
+      "shortPath": "actions.getCampaignStats",
+      "description": "Get Campaign Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCatalogs",
+      "shortPath": "actions.getCatalogs",
+      "description": "Get Catalogs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getCatalogsProductSets",
+      "shortPath": "actions.getCatalogsProductSets",
+      "description": "Get Catalogs Product Sets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getDynamicTemplate",
+      "shortPath": "actions.getDynamicTemplate",
+      "description": "Get Dynamic Template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getDynamicTemplatesExternalChangelogs",
+      "shortPath": "actions.getDynamicTemplatesExternalChangelogs",
+      "description": "Get Dynamic Templates External Changelogs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dynamic_template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for dynamic_template_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getEventDetails",
+      "shortPath": "actions.getEventDetails",
+      "description": "Get Event Details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_details_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for event_details_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getFundingSource",
+      "shortPath": "actions.getFundingSource",
+      "description": "Get Funding Source",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "funding_source_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for funding_source_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getInteractionZone",
+      "shortPath": "actions.getInteractionZone",
+      "description": "Get Interaction Zone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "interaction_zone_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for interaction_zone_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getInvoice",
+      "shortPath": "actions.getInvoice",
+      "description": "Get Invoice",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for invoice_id"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getMedia",
+      "shortPath": "actions.getMedia",
+      "description": "Get Media",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for media_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getMediaByIds",
+      "shortPath": "actions.getMediaByIds",
+      "description": "Get Media By Ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_ids",
+            "optional": false,
+            "type": "string[] | string",
+            "description": "List of entity identifiers or single identifier"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getMediaStats",
+      "shortPath": "actions.getMediaStats",
+      "description": "Get Media Stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for media_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getMember",
+      "shortPath": "actions.getMember",
+      "description": "Get Member",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for member_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getOrganization",
+      "shortPath": "actions.getOrganization",
+      "description": "Get Organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getOrganizationsCatalogs",
+      "shortPath": "actions.getOrganizationsCatalogs",
+      "description": "Get Organizations Catalogs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getOrganizationsMobileApps",
+      "shortPath": "actions.getOrganizationsMobileApps",
+      "description": "Get Organizations Mobile Apps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getOrganizationsPublicProfiles",
+      "shortPath": "actions.getOrganizationsPublicProfiles",
+      "description": "Get Organizations Public Profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getPixels",
+      "shortPath": "actions.getPixels",
+      "description": "Get Pixels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getProductFeeds",
+      "shortPath": "actions.getProductFeeds",
+      "description": "Get Product Feeds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_feed_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for product_feed_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getProductFeedsFeedUploads",
+      "shortPath": "actions.getProductFeedsFeedUploads",
+      "description": "Get Product Feeds Feed Uploads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_feed_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for product_feed_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getProductSets",
+      "shortPath": "actions.getProductSets",
+      "description": "Get Product Sets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getSegment",
+      "shortPath": "actions.getSegment",
+      "description": "Get Segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for segment_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingCarriers",
+      "shortPath": "actions.getTargetingCarriers",
+      "description": "Get Targeting Carriers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingConnectionTypes",
+      "shortPath": "actions.getTargetingConnectionTypes",
+      "description": "Get Targeting Connection Types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDemographicsAdvancedDemographics",
+      "shortPath": "actions.getTargetingDemographicsAdvancedDemographics",
+      "description": "Get Targeting Demographics Advanced Demographics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDemographicsAgeGroup",
+      "shortPath": "actions.getTargetingDemographicsAgeGroup",
+      "description": "Get Targeting Demographics Age Group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDemographicsGender",
+      "shortPath": "actions.getTargetingDemographicsGender",
+      "description": "Get Targeting Demographics Gender",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDemographicsLanguages",
+      "shortPath": "actions.getTargetingDemographicsLanguages",
+      "description": "Get Targeting Demographics Languages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDeviceIosOsVersion",
+      "shortPath": "actions.getTargetingDeviceIosOsVersion",
+      "description": "Get Targeting Device Ios Os Version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingDeviceMarketingNames",
+      "shortPath": "actions.getTargetingDeviceMarketingNames",
+      "description": "Get Targeting Device Marketing Names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingGeoPostalCode",
+      "shortPath": "actions.getTargetingGeoPostalCode",
+      "description": "Get Targeting Geo Postal Code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingGeoRegion",
+      "shortPath": "actions.getTargetingGeoRegion",
+      "description": "Get Targeting Geo Region",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingGeoUsPostalCode",
+      "shortPath": "actions.getTargetingGeoUsPostalCode",
+      "description": "Get Targeting Geo Us Postal Code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingGeoUsRegion",
+      "shortPath": "actions.getTargetingGeoUsRegion",
+      "description": "Get Targeting Geo Us Region",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingInterestsDlxc",
+      "shortPath": "actions.getTargetingInterestsDlxc",
+      "description": "Get Targeting Interests Dlxc",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingInterestsDlxp",
+      "shortPath": "actions.getTargetingInterestsDlxp",
+      "description": "Get Targeting Interests Dlxp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingInterestsDlxs",
+      "shortPath": "actions.getTargetingInterestsDlxs",
+      "description": "Get Targeting Interests Dlxs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingInterestsNln",
+      "shortPath": "actions.getTargetingInterestsNln",
+      "description": "Get Targeting Interests Nln",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingInterestsPlc",
+      "shortPath": "actions.getTargetingInterestsPlc",
+      "description": "Get Targeting Interests Plc",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingLocationCategoriesLoi",
+      "shortPath": "actions.getTargetingLocationCategoriesLoi",
+      "description": "Get Targeting Location Categories Loi",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingMetros",
+      "shortPath": "actions.getTargetingMetros",
+      "description": "Get Targeting Metros",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingOsTypes",
+      "shortPath": "actions.getTargetingOsTypes",
+      "description": "Get Targeting Os Types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingOsVersions",
+      "shortPath": "actions.getTargetingOsVersions",
+      "description": "Get Targeting Os Versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingV1InterestsScLs",
+      "shortPath": "actions.getTargetingV1InterestsScLs",
+      "description": "Get Targeting V1 Interests Sc Ls",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingV1InterestsShp",
+      "shortPath": "actions.getTargetingV1InterestsShp",
+      "description": "Get Targeting V1 Interests Shp",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country_code",
+            "optional": false,
+            "type": "string",
+            "description": "Value for country_code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingV1InterestsVac",
+      "shortPath": "actions.getTargetingV1InterestsVac",
+      "description": "Get Targeting V1 Interests Vac",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.getTargetingV1Options",
+      "shortPath": "actions.getTargetingV1Options",
+      "description": "Get Targeting V1 Options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAccountRoles",
+      "shortPath": "actions.listAccountRoles",
+      "description": "List Account Roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAdAccounts",
+      "shortPath": "actions.listAdAccounts",
+      "description": "List Ad Accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAdsByAccount",
+      "shortPath": "actions.listAdsByAccount",
+      "description": "List Ads By Account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAdsByAdSquad",
+      "shortPath": "actions.listAdsByAdSquad",
+      "description": "List Ads By Ad Squad",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_squad_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_squad_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAdsByCampaign",
+      "shortPath": "actions.listAdsByCampaign",
+      "description": "List Ads By Campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listAdSquads",
+      "shortPath": "actions.listAdSquads",
+      "description": "List Ad Squads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listBillingCenters",
+      "shortPath": "actions.listBillingCenters",
+      "description": "List Billing Centers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listCampaigns",
+      "shortPath": "actions.listCampaigns",
+      "description": "List Campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listCatalogRoles",
+      "shortPath": "actions.listCatalogRoles",
+      "description": "List Catalog Roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listCreatives",
+      "shortPath": "actions.listCreatives",
+      "description": "List Creatives",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listFundingSources",
+      "shortPath": "actions.listFundingSources",
+      "description": "List Funding Sources",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listInvoices",
+      "shortPath": "actions.listInvoices",
+      "description": "List Invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listMedia",
+      "shortPath": "actions.listMedia",
+      "description": "List Media",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listMemberRoles",
+      "shortPath": "actions.listMemberRoles",
+      "description": "List Member Roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for member_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listMembers",
+      "shortPath": "actions.listMembers",
+      "description": "List Members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listOrganizations",
+      "shortPath": "actions.listOrganizations",
+      "description": "List Organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listOrgPixels",
+      "shortPath": "actions.listOrgPixels",
+      "description": "List Org Pixels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listOrgRoles",
+      "shortPath": "actions.listOrgRoles",
+      "description": "List Org Roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listPhoneNumbers",
+      "shortPath": "actions.listPhoneNumbers",
+      "description": "List Phone Numbers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listSegments",
+      "shortPath": "actions.listSegments",
+      "description": "List Segments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listSponsoredContent",
+      "shortPath": "actions.listSponsoredContent",
+      "description": "List Sponsored Content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.listTransactions",
+      "shortPath": "actions.listTransactions",
+      "description": "List Transactions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.searchAdsLibrarySponsoredContent",
+      "shortPath": "actions.searchAdsLibrarySponsoredContent",
+      "description": "Search Ads Library Sponsored Content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "creator_name",
+            "optional": false,
+            "type": "string",
+            "description": "Value for creator_name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.searchCatalogProducts",
+      "shortPath": "actions.searchCatalogProducts",
+      "description": "Search Catalog Products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.searchCatalogsHotels",
+      "shortPath": "actions.searchCatalogsHotels",
+      "description": "Search Catalogs Hotels",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "catalog_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for catalog_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.updateAdAccount",
+      "shortPath": "actions.updateAdAccount",
+      "description": "Update Ad Account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adaccounts",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter adaccounts"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.updateAdSquad",
+      "shortPath": "actions.updateAdSquad",
+      "description": "Update Ad Squad",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "adsquads",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter adsquads"
+          },
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.updateBillingCenter",
+      "shortPath": "actions.updateBillingCenter",
+      "description": "Update Billing Center",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billingcenters",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter billingcenters"
+          },
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for organization_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.updateCampaign",
+      "shortPath": "actions.updateCampaign",
+      "description": "Update Campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for campaign_id"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.updateSegment",
+      "shortPath": "actions.updateSegment",
+      "description": "Update Segment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segments",
+            "optional": false,
+            "type": "string | {} | any[]",
+            "description": "Parameter segments"
+          },
+          {
+            "key": "ad_account_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for ad_account_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.uploadMediaMultipart",
+      "shortPath": "actions.uploadMediaMultipart",
+      "description": "Upload Media Multipart",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for media_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "snapchat.api.actions.validateConversionEvent",
+      "shortPath": "actions.validateConversionEvent",
+      "description": "Validate Conversion Event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{}[] | {} | string",
+            "description": "Conversion events array, object, or string to validate"
+          },
+          {
+            "key": "pixel_id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier for pixel_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
