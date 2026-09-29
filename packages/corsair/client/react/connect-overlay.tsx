@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useState } from 'react';
+import { formatProviderDisplayName } from '../../core/constants';
 import type {
 	ConnectionStatus,
 	PluginConnectionState,
@@ -9,7 +10,7 @@ import type {
 import type { CorsairManagementClient } from '../types';
 import type { ConnectState } from './connect-controller';
 import { CORSAIR_MARK } from './corsair-mark';
-import { PluginIcon, pluginToDomain, titleCasePlugin } from './plugin-icon';
+import { PluginIcon, pluginToDomain } from './plugin-icon';
 
 export type ConnectTheme = 'light' | 'dark' | 'auto';
 
@@ -179,7 +180,7 @@ function ConnectionsRoster({
 			{open ? (
 				<ul style={{ listStyle: 'none', margin: '4px 0 0', padding: 0 }}>
 					{others.map(([id, state]) => {
-						const name = titleCasePlugin(id);
+						const name = formatProviderDisplayName(id);
 						const connected = isConnected(state);
 						return (
 							<li
@@ -194,6 +195,7 @@ function ConnectionsRoster({
 							>
 								<PluginIcon
 									domain={pluginToDomain(id)}
+									pluginId={id}
 									label={name}
 									size={20}
 								/>
@@ -272,7 +274,7 @@ export function ConnectOverlay({
 	const primaryHover = dark ? '#ffffff' : '#000';
 
 	const pluginId = state.plugin ?? '';
-	const name = pluginId ? titleCasePlugin(pluginId) : 'your account';
+	const name = pluginId ? formatProviderDisplayName(pluginId) : 'your account';
 	const domain = pluginToDomain(pluginId);
 	const iconShadow = dark
 		? 'drop-shadow(0 8px 18px rgba(0,0,0,0.55))'
@@ -387,6 +389,7 @@ export function ConnectOverlay({
 									<span style={{ filter: iconShadow }}>
 										<PluginIcon
 											domain={domain}
+											pluginId={pluginId}
 											label={name}
 											size={52}
 											radius={14}

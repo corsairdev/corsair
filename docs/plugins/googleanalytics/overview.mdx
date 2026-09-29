@@ -1,0 +1,134 @@
+---
+title: Overview
+description: "Google Analytics 4 plugin for Corsair"
+---
+
+Use **Google Analytics** through Corsair: one client, typed API calls, local DB sync.
+
+GA4 Admin API, Data API, and Measurement Protocol. Listing measurement
+protocol secrets returns stream api_secret values and counts as a write.
+
+**What you get:**
+
+- 69 typed API operations
+- 2 synced entities (`accounts`, `properties`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googleanalytics
+```
+```bash yarn
+yarn add corsair @corsair-dev/googleanalytics
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googleanalytics
+```
+```bash bun
+bun add corsair @corsair-dev/googleanalytics
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googleanalytics } from '@corsair-dev/googleanalytics';
+
+export const corsair = createCorsair({
+	plugins: [
+		googleanalytics(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Analytics OAuth app.
+
+```ts
+googleanalytics()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googleanalytics',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`accounts.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleanalytics.api.accounts.get({});
+```
+
+
+**`accounts.provisionAccountTicket`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googleanalytics.api.accounts.provisionAccountTicket({});
+```
+
+
+See the full list on the [API](/plugins/googleanalytics/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.googleanalytics.db.<entity>.search()` and `.list()`: `accounts`, `properties`.
+
+See [Database](/plugins/googleanalytics/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googleanalytics/api">
+    Every `googleanalytics.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/googleanalytics/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

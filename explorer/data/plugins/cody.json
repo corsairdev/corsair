@@ -1,0 +1,1038 @@
+{
+  "id": "cody",
+  "displayName": "Cody",
+  "description": "Cody plugin for Corsair",
+  "npmPackageName": "@corsair-dev/cody",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "cody.api.bots.list",
+      "shortPath": "bots.list",
+      "description": "Get all bots with optional keyword filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter bots by name"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter bots by name"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, model?: string, created_at?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.conversations.create",
+      "shortPath": "conversations.create",
+      "description": "Create a new conversation with a specified bot and optional focus mode documents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the conversation"
+          },
+          {
+            "key": "bot_id",
+            "optional": false,
+            "type": "string",
+            "description": "Bot ID to create the conversation with"
+          },
+          {
+            "key": "document_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional document IDs to limit bot focus to specific knowledge"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, bot_id: string, created_at?: number, document_ids?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.conversations.delete",
+      "shortPath": "conversations.delete",
+      "description": "Delete a conversation by its ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the conversation to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Fetch a conversation by its ID from Cody AI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the conversation"
+          },
+          {
+            "key": "includes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra attributes to include (e.g. document_ids)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, bot_id: string, created_at?: number, document_ids?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "Get all conversations with optional filtering by bot, keyword, or includes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter conversations by name"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter conversations by name"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter conversations by bot ID"
+          },
+          {
+            "key": "includes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra attributes to include (e.g. document_ids)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, bot_id: string, created_at?: number, document_ids?: string[] }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Update a conversation by its ID including name, bot_id, and document_ids",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the conversation"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Updated name for the conversation"
+          },
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string",
+            "description": "Updated bot ID for the conversation"
+          },
+          {
+            "key": "document_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Updated document IDs for focus mode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, bot_id: string, created_at?: number, document_ids?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.create",
+      "shortPath": "documents.create",
+      "description": "Create a new document with text or HTML content in Cody AI",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the document"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text or HTML content of the document (up to 768 KB)"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "text/plain | text/html",
+            "description": "MIME content type of the content body"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "Folder ID where the document should be stored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string, content_url?: string, folder_id?: string | null, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.createFromFile",
+      "shortPath": "documents.createFromFile",
+      "description": "Create a document by uploading a file (up to 100 MB)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "S3 storage key obtained from uploads.getSignedUrl"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "Folder ID where the document should be stored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string, content_url?: string, folder_id?: string | null, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.createFromWebpage",
+      "shortPath": "documents.createFromWebpage",
+      "description": "Create a document from a publicly accessible webpage URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly accessible webpage URL to import"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "Folder ID where the document should be stored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string, content_url?: string, folder_id?: string | null, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.delete",
+      "shortPath": "documents.delete",
+      "description": "Delete a document by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the document to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Retrieve a specific document by its identifier from Cody AI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the document"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string, content_url?: string, folder_id?: string | null, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "Retrieve all documents from Cody AI account with optional filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter documents by name"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter documents by name"
+          },
+          {
+            "key": "folder_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter documents by folder ID"
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter documents by conversation ID"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string, content_url?: string, folder_id?: string | null, created_at?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a new folder in Cody AI for organizing content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the folder"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Retrieve a specific folder by its identifier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the folder"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "Retrieve all folders with optional keyword filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter folders by name"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword to filter folders by name"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created_at?: number }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Update a folder by its ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the folder to update"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New name for the folder"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, created_at?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Fetch a specific message by its ID from Cody AI",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the message"
+          },
+          {
+            "key": "includes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra message attributes to include (sources, usage)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "Retrieve a paginated list of messages from Cody, optionally filtered by conversation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation ID to retrieve messages for"
+          },
+          {
+            "key": "includes",
+            "optional": true,
+            "type": "string",
+            "description": "Extra message attributes to include (sources, usage)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number for pagination"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ pagination?: { total?: number, count?: number, per_page?: number, current_page?: number, total_pages?: number, links?: {} } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to Cody AI and receive an AI-generated response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation ID to send the message in"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text content of the message (up to 2000 characters)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, content: string, conversation_id: string, machine?: boolean, failed_responding?: boolean, flagged?: boolean, created_at?: number, sources?: { data?: {}[] }, usage?: { tokens?: number, credits?: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.messages.sendForStream",
+      "shortPath": "messages.sendForStream",
+      "description": "Send a message to Cody AI and receive a Server-Sent Events (SSE) stream URL for the AI response",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation ID to send the streaming message in"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Text content of the message (up to 2000 characters)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ stream_url: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "cody.api.uploads.getSignedUrl",
+      "shortPath": "uploads.getSignedUrl",
+      "description": "Get an AWS S3 signed upload URL for file uploads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string",
+            "description": "Original file name with extension to upload (e.g. document.pdf)"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string",
+            "description": "MIME content type of the file (e.g. application/pdf)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ url: string, key: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "cody.db.bots.search",
+      "entityName": "bots",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "model",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cody.db.conversations.search",
+      "entityName": "conversations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bot_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cody.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "folder_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cody.db.folders.search",
+      "entityName": "folders",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cody.db.messages.search",
+      "entityName": "messages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "conversation_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "machine",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "failed_responding",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "flagged",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "cody.db.usage.search",
+      "entityName": "usage",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "credits",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}

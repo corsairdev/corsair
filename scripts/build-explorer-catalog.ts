@@ -11,7 +11,6 @@
  *
  * Run manually whenever plugins change:
  *   pnpm build:explorer-catalog
- *   pnpm build:integration-pages
  *
  * Discovery logic mirrors `scripts/generate-plugin-docs.ts` but we intentionally
  * keep a small, self-contained copy here so the two scripts can evolve
@@ -69,6 +68,8 @@ const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
 type PluginDocsFile = {
 	displayName?: string;
 	description?: string;
+	/** Brand website hostname for plugin icons (see scripts/plugin-icon-domains.ts). */
+	domain?: string;
 };
 
 type PackageJson = { name?: string; description?: string; version?: string };

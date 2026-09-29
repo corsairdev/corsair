@@ -3,6 +3,7 @@ import { request } from 'corsair/http';
 import { makeGoogleDocsRequest, makeGoogleDriveRequest } from './client';
 import {
 	DocumentsEndpoints,
+	SheetsEndpoints,
 	StructureEndpoints,
 	TablesEndpoints,
 	TextEndpoints,
@@ -63,13 +64,13 @@ function countLeaves(tree: Record<string, unknown>): number {
 }
 
 describe('Google Docs plugin shape', () => {
-	it('exposes all 35 operations with schemas and meta in lockstep', () => {
+	it('exposes all 36 operations with schemas and meta in lockstep', () => {
 		const plugin = googledocs();
 		const endpoints = plugin.endpoints as unknown as Record<string, unknown>;
 
-		expect(countLeaves(endpoints)).toBe(35);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(35);
-		expect(Object.keys(googledocsEndpointSchemas)).toHaveLength(35);
+		expect(countLeaves(endpoints)).toBe(36);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(36);
+		expect(Object.keys(googledocsEndpointSchemas)).toHaveLength(36);
 	});
 
 	it('requests the documents, drive, and sheets-read OAuth scopes', () => {
@@ -323,6 +324,27 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				method: 'GET',
 				url: '/spreadsheets/sheet1',
 				query: { fields: 'sheets(charts(chartId,spec,position))' },
+			});
+		});
+
+		it('readValues GETs spreadsheets.values with default range', async () => {
+			mockRequest.mockResolvedValue({
+				range: 'Sheet1!A:Z',
+				values: [['a', 'b']],
+			});
+			await SheetsEndpoints.readValues(ctx, {
+				spreadsheetId: 'sheet1',
+			});
+
+			const { config, options } = lastCall();
+			expect(config.BASE).toBe(SHEETS_BASE);
+			expect(options).toMatchObject({
+				method: 'GET',
+				url: '/spreadsheets/sheet1/values/Sheet1!A:Z',
+				query: {
+					valueRenderOption: 'FORMATTED_VALUE',
+					dateTimeRenderOption: 'FORMATTED_STRING',
+				},
 			});
 		});
 

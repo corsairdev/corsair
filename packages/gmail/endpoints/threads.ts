@@ -109,34 +109,6 @@ export const modify: GmailEndpoints['threadsModify'] = async (ctx, input) => {
 	return result;
 };
 
-export const deleteThread: GmailEndpoints['threadsDelete'] = async (
-	ctx,
-	input,
-) => {
-	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['threadsDelete']>(
-		`/users/${input.userId || 'me'}/threads/${input.id}`,
-		ctx,
-		{
-			method: 'DELETE',
-		},
-	);
-
-	if (ctx.db.threads) {
-		try {
-			await ctx.db.threads.deleteByEntityId(input.id);
-		} catch (error) {
-			console.warn('Failed to delete thread from database:', error);
-		}
-	}
-
-	await logEventFromContext(
-		ctx,
-		'gmail.threads.delete',
-		{ ...input },
-		'completed',
-	);
-};
-
 export const trash: GmailEndpoints['threadsTrash'] = async (ctx, input) => {
 	const result = await makeAuthenticatedGmailRequest<
 		GmailEndpointOutputs['threadsTrash']

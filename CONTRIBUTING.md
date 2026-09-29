@@ -6,6 +6,10 @@ Thanks for contributing to Corsair. We welcome improvements to the core library,
 
 Please create an issue before starting work on anything significant. This helps us avoid duplicate work, align on scope, and catch design constraints early.
 
+We recommend waiting to be assigned an issue before you start work on it. Comment on the issue with your proposed approach and wait for a maintainer to assign it to you. This helps avoid overlap with other contributors and gives us a chance to confirm that your plan for completing the issue is in line with our expectation.
+
+Issues labeled **Good First Issue** are reserved for first-time contributors to Corsair. If you have already merged a contribution to this repository, please do not claim or work on a good first issue. The Corsair team will close the issue or pull request if a non-first-time contributor picks one up.
+
 If you want to contribute a new integration, check the [OSS Integrations page](https://corsair.dev/oss) first. It shows which integrations are available, which are already claimed, and who is working on them. Claim an integration there before you start so two people do not work on the same plugin.
 
 Before opening a new issue:

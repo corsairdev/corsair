@@ -1,0 +1,99 @@
+---
+title: Go
+sidebarTitle: Go
+description: Call your hosted Corsair Cloud project from Go. Standard library only.
+icon: "/icons/go.svg"
+---
+
+`corsaircloud` is a small Go client for a hosted [Corsair Cloud](/cloud/overview)
+project. It uses only the standard library. Give it your API key, and every
+plugin your runtime has is callable over HTTP.
+
+## 1. Install
+
+```bash
+go get github.com/corsairdev/corsair/clients/go
+```
+
+The module lives in a subdirectory of the `corsair` monorepo, so `go get`
+resolves it against subdirectory-scoped tags (`clients/go/vX.Y.Z`). To pin an
+exact version:
+
+```bash
+go get github.com/corsairdev/corsair/clients/go@v0.1.0
+```
+
+## 2. Add your API key
+
+Copy your project's **API key** (`ck_cloud_…`) from the dashboard Overview page.
+It's a server secret; keep it in an environment variable, not in source. The
+client derives its own URL from the key:
+
+```go
+import (
+    "os"
+    corsaircloud "github.com/corsairdev/corsair/clients/go"
+)
+
+corsair := corsaircloud.New(os.Getenv("CORSAIR_CLOUD_KEY"))
+// dev/testing: point at a local runtime with corsaircloud.WithURL("http://localhost:…")
+```
+
+## 3. Make a call
+
+Pick a user (a "tenant"), then call any operation on any plugin your runtime has.
+`Call` returns the raw JSON result, which you unmarshal into your own type:
+
+```go
+raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", map[string]any{"query": "roadmap"})
+if err != nil {
+    return err
+}
+
+var pages NotionPages
+if err := json.Unmarshal(raw, &pages); err != nil {
+    return err
+}
+```
+
+`Tenant("acme")` runs the call as your user "acme". The arguments map onto one
+request: `POST /acme/notion/call/pages.searchPage` with body
+`{"args": {"query": "roadmap"}}`.
+
+## 4. Connect a user's account
+
+A tenant can only call Notion after they have connected their Notion account.
+Create a connect link and send the user to it:
+
+```go
+link, err := corsair.CreateConnectLink(ctx, "notion", "acme", "") // last arg: optional redirectURI
+if err != nil {
+    return err
+}
+// redirect the user to link.ConnectURL
+```
+
+After they authorize, check who is connected:
+
+```go
+status, err := corsair.ConnectionStatus(ctx, "acme")
+if err != nil {
+    return err
+}
+// status is map[string]string{"notion": "connected"}
+```
+
+## Handle errors
+
+A non-2xx response comes back as `*corsaircloud.CorsairError`:
+
+```go
+raw, err := corsair.Tenant("acme").Call(ctx, "notion", "pages.searchPage", nil)
+var cerr *corsaircloud.CorsairError
+if errors.As(err, &cerr) && cerr.Code == "not_connected" {
+    // send the user through CreateConnectLink first
+}
+```
+
+Its fields: `Code` (machine reason, branch on this), `Message`, `Reason`, and
+`ProviderStatus` (the upstream provider's status, when the error came from them).

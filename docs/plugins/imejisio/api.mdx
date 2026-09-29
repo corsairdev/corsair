@@ -1,0 +1,82 @@
+---
+title: API
+description: "API reference for Imejisio: every `imejisio.api.*` operation with input and output types."
+---
+
+Every `imejisio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Designs
+
+### render
+
+`designs.render`
+
+Render an Imejis template design into image/PDF bytes or a stored URL
+
+**Risk:** `write`
+
+```ts
+await corsair.imejisio.api.designs.render({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | The design render code from the design render URL |
+| `format` | `png \| jpeg \| webp \| pdf` | Yes | Output format. Defaults to jpeg per the Imejis OpenAPI spec |
+| `quality` | `number` | No | JPEG quality from 1 to 100 (only affects jpeg output) |
+| `delivery` | `stream \| hosted \| signed` | Yes | Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL) |
+| `expiresIn` | `number` | No | Signed delivery only: link lifetime in minutes (default 60, maximum 7 days = 10080) |
+| `overrides` | `object` | No | Key-value overrides for dynamic design template fields |
+
+<AccordionGroup>
+<Accordion title="overrides full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  delivery: stream,
+  format: png | jpeg | webp | pdf,
+  contentType: string,
+  base64: string
+} | {
+  success?: boolean,
+  delivery: hosted,
+  url: string,
+  format?: png | jpeg | webp | pdf,
+  file?: {
+  }
+} | {
+  success?: boolean,
+  delivery: signed,
+  url: string,
+  expiresAt?: string,
+  format?: png | jpeg | webp | pdf,
+  file?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

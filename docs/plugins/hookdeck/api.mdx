@@ -1,0 +1,305 @@
+---
+title: API
+description: "API reference for Hookdeck: every `hookdeck.api.*` operation with input and output types."
+---
+
+Every `hookdeck.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a new connection
+
+**Risk:** `write`
+
+```ts
+await corsair.hookdeck.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `source_id` | `string` | No | — |
+| `destination_id` | `string` | No | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  count?: number,
+  interval?: number,
+  strategy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `full_name` | `string` | Yes | — |
+| `disabled_at` | `string` | No | — |
+| `paused_at` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  count?: number,
+  interval?: number,
+  strategy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`connections.delete`
+
+Delete a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.hookdeck.api.connections.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`connections.get`
+
+Get a connection by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hookdeck.api.connections.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `full_name` | `string` | Yes | — |
+| `disabled_at` | `string` | No | — |
+| `paused_at` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  count?: number,
+  interval?: number,
+  strategy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connections.list`
+
+List all connections
+
+**Risk:** `read`
+
+```ts
+await corsair.hookdeck.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `prev` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `dir` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  id: string,
+  team_id: string,
+  name?: string | null,
+  full_name: string,
+  disabled_at?: string | null,
+  paused_at?: string | null,
+  created_at: string,
+  updated_at: string,
+  rules?: {
+    type: string,
+    count?: number,
+    interval?: number,
+    strategy?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  order_by: string,
+  dir: asc | desc,
+  limit: number,
+  next?: string,
+  prev?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`connections.update`
+
+Update an existing connection
+
+**Risk:** `write`
+
+```ts
+await corsair.hookdeck.api.connections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  count?: number,
+  interval?: number,
+  strategy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `team_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `full_name` | `string` | Yes | — |
+| `disabled_at` | `string` | No | — |
+| `paused_at` | `string` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: string,
+  count?: number,
+  interval?: number,
+  strategy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

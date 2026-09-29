@@ -104,3 +104,15 @@ export type OAuthCallbackResult = {
 	plugin: string;
 	tenantId: string;
 };
+
+export type DisconnectInput = {
+	/** Plugin whose connection to remove for the tenant. */
+	plugin: string;
+	tenantId?: string;
+};
+
+export type DisconnectResult = {
+	ok: true;
+	/** `true` if a stored connection was removed; `false` if there was none. */
+	disconnected: boolean;
+};

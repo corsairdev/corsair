@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGithubRequest } from '../client';
 import type { GithubEndpoints } from '../index';
-import type { ForksListResponse } from './types';
+import type { ForkCreateResponse, ForksListResponse } from './types';
 
 export const list: GithubEndpoints['forksList'] = async (ctx, input) => {
 	const { owner, repo, ...queryParams } = input;
@@ -60,6 +60,70 @@ export const list: GithubEndpoints['forksList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'github.forks.list',
+		{ ...input },
+		'completed',
+	);
+	return result;
+};
+
+export const create: GithubEndpoints['forksCreate'] = async (ctx, input) => {
+	const { owner, repo, defaultBranchOnly, ...rest } = input;
+	const endpoint = `/repos/${owner}/${repo}/forks`;
+	const body: Record<string, unknown> = { ...rest };
+	if (typeof defaultBranchOnly === 'boolean') {
+		body.default_branch_only = defaultBranchOnly;
+	}
+	const result = await makeGithubRequest<ForkCreateResponse>(endpoint, ctx, {
+		method: 'POST',
+		body,
+	});
+
+	if (result) {
+		try {
+			if (ctx.db.repositories && result.id) {
+				await ctx.db.repositories.upsertByEntityId(result.id.toString(), {
+					id: result.id,
+					nodeId: result.nodeId,
+					name: result.name,
+					fullName: result.fullName,
+					private: result.private,
+					htmlUrl: result.htmlUrl,
+					description: result.description,
+					fork: result.fork,
+					url: result.url,
+					defaultBranch: result.defaultBranch,
+					createdAt: result.createdAt ? new Date(result.createdAt) : null,
+					updatedAt: result.updatedAt ? new Date(result.updatedAt) : null,
+					pushedAt: result.pushedAt ? new Date(result.pushedAt) : null,
+				});
+			}
+
+			if (ctx.db.forks && result.id && result.fullName) {
+				await ctx.db.forks.upsertByEntityId(result.id.toString(), {
+					id: result.id,
+					nodeId: result.nodeId,
+					fullName: result.fullName,
+					htmlUrl: result.htmlUrl,
+					description: result.description,
+					private: result.private,
+					fork: result.fork,
+					url: result.url,
+					sourceRepoId: 0,
+					sourceRepoFullName: `${owner}/${repo}`,
+					defaultBranch: result.defaultBranch,
+					createdAt: result.createdAt ? new Date(result.createdAt) : null,
+					updatedAt: result.updatedAt ? new Date(result.updatedAt) : null,
+					pushedAt: result.pushedAt ? new Date(result.pushedAt) : null,
+				});
+			}
+		} catch (error) {
+			console.warn('Failed to save fork to database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'github.forks.create',
 		{ ...input },
 		'completed',
 	);
