@@ -1,5 +1,11 @@
 import { z } from 'zod';
 
+// z.unknown() is used because Docsumo table rows, documents, agents, and cases
+// expose caller-defined or provider-specific fields that are not fully typed.
+const DocsumoDynamicRecord = z.record(z.string(), z.unknown());
+// z.unknown() is used because disabled agent entries vary by agent type.
+const DocsumoDisabledAgent = z.unknown();
+
 const DocsumoEnvelopeSchema = z
 	.object({
 		status: z.string().optional(),
@@ -16,7 +22,7 @@ export const TablesAddRowInputSchema = z.object({
 export type TablesAddRowInput = z.infer<typeof TablesAddRowInputSchema>;
 
 export const TablesAddRowOutputSchema = DocsumoEnvelopeSchema.extend({
-	data: z.array(z.record(z.string(), z.unknown())).optional(),
+	data: z.array(DocsumoDynamicRecord).optional(),
 });
 export type TablesAddRowOutput = z.infer<typeof TablesAddRowOutputSchema>;
 
@@ -36,7 +42,7 @@ export type TablesGetDataInput = z.infer<typeof TablesGetDataInputSchema>;
 export const TablesGetDataOutputSchema = DocsumoEnvelopeSchema.extend({
 	data: z
 		.object({
-			data: z.array(z.record(z.string(), z.unknown())).optional(),
+			data: z.array(DocsumoDynamicRecord).optional(),
 		})
 		.loose()
 		.optional(),
@@ -50,7 +56,7 @@ export const FoldersCreateInputSchema = z.object({
 export type FoldersCreateInput = z.infer<typeof FoldersCreateInputSchema>;
 
 export const FoldersCreateOutputSchema = DocsumoEnvelopeSchema.extend({
-	data: z.record(z.string(), z.unknown()).optional(),
+	data: DocsumoDynamicRecord.optional(),
 });
 export type FoldersCreateOutput = z.infer<typeof FoldersCreateOutputSchema>;
 
@@ -61,7 +67,7 @@ export type DocumentTypesGetEnabledInput = z.infer<
 
 export const DocumentTypesGetEnabledOutputSchema = DocsumoEnvelopeSchema.extend(
 	{
-		data: z.record(z.string(), z.unknown()).optional(),
+		data: DocsumoDynamicRecord.optional(),
 	},
 );
 export type DocumentTypesGetEnabledOutput = z.infer<
@@ -111,7 +117,7 @@ export type DocumentsListAllInput = z.infer<typeof DocumentsListAllInputSchema>;
 export const DocumentsListAllOutputSchema = DocsumoEnvelopeSchema.extend({
 	data: z
 		.object({
-			documents: z.array(z.record(z.string(), z.unknown())).optional(),
+			documents: z.array(DocsumoDynamicRecord).optional(),
 			limit: z.number().optional(),
 			offset: z.number().optional(),
 			total: z.number().optional(),
@@ -164,8 +170,8 @@ export type AgentsListExternalInput = z.infer<
 export const AgentsListExternalOutputSchema = DocsumoEnvelopeSchema.extend({
 	data: z
 		.object({
-			agents: z.array(z.record(z.string(), z.unknown())).optional(),
-			disabled_agents: z.array(z.unknown()).optional(),
+			agents: z.array(DocsumoDynamicRecord).optional(),
+			disabled_agents: z.array(DocsumoDisabledAgent).optional(),
 		})
 		.loose()
 		.optional(),
@@ -199,7 +205,7 @@ export type AgentsListCasesInput = z.infer<typeof AgentsListCasesInputSchema>;
 export const AgentsListCasesOutputSchema = DocsumoEnvelopeSchema.extend({
 	data: z
 		.object({
-			cases: z.array(z.record(z.string(), z.unknown())).optional(),
+			cases: z.array(DocsumoDynamicRecord).optional(),
 			pagination: z
 				.object({
 					limit: z.number().optional(),
@@ -227,9 +233,8 @@ export type AnalyticsMcaAnalysisInput = z.infer<
 
 export const AnalyticsMcaAnalysisOutputSchema = z
 	.object({
-		account_summaries: z
-			.array(z.array(z.record(z.string(), z.unknown())))
-			.optional(),
+		// z.unknown() is used because MCA account summary cells are nested dynamic records.
+		account_summaries: z.array(z.array(DocsumoDynamicRecord)).optional(),
 		status: z.string().optional(),
 		status_code: z.number().optional(),
 		message: z.string().optional(),
