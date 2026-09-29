@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Flow } from './endpoints';
 import type {
 	CeligoEndpointInputs,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CeligoSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveCeligoOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCeligoTenantWebhook } from './webhooks/tenant-matcher';
-import type { CeligoWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type CeligoPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCeligoPlugin['hooks'];
-	webhookHooks?: InternalCeligoPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof celigoEndpointsNested>;
 };
@@ -61,28 +52,13 @@ export type CeligoEndpoints = {
 	getFlow: CeligoEndpoint<'getFlow'>;
 };
 
-type CeligoWebhook<
-	K extends keyof CeligoWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CeligoContext, TEvent, CeligoWebhookOutputs[K]>;
-
-export type CeligoWebhooks = {
-	example: CeligoWebhook<'example', ExampleEvent>;
-};
-
-export type CeligoBoundWebhooks = BindWebhooks<CeligoWebhooks>;
-
 const celigoEndpointsNested = {
 	flow: {
 		get: Flow.get,
 	},
 } as const;
 
-const celigoWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const celigoWebhooksNested = {} as const;
 
 export const celigoEndpointSchemas = {
 	'flow.get': {
@@ -92,14 +68,6 @@ export const celigoEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof celigoEndpointsNested
 >;
-
-const celigoWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof celigoWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -112,9 +80,6 @@ const celigoEndpointMeta = {
 
 export const celigoAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -147,52 +112,28 @@ export function celigo<const T extends CeligoPluginOptions>(
 		schema: CeligoSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: celigoEndpointsNested,
 		webhooks: celigoWebhooksNested,
 		endpointMeta: celigoEndpointMeta,
 		endpointSchemas: celigoEndpointSchemas,
-		webhookSchemas: celigoWebhookSchemas,
-
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-celigo-signature' in headers;
-		},
-
-		pluginTenantWebhookMatcher: matchCeligoTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCeligoOAuthWebhookTenantLink,
-
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-
 		keyBuilder: async (ctx: CeligoKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('celigo', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('celigo', 'api_key');
 		},
 	} satisfies InternalCeligoPlugin;
 }
@@ -203,7 +144,3 @@ export type {
 	GetFlowInput,
 	GetFlowResponse,
 } from './endpoints/types';
-export type {
-	CeligoWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

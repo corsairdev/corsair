@@ -1,4 +1,4 @@
-import { getFlow } from './example';
+import { getFlow } from './flow';
 
 export const Flow = {
 	get: getFlow,

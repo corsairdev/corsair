@@ -1,7 +1,15 @@
 import { z } from 'zod';
 
+const FlowIdSchema = z
+	.string()
+	.min(1)
+	.refine((id) => !/[/?#]/.test(id) && !/^\.{1,2}$/.test(id), {
+		message:
+			'id must be a single URL path segment without delimiters or dot segments',
+	});
+
 const GetFlowInputSchema = z.object({
-	id: z.string(),
+	id: FlowIdSchema,
 });
 
 export type GetFlowInput = z.infer<typeof GetFlowInputSchema>;
