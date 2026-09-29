@@ -52,10 +52,22 @@ describe('Airtable plugin registration', () => {
 	it('keys the schema maps with the plural webhooks prefix', () => {
 		expect(AirtableEndpointInputSchemas).toHaveProperty('webhooksGetPayloads');
 		expect(AirtableEndpointOutputSchemas).toHaveProperty('webhooksGetPayloads');
-		expect(AirtableEndpointInputSchemas).not.toHaveProperty(
+	});
+
+	it('keeps the old singular key as a deprecated alias of the same schema', () => {
+		expect(AirtableEndpointInputSchemas.webhookGetPayloads).toBe(
+			AirtableEndpointInputSchemas.webhooksGetPayloads,
+		);
+		expect(AirtableEndpointOutputSchemas.webhookGetPayloads).toBe(
+			AirtableEndpointOutputSchemas.webhooksGetPayloads,
+		);
+	});
+
+	it('does not register the deprecated alias as an endpoint', () => {
+		expect(Object.keys(plugin.endpointSchemas ?? {})).not.toContain(
 			'webhookGetPayloads',
 		);
-		expect(AirtableEndpointOutputSchemas).not.toHaveProperty(
+		expect(Object.keys(plugin.endpointMeta ?? {})).not.toContain(
 			'webhookGetPayloads',
 		);
 	});
