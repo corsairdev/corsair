@@ -1,96 +1,149 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type {
+	CorsairErrorHandler,
+	ErrorContext,
+	ErrorHandlerAndMatchFunction,
+} from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-export const errorHandlers = {
-	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				// Gmail reports per-user and per-project quota limits as 403 or 429
-				// with one of these reasons in the message.
-				msg.includes('ratelimitexceeded') ||
-				msg.includes('userratelimitexceeded') ||
-				msg.includes('rate limit') ||
-				msg.includes('too many requests') ||
-				msg.includes('429')
-			);
+/**
+ * Decides whether an operation may be retried. Corsair retries the whole
+ * endpoint call, so retrying a write can repeat it: `messages.send` fetches the
+ * sent message afterwards, and a failure in that fetch would send the email
+ * again. Only read operations are retried.
+ */
+export type CanRetryOperation = (operation: string) => boolean;
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function messageIncludes(error: Error, phrases: string[]): boolean {
+	const msg = error.message.toLowerCase();
+	return phrases.some((phrase) => msg.includes(phrase));
+}
+
+// Gmail reports per-user and per-project quota limits either as 429 or as 403
+// with one of these reasons.
+const QUOTA_REASONS = [
+	'ratelimitexceeded',
+	'userratelimitexceeded',
+	'quotaexceeded',
+	'rate limit exceeded',
+];
+
+/**
+ * Matches by HTTP status when the error carries one, and by message only for
+ * errors without a status. A status is authoritative: a 404 whose message
+ * happens to contain a resource ID with "429" in it is not a rate limit.
+ */
+function matchStatus(
+	statuses: (status: number) => boolean,
+	phrases: string[],
+): (error: Error) => boolean {
+	return (error) => {
+		const status = statusOf(error);
+		if (status !== undefined) return statuses(status);
+		return messageIncludes(error, phrases);
+	};
+}
+
+export type GmailErrorHandlers = Record<
+	| 'RATE_LIMIT_ERROR'
+	| 'AUTH_ERROR'
+	| 'PERMISSION_ERROR'
+	| 'NOT_FOUND_ERROR'
+	| 'VALIDATION_ERROR'
+	| 'SERVER_ERROR'
+	| 'DEFAULT',
+	ErrorHandlerAndMatchFunction
+>;
+
+export function createErrorHandlers(
+	canRetry: CanRetryOperation,
+): GmailErrorHandlers {
+	return {
+		RATE_LIMIT_ERROR: {
+			match: (error: Error) => {
+				const status = statusOf(error);
+				if (status === 429) return true;
+				if (status === 403) return messageIncludes(error, QUOTA_REASONS);
+				if (status !== undefined) return false;
+				return messageIncludes(error, [
+					...QUOTA_REASONS,
+					'rate limit',
+					'too many requests',
+				]);
+			},
+			handler: async (error: Error, context: ErrorContext) => {
+				if (!canRetry(context.operation)) return { maxRetries: 0 };
+				const retryAfterMs =
+					error instanceof ApiError ? error.retryAfter : undefined;
+				return {
+					maxRetries: 5,
+					retryStrategy: 'exponential_backoff_jitter' as const,
+					headersRetryAfterMs: retryAfterMs,
+				};
+			},
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+		AUTH_ERROR: {
+			match: matchStatus(
+				(status) => status === 401,
+				['unauthorized', 'invalid credentials', 'unauthenticated'],
+			),
+			handler: async () => ({ maxRetries: 0 }),
 		},
-	},
-	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('unauthorized') ||
-				msg.includes('invalid credentials') ||
-				msg.includes('unauthenticated') ||
-				msg.includes('401')
-			);
+		PERMISSION_ERROR: {
+			match: matchStatus(
+				(status) => status === 403,
+				['forbidden', 'insufficient permission', 'permission denied'],
+			),
+			handler: async () => ({ maxRetries: 0 }),
 		},
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	PERMISSION_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 403) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('forbidden') ||
-				msg.includes('insufficient permission') ||
-				msg.includes('permission_denied') ||
-				msg.includes('403')
-			);
+		NOT_FOUND_ERROR: {
+			match: matchStatus((status) => status === 404, ['not found']),
+			handler: async () => ({ maxRetries: 0 }),
 		},
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('not found') || msg.includes('404');
+		VALIDATION_ERROR: {
+			match: matchStatus(
+				(status) => status === 400,
+				['invalid argument', 'bad request'],
+			),
+			handler: async () => ({ maxRetries: 0 }),
 		},
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 400) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('invalid argument') ||
-				msg.includes('bad request') ||
-				msg.includes('400')
-			);
+		SERVER_ERROR: {
+			match: matchStatus(
+				(status) => status >= 500,
+				['backend error', 'internal error'],
+			),
+			handler: async (_error: Error, context: ErrorContext) => {
+				if (!canRetry(context.operation)) return { maxRetries: 0 };
+				return {
+					maxRetries: 3,
+					retryStrategy: 'exponential_backoff_jitter' as const,
+				};
+			},
 		},
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	SERVER_ERROR: {
-		match: (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				error.status !== undefined &&
-				error.status >= 500
-			)
-				return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('backend error') ||
-				msg.includes('internal error') ||
-				msg.includes('500') ||
-				msg.includes('502') ||
-				msg.includes('503')
-			);
+		DEFAULT: {
+			match: (_error: Error) => true,
+			handler: async () => ({ maxRetries: 0 }),
 		},
-		handler: async () => ({ maxRetries: 3 }),
-	},
-	DEFAULT: {
-		match: (_error: Error) => true,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-} satisfies CorsairErrorHandler;
+	};
+}
+
+/**
+ * Combines the built-in handlers with caller overrides. Corsair uses the first
+ * handler that matches, and `DEFAULT` matches everything, so `DEFAULT` must stay
+ * last or a handler the caller adds for a new key would never run.
+ */
+export function mergeErrorHandlers(
+	builtIn: CorsairErrorHandler,
+	custom: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	const { DEFAULT: builtInDefault, ...builtInSpecific } = builtIn;
+	const { DEFAULT: customDefault, ...customSpecific } = custom ?? {};
+	return {
+		...builtInSpecific,
+		...customSpecific,
+		DEFAULT: customDefault ?? builtInDefault,
+	};
+}
