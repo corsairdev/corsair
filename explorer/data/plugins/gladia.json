@@ -1,0 +1,688 @@
+{
+  "id": "gladia",
+  "displayName": "Gladia",
+  "description": "Gladia plugin for Corsair",
+  "npmPackageName": "@corsair-dev/gladia",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gladia.api.live.deleteSession",
+      "shortPath": "live.deleteSession",
+      "description": "Permanently delete a live transcription session",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | { message: string }"
+      }
+    },
+    {
+      "path": "gladia.api.live.getTranscriptionResult",
+      "shortPath": "live.getTranscriptionResult",
+      "description": "Retrieve a live transcription session result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | done | error"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "live | pre-recorded"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string }"
+          },
+          {
+            "key": "request_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "post_session_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.live.initiateTranscriptionSession",
+      "shortPath": "live.initiateTranscriptionSession",
+      "description": "Create a live transcription session and return its WebSocket URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us-west | eu-west"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "wav/pcm | wav/alaw | wav/ulaw"
+          },
+          {
+            "key": "bit_depth",
+            "optional": true,
+            "type": "8 | 16 | 24 | 32"
+          },
+          {
+            "key": "sample_rate",
+            "optional": true,
+            "type": "8000 | 16000 | 32000 | 44100 | 48000"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "endpointing",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maximum_duration_without_endpointing",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "language_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pre_processing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "realtime_processing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "post_processing",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "messages_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callback_config",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.live.listTranscriptionJobs",
+      "shortPath": "live.listTranscriptionJobs",
+      "description": "List live transcription jobs with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | done | error[]"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: {}, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: {} | null, result?: any, post_session_metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.preRecorded.deleteJob",
+      "shortPath": "preRecorded.deleteJob",
+      "description": "Permanently delete a pre-recorded transcription job",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined | { message: string }"
+      }
+    },
+    {
+      "path": "gladia.api.preRecorded.getJob",
+      "shortPath": "preRecorded.getJob",
+      "description": "Retrieve a pre-recorded transcription job and result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | done | error"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "live | pre-recorded"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "error_code",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string }"
+          },
+          {
+            "key": "request_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "post_session_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.preRecorded.initiateTranscription",
+      "shortPath": "preRecorded.initiateTranscription",
+      "description": "Start a pre-recorded transcription job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_vocabulary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_vocabulary_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "callback",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "callback_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "subtitles",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subtitles_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "diarization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "diarization_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "translation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "translation_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "summarization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summarization_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "named_entity_recognition",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_spelling",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_spelling_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sentiment_analysis",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "audio_to_llm",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "audio_to_llm_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "pii_redaction",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pii_redaction_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "sentences",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "punctuation_enhanced",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.preRecorded.listJobs",
+      "shortPath": "preRecorded.listJobs",
+      "description": "List pre-recorded transcription jobs with pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "queued | processing | done | error[]"
+          },
+          {
+            "key": "custom_metadata",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "current",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: string, request_id?: string, version?: number, status?: queued | processing | done | error, created_at?: string, completed_at?: string | null, kind?: live | pre-recorded, custom_metadata?: {}, error_code?: number | null, file?: { id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string } | null, request_params?: {} | null, result?: any, post_session_metadata?: {} }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gladia.api.upload.audioVideoFile",
+      "shortPath": "upload.audioVideoFile",
+      "description": "Upload an audio or video file for a pre-recorded job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "custom"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "audio_metadata",
+            "optional": false,
+            "type": "{ id?: string, filename?: string, extension?: string, size?: number, audio_duration?: number, number_of_channels?: number, source?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

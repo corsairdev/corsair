@@ -119,6 +119,7 @@ test('full-lane turbo filter stays quoted-glob safe', () => {
 	assert.deepEqual(filtersForScope({ lane: 'full', includeWww: false }), {
 		lane: 'full',
 		turboFilter: './packages/*',
+		adaptersFilter: '--filter=./adapters/*',
 		skipHeavy: false,
 		includeWww: false,
 		wwwInstallFilter: '',
@@ -130,6 +131,7 @@ test('mixed www filters keep package globs out of the www extra flags', () => {
 	assert.deepEqual(filtersForScope({ lane: 'full', includeWww: true }), {
 		lane: 'full',
 		turboFilter: './packages/*',
+		adaptersFilter: '--filter=./adapters/*',
 		skipHeavy: false,
 		includeWww: true,
 		wwwInstallFilter: '--filter=@corsair/www...',

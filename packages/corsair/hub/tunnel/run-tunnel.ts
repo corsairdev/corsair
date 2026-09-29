@@ -7,6 +7,13 @@ import { CORSAIR_TUNNEL_PATH, CORSAIR_TUNNEL_ZONE } from './constants';
 import { resolveFrpcBinary } from './frpc-binary';
 import { buildFrpcConfig } from './frpc-config';
 import { startPathGuard } from './path-guard';
+import type { LockRecord } from './tunnel-lock';
+import {
+	reapStaleTunnel,
+	releaseTunnelLock,
+	tunnelLockPath,
+	writeTunnelLock,
+} from './tunnel-lock';
 
 // Bound every Hub request so a hung/silent Hub can't wedge startup with an
 // open frpc child + path guard (and, on the auto path, a stuck activeTunnels key).
@@ -108,6 +115,22 @@ export async function runTunnel(opts: {
 			apiUrl,
 			apiKey,
 		});
+
+	// Reap a frpc orphaned by a prior run (abrupt death — SIGKILL, `next dev` HMR —
+	// skips our signal cleanup) that's still holding this slug. frps serves one
+	// owner per subdomain, so without this the spawn below is rejected with "proxy
+	// already exists" and the supervisor retries forever against a live orphan.
+	// Done before the guard/cfg are allocated so a reap failure can't leak them.
+	// If a prior holder is still up and can't be safely reaped, don't spawn — that
+	// would overwrite its lock and leave it untracked. Throw so the supervisor
+	// (and the CLI retry) back off and try again once it's gone.
+	const lockPath = tunnelLockPath(slug);
+	if (!(await reapStaleTunnel(lockPath))) {
+		throw new Error(
+			`frpc: slug ${slug} is still held by another process and could not be reaped`,
+		);
+	}
+
 	const bin = resolveFrpcBinary();
 
 	// The dev's delivery path (default /api/corsair). The path-guard and the Hub
@@ -159,6 +182,7 @@ export async function runTunnel(opts: {
 		let settled = false;
 		let ready = false;
 		let outputBuffer = '';
+		let lockRecord: LockRecord | null = null;
 
 		const child = spawn(bin, ['-c', cfgPath], {
 			stdio: ['ignore', 'pipe', 'pipe'],
@@ -249,6 +273,9 @@ export async function runTunnel(opts: {
 		});
 
 		child.on('exit', (code) => {
+			// frpc is confirmed dead here — safe to release, and only if the lock
+			// still holds our exact record (a newest-wins successor keeps its own).
+			if (lockRecord) releaseTunnelLock(lockPath, lockRecord);
 			if (!settled) {
 				const tail = lastLine(outputBuffer);
 				const detail = tail ? ` — ${tail}` : '';
@@ -272,6 +299,15 @@ export async function runTunnel(opts: {
 				),
 			);
 		}, timeoutMs);
+
+		// Record our PID last, once every handler + timer is wired: if the lock write
+		// throws (unwritable cache, disk full), fail() reaps the child, guard, and
+		// cfg instead of leaking an frpc that no later reap could find.
+		try {
+			if (child.pid) lockRecord = writeTunnelLock(lockPath, child.pid);
+		} catch (err) {
+			fail(err instanceof Error ? err : new Error(String(err)));
+		}
 	});
 }
 

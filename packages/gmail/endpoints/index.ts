@@ -7,7 +7,6 @@ export const MessagesEndpoints = {
 	list: Messages.list,
 	get: Messages.get,
 	send: Messages.send,
-	delete: Messages.deleteMessage,
 	modify: Messages.modify,
 	batchModify: Messages.batchModify,
 	trash: Messages.trash,
@@ -35,7 +34,6 @@ export const ThreadsEndpoints = {
 	list: Threads.list,
 	get: Threads.get,
 	modify: Threads.modify,
-	delete: Threads.deleteThread,
 	trash: Threads.trash,
 	untrash: Threads.untrash,
 };

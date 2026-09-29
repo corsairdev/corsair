@@ -1,0 +1,3449 @@
+---
+title: API
+description: "API reference for Bunnycdn: every `bunnycdn.api.*` operation with input and output types."
+---
+
+Every `bunnycdn.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### list
+
+`apiKeys.list`
+
+List API keys on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.apiKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  Key?: string,
+  DateCreated?: string
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Billing
+
+### summary
+
+`billing.summary`
+
+Retrieve the billing summary for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.billing.summary({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  PullZoneId?: number,
+  MonthlyUsage?: number,
+  MonthlyBandwidthUsed?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Containers
+
+### applicationsList
+
+`containers.applicationsList`
+
+List Magic Container applications
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.applicationsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextCursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### configSuggestions
+
+`containers.configSuggestions`
+
+Get deployment configuration suggestions for a container image
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.configSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registryId` | `string \| number` | Yes | — |
+| `imageName` | `string` | Yes | — |
+| `imageNamespace` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### imageDigest
+
+`containers.imageDigest`
+
+Get the digest of a container image
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.imageDigest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registryId` | `string \| number` | Yes | — |
+| `imageName` | `string` | Yes | — |
+| `imageNamespace` | `string` | Yes | — |
+| `tag` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### imageTags
+
+`containers.imageTags`
+
+List tags for a container image
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.imageTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registryId` | `string \| number` | Yes | — |
+| `imageName` | `string` | Yes | — |
+| `imageNamespace` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### nodesList
+
+`containers.nodesList`
+
+List Magic Container nodes
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.nodesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextCursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### optimalBaseRegion
+
+`containers.optimalBaseRegion`
+
+Get the optimal base region for Magic Containers
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.optimalBaseRegion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cdnServerToken` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### publicImagesSearch
+
+`containers.publicImagesSearch`
+
+Search public container images by prefix
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.publicImagesSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registryId` | `string \| number` | Yes | — |
+| `prefix` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### regionsList
+
+`containers.regionsList`
+
+List Magic Container regions
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.regionsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nextCursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### registriesList
+
+`containers.registriesList`
+
+List container registries
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.registriesList({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### registryDelete
+
+`containers.registryDelete`
+
+Delete a container registry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bunnycdn.api.containers.registryDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registryId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### userLimits
+
+`containers.userLimits`
+
+Get Magic Container limits for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.userLimits({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### volumesList
+
+`containers.volumesList`
+
+List volumes for a Magic Container application
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.containers.volumesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Dns Zone
+
+### checkAvailability
+
+`dnsZone.checkAvailability`
+
+Check whether a DNS zone name is available
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.checkAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Available` | `boolean` | Yes | — |
+
+
+
+---
+
+### createRecord
+
+`dnsZone.createRecord`
+
+Create a new DNS record in a DNS zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.createRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zoneId` | `number` | Yes | — |
+| `record` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+  Type?: number,
+  Ttl?: number,
+  Value?: string,
+  Name?: string,
+  Weight?: number,
+  Priority?: number,
+  Flags?: number,
+  Tag?: string,
+  Port?: number,
+  PullZoneId?: number,
+  ScriptId?: number,
+  Accelerated?: boolean,
+  MonitorType?: number,
+  GeolocationLatitude?: number,
+  GeolocationLongitude?: number,
+  LatencyZone?: string,
+  SmartRoutingType?: number,
+  Disabled?: boolean,
+  EnviromentalVariables?: any[],
+  Comment?: string,
+  AutoSslIssuance?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | No | — |
+| `Type` | `number` | No | — |
+| `Value` | `string` | No | — |
+| `Name` | `string` | No | — |
+| `Ttl` | `number` | No | — |
+
+
+
+---
+
+### deleteRecord
+
+`dnsZone.deleteRecord`
+
+Delete a DNS record
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.deleteRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zoneId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`dnsZone.get`
+
+Get details of a specific DNS zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Domain` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`dnsZone.list`
+
+List all DNS zones
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: number,
+  Domain?: string
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateRecord
+
+`dnsZone.updateRecord`
+
+Update an existing DNS record
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.dnsZone.updateRecord({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zoneId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+| `record` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="record full type">
+
+```ts
+{
+  Type?: number,
+  Ttl?: number,
+  Value?: string,
+  Name?: string,
+  Weight?: number,
+  Priority?: number,
+  Flags?: number,
+  Tag?: string,
+  Port?: number,
+  PullZoneId?: number,
+  ScriptId?: number,
+  Accelerated?: boolean,
+  MonitorType?: number,
+  GeolocationLatitude?: number,
+  GeolocationLongitude?: number,
+  LatencyZone?: string,
+  SmartRoutingType?: number,
+  Disabled?: boolean,
+  EnviromentalVariables?: any[],
+  Comment?: string,
+  AutoSslIssuance?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Edge Scripts
+
+### list
+
+`edgeScripts.list`
+
+List all edge scripts
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.edgeScripts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `search` | `string` | No | — |
+| `includeLinkedPullzones` | `boolean` | No | — |
+| `integrationId` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pull Zone
+
+### addAllowedReferrer
+
+`pullZone.addAllowedReferrer`
+
+Add a hostname to the allowed referer list
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.addAllowedReferrer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### addBlockedIp
+
+`pullZone.addBlockedIp`
+
+Add an IP address to the blocked list
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.addBlockedIp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `blockedIp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### addBlockedReferrer
+
+`pullZone.addBlockedReferrer`
+
+Add a blocked referer to a pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.addBlockedReferrer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### checkAvailability
+
+`pullZone.checkAvailability`
+
+Check whether a pull zone name is available
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.checkAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Available` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`pullZone.create`
+
+Create a new pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `originUrl` | `string` | No | — |
+| `type` | `number` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  OriginUrl?: string,
+  AllowedReferrers?: any[],
+  BlockedReferrers?: any[],
+  BlockNoneReferrer?: boolean,
+  BlockedIps?: any[],
+  EnableGeoZoneUS?: boolean,
+  EnableGeoZoneEU?: boolean,
+  EnableGeoZoneASIA?: boolean,
+  EnableGeoZoneSA?: boolean,
+  EnableGeoZoneAF?: boolean,
+  IpFamilyPolicy?: number,
+  BlockRootPathAccess?: boolean,
+  BlockPostRequests?: boolean,
+  EnableQueryStringOrdering?: boolean,
+  EnableWebpVary?: boolean,
+  EnableAvifVary?: boolean,
+  EnableMobileVary?: boolean,
+  EnableCountryCodeVary?: boolean,
+  EnableCountryStateCodeVary?: boolean,
+  EnableHostnameVary?: boolean,
+  EnableCacheSlice?: boolean,
+  ZoneSecurityEnabled?: boolean,
+  ZoneSecurityIncludeHashRemoteIP?: boolean,
+  IgnoreQueryStrings?: boolean,
+  MonthlyBandwidthLimit?: number,
+  AccessControlOriginHeaderExtensions?: any[],
+  EnableAccessControlOriginHeader?: boolean,
+  DisableCookies?: boolean,
+  BudgetRedirectedCountries?: any[],
+  BlockedCountries?: any[],
+  CacheControlMaxAgeOverride?: number,
+  CacheControlPublicMaxAgeOverride?: number,
+  CacheControlBrowserMaxAgeOverride?: number,
+  AddHostHeader?: boolean,
+  AddCanonicalHeader?: boolean,
+  EnableLogging?: boolean,
+  LoggingIPAnonymizationEnabled?: boolean,
+  PermaCacheStorageZoneId?: number,
+  PermaCacheType?: number,
+  AWSSigningEnabled?: boolean,
+  AWSSigningKey?: string,
+  AWSSigningRegionName?: string,
+  AWSSigningSecret?: string,
+  EnableOriginShield?: boolean,
+  OriginShieldZoneCode?: string,
+  EnableTLS1?: boolean,
+  EnableTLS1_1?: boolean,
+  TlsSecurityLevel?: number,
+  CacheErrorResponses?: boolean,
+  VerifyOriginSSL?: boolean,
+  LogForwardingEnabled?: boolean,
+  LogForwardingHostname?: string,
+  LogForwardingPort?: number,
+  LogForwardingToken?: string,
+  LogForwardingProtocol?: number,
+  LoggingSaveToStorage?: boolean,
+  LoggingStorageZoneId?: number,
+  FollowRedirects?: boolean,
+  ConnectionLimitPerIPCount?: number,
+  RequestLimit?: number,
+  LimitRateAfter?: number,
+  LimitRatePerSecond?: number,
+  BurstSize?: number,
+  ErrorPageEnableCustomCode?: boolean,
+  ErrorPageCustomCode?: string,
+  ErrorPageEnableStatuspageWidget?: boolean,
+  ErrorPageStatuspageCode?: string,
+  ErrorPageWhitelabel?: boolean,
+  OptimizerEnabled?: boolean,
+  OptimizerTunnelEnabled?: boolean,
+  OptimizerDesktopMaxWidth?: number,
+  OptimizerMobileMaxWidth?: number,
+  OptimizerImageQuality?: number,
+  OptimizerMobileImageQuality?: number,
+  OptimizerEnableWebP?: boolean,
+  OptimizerPrerenderHtml?: boolean,
+  OptimizerHtmlToMarkdown?: number,
+  OptimizerLlmsTxt?: boolean,
+  OptimizerEnableManipulationEngine?: boolean,
+  OptimizerMinifyCSS?: boolean,
+  OptimizerMinifyJavaScript?: boolean,
+  OptimizerWatermarkEnabled?: boolean,
+  OptimizerWatermarkUrl?: string,
+  OptimizerWatermarkPosition?: number,
+  OptimizerWatermarkOffset?: number,
+  OptimizerWatermarkMinImageSize?: number,
+  OptimizerAutomaticOptimizationEnabled?: boolean,
+  OptimizerClasses?: any[],
+  OptimizerForceClasses?: boolean,
+  OptimizerStaticHtmlEnabled?: boolean,
+  OptimizerStaticHtmlWordPressPath?: string,
+  OptimizerStaticHtmlWordPressBypassCookie?: string,
+  Type?: number,
+  OriginRetries?: number,
+  OriginConnectTimeout?: number,
+  OriginResponseTimeout?: number,
+  UseStaleWhileUpdating?: boolean,
+  UseStaleWhileOffline?: boolean,
+  OriginRetry5XXResponses?: boolean,
+  OriginRetryConnectionTimeout?: boolean,
+  OriginRetryResponseTimeout?: boolean,
+  OriginRetryDelay?: number,
+  DnsOriginPort?: number,
+  DnsOriginScheme?: string,
+  QueryStringVaryParameters?: any[],
+  OriginShieldEnableConcurrencyLimit?: boolean,
+  OriginShieldMaxConcurrentRequests?: number,
+  EnableCookieVary?: boolean,
+  CookieVaryParameters?: any[],
+  EnableSafeHop?: boolean,
+  OriginShieldQueueMaxWaitTime?: number,
+  OriginShieldMaxQueuedRequests?: number,
+  UseBackgroundUpdate?: boolean,
+  EnableAutoSSL?: boolean,
+  LogAnonymizationType?: number,
+  StorageZoneId?: number,
+  EdgeScriptId?: number,
+  MiddlewareScriptId?: number,
+  EdgeScriptExecutionPhase?: number,
+  OriginType?: number,
+  MagicContainersAppId?: string,
+  MagicContainersEndpointId?: string,
+  LogFormat?: number,
+  LogForwardingFormat?: number,
+  ShieldDDosProtectionType?: number,
+  ShieldDDosProtectionEnabled?: boolean,
+  OriginHostHeader?: string,
+  EnableSmartCache?: boolean,
+  EnableRequestCoalescing?: boolean,
+  RequestCoalescingTimeout?: number,
+  DisableLetsEncrypt?: boolean,
+  EnableBunnyImageAi?: boolean,
+  BunnyAiImageBlueprints?: any[],
+  PreloadingScreenEnabled?: boolean,
+  PreloadingScreenCode?: string,
+  PreloadingScreenLogoUrl?: string,
+  PreloadingScreenShowOnFirstVisit?: boolean,
+  PreloadingScreenTheme?: number,
+  PreloadingScreenCodeEnabled?: boolean,
+  PreloadingScreenDelay?: number,
+  RoutingFilters?: any[],
+  StickySessionType?: number,
+  StickySessionCookieName?: string,
+  StickySessionClientHeaders?: string,
+  OptimizerEnableUpscaling?: boolean,
+  EnableWebSockets?: boolean,
+  MaxWebSocketConnections?: number,
+  CacheKeyHeaders?: string,
+  LoadBalancerId?: number,
+  Name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Name` | `string` | No | — |
+| `OriginUrl` | `string` | No | — |
+| `Enabled` | `boolean` | No | — |
+| `Suspended` | `boolean` | No | — |
+| `Hostnames` | `object[]` | No | — |
+| `StorageZoneId` | `number` | No | — |
+| `MonthlyBandwidthUsed` | `number` | No | — |
+| `MonthlyCharges` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="Hostnames full type">
+
+```ts
+{
+  Id?: number,
+  Value?: string | null,
+  ForceSSL?: boolean,
+  HasCertificate?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### edgeRuleDelete
+
+`pullZone.edgeRuleDelete`
+
+Delete an edge rule from a pull zone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bunnycdn.api.pullZone.edgeRuleDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `edgeRuleId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### edgeRuleSetEnabled
+
+`pullZone.edgeRuleSetEnabled`
+
+Enable or disable an edge rule without deleting it
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.edgeRuleSetEnabled({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `edgeRuleId` | `string \| number` | Yes | — |
+| `value` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### edgeRuleUpsert
+
+`pullZone.edgeRuleUpsert`
+
+Add or update an edge rule on a pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.edgeRuleUpsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `rule` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rule full type">
+
+```ts
+{
+  Guid?: string,
+  ActionType?: number,
+  ActionParameter1?: string,
+  ActionParameter2?: string,
+  Description?: string,
+  Enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Guid` | `string` | No | — |
+| `ActionType` | `number` | No | — |
+| `ActionParameter1` | `string` | No | — |
+| `ActionParameter2` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `Enabled` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`pullZone.get`
+
+Get details of a specific pull zone by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `includeCertificate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Name` | `string` | No | — |
+| `OriginUrl` | `string` | No | — |
+| `Enabled` | `boolean` | No | — |
+| `Suspended` | `boolean` | No | — |
+| `Hostnames` | `object[]` | No | — |
+| `StorageZoneId` | `number` | No | — |
+| `MonthlyBandwidthUsed` | `number` | No | — |
+| `MonthlyCharges` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="Hostnames full type">
+
+```ts
+{
+  Id?: number,
+  Value?: string | null,
+  ForceSSL?: boolean,
+  HasCertificate?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pullZone.list`
+
+List pull zones with pagination and search
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `search` | `string` | No | — |
+| `includeCertificate` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: number,
+  Name?: string | null,
+  OriginUrl?: string | null,
+  Enabled?: boolean,
+  Suspended?: boolean,
+  Hostnames?: {
+    Id?: number,
+    Value?: string | null,
+    ForceSSL?: boolean,
+    HasCertificate?: boolean
+  }[] | null,
+  StorageZoneId?: number,
+  MonthlyBandwidthUsed?: number,
+  MonthlyCharges?: number
+}[] | {
+  Items: {
+    Id: number,
+    Name?: string | null,
+    OriginUrl?: string | null,
+    Enabled?: boolean,
+    Suspended?: boolean,
+    Hostnames?: {
+      Id?: number,
+      Value?: string | null,
+      ForceSSL?: boolean,
+      HasCertificate?: boolean
+    }[] | null,
+    StorageZoneId?: number,
+    MonthlyBandwidthUsed?: number,
+    MonthlyCharges?: number
+  }[],
+  CurrentPage?: number,
+  TotalItems?: number,
+  HasMoreItems?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### optimizerStatistics
+
+`pullZone.optimizerStatistics`
+
+Retrieve optimizer statistics for a pull zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.optimizerStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `hourly` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### originShieldQueueStatistics
+
+`pullZone.originShieldQueueStatistics`
+
+Retrieve origin shield queue statistics for a pull zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.originShieldQueueStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `hourly` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### purgeCache
+
+`pullZone.purgeCache`
+
+Purge cached content for a pull zone, optionally by cache tag
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.purgeCache({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `cacheTag` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### remove
+
+`pullZone.remove`
+
+Delete a specific pull zone by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bunnycdn.api.pullZone.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### removeAllowedReferrer
+
+`pullZone.removeAllowedReferrer`
+
+Remove a hostname from the allowed referer list
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.removeAllowedReferrer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### removeBlockedIp
+
+`pullZone.removeBlockedIp`
+
+Remove an IP address from the blocked list
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.removeBlockedIp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `blockedIp` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### removeBlockedReferrer
+
+`pullZone.removeBlockedReferrer`
+
+Remove a blocked referer from a pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.removeBlockedReferrer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### resetSecurityKey
+
+`pullZone.resetSecurityKey`
+
+Reset the URL token security key for a pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.resetSecurityKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `securityKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### safeHopStatistics
+
+`pullZone.safeHopStatistics`
+
+Retrieve SafeHop statistics for a pull zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.pullZone.safeHopStatistics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `hourly` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### setForceSSL
+
+`pullZone.setForceSSL`
+
+Enable or disable Force SSL on a pull zone hostname
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.setForceSSL({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `hostname` | `string` | Yes | — |
+| `forceSSL` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`pullZone.update`
+
+Update settings for a specific pull zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.pullZone.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `settings` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  OriginUrl?: string,
+  AllowedReferrers?: any[],
+  BlockedReferrers?: any[],
+  BlockNoneReferrer?: boolean,
+  BlockedIps?: any[],
+  EnableGeoZoneUS?: boolean,
+  EnableGeoZoneEU?: boolean,
+  EnableGeoZoneASIA?: boolean,
+  EnableGeoZoneSA?: boolean,
+  EnableGeoZoneAF?: boolean,
+  IpFamilyPolicy?: number,
+  BlockRootPathAccess?: boolean,
+  BlockPostRequests?: boolean,
+  EnableQueryStringOrdering?: boolean,
+  EnableWebpVary?: boolean,
+  EnableAvifVary?: boolean,
+  EnableMobileVary?: boolean,
+  EnableCountryCodeVary?: boolean,
+  EnableCountryStateCodeVary?: boolean,
+  EnableHostnameVary?: boolean,
+  EnableCacheSlice?: boolean,
+  ZoneSecurityEnabled?: boolean,
+  ZoneSecurityIncludeHashRemoteIP?: boolean,
+  IgnoreQueryStrings?: boolean,
+  MonthlyBandwidthLimit?: number,
+  AccessControlOriginHeaderExtensions?: any[],
+  EnableAccessControlOriginHeader?: boolean,
+  DisableCookies?: boolean,
+  BudgetRedirectedCountries?: any[],
+  BlockedCountries?: any[],
+  CacheControlMaxAgeOverride?: number,
+  CacheControlPublicMaxAgeOverride?: number,
+  CacheControlBrowserMaxAgeOverride?: number,
+  AddHostHeader?: boolean,
+  AddCanonicalHeader?: boolean,
+  EnableLogging?: boolean,
+  LoggingIPAnonymizationEnabled?: boolean,
+  PermaCacheStorageZoneId?: number,
+  PermaCacheType?: number,
+  AWSSigningEnabled?: boolean,
+  AWSSigningKey?: string,
+  AWSSigningRegionName?: string,
+  AWSSigningSecret?: string,
+  EnableOriginShield?: boolean,
+  OriginShieldZoneCode?: string,
+  EnableTLS1?: boolean,
+  EnableTLS1_1?: boolean,
+  TlsSecurityLevel?: number,
+  CacheErrorResponses?: boolean,
+  VerifyOriginSSL?: boolean,
+  LogForwardingEnabled?: boolean,
+  LogForwardingHostname?: string,
+  LogForwardingPort?: number,
+  LogForwardingToken?: string,
+  LogForwardingProtocol?: number,
+  LoggingSaveToStorage?: boolean,
+  LoggingStorageZoneId?: number,
+  FollowRedirects?: boolean,
+  ConnectionLimitPerIPCount?: number,
+  RequestLimit?: number,
+  LimitRateAfter?: number,
+  LimitRatePerSecond?: number,
+  BurstSize?: number,
+  ErrorPageEnableCustomCode?: boolean,
+  ErrorPageCustomCode?: string,
+  ErrorPageEnableStatuspageWidget?: boolean,
+  ErrorPageStatuspageCode?: string,
+  ErrorPageWhitelabel?: boolean,
+  OptimizerEnabled?: boolean,
+  OptimizerTunnelEnabled?: boolean,
+  OptimizerDesktopMaxWidth?: number,
+  OptimizerMobileMaxWidth?: number,
+  OptimizerImageQuality?: number,
+  OptimizerMobileImageQuality?: number,
+  OptimizerEnableWebP?: boolean,
+  OptimizerPrerenderHtml?: boolean,
+  OptimizerHtmlToMarkdown?: number,
+  OptimizerLlmsTxt?: boolean,
+  OptimizerEnableManipulationEngine?: boolean,
+  OptimizerMinifyCSS?: boolean,
+  OptimizerMinifyJavaScript?: boolean,
+  OptimizerWatermarkEnabled?: boolean,
+  OptimizerWatermarkUrl?: string,
+  OptimizerWatermarkPosition?: number,
+  OptimizerWatermarkOffset?: number,
+  OptimizerWatermarkMinImageSize?: number,
+  OptimizerAutomaticOptimizationEnabled?: boolean,
+  OptimizerClasses?: any[],
+  OptimizerForceClasses?: boolean,
+  OptimizerStaticHtmlEnabled?: boolean,
+  OptimizerStaticHtmlWordPressPath?: string,
+  OptimizerStaticHtmlWordPressBypassCookie?: string,
+  Type?: number,
+  OriginRetries?: number,
+  OriginConnectTimeout?: number,
+  OriginResponseTimeout?: number,
+  UseStaleWhileUpdating?: boolean,
+  UseStaleWhileOffline?: boolean,
+  OriginRetry5XXResponses?: boolean,
+  OriginRetryConnectionTimeout?: boolean,
+  OriginRetryResponseTimeout?: boolean,
+  OriginRetryDelay?: number,
+  DnsOriginPort?: number,
+  DnsOriginScheme?: string,
+  QueryStringVaryParameters?: any[],
+  OriginShieldEnableConcurrencyLimit?: boolean,
+  OriginShieldMaxConcurrentRequests?: number,
+  EnableCookieVary?: boolean,
+  CookieVaryParameters?: any[],
+  EnableSafeHop?: boolean,
+  OriginShieldQueueMaxWaitTime?: number,
+  OriginShieldMaxQueuedRequests?: number,
+  UseBackgroundUpdate?: boolean,
+  EnableAutoSSL?: boolean,
+  LogAnonymizationType?: number,
+  StorageZoneId?: number,
+  EdgeScriptId?: number,
+  MiddlewareScriptId?: number,
+  EdgeScriptExecutionPhase?: number,
+  OriginType?: number,
+  MagicContainersAppId?: string,
+  MagicContainersEndpointId?: string,
+  LogFormat?: number,
+  LogForwardingFormat?: number,
+  ShieldDDosProtectionType?: number,
+  ShieldDDosProtectionEnabled?: boolean,
+  OriginHostHeader?: string,
+  EnableSmartCache?: boolean,
+  EnableRequestCoalescing?: boolean,
+  RequestCoalescingTimeout?: number,
+  DisableLetsEncrypt?: boolean,
+  EnableBunnyImageAi?: boolean,
+  BunnyAiImageBlueprints?: any[],
+  PreloadingScreenEnabled?: boolean,
+  PreloadingScreenCode?: string,
+  PreloadingScreenLogoUrl?: string,
+  PreloadingScreenShowOnFirstVisit?: boolean,
+  PreloadingScreenTheme?: number,
+  PreloadingScreenCodeEnabled?: boolean,
+  PreloadingScreenDelay?: number,
+  RoutingFilters?: any[],
+  StickySessionType?: number,
+  StickySessionCookieName?: string,
+  StickySessionClientHeaders?: string,
+  OptimizerEnableUpscaling?: boolean,
+  EnableWebSockets?: boolean,
+  MaxWebSocketConnections?: number,
+  CacheKeyHeaders?: string,
+  LoadBalancerId?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Name` | `string` | No | — |
+| `OriginUrl` | `string` | No | — |
+| `Enabled` | `boolean` | No | — |
+| `Suspended` | `boolean` | No | — |
+| `Hostnames` | `object[]` | No | — |
+| `StorageZoneId` | `number` | No | — |
+| `MonthlyBandwidthUsed` | `number` | No | — |
+| `MonthlyCharges` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="Hostnames full type">
+
+```ts
+{
+  Id?: number,
+  Value?: string | null,
+  ForceSSL?: boolean,
+  HasCertificate?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Purge
+
+### url
+
+`purge.url`
+
+Purge a single URL from cache across pull zones
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.purge.url({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `async` | `boolean` | No | — |
+| `exactPath` | `boolean` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Search
+
+### global
+
+`search.global`
+
+Global search across pull zones, storage zones, DNS zones and more
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.search.global({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `from` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Shield
+
+### accessListConfigUpdate
+
+`shield.accessListConfigUpdate`
+
+Update an access list configuration action or enabled state
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListConfigUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+| `isEnabled` | `boolean` | No | — |
+| `action` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### accessListCreate
+
+`shield.accessListCreate`
+
+Create a custom access list in a shield zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string \| number` | Yes | — |
+| `content` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `checksum` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `any` | No | — |
+
+
+
+---
+
+### accessListEnums
+
+`shield.accessListEnums`
+
+List available access list configuration values
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListEnums({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### accessListGet
+
+`shield.accessListGet`
+
+Get a custom access list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `any` | No | — |
+
+
+
+---
+
+### accessListsList
+
+`shield.accessListsList`
+
+List access lists for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### accessListUpdate
+
+`shield.accessListUpdate`
+
+Update a custom access list in a shield zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.accessListUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `checksum` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `any` | No | — |
+
+
+
+---
+
+### botDetectionGet
+
+`shield.botDetectionGet`
+
+Get the bot detection configuration for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.botDetectionGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### botDetectionUpdate
+
+`shield.botDetectionUpdate`
+
+Update the bot detection configuration for a shield zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.botDetectionUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `executionMode` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### ddosEnums
+
+`shield.ddosEnums`
+
+List available Shield DDoS configuration values
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.ddosEnums({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### eventLogs
+
+`shield.eventLogs`
+
+Get shield event logs for a zone and date with continuation token
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.eventLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+| `continuationToken` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsBotDetection
+
+`shield.metricsBotDetection`
+
+Get bot detection metrics for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsBotDetection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsOverview
+
+`shield.metricsOverview`
+
+Get the security metrics overview for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsOverviewDetailed
+
+`shield.metricsOverviewDetailed`
+
+Get detailed security metrics for a shield zone over a time range
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsOverviewDetailed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `resolution` | `string \| number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsRateLimit
+
+`shield.metricsRateLimit`
+
+Get metrics for a specific shield rate limit
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsRateLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsRateLimits
+
+`shield.metricsRateLimits`
+
+Get aggregated rate limit metrics for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsRateLimits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsUploadScanning
+
+`shield.metricsUploadScanning`
+
+Get upload scanning metrics for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsUploadScanning({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### metricsWafRule
+
+`shield.metricsWafRule`
+
+Get metrics for a specific WAF rule
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.metricsWafRule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `ruleId` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### promoState
+
+`shield.promoState`
+
+Get the shield promotional state for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.promoState({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### rateLimitCreate
+
+`shield.rateLimitCreate`
+
+Create a shield rate limit rule
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.rateLimitCreate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `ruleName` | `string` | No | — |
+| `ruleDescription` | `string` | No | — |
+| `ruleConfiguration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="ruleConfiguration full type">
+
+```ts
+{
+  actionType?: number,
+  variableTypes?: {
+  },
+  operatorType?: number,
+  severityType?: number,
+  transformationTypes?: any[],
+  value?: string,
+  isNegated?: boolean,
+  isRegexVariable?: boolean,
+  requestCount?: number,
+  counterKeyType?: number,
+  timeframe?: number,
+  blockTime?: number,
+  chainedRuleConditions?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `shieldZoneId` | `number` | No | — |
+| `ruleName` | `string` | No | — |
+| `ruleDescription` | `string` | No | — |
+
+
+
+---
+
+### rateLimitDelete
+
+`shield.rateLimitDelete`
+
+Delete a shield rate limit rule
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bunnycdn.api.shield.rateLimitDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### rateLimitGet
+
+`shield.rateLimitGet`
+
+Get a shield rate limit rule by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.rateLimitGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `shieldZoneId` | `number` | No | — |
+| `ruleName` | `string` | No | — |
+| `ruleDescription` | `string` | No | — |
+
+
+
+---
+
+### rateLimitsList
+
+`shield.rateLimitsList`
+
+List rate limit rules for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.rateLimitsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### rateLimitUpdate
+
+`shield.rateLimitUpdate`
+
+Update a shield rate limit rule
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.rateLimitUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `ruleName` | `string` | No | — |
+| `ruleDescription` | `string` | No | — |
+| `ruleConfiguration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="ruleConfiguration full type">
+
+```ts
+{
+  actionType?: number,
+  variableTypes?: {
+  },
+  operatorType?: number,
+  severityType?: number,
+  transformationTypes?: any[],
+  value?: string,
+  isNegated?: boolean,
+  isRegexVariable?: boolean,
+  requestCount?: number,
+  counterKeyType?: number,
+  timeframe?: number,
+  blockTime?: number,
+  chainedRuleConditions?: any[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `shieldZoneId` | `number` | No | — |
+| `ruleName` | `string` | No | — |
+| `ruleDescription` | `string` | No | — |
+
+
+
+---
+
+### uploadScanningGet
+
+`shield.uploadScanningGet`
+
+Get the upload scanning configuration for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.uploadScanningGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### uploadScanningUpdate
+
+`shield.uploadScanningUpdate`
+
+Update the upload scanning configuration for a shield zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.uploadScanningUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `isEnabled` | `boolean` | No | — |
+| `csamScanningMode` | `number` | No | — |
+| `antivirusScanningMode` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafCustomRuleGet
+
+`shield.wafCustomRuleGet`
+
+Get a custom WAF rule by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafCustomRuleGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafCustomRulesList
+
+`shield.wafCustomRulesList`
+
+List custom WAF rules for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafCustomRulesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafEngineConfig
+
+`shield.wafEngineConfig`
+
+Get the Shield WAF engine configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafEngineConfig({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafEnums
+
+`shield.wafEnums`
+
+List available Shield WAF configuration values
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafEnums({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafProfiles
+
+`shield.wafProfiles`
+
+List available WAF security profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafProfiles({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafRulesByZone
+
+`shield.wafRulesByZone`
+
+List WAF rules for a shield zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafRulesByZone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafRulesPlanSegmentation
+
+`shield.wafRulesPlanSegmentation`
+
+List WAF rules segmented by subscription plan
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafRulesPlanSegmentation({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafRulesReviewTriggered
+
+`shield.wafRulesReviewTriggered`
+
+List triggered WAF rules awaiting review
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.wafRulesReviewTriggered({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### wafRulesReviewTriggeredPost
+
+`shield.wafRulesReviewTriggeredPost`
+
+Apply an action to a triggered WAF rule
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.wafRulesReviewTriggeredPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `ruleId` | `string \| number` | No | — |
+| `action` | `string \| number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### zoneGet
+
+`shield.zoneGet`
+
+Get a shield zone configuration by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.zoneGet({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `pullZoneId` | `number` | No | — |
+| `learningMode` | `boolean` | No | — |
+| `wafEnabled` | `boolean` | No | — |
+| `planType` | `number` | No | — |
+
+
+
+---
+
+### zoneGetByPullZone
+
+`shield.zoneGetByPullZone`
+
+Get the shield zone configuration for a pull zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.zoneGetByPullZone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pullZoneId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `pullZoneId` | `number` | No | — |
+| `learningMode` | `boolean` | No | — |
+| `wafEnabled` | `boolean` | No | — |
+| `planType` | `number` | No | — |
+
+
+
+---
+
+### zonesList
+
+`shield.zonesList`
+
+List all shield zones
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.zonesList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### zonesPullZoneMapping
+
+`shield.zonesPullZoneMapping`
+
+Get the mapping between shield zones and pull zones
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.shield.zonesPullZoneMapping({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### zoneUpdate
+
+`shield.zoneUpdate`
+
+Update a shield zone configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.shield.zoneUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shieldZoneId` | `number` | Yes | — |
+| `shieldZone` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="shieldZone full type">
+
+```ts
+{
+  shieldZoneId?: number,
+  premiumPlan?: boolean,
+  planType?: number,
+  learningMode?: boolean,
+  learningModeUntil?: string,
+  wafEnabled?: boolean,
+  wafExecutionMode?: number,
+  wafDisabledRules?: any[],
+  wafLogOnlyRules?: any[],
+  wafCustomRuleOrder?: any[],
+  wafRequestHeaderLoggingEnabled?: boolean,
+  requestBodyLoggingEnabled?: boolean,
+  wafRequestIgnoredHeaders?: any[],
+  wafRealtimeThreatIntelligenceEnabled?: boolean,
+  wafProfileId?: number,
+  wafEngineConfig?: any[],
+  wafRequestBodyLimitAction?: number,
+  wafResponseBodyLimitAction?: number,
+  dDoSShieldSensitivity?: number,
+  dDoSChallengeWindow?: number,
+  whitelabelResponsePages?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Statistics
+
+### countries
+
+`statistics.countries`
+
+List countries supported by BunnyCDN
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.statistics.countries({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: number,
+  Name?: string,
+  IsoCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`statistics.get`
+
+Retrieve CDN bandwidth and request statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.statistics.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+| `pullZone` | `number` | No | — |
+| `serverZoneId` | `number` | No | — |
+| `hourly` | `boolean` | No | — |
+| `exactRange` | `boolean` | No | — |
+| `loadErrors` | `boolean` | No | — |
+| `loadOriginResponseTimes` | `boolean` | No | — |
+| `loadOriginTraffic` | `boolean` | No | — |
+| `loadRequestsServed` | `boolean` | No | — |
+| `loadBandwidthUsed` | `boolean` | No | — |
+| `loadOriginShieldBandwidth` | `boolean` | No | — |
+| `loadGeographicTrafficDistribution` | `boolean` | No | — |
+| `loadUserBalanceHistory` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### regions
+
+`statistics.regions`
+
+List BunnyCDN regions with pricing info
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.statistics.regions({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: number,
+  Name?: string,
+  RegionCode?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Storage Zone
+
+### checkAvailability
+
+`storageZone.checkAvailability`
+
+Check whether a storage zone name is available
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.storageZone.checkAvailability({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Available` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`storageZone.create`
+
+Create a new storage zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.storageZone.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `region` | `string` | Yes | — |
+| `details` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+  Name: string,
+  Region: string,
+  ReplicationRegions?: any[],
+  ZoneTier?: number,
+  StorageZoneType?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Name` | `string` | No | — |
+| `Region` | `string` | No | — |
+| `ZoneTier` | `number` | No | — |
+| `StorageZoneType` | `number` | No | — |
+| `Deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`storageZone.get`
+
+Get details of a specific storage zone
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.storageZone.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | Yes | — |
+| `Name` | `string` | No | — |
+| `Region` | `string` | No | — |
+| `ZoneTier` | `number` | No | — |
+| `StorageZoneType` | `number` | No | — |
+| `Deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`storageZone.list`
+
+List all storage zones
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.storageZone.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `includeDeleted` | `boolean` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: number,
+  Name?: string,
+  Region?: string,
+  ZoneTier?: number,
+  StorageZoneType?: number,
+  Deleted?: boolean
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`storageZone.remove`
+
+Delete a storage zone and all of its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bunnycdn.api.storageZone.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleteLinkedPullZones` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`storageZone.update`
+
+Update settings for a specific storage zone
+
+**Risk:** `write`
+
+```ts
+await corsair.bunnycdn.api.storageZone.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `settings` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  ReplicationZones?: any[],
+  OriginUrl?: string,
+  Custom404FilePath?: string,
+  Rewrite404To200?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Stream
+
+### oembed
+
+`stream.oembed`
+
+Retrieve oEmbed metadata for a video embed
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.stream.oembed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `maxWidth` | `number` | No | — |
+| `maxHeight` | `number` | No | — |
+| `token` | `string` | No | — |
+| `expires` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## User
+
+### auditLog
+
+`user.auditLog`
+
+Retrieve user audit log entries for a date
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.user.auditLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | — |
+| `product` | `string[]` | No | — |
+| `resourceType` | `string[]` | No | — |
+| `resourceId` | `string[]` | No | — |
+| `actorId` | `string[]` | No | — |
+| `order` | `string` | No | — |
+| `continuationToken` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Video Library
+
+### languages
+
+`videoLibrary.languages`
+
+List languages supported by video libraries
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.videoLibrary.languages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any[]`
+
+
+---
+
+### list
+
+`videoLibrary.list`
+
+List all video libraries
+
+**Risk:** `read`
+
+```ts
+await corsair.bunnycdn.api.videoLibrary.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: number,
+  Name?: string
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

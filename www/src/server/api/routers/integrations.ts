@@ -938,116 +938,6 @@ export const integrationsRouter = createTRPCRouter({
 			};
 		}),
 
-	leaderboard: publicProcedure
-		.input(
-			z
-				.object({
-					page: z.number().int().min(1).default(1),
-				})
-				.default({ page: 1 }),
-		)
-		.query(async ({ ctx, input }) => {
-			const visibleRows = await ctx.db
-				.select({
-					id: integrations.id,
-					name: integrations.name,
-					slug: integrations.slug,
-					points: integrations.points,
-				})
-				.from(integrations)
-				.where(eq(integrations.show, true));
-
-			const latestStatuses = await getLatestStatusesForIntegrations(
-				ctx.db,
-				visibleRows.map((row) => row.id),
-			);
-
-			const integrationsById = new Map(visibleRows.map((row) => [row.id, row]));
-
-			const userClaims = new Map<
-				string,
-				{ id: string; name: string; slug: string; points: number }[]
-			>();
-
-			for (const status of latestStatuses.values()) {
-				if (!isIntegrationActivelyClaimed(status.phase)) continue;
-
-				const integration = integrationsById.get(status.integrationId);
-				if (!integration) continue;
-
-				const existing = userClaims.get(status.userId) ?? [];
-				existing.push({
-					id: integration.id,
-					name: integration.name,
-					slug: integration.slug,
-					points: integration.points,
-				});
-				userClaims.set(status.userId, existing);
-			}
-
-			const userIds = [...userClaims.keys()];
-			const users =
-				userIds.length > 0
-					? await ctx.db
-							.select({
-								id: user.id,
-								githubUsername: user.githubUsername,
-							})
-							.from(user)
-							.where(inArray(user.id, userIds))
-					: [];
-
-			const ranked = users
-				.map((row) => {
-					const claimedIntegrations = userClaims.get(row.id) ?? [];
-					const totalPoints = claimedIntegrations.reduce(
-						(sum, integration) => sum + integration.points,
-						0,
-					);
-
-					return {
-						userId: row.id,
-						githubUsername: row.githubUsername ?? null,
-						totalPoints,
-						integrations: claimedIntegrations.sort((a, b) =>
-							a.name.localeCompare(b.name),
-						),
-					};
-				})
-				.sort((a, b) => b.totalPoints - a.totalPoints);
-
-			const total = ranked.length;
-			const offset = (input.page - 1) * PAGE_SIZE;
-			const pageItems = ranked.slice(offset, offset + PAGE_SIZE);
-			const usernames = [
-				...new Set(
-					pageItems
-						.map((row) => row.githubUsername)
-						.filter((username): username is string => username !== null),
-				),
-			];
-			const avatars = await getGithubUserAvatars(usernames);
-
-			const items = pageItems.map((row, index) => ({
-				rank: offset + index + 1,
-				userId: row.userId,
-				githubUsername: row.githubUsername,
-				avatarUrl: row.githubUsername
-					? (avatars.get(row.githubUsername) ?? null)
-					: null,
-				totalPoints: row.totalPoints,
-				integrations: row.integrations,
-			}));
-
-			return {
-				items,
-				total,
-				page: input.page,
-				pageSize: PAGE_SIZE,
-				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
-			};
-		}),
-
 	claim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
@@ -1082,47 +972,63 @@ export const integrationsRouter = createTRPCRouter({
 	unclaim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			const [integration] = await ctx.db
-				.select({ slug: integrations.slug })
-				.from(integrations)
-				.where(eq(integrations.id, input.integrationId))
-				.limit(1);
+			return ctx.db.transaction(async (tx) => {
+				const db = tx as unknown as DB;
 
-			if (!integration) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
+				const [integration] = await tx
+					.select({ slug: integrations.slug })
+					.from(integrations)
+					.where(eq(integrations.id, input.integrationId))
+					.for('update')
+					.limit(1);
+
+				if (!integration) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'Integration not found',
+					});
+				}
+
+				const latestStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
+
+				if (
+					!latestStatus ||
+					!isIntegrationActivelyClaimed(latestStatus.phase)
+				) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'This integration is not claimed',
+					});
+				}
+
+				if (latestStatus.userId !== ctx.user.id) {
+					throw new TRPCError({
+						code: 'FORBIDDEN',
+						message: 'You can only unclaim integrations you have claimed',
+					});
+				}
+
+				const urls = await fetchIntegrationUrls(db, input.integrationId);
+				if (urls.prUrl) {
+					throw new TRPCError({
+						code: 'BAD_REQUEST',
+						message: 'You cannot unclaim an integration after linking a PR',
+					});
+				}
+
+				await releaseIntegrationClaim(db, {
+					integrationId: input.integrationId,
+					userId: ctx.user.id,
+					reason: 'manual',
 				});
-			}
 
-			const latestStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
+				await clearContributorIntegrationUrls(db, input.integrationId);
 
-			if (!latestStatus || !isIntegrationActivelyClaimed(latestStatus.phase)) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'This integration is not claimed',
-				});
-			}
-
-			if (latestStatus.userId !== ctx.user.id) {
-				throw new TRPCError({
-					code: 'FORBIDDEN',
-					message: 'You can only unclaim integrations you have claimed',
-				});
-			}
-
-			await releaseIntegrationClaim(ctx.db, {
-				integrationId: input.integrationId,
-				userId: ctx.user.id,
-				reason: 'manual',
+				return { integrationId: input.integrationId, slug: integration.slug };
 			});
-
-			await clearContributorIntegrationUrls(ctx.db, input.integrationId);
-
-			return { integrationId: input.integrationId, slug: integration.slug };
 		}),
 
 	updateUrls: protectedProcedure
@@ -1133,63 +1039,68 @@ export const integrationsRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ ctx, input }) => {
-			const [integration] = await ctx.db
-				.select({ id: integrations.id, slug: integrations.slug })
-				.from(integrations)
-				.where(eq(integrations.id, input.integrationId))
-				.limit(1);
+			return ctx.db.transaction(async (tx) => {
+				const db = tx as unknown as DB;
 
-			if (!integration) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
+				const [integration] = await tx
+					.select({ id: integrations.id, slug: integrations.slug })
+					.from(integrations)
+					.where(eq(integrations.id, input.integrationId))
+					.for('update')
+					.limit(1);
+
+				if (!integration) {
+					throw new TRPCError({
+						code: 'NOT_FOUND',
+						message: 'Integration not found',
+					});
+				}
+
+				const latestStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
+
+				if (
+					!latestStatus ||
+					latestStatus.userId !== ctx.user.id ||
+					!isIntegrationActivelyClaimed(latestStatus.phase)
+				) {
+					throw new TRPCError({
+						code: 'FORBIDDEN',
+						message: 'Only the integration owner can update URLs',
+					});
+				}
+
+				const previousUrls = normalizeIntegrationUrls(
+					await fetchIntegrationUrls(db, input.integrationId),
+				);
+				const urls = normalizeIntegrationUrls(input.urls);
+
+				await upsertIntegrationUrls(db, input.integrationId, urls);
+
+				await maybeAdvancePhaseAfterUrlUpdate(db, {
+					integrationId: input.integrationId,
+					userId: ctx.user.id,
+					slug: integration.slug,
+					previousUrls,
+					nextUrls: urls,
 				});
-			}
 
-			const latestStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
+				const updatedStatus = await getLatestStatusForIntegration(
+					db,
+					input.integrationId,
+				);
 
-			if (
-				!latestStatus ||
-				latestStatus.userId !== ctx.user.id ||
-				!isIntegrationActivelyClaimed(latestStatus.phase)
-			) {
-				throw new TRPCError({
-					code: 'FORBIDDEN',
-					message: 'Only the integration owner can update URLs',
-				});
-			}
-
-			const previousUrls = normalizeIntegrationUrls(
-				await fetchIntegrationUrls(ctx.db, input.integrationId),
-			);
-			const urls = normalizeIntegrationUrls(input.urls);
-
-			await upsertIntegrationUrls(ctx.db, input.integrationId, urls);
-
-			await maybeAdvancePhaseAfterUrlUpdate(ctx.db, {
-				integrationId: input.integrationId,
-				userId: ctx.user.id,
-				slug: integration.slug,
-				previousUrls,
-				nextUrls: urls,
+				return {
+					integrationId: input.integrationId,
+					slug: integration.slug,
+					urls,
+					phase: updatedStatus?.phase ?? latestStatus.phase,
+					issueDeadlineAt: updatedStatus?.issueDeadlineAt ?? null,
+					prDeadlineAt: updatedStatus?.prDeadlineAt ?? null,
+				};
 			});
-
-			const updatedStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
-
-			return {
-				integrationId: input.integrationId,
-				slug: integration.slug,
-				urls,
-				phase: updatedStatus?.phase ?? latestStatus.phase,
-				issueDeadlineAt: updatedStatus?.issueDeadlineAt ?? null,
-				prDeadlineAt: updatedStatus?.prDeadlineAt ?? null,
-			};
 		}),
 
 	markReadyToReview: protectedProcedure

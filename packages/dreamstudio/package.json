@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/dreamstudio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DreamStudio (Stability AI) plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -38,9 +38,15 @@
     "stability",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/dreamstudio"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/dreamstudio"
 }

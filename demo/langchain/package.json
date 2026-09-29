@@ -1,0 +1,26 @@
+{
+  "name": "corsair-langchain-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "tsx scripts/test-langchain.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@corsair-dev/langchain": "workspace:*",
+    "@corsair-dev/slack": "workspace:^",
+    "@langchain/core": "^1.0.0",
+    "@langchain/langgraph": "^1.0.0",
+    "@langchain/openai": "^1.0.0",
+    "better-sqlite3": "^11.0.0",
+    "corsair": "workspace:*",
+    "dotenv": "^16.4.0",
+    "tsx": "^4.20.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.8.0"
+  }
+}
