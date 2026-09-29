@@ -27,7 +27,7 @@ export const BaseProviders = [
 	'agentmail',
 	'agentql',
 	'agenty',
-	'agiled',
+
 	'agilitycms',
 	'ahrefs',
 	'aimlapi',
