@@ -73,6 +73,7 @@ export type ClickSendWebhookOutputs = {
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
+	// unknown: webhook body may be a raw JSON string or an already-parsed object.
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
@@ -130,6 +131,7 @@ export function verifyClickSendWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret?: string,
 ): { valid: boolean; error?: string } {
+	// unknown: WebhookRequest body type is transport-level until verified.
 	if (request.hubVerified === true) {
 		return { valid: true };
 	}
@@ -156,6 +158,7 @@ export function verifyClickSendWebhookSignature(
 		string,
 		string | string[] | undefined
 	>;
+	// unknown: query params are not on WebhookRequest's public type but may be present at runtime.
 	const query = ((
 		request as unknown as {
 			query?: Record<string, string | string[] | undefined>;
