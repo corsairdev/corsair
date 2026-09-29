@@ -80,6 +80,16 @@ describe('Fixer Endpoints Execution & Error Policies', () => {
 		expect(res.result).toBe(92);
 	});
 
+	it('rejects invalid historical dates before calling Fixer', async () => {
+		await expect(
+			rates.historical(mockCtx, { date: '2025-02-29' }),
+		).rejects.toThrow();
+		await expect(
+			rates.historical(mockCtx, { date: '2026-13-01' }),
+		).rejects.toThrow();
+		expect(global.fetch).not.toHaveBeenCalled();
+	});
+
 	it('executes rates.historical endpoint', async () => {
 		(global.fetch as jest.Mock).mockResolvedValueOnce(
 			mockResponse(200, {

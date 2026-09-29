@@ -1,19 +1,25 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FixerEndpoints } from '..';
 import { makeFixerRequest } from '../client';
-import type { FixerEndpointOutputs } from './types';
+import {
+	RatesConvertInputSchema,
+	RatesConvertOutputSchema,
+	RatesHistoricalInputSchema,
+	RatesHistoricalOutputSchema,
+	RatesLatestInputSchema,
+	RatesLatestOutputSchema,
+} from './types';
 
-export const latest: FixerEndpoints['ratesLatest'] = async (ctx, input) => {
-	const response = await makeFixerRequest<FixerEndpointOutputs['ratesLatest']>(
-		'latest',
-		ctx.key,
-		{
+export const latest: FixerEndpoints['ratesLatest'] = async (ctx, rawInput) => {
+	const input = RatesLatestInputSchema.parse(rawInput);
+	const response = RatesLatestOutputSchema.parse(
+		await makeFixerRequest<unknown>('latest', ctx.key, {
 			method: 'GET',
 			query: {
 				base: input.base,
 				symbols: input.symbols?.join(','),
 			},
-		},
+		}),
 	);
 
 	await logEventFromContext(
@@ -29,11 +35,13 @@ export const latest: FixerEndpoints['ratesLatest'] = async (ctx, input) => {
 	return response;
 };
 
-export const convert: FixerEndpoints['ratesConvert'] = async (ctx, input) => {
-	const response = await makeFixerRequest<FixerEndpointOutputs['ratesConvert']>(
-		'convert',
-		ctx.key,
-		{
+export const convert: FixerEndpoints['ratesConvert'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = RatesConvertInputSchema.parse(rawInput);
+	const response = RatesConvertOutputSchema.parse(
+		await makeFixerRequest<unknown>('convert', ctx.key, {
 			method: 'GET',
 			query: {
 				from: input.from,
@@ -41,7 +49,7 @@ export const convert: FixerEndpoints['ratesConvert'] = async (ctx, input) => {
 				amount: input.amount,
 				date: input.date,
 			},
-		},
+		}),
 	);
 
 	await logEventFromContext(
@@ -60,17 +68,18 @@ export const convert: FixerEndpoints['ratesConvert'] = async (ctx, input) => {
 
 export const historical: FixerEndpoints['ratesHistorical'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
-	const response = await makeFixerRequest<
-		FixerEndpointOutputs['ratesHistorical']
-	>(input.date, ctx.key, {
-		method: 'GET',
-		query: {
-			base: input.base,
-			symbols: input.symbols?.join(','),
-		},
-	});
+	const input = RatesHistoricalInputSchema.parse(rawInput);
+	const response = RatesHistoricalOutputSchema.parse(
+		await makeFixerRequest<unknown>(input.date, ctx.key, {
+			method: 'GET',
+			query: {
+				base: input.base,
+				symbols: input.symbols?.join(','),
+			},
+		}),
+	);
 
 	await logEventFromContext(
 		ctx,
