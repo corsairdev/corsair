@@ -7,14 +7,20 @@ export function matchCodeInterpreterTenantWebhook(
 	const body = readBodyRecord(request);
 	if (!body) return null;
 
-	const externalId = firstString([
+	const sessionId = firstString([
 		body.session_id,
 		asRecord(body.data)?.session_id,
+	]);
+	const tenantExternalId = firstString([
 		body.tenant_external_id,
 		asRecord(body.data)?.tenant_external_id,
 	]);
+	const externalId = sessionId ?? tenantExternalId;
 
 	if (!externalId) return null;
 
-	return { linkType: 'session_id', externalId };
+	return {
+		linkType: sessionId ? 'session_id' : 'tenant_external_id',
+		externalId,
+	};
 }
