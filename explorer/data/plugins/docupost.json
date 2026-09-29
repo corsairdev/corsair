@@ -1,0 +1,211 @@
+{
+  "id": "docupost",
+  "displayName": "Docupost",
+  "description": "Docupost plugin for Corsair",
+  "npmPackageName": "@corsair-dev/docupost",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "docupost.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Fetch the remaining DocuPost account balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docupost.api.send.letter",
+      "shortPath": "send.letter",
+      "description": "Send a physical letter through DocuPost",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pdf_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "docupost.api.send.postcard",
+      "shortPath": "send.postcard",
+      "description": "Send a physical postcard through DocuPost",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "from_zip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "front_image_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "back_image_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
