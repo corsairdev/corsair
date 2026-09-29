@@ -5,12 +5,12 @@ import {
 	makeCodeInterpreterRequest,
 	makeCodeInterpreterUpload,
 } from '../client';
-import { deleteFile } from './deleteFile';
-import { downloadFile } from './downloadFile';
-import { executeCode } from './executeCode';
-import { listFiles } from './listFiles';
+import { deleteFile } from './delete-file';
+import { downloadFile } from './download-file';
+import { executeCode } from './execute-code';
+import { listFiles } from './list-files';
 import { CodeInterpreterEndpointOutputSchemas } from './types';
-import { uploadFile } from './uploadFile';
+import { uploadFile } from './upload-file';
 
 jest.mock('../client', () => ({
 	makeCodeInterpreterRequest: jest.fn(),
