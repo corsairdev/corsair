@@ -1,0 +1,329 @@
+{
+  "id": "hookdeck",
+  "displayName": "Hookdeck",
+  "description": "Hookdeck plugin for Corsair",
+  "npmPackageName": "@corsair-dev/hookdeck",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "hookdeck.api.connections.create",
+      "shortPath": "connections.create",
+      "description": "Create a new connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "source_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, count?: number, interval?: number, strategy?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disabled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, count?: number, interval?: number, strategy?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hookdeck.api.connections.delete",
+      "shortPath": "connections.delete",
+      "description": "Delete a connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hookdeck.api.connections.get",
+      "shortPath": "connections.get",
+      "description": "Get a connection by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disabled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, count?: number, interval?: number, strategy?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hookdeck.api.connections.list",
+      "shortPath": "connections.list",
+      "description": "List all connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prev",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dir",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ id: string, team_id: string, name?: string | null, full_name: string, disabled_at?: string | null, paused_at?: string | null, created_at: string, updated_at: string, rules?: { type: string, count?: number, interval?: number, strategy?: string }[] }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ order_by: string, dir: asc | desc, limit: number, next?: string, prev?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hookdeck.api.connections.update",
+      "shortPath": "connections.update",
+      "description": "Update an existing connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, count?: number, interval?: number, strategy?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disabled_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paused_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ type: string, count?: number, interval?: number, strategy?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

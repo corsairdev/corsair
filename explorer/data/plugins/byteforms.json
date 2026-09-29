@@ -1,0 +1,218 @@
+{
+  "id": "byteforms",
+  "displayName": "ByteForms",
+  "description": "ByteForms plugin for Corsair",
+  "npmPackageName": "@corsair-dev/byteforms",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "byteforms.api.forms.create",
+      "shortPath": "forms.create",
+      "description": "Create a new ByteForms form with custom fields and options",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "{ component: string, type?: string, label?: string, id?: string, required?: boolean, placeholder?: string }[]"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ one_submission_per_email?: boolean, thank_you_message?: string, max_submissions?: number, stop_submissions_after?: string | null, submit_button_text?: string, form_width?: string, redirect_url?: string, password?: string, theme?: string, visibility?: string, page_behaviour?: string, custom_code?: string, draft_submissions?: boolean, remove_branding?: boolean, email_notifications?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id: number, public_id: string, name: string, body: { component: string, type?: string, label?: string, id?: string, required?: boolean, placeholder?: string }[], pages?: any | null, is_custom: boolean, options: { one_submission_per_email?: boolean, thank_you_message?: string, max_submissions?: number, stop_submissions_after?: string | null, submit_button_text?: string, form_width?: string, redirect_url?: string, password?: string, theme?: string, visibility?: string, page_behaviour?: string, custom_code?: string, draft_submissions?: boolean, remove_branding?: boolean, email_notifications?: boolean }, user_id: number, created_at: string, updated_at: string, deleted_at?: string | null }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "byteforms.api.forms.delete",
+      "shortPath": "forms.delete",
+      "description": "Delete a ByteForms form by its numeric or public ID",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "byteforms.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Retrieve a single ByteForms form definition by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, public_id: string, name: string, body: { component: string, type?: string, label?: string, id?: string, required?: boolean, placeholder?: string }[], pages?: any | null, is_custom: boolean, options: { one_submission_per_email?: boolean, thank_you_message?: string, max_submissions?: number, stop_submissions_after?: string | null, submit_button_text?: string, form_width?: string, redirect_url?: string, password?: string, theme?: string, visibility?: string, page_behaviour?: string, custom_code?: string, draft_submissions?: boolean, remove_branding?: boolean, email_notifications?: boolean }, user_id: number, created_at: string, updated_at: string, deleted_at?: string | null }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "byteforms.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List all ByteForms forms created by the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, public_id: string, name: string, body: { component: string, type?: string, label?: string, id?: string, required?: boolean, placeholder?: string }[], pages?: any | null, is_custom: boolean, options: { one_submission_per_email?: boolean, thank_you_message?: string, max_submissions?: number, stop_submissions_after?: string | null, submit_button_text?: string, form_width?: string, redirect_url?: string, password?: string, theme?: string, visibility?: string, page_behaviour?: string, custom_code?: string, draft_submissions?: boolean, remove_branding?: boolean, email_notifications?: boolean }, user_id: number, created_at: string, updated_at: string, deleted_at?: string | null }[]"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "byteforms.api.forms.responses",
+      "shortPath": "forms.responses",
+      "description": "Retrieve paginated responses submitted to a ByteForms form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": false,
+            "type": "{ after?: string | null, before?: string | null }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, form_id: number, response: {}, options?: { ip?: string }, created_at: string, updated_at: string, deleted_at?: string | null }[] | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
