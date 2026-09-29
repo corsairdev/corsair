@@ -44,6 +44,7 @@ export type AmaraQuery = Record<string, string | number | boolean | undefined>;
 
 export type AmaraRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// unknown: Amara JSON bodies differ by route; Zod parses at the caller.
 	body?: Record<string, unknown>;
 	query?: AmaraQuery;
 };

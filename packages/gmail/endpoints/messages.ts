@@ -184,34 +184,6 @@ export const send: GmailEndpoints['messagesSend'] = async (ctx, input) => {
 	return result;
 };
 
-export const deleteMessage: GmailEndpoints['messagesDelete'] = async (
-	ctx,
-	input,
-) => {
-	await makeAuthenticatedGmailRequest<GmailEndpointOutputs['messagesDelete']>(
-		`/users/${input.userId || 'me'}/messages/${input.id}`,
-		ctx,
-		{
-			method: 'DELETE',
-		},
-	);
-
-	if (ctx.db.messages) {
-		try {
-			await ctx.db.messages.deleteByEntityId(input.id);
-		} catch (error) {
-			console.warn('Failed to delete message from database:', error);
-		}
-	}
-
-	await logEventFromContext(
-		ctx,
-		'gmail.messages.delete',
-		{ ...input },
-		'completed',
-	);
-};
-
 export const modify: GmailEndpoints['messagesModify'] = async (ctx, input) => {
 	const body: {
 		addLabelIds?: string[];

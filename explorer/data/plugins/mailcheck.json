@@ -1,0 +1,121 @@
+{
+  "id": "mailcheck",
+  "displayName": "Mailcheck",
+  "description": "Mailcheck plugin for Corsair",
+  "npmPackageName": "@corsair-dev/mailcheck",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 2,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mailcheck.api.domain.validate",
+      "shortPath": "domain.validate",
+      "description": "Check a domain for MX records, disposable providers, and catch-all mail",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mxExists",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isNotDisposable",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isNotSmtpCatchAll",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcheck.api.email.verify",
+      "shortPath": "email.verify",
+      "description": "Verify an email for syntax, MX records, and SMTP validity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "trustRate",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "mxExists",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "smtpExists",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isNotDisposable",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "isNotSmtpCatchAll",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "gravatar",
+            "optional": true,
+            "type": "{ entries?: { profileUrl?: string, preferredUsername?: string, accounts?: { domain: string }[] }[] }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
