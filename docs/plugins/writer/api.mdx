@@ -1,0 +1,894 @@
+---
+title: API
+description: "API reference for Writer: every `writer.api.*` operation with input and output types."
+---
+
+Every `writer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Applications
+
+### list
+
+`applications.list`
+
+List no-code applications
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.applications.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chat
+
+### create
+
+`chat.create`
+
+Generate chat completions
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.chat.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `temperature` | `number` | No | — |
+| `stream` | `false` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant | system,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `chat.completion` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  finish_reason?: string | null,
+  message: {
+    role: string,
+    content?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  total_tokens: number,
+  completion_tokens: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Completions
+
+### create
+
+`completions.create`
+
+Generate text completions
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.completions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `prompt` | `string` | Yes | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `best_of` | `number` | No | — |
+| `random_seed` | `number` | No | — |
+| `stream` | `false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `choices` | `object[]` | Yes | — |
+| `model` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  text: string,
+  log_probs?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.writer.api.files.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### download
+
+`files.download`
+
+Download file contents
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.files.download({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`files.get`
+
+Get file details
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.files.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`files.list`
+
+List uploaded files
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `graph_id` | `string` | No | — |
+| `status` | `in_progress \| completed \| failed` | No | — |
+| `file_types` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload file
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.files.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `graphId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Knowledge Graphs
+
+### addFile
+
+`knowledgeGraphs.addFile`
+
+Add file to graph
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.addFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_id` | `string` | Yes | — |
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### askQuestion
+
+`knowledgeGraphs.askQuestion`
+
+Ask question to knowledge graph
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.askQuestion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_ids` | `string[]` | Yes | — |
+| `question` | `string` | Yes | — |
+| `stream` | `false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `question` | `string` | Yes | — |
+| `answer` | `string` | Yes | — |
+| `sources` | `any[]` | No | — |
+
+
+
+---
+
+### create
+
+`knowledgeGraphs.create`
+
+Create knowledge graph
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `urls` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`knowledgeGraphs.delete`
+
+Delete knowledge graph
+
+**Risk:** `destructive`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`knowledgeGraphs.list`
+
+List knowledge graphs
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `team_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFile
+
+`knowledgeGraphs.removeFile`
+
+Remove file from graph
+
+**Risk:** `destructive`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.removeFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_id` | `string` | Yes | — |
+| `file_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### retrieve
+
+`knowledgeGraphs.retrieve`
+
+Retrieve knowledge graph
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`knowledgeGraphs.update`
+
+Update knowledge graph
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.knowledgeGraphs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `graph_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `team_ids` | `number[]` | No | — |
+| `urls` | `any[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List available models
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  id: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### analyzeImages
+
+`tools.analyzeImages`
+
+Analyze images with vision models
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.tools.analyzeImages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `input` | `any[]` | Yes | — |
+| `stream` | `false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `choices` | `any[]` | No | — |
+
+
+
+---
+
+### detectAiContent
+
+`tools.detectAiContent`
+
+Detect AI-generated content likelihood
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.tools.detectAiContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  label?: string,
+  confidence?: number
+}[] | any
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### medicalComprehend
+
+`tools.medicalComprehend`
+
+Extract structured medical entities from text
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.tools.medicalComprehend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `model` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### parsePdf
+
+`tools.parsePdf`
+
+Parse PDF file
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.tools.parsePdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | — |
+| `format` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | — |
+| `markdown` | `string` | No | — |
+
+
+
+---
+
+### translateText
+
+`tools.translateText`
+
+Translate text between languages
+
+**Risk:** `write`
+
+```ts
+await corsair.writer.api.tools.translateText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `target_language` | `string` | Yes | — |
+| `source_language` | `string` | No | — |
+| `formality` | `string` | No | — |
+| `mask_profanity` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translation` | `string` | No | — |
+| `translated_text` | `string` | No | — |
+
+
+
+---
+
+### webSearch
+
+`tools.webSearch`
+
+Search the web
+
+**Risk:** `read`
+
+```ts
+await corsair.writer.api.tools.webSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[]` | No | — |
+
+
+
+---
+

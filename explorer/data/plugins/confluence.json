@@ -1,0 +1,261 @@
+{
+  "id": "confluence",
+  "displayName": "Confluence",
+  "description": "Team wiki and documentation platform for knowledge bases and collaborative page editing.",
+  "npmPackageName": "@corsair-dev/confluence",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "email", "cloud_url"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "cloud_id",
+        "cloud_url"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "confluence.api.pages.get",
+      "shortPath": "pages.get",
+      "description": "List Confluence pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "space_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by space ID"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Filter pages by title"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "current | trashed | draft",
+            "description": "Filter pages by content status"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of pages to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status?: string, title: string, spaceId?: string, parentId?: string | null, parentType?: string | null, authorId?: string, createdAt?: string, version?: { createdAt?: string, message?: string, number?: number, minorEdit?: boolean, authorId?: string }, body?: { storage?: { value?: string, representation?: string }, atlas_doc_format?: { value?: string, representation?: string } }, _links?: { webui?: string, editui?: string, tinyui?: string, self?: string } }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ next?: string, base?: string, self?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "confluence.api.pages.search",
+      "shortPath": "pages.search",
+      "description": "Search Confluence pages via CQL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cql",
+            "optional": false,
+            "type": "string",
+            "description": "Confluence Query Language (CQL) query string"
+          },
+          {
+            "key": "cqlcontext",
+            "optional": true,
+            "type": "string",
+            "description": "Context for the CQL query"
+          },
+          {
+            "key": "includeArchivedSpaces",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include archived spaces in results"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum results"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset for the first result"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ content: { id: string, type: string, status?: string, title: string, childTypes?: {}, macroRenderedOutput?: {}, restrictions?: {}, _expandable?: {}, _links?: { webui?: string, self?: string, tinyui?: string } }, title: string, excerpt?: string, url?: string, resultGlobalContainer?: { title: string, displayUrl: string }, breadcrumbs?: any[], entityType?: string, iconCssClass?: string, lastModified?: string, friendlyLastModified?: string, score?: number }[]"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cqlQuery",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchDuration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "archivedResultCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ base?: string, context?: string, self?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "confluence.api.spaces.list",
+      "shortPath": "spaces.list",
+      "description": "List Confluence spaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by space key"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "global | personal",
+            "description": "Filter by space type"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "current | archived",
+            "description": "Filter by space status"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by space label"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of spaces to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string, ari?: string, key: string, alias?: string, name: string, type?: string, status?: string, description?: any, homepage?: any, _expandable?: {}, _links?: {} }[]"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

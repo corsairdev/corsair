@@ -1,0 +1,403 @@
+---
+title: API
+description: "API reference for Bright Data: every `brightdata.api.*` operation with input and output types."
+---
+
+Every `brightdata.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Crawl Api
+
+### crawlApi
+
+`crawlApi`
+
+Tool to trigger an asynchronous site crawl for a dataset and list of URLs. Returns snapshot_id required by getSnapshotStatus and getSnapshotResults.
+
+**Risk:** `write`
+
+```ts
+await corsair.brightdata.api.crawlApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | Yes | Official query: ?dataset_id= |
+| `items` | `object[]` | Yes | — |
+| `include_errors` | `boolean` | No | — |
+| `custom_output_fields` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | Yes | — |
+
+
+
+---
+
+## Filter Dataset
+
+### filterDataset
+
+`filterDataset`
+
+Tool to apply custom filter criteria to a marketplace dataset (BETA). Use after selecting a dataset to generate a filtered snapshot.
+
+**Risk:** `write`
+
+```ts
+await corsair.brightdata.api.filterDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset_id` | `string` | Yes | — |
+| `filter` | `object` | Yes | — |
+| `records_limit` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | Yes | — |
+
+
+
+---
+
+## Get Available Cities
+
+### getAvailableCities
+
+`getAvailableCities`
+
+Tool to get available static network cities for a given country. Use when you need to configure static proxy endpoints after selecting a country.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.getAvailableCities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | Official query: ?country= |
+| `pool_ip_type` | `dc \| static_res` | No | — |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+## Get Available Countries
+
+### getAvailableCountries
+
+`getAvailableCountries`
+
+Tool to list available countries and their ISO 3166-1 alpha-2 codes. Use when you need to configure zones with valid country codes before provisioning proxies.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.getAvailableCountries({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_types` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="zone_types full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Get Snapshot Results
+
+### getSnapshotResults
+
+`getSnapshotResults`
+
+Tool to retrieve the scraped data from a completed crawl job by snapshot ID. Only call after confirming the job is complete via getSnapshotStatus.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.getSnapshotResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/snapshot/{snapshot_id} |
+| `format` | `json \| ndjson \| jsonl \| csv` | No | — |
+| `compress` | `boolean` | No | — |
+| `batch_size` | `number` | No | — |
+| `part` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Get Snapshot Status
+
+### getSnapshotStatus
+
+`getSnapshotStatus`
+
+Tool to check the processing status of a crawl job using snapshot ID. Call before attempting to download results to ensure data collection is complete.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.getSnapshotStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | Yes | Official path {snapshot_id} on GET /datasets/v3/progress/{snapshot_id} |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshot_id` | `string` | No | — |
+| `dataset_id` | `string` | No | — |
+| `status` | `starting \| running \| ready \| failed \| canceled` | Yes | — |
+
+
+
+---
+
+## List Datasets
+
+### listDatasets
+
+`listDatasets`
+
+Tool to list all available pre-made scrapers (datasets) from Bright Data marketplace. Use when you need to browse available data sources for structured scraping.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.listDatasets({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  size?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## List Web Unlocker Zones
+
+### listWebUnlockerZones
+
+`listWebUnlockerZones`
+
+Tool to list your configured Web Unlocker zones and proxy endpoints. Use to view available zones for web scraping and bot protection bypass.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.listWebUnlockerZones({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Serp Search
+
+### serpSearch
+
+`serpSearch`
+
+Tool to perform SERP searches across search engines using Bright Data SERP API. Use when you need search results, trending topics, or competitive analysis data.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.serpSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone` | `string` | Yes | — |
+| `q_keywords` | `string` | Yes | — |
+| `search_engine` | `google \| bing \| yahoo \| yandex \| duckduckgo` | No | — |
+| `format` | `json \| raw` | No | — |
+| `method` | `string` | No | — |
+| `country` | `string` | No | — |
+| `data_format` | `markdown \| screenshot` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  general?: {
+  },
+  input?: {
+  },
+  organic?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Web Unlocker
+
+### webUnlocker
+
+`webUnlocker`
+
+Tool to bypass bot detection, captcha, and other anti-scraping measures to extract content from websites. Use when sites block automated access or require JavaScript rendering.
+
+**Risk:** `read`
+
+```ts
+await corsair.brightdata.api.webUnlocker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `zone` | `string` | Yes | — |
+| `format` | `json \| raw` | No | — |
+| `country` | `string` | No | — |
+| `data_format` | `markdown \| screenshot` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  status_code?: number,
+  headers?: {
+  },
+  body?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

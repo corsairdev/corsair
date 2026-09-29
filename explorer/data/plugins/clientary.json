@@ -1,0 +1,6454 @@
+{
+  "id": "clientary",
+  "displayName": "Clientary",
+  "description": "Client management software for freelancers tracking projects, invoices, and time.",
+  "npmPackageName": "@corsair-dev/clientary",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 6
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "domain"]
+    }
+  ],
+  "api": [
+    {
+      "path": "clientary.api.clients.create",
+      "shortPath": "clients.create",
+      "description": "Create a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Client name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Client number (unique)"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.clients.delete",
+      "shortPath": "clients.delete",
+      "description": "Delete a client and all associated projects, invoices, estimates, and contacts",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.clients.get",
+      "shortPath": "clients.get",
+      "description": "Get a client by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.clients.list",
+      "shortPath": "clients.list",
+      "description": "List clients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only return clients updated since this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "date",
+            "description": "Sort by most recently created"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "clients",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.clients.update",
+      "shortPath": "clients.update",
+      "description": "Update a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Client name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Client number (unique)"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client the contact belongs to"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Contact name"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Contact email"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Contact ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Contact ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, name: string, email?: string | null, title?: string | null, phone?: string | null, mobile?: string | null, ext?: string | null, avatar?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.listForClient",
+      "shortPath": "contacts.listForClient",
+      "description": "List contacts belonging to a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope contacts by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, name: string, email?: string | null, title?: string | null, phone?: string | null, mobile?: string | null, ext?: string | null, avatar?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Contact ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Contact name"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Contact email"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.create",
+      "shortPath": "estimates.create",
+      "description": "Create an estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Estimate number (autoincrements)"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "Estimate date (YYYY-MM-DD)"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimate_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number, taxable?: boolean }[]",
+            "description": "Estimate line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimate_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.delete",
+      "shortPath": "estimates.delete",
+      "description": "Delete an estimate",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Estimate ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.get",
+      "shortPath": "estimates.get",
+      "description": "Get an estimate by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Estimate ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimate_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.list",
+      "shortPath": "estimates.list",
+      "description": "List estimates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "estimates",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, client_id?: number | null, note?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, estimate_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.listForClient",
+      "shortPath": "estimates.listForClient",
+      "description": "List estimates belonging to a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope estimates by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "estimates",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, client_id?: number | null, note?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, estimate_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.listForProject",
+      "shortPath": "estimates.listForProject",
+      "description": "List estimates belonging to a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID to scope estimates by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "estimates",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, client_id?: number | null, note?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, estimate_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.send",
+      "shortPath": "estimates.send",
+      "description": "Send an estimate via email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Estimate ID to send"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "string[]",
+            "description": "Recipient email addresses"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Email subject line"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Email body message"
+          },
+          {
+            "key": "send_copy",
+            "optional": true,
+            "type": "boolean | number",
+            "description": "Send a copy to the sending user"
+          },
+          {
+            "key": "attach_pdf",
+            "optional": true,
+            "type": "boolean | number",
+            "description": "Attach a PDF of the estimate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.estimates.update",
+      "shortPath": "estimates.update",
+      "description": "Update an estimate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Estimate ID"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Estimate number (autoincrements)"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Estimate date (YYYY-MM-DD)"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimate_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number, taxable?: boolean }[]",
+            "description": "Estimate line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "estimate_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.create",
+      "shortPath": "expenses.create",
+      "description": "Create an expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Expense amount"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incurred_on",
+            "optional": true,
+            "type": "string",
+            "description": "Date incurred (YYYY-MM-DD)"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_item_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incurred_on",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.delete",
+      "shortPath": "expenses.delete",
+      "description": "Delete an expense",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Expense ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.get",
+      "shortPath": "expenses.get",
+      "description": "Get an expense by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Expense ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_item_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incurred_on",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.list",
+      "shortPath": "expenses.list",
+      "description": "List expenses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "string",
+            "description": "Start of date range (YYYY-MM-DD)"
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "string",
+            "description": "End of date range (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, project_id?: number | null, invoice_id?: number | null, invoice_item_id?: number | null, user_id?: number | null, amount: number, description?: string | null, incurred_on: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.listForClient",
+      "shortPath": "expenses.listForClient",
+      "description": "List expenses belonging to a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope expenses by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, project_id?: number | null, invoice_id?: number | null, invoice_item_id?: number | null, user_id?: number | null, amount: number, description?: string | null, incurred_on: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.listForProject",
+      "shortPath": "expenses.listForProject",
+      "description": "List expenses belonging to a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID to scope expenses by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expenses",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, project_id?: number | null, invoice_id?: number | null, invoice_item_id?: number | null, user_id?: number | null, amount: number, description?: string | null, incurred_on: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.expenses.update",
+      "shortPath": "expenses.update",
+      "description": "Update an expense",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Expense ID"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "Expense amount"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incurred_on",
+            "optional": true,
+            "type": "string",
+            "description": "Date incurred (YYYY-MM-DD)"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invoice_item_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "incurred_on",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.hours.create",
+      "shortPath": "hours.create",
+      "description": "Log hours to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project to log hours against"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "number",
+            "description": "Number of hours logged"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Title of the logged work"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Date logged (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billed?",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.hours.delete",
+      "shortPath": "hours.delete",
+      "description": "Delete an hours entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Hours entry ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.hours.get",
+      "shortPath": "hours.get",
+      "description": "Get an hours entry by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Hours entry ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billed?",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.hours.listForProject",
+      "shortPath": "hours.listForProject",
+      "description": "List hours logged against a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID to scope hours by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "billed | unbilled",
+            "description": "Narrow to billed or unbilled hours"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "{ id: number, project_id: number, user_id?: number | null, title: string, description?: string | null, date: string, hours: number, rate?: number | null, cost?: number | null, billed??: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.hours.update",
+      "shortPath": "hours.update",
+      "description": "Update an hours entry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Hours entry ID"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "number",
+            "description": "Number of hours logged"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Title of the logged work"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Date logged (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "billed?",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Invoice number (autoincrements)"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "Invoice date (YYYY-MM-DD)"
+          },
+          {
+            "key": "due_date",
+            "optional": false,
+            "type": "string",
+            "description": "Invoice due date (YYYY-MM-DD)"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number, taxable?: boolean }[]",
+            "description": "Invoice line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_payments",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "recurring_schedules",
+            "optional": true,
+            "type": "{ id: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.delete",
+      "shortPath": "invoices.delete",
+      "description": "Delete an invoice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Invoice ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Get an invoice by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Invoice ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_payments",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "recurring_schedules",
+            "optional": true,
+            "type": "{ id: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "updated_since",
+            "optional": true,
+            "type": "string",
+            "description": "Only return invoices updated since this date (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, due_date?: string | null, client_id?: number | null, note?: string | null, po?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, balance: number, total_payments: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, invoice_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[], payments?: { id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[], recurring_schedules?: { id: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.listForClient",
+      "shortPath": "invoices.listForClient",
+      "description": "List invoices belonging to a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope invoices by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, due_date?: string | null, client_id?: number | null, note?: string | null, po?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, balance: number, total_payments: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, invoice_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[], payments?: { id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[], recurring_schedules?: { id: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.listForProject",
+      "shortPath": "invoices.listForProject",
+      "description": "List invoices belonging to a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID to scope invoices by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, due_date?: string | null, client_id?: number | null, note?: string | null, po?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, balance: number, total_payments: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, invoice_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[], payments?: { id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[], recurring_schedules?: { id: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.listForRecurring",
+      "shortPath": "invoices.listForRecurring",
+      "description": "List invoices generated by a recurring schedule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recurring_id",
+            "optional": false,
+            "type": "number",
+            "description": "Recurring schedule ID to scope invoices by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoices",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, title?: string | null, date: string, due_date?: string | null, client_id?: number | null, note?: string | null, po?: string | null, status: number, currency_code: string, subtotal: number, total_cost: number, balance: number, total_payments: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, summary?: string | null, invoice_items?: { id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[], payments?: { id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[], recurring_schedules?: { id: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.send",
+      "shortPath": "invoices.send",
+      "description": "Send an invoice via email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Estimate ID to send"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "string[]",
+            "description": "Recipient email addresses"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Email subject line"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Email body message"
+          },
+          {
+            "key": "send_copy",
+            "optional": true,
+            "type": "boolean | number",
+            "description": "Send a copy to the sending user"
+          },
+          {
+            "key": "attach_pdf",
+            "optional": true,
+            "type": "boolean | number",
+            "description": "Attach a PDF of the estimate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sent",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.invoices.update",
+      "shortPath": "invoices.update",
+      "description": "Update an invoice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Invoice ID"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Invoice number (autoincrements)"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "Invoice date (YYYY-MM-DD)"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "Invoice due date (YYYY-MM-DD)"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number, taxable?: boolean }[]",
+            "description": "Invoice line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_payments",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_items",
+            "optional": true,
+            "type": "{ id: number, title: string, price: number | string, quantity: number, taxable?: boolean }[]"
+          },
+          {
+            "key": "payments",
+            "optional": true,
+            "type": "{ id: number, amount: number, note?: string | null, received_on: string, invoice_id?: number | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "recurring_schedules",
+            "optional": true,
+            "type": "{ id: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Client name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Client number (unique)"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.leads.delete",
+      "shortPath": "leads.delete",
+      "description": "Delete a lead",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Lead ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Get a lead by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Lead ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "List leads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | oldest",
+            "description": "Sort by name or oldest first"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Update a lead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Lead ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Client name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Client number (unique)"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_extra_fields",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.paymentProfiles.create",
+      "shortPath": "paymentProfiles.create",
+      "description": "Create a payment profile for a client",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client to attach the payment profile to"
+          },
+          {
+            "key": "stripe_customer_id",
+            "optional": false,
+            "type": "string",
+            "description": "Stripe customer ID"
+          },
+          {
+            "key": "stripe_source_id",
+            "optional": false,
+            "type": "string",
+            "description": "Stripe source ID"
+          },
+          {
+            "key": "last_four_digits",
+            "optional": false,
+            "type": "string",
+            "description": "Last four digits of the card"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Cardholder name"
+          },
+          {
+            "key": "expiration_date",
+            "optional": false,
+            "type": "string",
+            "description": "Card expiration date (YYYY-MM-DD)"
+          },
+          {
+            "key": "card_type",
+            "optional": true,
+            "type": "string",
+            "description": "Card brand, e.g. Visa"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gateway",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gateway_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.paymentProfiles.delete",
+      "shortPath": "paymentProfiles.delete",
+      "description": "Delete a payment profile",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client the payment profile belongs to"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Payment profile ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.paymentProfiles.listForClient",
+      "shortPath": "paymentProfiles.listForClient",
+      "description": "List payment profiles for a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope payment profiles by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payment_profiles",
+            "optional": false,
+            "type": "{ id: number, client_id: number, name: string, gateway: string, gateway_token?: string | null, address?: string | null, city?: string | null, state?: string | null, zip?: string | null, country?: string | null, expiration_date?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.payments.create",
+      "shortPath": "payments.create",
+      "description": "Record a payment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number",
+            "description": "Invoice to apply the payment to"
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "Payment amount"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "Payment note"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number",
+            "description": "Auto-charge this payment profile for the outstanding balance"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "received_on",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transaction_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_fee_amount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.payments.delete",
+      "shortPath": "payments.delete",
+      "description": "Delete (void) a payment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "invoice_id",
+            "optional": false,
+            "type": "number",
+            "description": "Invoice the payment belongs to"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Payment ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List payments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at",
+            "description": "Sort by record creation time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "payments",
+            "optional": false,
+            "type": "{ id: number, invoice_id: number, amount: number, note?: string | null, received_on: string, transaction_id?: string | null, transaction_fee_amount?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Project number (unique)"
+          },
+          {
+            "key": "rate",
+            "optional": false,
+            "type": "number",
+            "description": "Hourly rate (or total cost for fixed amount)"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "0 = total budgeted hours, 1 = total budgeted amount"
+          },
+          {
+            "key": "project_type",
+            "optional": true,
+            "type": "0 | 2",
+            "description": "0 = hourly rate, 2 = fixed amount"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worked_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unbilled_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worked_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unbilled_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "all",
+            "description": "Include closed projects (default: active/billable only)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, name: string, description?: string | null, status: number, budget_type: number, project_type: number, budget?: number | null, rate?: number | null, cost?: number | null, worked_hours?: number | null, unbilled_hours?: number | null, currency_code?: string | null, start_date?: string | null, end_date?: string | null, client?: { id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.listForClient",
+      "shortPath": "projects.listForClient",
+      "description": "List projects belonging to a client",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client ID to scope projects by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, number?: string | null, name: string, description?: string | null, status: number, budget_type: number, project_type: number, budget?: number | null, rate?: number | null, cost?: number | null, worked_hours?: number | null, unbilled_hours?: number | null, currency_code?: string | null, start_date?: string | null, end_date?: string | null, client?: { id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Project name"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string",
+            "description": "Project number (unique)"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number",
+            "description": "Hourly rate (or total cost for fixed amount)"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "0 = total budgeted hours, 1 = total budgeted amount"
+          },
+          {
+            "key": "project_type",
+            "optional": true,
+            "type": "0 | 2",
+            "description": "0 = hourly rate, 2 = fixed amount"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Start date (YYYY-MM-DD)"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "End date (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_type",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "budget",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "worked_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unbilled_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "{ id: number, number?: string | null, name: string, city?: string | null, address?: string | null, address_2?: string | null, zip?: string | null, country?: string | null, state?: string | null, website?: string | null, description?: string | null, invoice_extra_fields?: any | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.recurring.create",
+      "shortPath": "recurring.create",
+      "description": "Create a recurring schedule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Schedule number (autoincrements)"
+          },
+          {
+            "key": "next_date",
+            "optional": false,
+            "type": "string",
+            "description": "Next invoice date (YYYY-MM-DD)"
+          },
+          {
+            "key": "due_period",
+            "optional": false,
+            "type": "number",
+            "description": "Due in N days"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "time_interval",
+            "optional": false,
+            "type": "number",
+            "description": "Frequency (1=weekly ... 11=every 4 months)"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number",
+            "description": "Client billed by this schedule"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "number",
+            "description": "0=send, 1=draft, 2=autobill"
+          },
+          {
+            "key": "unlimited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "occurrences_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurring_schedule_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number }[]",
+            "description": "Recurring schedule line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_interval",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "due_period",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unlimited",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "occurrences_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recurring_schedule_items",
+            "optional": true,
+            "type": "{ id: number, recurring_schedule_id?: number | null, title: string, price?: string | null, quantity: number, item_type: number, taxable??: boolean, secondary_tax??: boolean, tertiary_tax??: boolean, total_tax?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.recurring.delete",
+      "shortPath": "recurring.delete",
+      "description": "Delete a recurring schedule",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Recurring schedule ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.recurring.get",
+      "shortPath": "recurring.get",
+      "description": "Get a recurring schedule by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Recurring schedule ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_interval",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "due_period",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unlimited",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "occurrences_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recurring_schedule_items",
+            "optional": true,
+            "type": "{ id: number, recurring_schedule_id?: number | null, title: string, price?: string | null, quantity: number, item_type: number, taxable??: boolean, secondary_tax??: boolean, tertiary_tax??: boolean, total_tax?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.recurring.list",
+      "shortPath": "recurring.list",
+      "description": "List recurring schedules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "recurring",
+            "optional": false,
+            "type": "{ id: number, client_id: number, number?: string | null, title: string, note?: string | null, status: number, action: number, time_interval: number, due_period: number, next_date: string, currency_code: string, unlimited: boolean, occurrences_remaining?: number | null, payment_profile_id?: number | null, po?: string | null, summary?: string | null, subtotal: number, total_cost: number, tax: number, tax2: number, tax3: number, tax_label?: string | null, tax2_label?: string | null, tax3_label?: string | null, compound_tax: boolean, updated_at?: string | null, client?: any | null, recurring_schedule_items?: { id: number, recurring_schedule_id?: number | null, title: string, price?: string | null, quantity: number, item_type: number, taxable??: boolean, secondary_tax??: boolean, tertiary_tax??: boolean, total_tax?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.recurring.update",
+      "shortPath": "recurring.update",
+      "description": "Update a recurring schedule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Recurring schedule ID"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number",
+            "description": "Schedule number (autoincrements)"
+          },
+          {
+            "key": "next_date",
+            "optional": true,
+            "type": "string",
+            "description": "Next invoice date (YYYY-MM-DD)"
+          },
+          {
+            "key": "due_period",
+            "optional": true,
+            "type": "number",
+            "description": "Due in N days"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string",
+            "description": "ISO currency code, e.g. USD"
+          },
+          {
+            "key": "time_interval",
+            "optional": true,
+            "type": "number",
+            "description": "Frequency (1=weekly ... 11=every 4 months)"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number",
+            "description": "Client billed by this schedule"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "number",
+            "description": "0=send, 1=draft, 2=autobill"
+          },
+          {
+            "key": "unlimited",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "occurrences_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "recurring_schedule_items_attributes",
+            "optional": true,
+            "type": "{ id?: number, _destroy?: boolean, title?: string, quantity?: number, price?: number }[]",
+            "description": "Recurring schedule line items"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_interval",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "due_period",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currency_code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unlimited",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "occurrences_remaining",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "payment_profile_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "po",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subtotal",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax2",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax3",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tax_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax2_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tax3_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compound_tax",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "recurring_schedule_items",
+            "optional": true,
+            "type": "{ id: number, recurring_schedule_id?: number | null, title: string, price?: string | null, quantity: number, item_type: number, taxable??: boolean, secondary_tax??: boolean, tertiary_tax??: boolean, total_tax?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.staff.get",
+      "shortPath": "staff.get",
+      "description": "Get a staff member by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Staff user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.staff.list",
+      "shortPath": "staff.list",
+      "description": "List staff members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "staff",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, name: string, email?: string | null, title?: string | null, phone?: string | null, mobile?: string | null, ext?: string | null, avatar?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Task title"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string",
+            "description": "Due date (YYYY-MM-DD)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "complete",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Task ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Task ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "complete",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, project_id?: number | null, user_id?: number | null, assignee_id?: number | null, title: string, description?: string | null, complete: boolean, completed_at?: string | null, due_date?: string | null, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.listForProject",
+      "shortPath": "tasks.listForProject",
+      "description": "List tasks belonging to a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number",
+            "description": "Project ID to scope tasks by"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (starts at 1)"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id: number, client_id?: number | null, project_id?: number | null, user_id?: number | null, assignee_id?: number | null, title: string, description?: string | null, complete: boolean, completed_at?: string | null, due_date?: string | null, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clientary.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Task ID"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "complete",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the task complete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "complete",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "clientary.db.clients.search",
+      "entityName": "clients",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "city",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "address_2",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "zip",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "country",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "website",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clientary.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clientary.db.estimates.search",
+      "entityName": "estimates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "tax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clientary.db.invoices.search",
+      "entityName": "invoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subtotal",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_cost",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_payments",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clientary.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "number",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "budget_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_type",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "budget",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rate",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currency_code",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "end_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clientary.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "client_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "user_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "assignee_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "complete",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

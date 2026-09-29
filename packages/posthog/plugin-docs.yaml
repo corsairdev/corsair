@@ -1,0 +1,18 @@
+displayName: PostHog
+description: Product analytics platform for event tracking, feature flags, session replay, and experiments.
+examples:
+  write:
+    path: events.eventCreate
+    title: Capture an event
+    args:
+      distinct_id: abc123
+      event: corsair_example
+dbExample:
+  entity: events
+  note: Search synced events without hitting PostHog.
+  limit: 50
+exampleWebhook:
+  path: events.captured
+  note: Fires when a PostHog event is captured.
+  after: |
+    console.log('PostHog event captured:', result.data);

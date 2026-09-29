@@ -1,0 +1,6095 @@
+{
+  "id": "affinda",
+  "displayName": "Affinda",
+  "description": "AI document parsing for resumes, invoices, and structured data extraction from files.",
+  "npmPackageName": "@corsair-dev/affinda",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 119,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "affinda.api.annotations.batchUpdateAnnotations",
+      "shortPath": "annotations.batchUpdateAnnotations",
+      "description": "Batch update multiple document annotations in a single API call. Use this action to efficiently update parsed values or other fields across many annotations at once, rather than making individual update requests for each annotation. Prerequisites: - Obtain annotation IDs using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Correcting OCR/extraction errors in bulk - Updating parsed values after manual review - Modifying annotation data programmatically",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotations",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.annotations.createBatchAnnotations",
+      "shortPath": "annotations.createBatchAnnotations",
+      "description": "Batch create multiple document annotations in a single API call. Use this action to efficiently create multiple annotations at once for documents that have been processed by Affinda. This is useful for programmatically adding structured data to documents or importing annotation data from external sources. Prerequisites: - Documents must be created first using 'Create Document' action - Obtain document identifiers from 'Create Document' or 'Get Documents' actions - Know the data point identifiers for your collection (from extractor configuration) Common use cases: - Importing annotation data from external systems - Programmatically adding structured data to documents - Creating annotations for validation or training purposes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotations",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.annotations.deleteAnnotationsBatch",
+      "shortPath": "annotations.deleteAnnotationsBatch",
+      "description": "Batch delete multiple document annotations in a single API call. Use this action to efficiently remove multiple annotations at once rather than making individual delete requests for each annotation. Prerequisites: - Obtain annotation IDs using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Removing incorrect or unwanted annotations in bulk - Cleaning up annotations after document reprocessing - Deleting specific extracted data fields programmatically",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotation_ids",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.annotations.getAnnotations",
+      "shortPath": "annotations.getAnnotations",
+      "description": "Retrieves all annotations for a specific document. Annotations are extracted data fields (text, dates, numbers, tables, etc.) from parsed documents. Use this after a document has been processed to access the extracted data.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.annotations.updateAnnotation",
+      "shortPath": "annotations.updateAnnotation",
+      "description": "Tool to update data of a single annotation in Affinda. Use when you need to correct extracted values, verify annotations, or modify annotation metadata after document processing. Prerequisites: - Obtain the annotation ID using the 'Get Annotations' action with a document filter - Annotations must exist in documents that have been processed by Affinda Common use cases: - Correcting OCR or extraction errors in individual fields - Marking annotations as verified after manual review (set isClientVerified=true) - Updating parsed values to fix incorrect data extraction - Modifying annotation coordinates or page references Note: For bulk updates across multiple annotations, use the 'Batch Update Annotations' action instead for better efficiency.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "parsed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rectangles",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "isClientVerified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "validationResults",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.apiUsers.createApiUser",
+      "shortPath": "apiUsers.createApiUser",
+      "description": "Tool to create a new API user within an organization. Use when you need to generate a new API user with authentication credentials for programmatic access to Affinda services.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.apiUsers.getAllApiUsers",
+      "shortPath": "apiUsers.getAllApiUsers",
+      "description": "Tool to retrieve a list of all API users. Use when you need to list API users, optionally filtered by organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.createCollection",
+      "shortPath": "collections.createCollection",
+      "description": "Tool to create a new collection. Use after you have a valid workspace ID and want to group documents by a specific extractor within that workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "extractor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.createDataFieldForCollection",
+      "shortPath": "collections.createDataFieldForCollection",
+      "description": "Tool to create a data field for a collection along with a new data point. Use when you need to add a custom field to a collection for document processing and validation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "dataPoint",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "categoryLabel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.deleteCollection",
+      "shortPath": "collections.deleteCollection",
+      "description": "Permanently delete a collection from Affinda by its identifier. This is a destructive operation that cannot be undone. Use Get Collections first to verify the collection ID before deletion. Note: Documents in the collection may also be affected.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.getCollection",
+      "shortPath": "collections.getCollection",
+      "description": "Tool to retrieve details of a specific collection by its ID. Use when you need full metadata about a collection after confirming its identifier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collection_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.getCollectionFields",
+      "shortPath": "collections.getCollectionFields",
+      "description": "Tool to retrieve data field configuration for a collection associated with a data point. Use when you need to understand the structure and validation rules of a specific field in a collection. Note: This endpoint is deprecated.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datapoint_identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.getCollections",
+      "shortPath": "collections.getCollections",
+      "description": "Tool to retrieve a list of all collections. Use when you need to list collections in your Affinda workspace after authentication.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.getCollectionUsage",
+      "shortPath": "collections.getCollectionUsage",
+      "description": "Retrieves monthly credits consumption statistics for a specific collection. Returns a list of usage records showing how many credits were consumed each month. Use this to track collection activity, monitor consumption trends, or generate usage reports. Note: This endpoint is deprecated.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.updateCollection",
+      "shortPath": "collections.updateCollection",
+      "description": "Tool to update specific fields of a collection. Use when you need to rename or reassign a collection after creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.collections.updateDataFieldForCollection",
+      "shortPath": "collections.updateDataFieldForCollection",
+      "description": "Tool to update a data field configuration for a collection's data point. Use when you need to modify field properties such as label, type, mandatory status, or validation settings after the field has been created.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mapping",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mandatory",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "showDropdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayRawText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayEnumValue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "datapoint_identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "autoValidationThreshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "enableAutoValidationThreshold",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPointChoices.createDataPointChoice",
+      "shortPath": "dataPointChoices.createDataPointChoice",
+      "description": "Tool to create a custom data point choice. Use when you need to add a new choice option for a specific data point in a collection or organization. Note: This endpoint is deprecated but still functional.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "synonyms",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "dataPoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPointChoices.getDataPointChoice",
+      "shortPath": "dataPointChoices.getDataPointChoice",
+      "description": "Tool to return a specific data point choice by its ID. Use when you need details about a particular data point choice option. Note: This endpoint is deprecated but still functional.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPointChoices.listDataPointChoices",
+      "shortPath": "dataPointChoices.listDataPointChoices",
+      "description": "Tool to retrieve available choices for a specific enum data point. Use when you need to discover valid options for dropdown/enum fields in a collection's data schema. Note: This endpoint is deprecated but still functional for accessing data point choice metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data_point",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPointChoices.replaceDataPointChoices",
+      "shortPath": "dataPointChoices.replaceDataPointChoices",
+      "description": "Tool to completely replace all choices for a data point. Use when you need to bulk update enum options - existing choices are matched by value, new values are created, updated values are modified, and values not in the incoming list are deleted. Note: This is a deprecated endpoint but still functional. Either collection or organization must be specified to scope the replacement.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "dataPoint",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPointChoices.updateDataPointChoice",
+      "shortPath": "dataPointChoices.updateDataPointChoice",
+      "description": "Tool to update data of a data point choice by its ID. Use when you need to modify label, value, description, synonyms, or associated collection/organization for an existing data point choice. Note: This endpoint is deprecated but still functional.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "synonyms",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "dataPoint",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPoints.createDataPoint",
+      "shortPath": "dataPoints.createDataPoint",
+      "description": "Tool to create a custom data point for document extraction. Use when you need to define a new field that should be extracted from documents in a specific extractor. Note: This endpoint is deprecated but still functional. Data points define custom fields for extraction models.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "noRect",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "multiple",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "extractor",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "manualEntry",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "mappingDataSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "annotationContentType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPoints.deleteDataPoint",
+      "shortPath": "dataPoints.deleteDataPoint",
+      "description": "Tool to permanently delete a data point by its identifier. Use when you need to remove a data point from the database after confirming the identifier. Note: This endpoint is deprecated but still functional.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPoints.getDataPoint",
+      "shortPath": "dataPoints.getDataPoint",
+      "description": "Tool to retrieve details of a specific data point by its identifier. Use when you need to inspect a data point's configuration, type, or structure. Data points represent individual fields that can be extracted from documents (e.g., 'name', 'email', 'date'). This endpoint is deprecated but still functional for retrieving data point metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPoints.listDataPoints",
+      "shortPath": "dataPoints.listDataPoints",
+      "description": "Tool to retrieve all data points. Returns both custom data points and Affinda's off-the-shelf data points. Use when you need to list available data points for extractors.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "extractor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_public",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "annotation_content_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataPoints.updateDataPoint",
+      "shortPath": "dataPoints.updateDataPoint",
+      "description": "Tool to update data of a data point by its identifier. Use when you need to modify a data point's name, description, slug, parent, or mapping data source. Note: This endpoint is deprecated but still functional.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mappingDataSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.createDataSource",
+      "shortPath": "dataSources.createDataSource",
+      "description": "Tool to create a custom mapping data source. Use when you need to set up a new data source for mapping AI-extracted values to your database records.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keyProperty",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "displayProperty",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.createDataSourceValue",
+      "shortPath": "dataSources.createDataSourceValue",
+      "description": "Tool to add a new value to a mapping data source. Use when you need to add entries to a data source for mapping or validation purposes. The created value can then be referenced in document extraction and mapping workflows.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.deleteDataSource",
+      "shortPath": "dataSources.deleteDataSource",
+      "description": "Permanently delete a mapping data source from the database by its identifier. This is a destructive operation that cannot be undone. Use when you need to remove a data source that is no longer needed or was created in error.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.deleteDataSourceValue",
+      "shortPath": "dataSources.deleteDataSourceValue",
+      "description": "Tool to delete a specific value from a mapping data source. Use when you need to remove an incorrect or outdated value from a data source mapping.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.getDataSource",
+      "shortPath": "dataSources.getDataSource",
+      "description": "Tool to retrieve details of a specific mapping data source by its identifier. Use when you need to fetch mapping data source metadata and schema configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.getDataSourceValue",
+      "shortPath": "dataSources.getDataSourceValue",
+      "description": "Tool to retrieve a specific value from a mapping data source. Use when you need to get details about a particular value in a data source.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.getDataSourceValues",
+      "shortPath": "dataSources.getDataSourceValues",
+      "description": "Tool to retrieve all values from a mapping data source. Use when you need to list or search values in a specific data source after authentication.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "annotation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.listDataSources",
+      "shortPath": "dataSources.listDataSources",
+      "description": "Tool to retrieve the list of all custom mapping data sources. Use when you need to list or search for mapping data sources in your Affinda workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.replaceDataSourceValues",
+      "shortPath": "dataSources.replaceDataSourceValues",
+      "description": "Tool to completely replace all values in a mapping data source. Use when you need to bulk update or refresh an entire data source's value list. Note: For large data sources (>1000 values), new values may take a few minutes to become searchable after the operation completes.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.dataSources.updateDataSourceValue",
+      "shortPath": "dataSources.updateDataSourceValue",
+      "description": "Tool to update an existing value in a mapping data source. Use when you need to modify the label or description of an existing data source value. The value identifier itself cannot be changed.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.addTagToDocuments",
+      "shortPath": "documents.addTagToDocuments",
+      "description": "Tool to add a tag to multiple documents in a single operation. Use when you need to organize or categorize multiple documents by assigning them a shared tag. Tags enable efficient filtering and grouping of documents in your workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "identifiers",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.createDocument",
+      "shortPath": "documents.createDocument",
+      "description": "Upload a document to Affinda for parsing and data extraction. Use this action when you need to: - Parse resumes/CVs to extract candidate information - Process invoices to extract line items, amounts, and vendor details - Extract data from any supported document type (PDF, DOCX, images) You can upload either a file directly or provide a publicly accessible URL. The document will be processed by Affinda's AI extraction engine. Prerequisites: - For collection-based uploads: Get collection ID from get_collections action - For workspace-specific uploads: Get workspace ID from get_workspaces action",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rejectDuplicates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.createFromDataDocuments",
+      "shortPath": "documents.createFromDataDocuments",
+      "description": "Create a document from structured resume or job description data for Search & Match. Use this when you have structured data to create a document programmatically without file uploads. Returns an identifier for subsequent status checks via /documents/{identifier}.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "file_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snake_case",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "expiry_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "document_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.deleteDocument",
+      "shortPath": "documents.deleteDocument",
+      "description": "Tool to delete a specific document by its ID. Use when you need to remove a document that is incorrect or no longer needed, after confirming the document ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.getDocument",
+      "shortPath": "documents.getDocument",
+      "description": "Retrieve full details and parsed data for a specific document by its identifier. Use this tool to get comprehensive information about a document including: - Processing status (ready/failed) - Document metadata (file name, page count, language) - Parsed/extracted data results - URLs for PDF, original file, and review page - Collection and workspace information The document identifier can be either a system-generated ID or a custom identifier set during document upload.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.getDocumentRedacted",
+      "shortPath": "documents.getDocumentRedacted",
+      "description": "Tool to retrieve the redacted version of a document as a PDF file. Use when you need to get a document with sensitive information removed. The original document is not modified by this operation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.getDocuments",
+      "shortPath": "documents.getDocuments",
+      "description": "Tool to retrieve a list of all documents. Use when you need to list documents in your Affinda workspace after authentication.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.removeTagFromDocuments",
+      "shortPath": "documents.removeTagFromDocuments",
+      "description": "Remove a tag from multiple documents in a single batch operation. Use this action to efficiently untag many documents at once rather than making individual remove requests. The operation is idempotent - removing a tag that isn't present on a document will not cause an error.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "identifiers",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.updateDocument",
+      "shortPath": "documents.updateDocument",
+      "description": "Tool to update specific fields of a document. Use when you need to rename, reassign, or adjust expiry and storage settings after document creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "regionBias",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "customIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deleteAfterParse",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableValidationTool",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documents.updateDocumentData",
+      "shortPath": "documents.updateDocumentData",
+      "description": "Update parsed data for a resume or job description document in Affinda. This endpoint is ONLY applicable for documents that have been processed with 'resume' or 'job-description' extractors. For other document types, use the batch_update_annotations endpoint instead. Use this tool when you need to correct or add parsed fields to an existing resume or job description document after it has been uploaded and processed.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{}"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentSplitters.getAllDocumentSplitters",
+      "shortPath": "documentSplitters.getAllDocumentSplitters",
+      "description": "Tool to get a list of all document splitters. Use when you need to retrieve document splitters, optionally filtered by organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includePublic",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentSplitters.getDocumentSplitter",
+      "shortPath": "documentSplitters.getDocumentSplitter",
+      "description": "Tool to retrieve details of a specific document splitter by its identifier. Use when you need to fetch metadata about a document splitter configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.createDocumentType",
+      "shortPath": "documentTypes.createDocumentType",
+      "description": "Tool to create a new document type in the specified organization. Use when you need to define a new category of documents for processing. Document types allow you to organize and categorize documents within an organization.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.deleteDocumentType",
+      "shortPath": "documentTypes.deleteDocumentType",
+      "description": "Tool to permanently delete a document type by its identifier. Use when you need to remove a document type that is no longer needed. This is a destructive operation that cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.getDocumentType",
+      "shortPath": "documentTypes.getDocumentType",
+      "description": "Tool to retrieve details of a specific document type by its ID. Use when you need to confirm the configuration or metadata of a document type before processing documents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.getDocumentTypeJsonSchema",
+      "shortPath": "documentTypes.getDocumentTypeJsonSchema",
+      "description": "Tool to generate a JSON schema from a document type by its identifier. Use when you need the structured schema definition for a document type to understand its field structure and validation rules.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.getDocumentTypePydanticModels",
+      "shortPath": "documentTypes.getDocumentTypePydanticModels",
+      "description": "Tool to generate Pydantic model code from a document type's schema. Use when you need type-safe Python models for parsing documents of a specific type.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.getDocumentTypes",
+      "shortPath": "documentTypes.getDocumentTypes",
+      "description": "Retrieve all document types accessible to the authenticated user. Returns a list containing each document type's identifier, name, description, ingest email, and organization. Use this to discover available document types before uploading or processing documents. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.documentTypes.updateDocumentType",
+      "shortPath": "documentTypes.updateDocumentType",
+      "description": "Tool to update a document type by its identifier. Use when you need to modify the name or description of an existing document type.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.extractors.createExtractor",
+      "shortPath": "extractors.createExtractor",
+      "description": "Tool to create a new extractor. Use when you need to define a custom document parser with specific fields and extraction rules, typically derived from a base extractor.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "namePlural",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldGroups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "validatable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "baseExtractor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.extractors.deleteExtractor",
+      "shortPath": "extractors.deleteExtractor",
+      "description": "Permanently delete an extractor from Affinda by its identifier. This is a destructive operation that cannot be undone. Use Get Extractors first to verify the extractor ID before deletion. Note: This action is deprecated by the API.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.extractors.getExtractor",
+      "shortPath": "extractors.getExtractor",
+      "description": "Tool to retrieve detailed information about a specific extractor by its identifier. Use when you need complete metadata about an extractor's configuration, fields, and capabilities.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.extractors.getExtractors",
+      "shortPath": "extractors.getExtractors",
+      "description": "Retrieve all extractors available for an organization. Extractors are document parsing configurations that define what data to extract from documents. This includes both Affinda's built-in extractors (resumes, invoices, etc.) and any custom extractors created for the organization. Use this action to: - List available extractors before creating a collection - Find the identifier of a specific extractor type - Check if custom extractors exist for the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_public_extractors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "validatable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.extractors.updateExtractor",
+      "shortPath": "extractors.updateExtractor",
+      "description": "Tool to update specific fields of an extractor. Use when you need to modify an extractor's name, category, validation settings, or field groups after creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "namePlural",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fieldGroups",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "validatable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "baseExtractor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.indexes.createIndex",
+      "shortPath": "indexes.createIndex",
+      "description": "Tool to create a new index for search and match functionality. Use when you need to set up a new index for organizing and searching documents like resumes or job descriptions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "docType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.indexes.deleteIndex",
+      "shortPath": "indexes.deleteIndex",
+      "description": "Tool to permanently delete an index from Affinda by its name. Use when you need to remove an index that is no longer needed. This is a destructive operation that cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.indexes.getIndexDocuments",
+      "shortPath": "indexes.getIndexDocuments",
+      "description": "Tool to retrieve all indexed documents for a specific index. Use when you need to list documents in a search index after creating or accessing an index.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.indexes.listIndexes",
+      "shortPath": "indexes.listIndexes",
+      "description": "Tool to retrieve a list of all search indexes. Use when you need to view available indexes for searching and matching documents in Affinda.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "document_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.indexes.updateIndex",
+      "shortPath": "indexes.updateIndex",
+      "description": "Tool to update the name of an existing search index. Use when you need to rename an index after creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "new_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.invitations.createInvitation",
+      "shortPath": "invitations.createInvitation",
+      "description": "Tool to create a new organization invitation. Use when you need to invite a user to join an organization with a specific role.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.invitations.deleteInvitation",
+      "shortPath": "invitations.deleteInvitation",
+      "description": "Tool to delete an invitation by its identifier. Use when you need to remove or revoke an invitation after confirming the invitation identifier.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.invitations.getAllInvitations",
+      "shortPath": "invitations.getAllInvitations",
+      "description": "Tool to retrieve all invitations you created or sent to you. Use when you need to list organization invitations with optional filtering by status, role, or organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.invitations.getInvitation",
+      "shortPath": "invitations.getInvitation",
+      "description": "Tool to retrieve details of a specific organization invitation by its identifier. Use when you need to check invitation status or get invitation metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.invitations.updateInvitation",
+      "shortPath": "invitations.updateInvitation",
+      "description": "Tool to update an organization invitation's role. Use when you need to change the role assigned to an invitation before it is accepted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.jobDescriptionSearch.createJobDescriptionSearch",
+      "shortPath": "jobDescriptionSearch.createJobDescriptionSearch",
+      "description": "Search through parsed job descriptions using custom criteria or resume matching. Use this action when you need to find job postings that match specific requirements such as skills, experience, location, education, or to find jobs matching a candidate's resume. Returns ranked results with detailed match scores.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "degrees",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "indices",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "socCodes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "jobTitles",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "degreeTypes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "skillsWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "socCodesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "degreesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "educationWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobTitlesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "languagesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locationsWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchExpression",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socCodesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobTitlesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locationsRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "degreeTypesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "totalYearsExperience",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managementLevelWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearsExperienceWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "searchExpressionWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managementLevelRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "yearsExperienceRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchExpressionRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUrl",
+      "shortPath": "jobDescriptionSearch.createJobDescriptionSearchEmbedUrl",
+      "description": "Tool to create and return a signed URL for the embeddable job description search tool. Use this when you need to generate a URL that can be embedded on a web page to provide job description search functionality. Optionally pass config_override to customize display settings, field weights, and theme.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configOverride",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig",
+      "shortPath": "jobDescriptionSearch.getJobDescriptionSearchConfig",
+      "description": "Tool to get the configuration for the logged in user's embeddable job description search tool. Returns display settings, field weights, and maximum results limits. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig",
+      "shortPath": "jobDescriptionSearch.updateJobDescriptionSearchConfig",
+      "description": "Tool to update the configuration for the logged in user's embeddable job description search tool. Use to configure display fields, field weights, maximum results, and UI customization options.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "indices",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hideToolbar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "distanceUnit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weightSkills",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displaySkills",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideSidePanel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weightJobTitle",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightKeywords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightLocation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayJobTitle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayKeywords",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayLocation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchToolTheme",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "weightEducation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightLanguages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowPdfDownload",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayEducation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayLanguages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showIndexDropdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customFieldsConfig",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "weightManagementLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightOccupationGroup",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightYearsExperience",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayManagementLevel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayOccupationGroup",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayYearsExperience",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.mappings.createMapping",
+      "shortPath": "mappings.createMapping",
+      "description": "Tool to create a custom mapping for a data source. Use when you need to configure specific lookup settings for a MappingDataSource. Note: This endpoint is deprecated.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dataSource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scoreCutoff",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.mappings.deleteMapping",
+      "shortPath": "mappings.deleteMapping",
+      "description": "Tool to delete a specific mapping by its identifier. Use when you need to remove an unused or incorrect mapping from the database. Note: This endpoint is deprecated.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.mappings.getMapping",
+      "shortPath": "mappings.getMapping",
+      "description": "Tool to retrieve a specific mapping by its identifier. Use when you need to fetch mapping configuration details for a lookup against a MappingDataSource.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.mappings.listMappings",
+      "shortPath": "mappings.listMappings",
+      "description": "Tool to retrieve the list of all custom data mappings. Use when you need to list mappings for a specific data source.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mappingDataSource",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.mappings.updateMapping",
+      "shortPath": "mappings.updateMapping",
+      "description": "Tool to update a specific mapping's settings. Use when you need to adjust score cutoff or ordering for a lookup against a MappingDataSource.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scoreCutoff",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.occupationGroups.listOccupationGroups",
+      "shortPath": "occupationGroups.listOccupationGroups",
+      "description": "Tool to retrieve the list of searchable occupation groups. Use when you need to get available occupation categories for job matching or classification. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizationMemberships.getAllOrganizationMemberships",
+      "shortPath": "organizationMemberships.getAllOrganizationMemberships",
+      "description": "Retrieve all organization memberships across the account. Returns paginated results showing which users belong to which organizations. Use to audit organization access or find specific user memberships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizationMemberships.getOrganizationMembership",
+      "shortPath": "organizationMemberships.getOrganizationMembership",
+      "description": "Tool to retrieve details of a specific organization membership by its ID. Use when you need to confirm a user's role and details within an organization.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizationMemberships.updateOrganizationMembership",
+      "shortPath": "organizationMemberships.updateOrganizationMembership",
+      "description": "Tool to update an organization membership's role. Use when you need to change a user's role within an organization.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizations.createOrganization",
+      "shortPath": "organizations.createOrganization",
+      "description": "Tool to create a new organization. Use when you have a unique organization name and want to group resources under it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizations.deleteOrganization",
+      "shortPath": "organizations.deleteOrganization",
+      "description": "Permanently deletes an organization from Affinda. This action is destructive and cannot be undone. All workspaces, collections, and documents associated with the organization will also be deleted. Use the get_organizations action first to confirm the organization identifier before deletion.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizations.getOrganization",
+      "shortPath": "organizations.getOrganization",
+      "description": "Tool to retrieve details of a specific organization by its ID. Use when you need to fetch an organization's metadata after confirming its identifier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizations.getOrganizations",
+      "shortPath": "organizations.getOrganizations",
+      "description": "Retrieves all organizations accessible to the authenticated user. Returns a list of organizations with details including identifier, name, user role, trial status, and configuration settings. Use the 'identifier' field from the response when calling other organization-related endpoints. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.organizations.updateOrganization",
+      "shortPath": "organizations.updateOrganization",
+      "description": "Tool to update specific fields of an organization. Use when you need to modify an organization's name, avatar, or webhook and validation settings after creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resthook_signature_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "validation_tool_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resthooks.createResthookSubscription",
+      "shortPath": "resthooks.createResthookSubscription",
+      "description": "Tool to create a new RESTHook subscription. Use after confirming your webhook endpoint is ready to receive document event notifications.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "targetUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resthooks.deleteResthookSubscription",
+      "shortPath": "resthooks.deleteResthookSubscription",
+      "description": "Tool to delete a specific resthook subscription by ID. Use after confirming the subscription identifier when the webhook is no longer needed.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resthooks.getResthookSubscription",
+      "shortPath": "resthooks.getResthookSubscription",
+      "description": "Tool to retrieve details of a specific resthook subscription by its ID. Use after confirming its creation to verify its settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resthooks.getResthookSubscriptions",
+      "shortPath": "resthooks.getResthookSubscriptions",
+      "description": "Tool to retrieve a list of all RESTHook subscriptions. Use after authenticating to list all webhook subscriptions associated with your account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resthooks.updateResthookSubscription",
+      "shortPath": "resthooks.updateResthookSubscription",
+      "description": "Tool to update an existing RESTHook subscription. Use after confirming the subscription identifier to modify its URL, event, or activation status.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "targetUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.createResumeSearch",
+      "shortPath": "resumeSearch.createResumeSearch",
+      "description": "Tool to search through parsed resumes using three methods: match to a job description, match to a resume, or custom criteria. Use when you need to find candidates matching specific requirements.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resume",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "degrees",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "indices",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "socCodes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "jobTitles",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "customData",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "institutions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "skillsWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socCodesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "degreesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "educationWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "jobTitlesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "languagesWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "locationsWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managementLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isCurrentStudent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRecentGraduate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchExpression",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "socCodesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobTitlesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "locationsRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "highestDegreeTypes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "yearsExperienceMax",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearsExperienceMin",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "institutionsRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "jobTitlesCurrentOnly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "managementLevelWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearsExperienceWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "searchExpressionWeight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managementLevelRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "yearsExperienceRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isCurrentStudentRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isRecentGraduateRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchExpressionRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "highestDegreeTypesRequired",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.createResumeSearchEmbedUrl",
+      "shortPath": "resumeSearch.createResumeSearchEmbedUrl",
+      "description": "Tool to create and return a signed URL for the embeddable resume search tool. Use this when you need to generate a URL that can be embedded on a web page to provide resume search functionality. Optionally pass config_override to customize display settings, field weights, and theme.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "configOverride",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.listResumeSearchConfig",
+      "shortPath": "resumeSearch.listResumeSearchConfig",
+      "description": "Tool to get the configuration for the logged in user's embeddable resume search tool. Use this to retrieve display field settings, search weights, maximum results, and theme customization options for the resume search interface. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions",
+      "shortPath": "resumeSearch.listResumeSearchJobTitleSuggestions",
+      "description": "Tool to get job title suggestions based on provided job title(s). Use when you need to find related job titles for resume search.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_titles",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.listResumeSearchSkillSuggestions",
+      "shortPath": "resumeSearch.listResumeSearchSkillSuggestions",
+      "description": "Tool to get skill suggestions based on provided skills. Use when you need to find related skills to expand or refine resume search queries.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "skills",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.resumeSearch.updateResumeSearchConfig",
+      "shortPath": "resumeSearch.updateResumeSearchConfig",
+      "description": "Tool to update the configuration for the logged in user's embeddable resume search tool. Use this to modify which fields are displayed, their search weights, maximum results limit, distance units, custom actions, and theme settings.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "indices",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hideToolbar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "distanceUnit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weightSkills",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displaySkills",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hideSidePanel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weightJobTitle",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightKeywords",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightLocation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayJobTitle",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayKeywords",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayLocation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "searchToolTheme",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "weightEducation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightLanguages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allowPdfDownload",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayEducation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayLanguages",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showIndexDropdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "customFieldsConfig",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "weightManagementLevel",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightOccupationGroup",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "weightYearsExperience",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "displayManagementLevel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayOccupationGroup",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "displayYearsExperience",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.tags.createTag",
+      "shortPath": "tags.createTag",
+      "description": "Creates a new tag in the specified workspace. Tags can be used to categorize and label documents for organization and filtering. Each tag name must be unique within its workspace. Returns the created tag with its ID and metadata.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.tags.deleteTag",
+      "shortPath": "tags.deleteTag",
+      "description": "Permanently delete a tag from Affinda by its ID. This is a destructive operation that cannot be undone. Use Get Tags first to verify the tag ID before deletion.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.tags.getAllTags",
+      "shortPath": "tags.getAllTags",
+      "description": "Tool to list all tags. Use after confirming authentication to fetch tags across workspaces.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.tags.getTag",
+      "shortPath": "tags.getTag",
+      "description": "Tool to retrieve details of a specific tag by its ID. Use when you need to fetch information about a particular tag.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.tags.updateTag",
+      "shortPath": "tags.updateTag",
+      "description": "Tool to update data of a tag. Use when you need to modify a tag's name or reassign it to a different workspace. Only provide the fields you want to change; other fields will remain unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.validation.splitDocumentPages",
+      "shortPath": "validation.splitDocumentPages",
+      "description": "Split a document into multiple documents by dividing its pages. Use when you need to separate a multi-page document into distinct documents based on page groupings. Prerequisites: - Obtain the document identifier from create_document or get_document actions - Use get_document to retrieve page IDs for the pages you want to split Important notes: - Each page can only be assigned to one split - All pages should be accounted for across all splits - One split can optionally use the original document identifier to maintain the root document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "splits",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.validationResults.createValidationResult",
+      "shortPath": "validationResults.createValidationResult",
+      "description": "Create a validation result for document annotations in Affinda. Use this tool to record validation outcomes after parsing a document. Validation results track whether specific annotations (extracted data fields) pass or fail business rules. Prerequisites: 1. Get a document identifier from Get Documents or Create Document 2. Get annotation IDs from Get Annotations for that document 3. Define a kebab-case rule slug that identifies your validation rule Example use cases: - Recording that an invoice total matches the sum of line items - Marking that a required field is present and valid - Logging validation failures for review workflows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ruleSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "annotations",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.validationResults.createValidationResultsBatch",
+      "shortPath": "validationResults.createValidationResultsBatch",
+      "description": "Batch create multiple validation results for document annotations in a single API call. Use this action to efficiently record validation outcomes for multiple documents or rules at once, rather than making individual create requests for each validation result. This is particularly useful for bulk validation workflows or when validating multiple rules across many documents. Prerequisites: - Obtain document identifiers from Get Documents or Create Document actions - Get annotation IDs from Get Annotations for those documents - Define kebab-case rule slugs that identify your validation rules Common use cases: - Bulk recording of validation results across multiple documents - Validating multiple business rules on the same document - Automated validation workflows for large document batches",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "validation_results",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.validationResults.deleteValidationResults",
+      "shortPath": "validationResults.deleteValidationResults",
+      "description": "Delete multiple validation results in a single API call. Use this action to efficiently remove multiple validation results at once rather than making individual delete requests for each validation result. Prerequisites: - Obtain validation result IDs using the 'Get All Validation Results' action Common use cases: - Removing obsolete validation results in bulk - Cleaning up validation results after reprocessing documents - Deleting validation results for specific documents programmatically",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.validationResults.getAllValidationResults",
+      "shortPath": "validationResults.getAllValidationResults",
+      "description": "Tool to list validation results for documents. Use after processing documents to inspect validation outcomes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "document",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaceMemberships.createWorkspaceMembership",
+      "shortPath": "workspaceMemberships.createWorkspaceMembership",
+      "description": "Tool to add a user to a workspace by creating a membership. Use when you need to grant a user access to a specific workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaceMemberships.deleteWorkspaceMembership",
+      "shortPath": "workspaceMemberships.deleteWorkspaceMembership",
+      "description": "Tool to remove a user from a workspace by membership ID. Use after confirming the workspace membership ID to revoke access.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaceMemberships.getAllWorkspaceMemberships",
+      "shortPath": "workspaceMemberships.getAllWorkspaceMemberships",
+      "description": "Retrieve all workspace memberships across the account. Returns paginated results showing which users belong to which workspaces. Use to audit workspace access or find specific user memberships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaceMemberships.getWorkspaceMembership",
+      "shortPath": "workspaceMemberships.getWorkspaceMembership",
+      "description": "Tool to retrieve details of a specific workspace membership by its ID. Use when you need to confirm a user's role and details within a workspace after obtaining the membership identifier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.createWorkspace",
+      "shortPath": "workspaces.createWorkspace",
+      "description": "Tool to create a new workspace. Use when you need to programmatically create a workspace container within an organization.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rejectInvalidDocuments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.deleteWorkspace",
+      "shortPath": "workspaces.deleteWorkspace",
+      "description": "Tool to delete a specific workspace by its ID. Use when you need to remove an unused workspace after confirming the workspace ID.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.getUsageByWorkspace",
+      "shortPath": "workspaces.getUsageByWorkspace",
+      "description": "Retrieves monthly document processing usage statistics for a specific workspace. Returns a list of usage records showing how many documents were processed each month. Use this to track workspace activity, monitor consumption trends, or generate usage reports.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.getWorkspace",
+      "shortPath": "workspaces.getWorkspace",
+      "description": "Tool to retrieve details of a specific workspace by its ID. Use when you need full workspace metadata after confirming its identifier.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.getWorkspaces",
+      "shortPath": "workspaces.getWorkspaces",
+      "description": "Tool to retrieve a list of all workspaces. Use when you need to list workspaces filtered by organization and optional name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "affinda.api.workspaces.updateWorkspace",
+      "shortPath": "workspaces.updateWorkspace",
+      "description": "Tool to update specific fields of a workspace. Use when you need to modify a workspace's name, visibility, document rejection policy, or other settings. Only provide the fields you want to change; other fields will remain unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "documentTypes",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "documentSplitter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rejectDuplicates",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rejectInvalidDocuments",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "whitelistIngestAddresses",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "affinda.db.collections.search",
+      "entityName": "collections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "affinda.db.documents.search",
+      "entityName": "documents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fileName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ready",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "affinda.db.workspaces.search",
+      "entityName": "workspaces",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "identifier",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

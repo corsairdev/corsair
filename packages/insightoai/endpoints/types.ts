@@ -2,9 +2,8 @@ import { z } from 'zod';
 
 // Insighto.ai's live API reference (docs.insighto.ai/api/ragify) renders response schemas
 // through a client-side OpenAPI panel that doesn't expose field-level detail through static
-// scraping — only request parameters were independently confirmed (cross-referenced against
-// Composio's published Insighto.ai toolkit, which mirrors the same 65 operations). Response
-// shapes are therefore intentionally left permissive rather than guessed at the field level.
+// scraping — only request parameters were independently confirmed (65 operations total).
+// Response shapes are therefore intentionally left permissive rather than guessed at the field level.
 const InsightoaiResponseSchema = z.record(z.string(), z.unknown());
 export type InsightoaiResponse = z.infer<typeof InsightoaiResponseSchema>;
 

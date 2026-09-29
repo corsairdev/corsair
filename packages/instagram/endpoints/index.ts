@@ -4,6 +4,7 @@ import * as Conversations from './conversations';
 import * as Image from './image';
 import * as Media from './media';
 import * as Messages from './messages';
+import * as Messenger from './messenger-profile';
 import * as Profile from './profile';
 import * as Publish from './publish-content';
 import * as Reel from './reel';
@@ -12,6 +13,11 @@ import * as Video from './video';
 export const ProfileEndpoints = {
 	get: Profile.get,
 	insights: Profile.insights,
+	contentPublishingLimit: Profile.contentPublishingLimit,
+	liveMedia: Profile.liveMedia,
+	stories: Profile.stories,
+	tags: Profile.tags,
+	replyMentions: Profile.replyMentions,
 };
 
 export const MediaEndpoints = {
@@ -19,6 +25,7 @@ export const MediaEndpoints = {
 	get: Media.get,
 	status: Media.status,
 	insights: Media.insights,
+	children: Media.children,
 };
 
 export const ImageEndpoints = {
@@ -46,11 +53,14 @@ export const CarouselEndpoints = {
 export const ConversationsEndpoints = {
 	list: Conversations.list,
 	get: Conversations.get,
+	getConversation: Conversations.getConversation,
 };
 
 export const MessagesEndpoints = {
 	get: Messages.get,
 	send: Messages.send,
+	markSeen: Messages.markSeen,
+	sendImage: Messages.sendImage,
 };
 
 export const CommentsEndpoints = {
@@ -60,4 +70,11 @@ export const CommentsEndpoints = {
 	get: Comments.get,
 	update: Comments.update,
 	remove: Comments.remove,
+	getReplies: Comments.getReplies,
+};
+
+export const MessengerEndpoints = {
+	getProfile: Messenger.getProfile,
+	updateProfile: Messenger.updateProfile,
+	deleteProfile: Messenger.deleteProfile,
 };

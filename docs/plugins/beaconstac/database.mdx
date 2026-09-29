@@ -1,0 +1,258 @@
+---
+title: Database
+description: "Beaconstac local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Beaconstac plugin syncs data locally. Use `corsair.beaconstac.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Bulk Qrcodes
+
+Path: `beaconstac.db.bulkQrcodes.search`
+
+```ts
+const rows = await corsair.beaconstac.db.bulkQrcodes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `qr_type` | `number` | equals, gt, gte, lt, lte, in |
+| `qr_data_type` | `number` | equals, gt, gte, lt, lte, in |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `storage_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `media` | `number` | equals, gt, gte, lt, lte, in |
+| `maintainer` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Organizations
+
+Path: `beaconstac.db.organizations.search`
+
+```ts
+const rows = await corsair.beaconstac.db.organizations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent` | `number` | equals, gt, gte, lt, lte, in |
+| `reseller_access` | `boolean` | equals |
+| `whitelabel_access` | `boolean` | equals |
+| `custom_domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `cname` | `string` | equals, contains, startsWith, endsWith, in |
+| `ga_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `fb_pixel_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `google_conversion_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Places
+
+Path: `beaconstac.db.places.search`
+
+```ts
+const rows = await corsair.beaconstac.db.places.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `latitude` | `number` | equals, gt, gte, lt, lte, in |
+| `longitude` | `number` | equals, gt, gte, lt, lte, in |
+| `place_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `beacon_count` | `number` | equals, gt, gte, lt, lte, in |
+| `default_place` | `boolean` | equals |
+| `business_icon_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `business_cover_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `business_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Qrcodes
+
+Path: `beaconstac.db.qrcodes.search`
+
+```ts
+const rows = await corsair.beaconstac.db.qrcodes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `qr_type` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `place` | `number` | equals, gt, gte, lt, lte, in |
+| `maintainer` | `number` | equals, gt, gte, lt, lte, in |
+| `template` | `number` | equals, gt, gte, lt, lte, in |
+| `view_limit` | `number` | equals, gt, gte, lt, lte, in |
+| `domain` | `number` | equals, gt, gte, lt, lte, in |
+| `location_enabled` | `boolean` | equals |
+| `password` | `boolean` | equals |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `heartbeat` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Qr Templates
+
+Path: `beaconstac.db.qrTemplates.search`
+
+```ts
+const rows = await corsair.beaconstac.db.qrTemplates.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `default` | `boolean` | equals |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `maintainer` | `number` | equals, gt, gte, lt, lte, in |
+| `margin` | `number` | equals, gt, gte, lt, lte, in |
+| `dotScale` | `number` | equals, gt, gte, lt, lte, in |
+| `dataPattern` | `string` | equals, contains, startsWith, endsWith, in |
+| `colorDark` | `string` | equals, contains, startsWith, endsWith, in |
+| `colorLight` | `string` | equals, contains, startsWith, endsWith, in |
+| `gradientType` | `string` | equals, contains, startsWith, endsWith, in |
+| `eyeBallShape` | `string` | equals, contains, startsWith, endsWith, in |
+| `eyeFrameShape` | `string` | equals, contains, startsWith, endsWith, in |
+| `logoImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `backgroundImage` | `string` | equals, contains, startsWith, endsWith, in |
+| `frameStyle` | `string` | equals, contains, startsWith, endsWith, in |
+| `frameText` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Tags
+
+Path: `beaconstac.db.tags.search`
+
+```ts
+const rows = await corsair.beaconstac.db.tags.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `maintainer` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `beaconstac.db.users.search`
+
+```ts
+const rows = await corsair.beaconstac.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_group` | `string` | equals, contains, startsWith, endsWith, in |
+| `customer_plan` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscription_state` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_active` | `boolean` | equals |
+| `stripe_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `timezone` | `string` | equals, contains, startsWith, endsWith, in |
+| `organization` | `number` | equals, gt, gte, lt, lte, in |
+| `last_login` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_joined` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

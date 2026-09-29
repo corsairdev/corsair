@@ -1,0 +1,6128 @@
+{
+  "id": "agencyzoom",
+  "displayName": "AgencyZoom",
+  "description": "Insurance agency management software for policies, clients, and producer workflows.",
+  "npmPackageName": "@corsair-dev/agencyzoom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 99,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "agencyzoom.api.auth.logTheUserIn",
+      "shortPath": "auth.logTheUserIn",
+      "description": "Authenticates an existing AgencyZoom user using their email (as username) and password to obtain a JWT for API access; this action does not support new user creation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jwt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerAgent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.auth.logTheUserOut",
+      "shortPath": "auth.logTheUserOut",
+      "description": "Use this action to log the current user out of AgencyZoom by invalidating their active session token. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.auth.v4SsoLogTheUserIn",
+      "shortPath": "auth.v4SsoLogTheUserIn",
+      "description": "Logs a user into the AgencyZoom platform via Single Sign-On (SSO). Returns JWT on success or error details on authentication failure.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jwt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerAgent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.contact.batchCreateContact",
+      "shortPath": "contact.batchCreateContact",
+      "description": "Creates 1 to 5 new contacts in AgencyZoom in a single batch API call.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactDataRequests",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.createACustomerNote",
+      "shortPath": "customers.createACustomerNote",
+      "description": "Adds a new note to an existing customer's profile using their ID; cannot be used to edit or retrieve existing notes.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.deleteACustomer",
+      "shortPath": "customers.deleteACustomer",
+      "description": "Irreversibly deletes a customer and all associated data in AgencyZoom using their `customerId`; useful for offboarding or data privacy compliance.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.deleteACustomerFile",
+      "shortPath": "customers.deleteACustomerFile",
+      "description": "Permanently deletes a specific file, identified by `fileId`, associated with a customer, identified by `customerId`.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.deleteACustomerPolicy",
+      "shortPath": "customers.deleteACustomerPolicy",
+      "description": "Permanently deletes a specific policy associated with a customer, for instance, if it's cancelled or inactive; this action is irreversible and requires caution.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.getAmsPoliciesForACustomer",
+      "shortPath": "customers.getAmsPoliciesForACustomer",
+      "description": "Retrieves a customer's synchronized Agency Management System (AMS) policy data (typically a single policy); requires an active AMS integration, may return empty/default values if data is missing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.getPoliciesForACustomer",
+      "shortPath": "customers.getPoliciesForACustomer",
+      "description": "Retrieves from AgencyZoom all insurance policies for an existing customer (identified by `customerId`), including policy details like type, carrier, premium, effective dates, and assigned agents. Excludes premium payment history or claims information.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.getTheCustomerDetails",
+      "shortPath": "customers.getTheCustomerDetails",
+      "description": "Fetches comprehensive details for a specific customer, including personal information, policies, notes, tasks, files, and custom fields, using their unique customer ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "businessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.getTheCustomerTasks",
+      "shortPath": "customers.getTheCustomerTasks",
+      "description": "Fetches all tasks (read-only task data) for a customer by `customerId` to review their activities, follow-ups, and action items; the `customerId` must be valid.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.searchCustomers",
+      "shortPath": "customers.searchCustomers",
+      "description": "Searches for customers in AgencyZoom using criteria like contact information, policy details, or custom fields, with options for filtering, sorting, and pagination. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.customers.updateCustomer",
+      "shortPath": "customers.updateCustomer",
+      "description": "Updates an existing customer's information in AgencyZoom using their unique customerId.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csrId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "bizCustomer",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "totalPayroll",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "annualRevenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactLastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactFirstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactMiddlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numberOfEmployees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "businessName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.emailThreads.deleteMessage",
+      "shortPath": "emailThreads.deleteMessage",
+      "description": "Deletes a specific message from an email thread within AgencyZoom. Requires the message ID to identify which message to remove. Returns the updated thread information with the remaining messages after deletion.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.emailThreads.deleteThread",
+      "shortPath": "emailThreads.deleteThread",
+      "description": "Permanently deletes a specific email thread from the AgencyZoom system, identified by its `threadId` (expected by the endpoint), provided the thread exists.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.emailThreads.getThreadDetails",
+      "shortPath": "emailThreads.getThreadDetails",
+      "description": "Searches and retrieves detailed information for email threads in AgencyZoom; no explicit search criteria are passed in this request. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "threadId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchTerm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastDateUTC",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.emailThreads.markThreadAsUnreadApiEndpoint",
+      "shortPath": "emailThreads.markThreadAsUnreadApiEndpoint",
+      "description": "Marks an email thread in AgencyZoom as read or unread using its `threadId`; this action does not modify message content and the specified `threadId` must refer to an existing thread.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markUnread",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.emailThreads.searchEmailThreads",
+      "shortPath": "emailThreads.searchEmailThreads",
+      "description": "Retrieves a list of email thread metadata from AgencyZoom, suitable for an overview when no specific filtering, sorting, or pagination is needed, as results are subject to default server-side limits and ordering. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.batchCreateLead",
+      "shortPath": "leads.batchCreateLead",
+      "description": "Creates up to 5 new leads in AgencyZoom; all referenced entity IDs (e.g., pipeline, user, custom field names) must exist, and organization `name` is required if `isBusiness` is true.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadDataRequests",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.changeStatusForLead",
+      "shortPath": "leads.changeStatusForLead",
+      "description": "Updates a lead's lifecycle status (e.g., Active, Won, Lost, X-Dated) and can optionally manage its workflow, pipeline, stage, source, or associated tags.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "toStageId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "xDateType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lossReasonId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recycleToStage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workflowStageId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recycleToPipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "changeLeadSourceTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.createALeadNote",
+      "shortPath": "leads.createALeadNote",
+      "description": "Adds a new note to an existing lead in AgencyZoom, identified by `leadId`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "note",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.createALeadOpportunity",
+      "shortPath": "leads.createALeadOpportunity",
+      "description": "Adds a new sales opportunity to an existing lead in AgencyZoom, requiring a valid `leadId`, `carrierId`, `productLineId`, and that custom field names match existing definitions in AgencyZoom.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "productLineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.createALeadQuote",
+      "shortPath": "leads.createALeadQuote",
+      "description": "Creates a new insurance quote for an existing lead in AgencyZoom, using valid carrier and product line IDs, to track a proposal; this action does not bind policies or process payments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "productLineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.createBizLead",
+      "shortPath": "leads.createBizLead",
+      "description": "Creates or updates a business lead in AgencyZoom using detailed personal and company information, for B2B sales and marketing lead management.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dba",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fein",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "csrId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payroll",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assignTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "soldDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherCsrs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "quoteDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "annualRevenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherProducers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignmentGroupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numberOfEmployees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextExpirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "yearBusinessStarted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessClassification",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearsOfManagementExperience",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.createLead",
+      "shortPath": "leads.createLead",
+      "description": "Creates a new lead or updates an existing one in AgencyZoom; ensure `pipelineId`, `stageId`, `leadSourceId`, and `assignTo` reference valid, existing entities.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csrId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assignTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "soldDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherCsrs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "quoteDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBusiness",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "maritalStatus",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherProducers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignmentGroupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextExpirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipelineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.deleteALeadFile",
+      "shortPath": "leads.deleteALeadFile",
+      "description": "Deletes a specific file (identified by `fileId`) associated with an existing lead (identified by `leadId`); this operation is irreversible.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.deleteALeadOpportunity",
+      "shortPath": "leads.deleteALeadOpportunity",
+      "description": "Permanently deletes an existing opportunity (by `opportunityId`) associated with an existing lead (by `leadId`) when it's irrelevant, closed, or erroneous; the lead itself remains.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.deleteALeadQuote",
+      "shortPath": "leads.deleteALeadQuote",
+      "description": "Deletes a specific quote from a lead, requiring that the lead and quote exist and are associated.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "quoteId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getLeadFiles",
+      "shortPath": "leads.getLeadFiles",
+      "description": "Retrieves metadata (id, title, MIME type, size, dates, creator info) for files attached to leads in AgencyZoom. Optionally filter by `leadId` to get files for a specific lead, or omit to retrieve files across all leads. Returns file metadata only, not the actual file content.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerReferralId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getLeadNotes",
+      "shortPath": "leads.getLeadNotes",
+      "description": "Fetches the complete history of notes for a specific lead by `leadId` (which must exist), useful for reviewing context for communications or follow-ups; this is a read-only operation.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getLeadQuotes",
+      "shortPath": "leads.getLeadQuotes",
+      "description": "Retrieves all insurance quotes (active and inactive) for a specific lead ID, useful for reviewing or tracking quote history.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getLeadTasks",
+      "shortPath": "leads.getLeadTasks",
+      "description": "Retrieves all tasks for a specific lead, identified by its `leadId`, to review its activity history or manage follow-ups.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getTheLeadDetails",
+      "shortPath": "leads.getTheLeadDetails",
+      "description": "Retrieves comprehensive details for a specific lead in AgencyZoom by its unique `leadId` (which must correspond to an existing lead), including contact information, status, associated opportunities, quotes/policies, custom fields, and interaction history.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipelineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.getTheOpportunitiesForALead",
+      "shortPath": "leads.getTheOpportunitiesForALead",
+      "description": "Retrieves all sales opportunities and their details for a specified, existing `leadId` in AgencyZoom.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.moveLeadToSold",
+      "shortPath": "leads.moveLeadToSold",
+      "description": "Marks an existing lead as sold by its `leadId` and records product details; `productLineId`, `premium`, `effectiveDate`, and `soldDate` are operationally required for each sold product, despite schema flexibility.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "keepOpen",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "soldProducts",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.searchLeads",
+      "shortPath": "leads.searchLeads",
+      "description": "Retrieves AgencyZoom leads, using filters, pagination, and sorting options sent in the POST body, as the request schema itself is empty. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "{ id?: string | number, firstname?: string, middlename?: string, lastname?: string, email?: string, phone?: string, status?: string | number, leadSourceId?: number, pipelineId?: number, stageId?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.searchLeadsCount",
+      "shortPath": "leads.searchLeadsCount",
+      "description": "Retrieves a summary of lead counts categorized by workflow stage from AgencyZoom; this action does not support filtering and returns aggregate counts rather than individual lead details. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateALeadFileName",
+      "shortPath": "leads.updateALeadFileName",
+      "description": "Updates a lead's file name to `newFileName`; requires `fileId` of the target file, which must be associated with both the `leadId` (path parameter) and the provided `customerReferralId`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "newFileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customerReferralId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateALeadOpportunity",
+      "shortPath": "leads.updateALeadOpportunity",
+      "description": "Updates an existing opportunity's details (carrier, product line, premium, items, custom fields) for a specific lead; `leadId`, opportunity `id`, `carrierId`, and `productLineId` must refer to existing entities.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "productLineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateALeadQuote",
+      "shortPath": "leads.updateALeadQuote",
+      "description": "Updates an existing quote for a specified lead in AgencyZoom when its details require revision, ensuring the provided `leadId` (path parameter), quote `id` (body parameter), `carrierId`, and `productLineId` are valid and correspond to existing entities.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "productLineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateBusinessLead",
+      "shortPath": "leads.updateBusinessLead",
+      "description": "Updates an existing business lead in AgencyZoom. Requires leadId (path parameter) plus core business information fields: firstname, email, name (business name), pipelineId, stageId, leadSourceId, assignTo (producer ID), and country. All other fields are optional and will only update if provided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dba",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fein",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "csrId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "payroll",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assignTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "soldDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherCsrs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "quoteDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "annualRevenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherProducers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignmentGroupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "numberOfEmployees",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextExpirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "yearBusinessStarted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessClassification",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "yearsOfManagementExperience",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateLead",
+      "shortPath": "leads.updateLead",
+      "description": "Updates an existing lead's information in AgencyZoom using the `leadId`; ensure the `leadId` corresponds to an existing lead in AgencyZoom.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "csrId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "xDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stageId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "assignTo",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nickname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "soldDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherCsrs",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "quoteDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isBusiness",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pipelineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "contactDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "maritalStatus",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "streetAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "otherProducers",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "secondaryEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "secondaryPhone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignmentGroupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "nextExpirationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetAddressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middlename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pipelineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stageId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.leads.updateLeadStatusById",
+      "shortPath": "leads.updateLeadStatusById",
+      "description": "Updates a lead's status (0=ACTIVE, 2=WON, 3=LOST, 5=XDATED) by `leadId`, optionally setting workflow, stage, date, loss reason, X-date type, source, recycle stage/pipeline, or tags; requires `date` and `xDateType` for status 5 (XDATED), and `lossReasonId` for status 3 (LOST).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "toStageId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "xDateType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workflowId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lossReasonId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recycleToStage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workflowStageId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "recycleToPipeline",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "changeLeadSourceTo",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.life.searchLifeAndHealthLeads",
+      "shortPath": "life.searchLifeAndHealthLeads",
+      "description": "Searches for life and health insurance leads by providing filter criteria (matching AlrLead fields) in the request body; an empty request may retrieve all leads or a default set. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.createADriverForAnOpportunity",
+      "shortPath": "opportunities.createADriverForAnOpportunity",
+      "description": "Creates a new driver record associated with an existing AgencyZoom opportunity using its ID; requires firstName and lastName, with optional fields for additional driver details.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relationship",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maritalStatus",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stateLicensed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.createAnOpportunity",
+      "shortPath": "opportunities.createAnOpportunity",
+      "description": "Creates a new lead opportunity in AgencyZoom; this action cannot update existing opportunities.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "productLineId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "property__zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerReferralId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "property__address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__useMailingAddressAsLocation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "productLineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.createAVehicleForAnOpportunity",
+      "shortPath": "opportunities.createAVehicleForAnOpportunity",
+      "description": "Adds a new vehicle record to a specified opportunity; `opportunityId` must refer to a valid, existing opportunity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "make",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownership",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.deleteADriver",
+      "shortPath": "opportunities.deleteADriver",
+      "description": "Permanently deletes an existing driver record (a person associated with an insurance opportunity) from AgencyZoom using its unique `driverId`; this action is irreversible.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driverId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.deleteAnOpportunity",
+      "shortPath": "opportunities.deleteAnOpportunity",
+      "description": "Permanently deletes a specific opportunity by its unique ID; this action is irreversible and requires a valid, existing `opportunityId`.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.deleteAVehicle",
+      "shortPath": "opportunities.deleteAVehicle",
+      "description": "Permanently deletes a vehicle record by its `vehicleId`, which must correspond to an existing vehicle in the AgencyZoom system.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.getAListOfDriversForAnOpportunity",
+      "shortPath": "opportunities.getAListOfDriversForAnOpportunity",
+      "description": "Retrieves a list of drivers (individuals), including their personal details, licensing information, and relationship status, associated with a specific, existing `opportunityId` in AgencyZoom.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.getAListOfVehiclesForAnOpportunity",
+      "shortPath": "opportunities.getAListOfVehiclesForAnOpportunity",
+      "description": "Retrieves all vehicles associated with an existing opportunity, using its unique opportunityId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.getTheDriverDetails",
+      "shortPath": "opportunities.getTheDriverDetails",
+      "description": "Retrieves detailed information for a specific, existing driver (by `driverId`) associated with an AgencyZoom opportunity.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driverId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.getTheOpportunityDetails",
+      "shortPath": "opportunities.getTheOpportunityDetails",
+      "description": "Fetches comprehensive details for an existing opportunity using its unique `opportunityId`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "productLineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.getTheVehicleDetails",
+      "shortPath": "opportunities.getTheVehicleDetails",
+      "description": "Retrieves detailed information for a specific vehicle, often associated with an AgencyZoom opportunity, using its unique vehicleId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.linkADriverToOpportunity",
+      "shortPath": "opportunities.linkADriverToOpportunity",
+      "description": "Assigns or reassigns an existing driver to an existing opportunity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driverId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.linkAVehicleToOpportunity",
+      "shortPath": "opportunities.linkAVehicleToOpportunity",
+      "description": "Links an existing vehicle to an existing sales opportunity in AgencyZoom using their respective IDs, typically for managing auto insurance policies or related services.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.unlinkADriverFromOpportunity",
+      "shortPath": "opportunities.unlinkADriverFromOpportunity",
+      "description": "Unlinks a currently associated driver from an AgencyZoom opportunity, used when the driver is no longer relevant, for policy or data updates, potentially impacting the opportunity's status or associated policy details.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "driverId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.unlinkAVehicleFromOpportunity",
+      "shortPath": "opportunities.unlinkAVehicleFromOpportunity",
+      "description": "Unlinks a specific, existing vehicle from a specific, existing opportunity using their respective IDs, removing only the association and not the records themselves.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vehicleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.updateADriverSDetails",
+      "shortPath": "opportunities.updateADriverSDetails",
+      "description": "Updates an existing driver's details in AgencyZoom, requiring `driverId` in the path and `firstName` and `lastName` in the request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birthday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "driverId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "middleName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "relationship",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "licenseNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maritalStatus",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "stateLicensed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.updateAnOpportunity",
+      "shortPath": "opportunities.updateAnOpportunity",
+      "description": "Updates an existing opportunity with the provided details; ensure any custom field names are predefined in AgencyZoom configuration.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "opportunityId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "productLineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "property__zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property__useMailingAddressAsLocation",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "productLineId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.opportunities.updateAVehicleSDetails",
+      "shortPath": "opportunities.updateAVehicleSDetails",
+      "description": "Updates details for an existing vehicle within an opportunity; this action cannot be used to create new vehicle records.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "make",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "year",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ownership",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "vehicleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.policies.updateAPolicy",
+      "shortPath": "policies.updateAPolicy",
+      "description": "Updates an existing insurance policy for the given `policyId`; monetary values must be in cents and dates in YYYY-MM-DD format.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "premium",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "soldDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "brokerFee",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "carrierId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "groupCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "policyType",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "insuredName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "policyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "departmentCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priorExpiryDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priorCarrierName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priorPolicyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "productCategoryId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.policies.updateTagsForAPolicy",
+      "shortPath": "policies.updateTagsForAPolicy",
+      "description": "Adds new comma-separated `tagNames` to a policy, requiring `tagNames` and identification by either `policyId` or `amsPolicyId`; if `amsPolicyId` is provided, `policyId` is ignored, and existing tags are not affected.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policyId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tagNames",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amsPolicyId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.profile.updateMyProfile",
+      "shortPath": "profile.updateMyProfile",
+      "description": "Updates the profile information (first name, last name, email, and optional phone) for the currently authenticated user in AgencyZoom; the provided email address must be unique within the system.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfAssignGroups",
+      "shortPath": "referenceData.getAListOfAssignGroups",
+      "description": "Retrieves all assign groups configured in AgencyZoom, used for categorizing or assigning items to specific teams or units. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfCarriers",
+      "shortPath": "referenceData.getAListOfCarriers",
+      "description": "Retrieves all insurance carriers from AgencyZoom, typically used for populating selection lists or synchronizing carrier data; does not return detailed policy or coverage information. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfCsrs",
+      "shortPath": "referenceData.getAListOfCsrs",
+      "description": "Fetches all Customer Service Representatives (CSRs), including their ID and name, returning an empty list if none are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfCustomFields",
+      "shortPath": "referenceData.getAListOfCustomFields",
+      "description": "Retrieves metadata for all configured custom field definitions, not the specific values entered for individual records. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfEmployees",
+      "shortPath": "referenceData.getAListOfEmployees",
+      "description": "Retrieves a complete list of all employees for the authenticated agency; returns an empty list if no employees are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfLeadSourceCategories",
+      "shortPath": "referenceData.getAListOfLeadSourceCategories",
+      "description": "Retrieves a comprehensive list of all predefined lead source categories from AgencyZoom, used to classify lead origins. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfLeadSources",
+      "shortPath": "referenceData.getAListOfLeadSources",
+      "description": "Fetches a list of all lead sources configured in AgencyZoom, including their ID, name, sales exclusion status, and category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfLifeProfessionals",
+      "shortPath": "referenceData.getAListOfLifeProfessionals",
+      "description": "Retrieves a list of life insurance professionals, including only their contact and status information (excluding sales or customer data), from the AgencyZoom platform. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfLocations",
+      "shortPath": "referenceData.getAListOfLocations",
+      "description": "Retrieves all agency locations or branches from AgencyZoom; filtering options are not available. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfLossReasons",
+      "shortPath": "referenceData.getAListOfLossReasons",
+      "description": "Retrieves all predefined loss reasons (e.g., 'Lost to competitor', 'Premium too high') available in AgencyZoom. These reasons can be used when marking leads as lost or for reporting purposes. No parameters required - returns complete list. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfPipelines",
+      "shortPath": "referenceData.getAListOfPipelines",
+      "description": "Retrieves all pipelines and their stages from AgencyZoom to understand workflow structures; this is a read-only operation and does not return individual items (like leads or tasks) within these pipelines. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfProductLinesPolicyTypes",
+      "shortPath": "referenceData.getAListOfProductLinesPolicyTypes",
+      "description": "Fetches all product lines and policy types from AgencyZoom, each detailed with its ID, name, and product category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getAListOfRecycleEvents",
+      "shortPath": "referenceData.getAListOfRecycleEvents",
+      "description": "Retrieves the available recycle event types and any existing X-Date information for a specified lead in AgencyZoom. Returns a list of recycle event categories that can be used to trigger follow-ups (e.g., 'X-Date', 'Accident Falls Off', 'Prior Insurance Fulfilled').",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "existingXDate",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "newXDate",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getDepartmentsGroups",
+      "shortPath": "referenceData.getDepartmentsGroups",
+      "description": "Fetches department and group information for an agency, optionally filtered by a specific `agencyNumber`, to analyze its organizational structure.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agencyNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.getListOfEndStages",
+      "shortPath": "referenceData.getListOfEndStages",
+      "description": "Fetches a list of all defined end stages, representing final steps in processes like lead conversion or policy closure. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.listProductCategories",
+      "shortPath": "referenceData.listProductCategories",
+      "description": "Retrieves a complete, unfiltered list of all product categories (ID and name) from AgencyZoom, useful for understanding product organization or populating UI elements. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.referenceData.searchBusinessClassifications",
+      "shortPath": "referenceData.searchBusinessClassifications",
+      "description": "Retrieves a comprehensive list of all available business classifications from AgencyZoom, each including an ID, code, and description. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.serviceTickets.serviceTicketList",
+      "shortPath": "serviceTickets.serviceTicketList",
+      "description": "Retrieves a paginated list of service tickets from AgencyZoom. Supports filtering by: - Status (0=removed, 1=active, 2=completed) - Priority ID and Category ID Returns service ticket details including subject, description, dates, assignment information, and workflow stage. Results are paginated with default page size of 20 tickets per page.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priorityId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.batchDeleteTask",
+      "shortPath": "tasks.batchDeleteTask",
+      "description": "Deletes multiple AgencyZoom tasks in a batch; task deletion is permanent and the response indicates overall batch success, not individual task status.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskIds",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.completeTask",
+      "shortPath": "tasks.completeTask",
+      "description": "Marks an existing and accessible task in AgencyZoom as 'completed'; this action does not return the full updated task object.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.createTask",
+      "shortPath": "tasks.createTask",
+      "description": "Creates a new task in AgencyZoom; ensure `assigneeId`, `customerId`, or `leadId` are valid existing entities if provided, and use `contactEmail`, `customerId`, or `leadId` to link the task to a contact.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invitees",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dueDatetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeSpecific",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lifeProfessionalId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.deleteATask",
+      "shortPath": "tasks.deleteATask",
+      "description": "Permanently and irreversibly deletes an existing task, identified by its `taskId`.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.getTheTaskDetails",
+      "shortPath": "tasks.getTheTaskDetails",
+      "description": "Retrieves comprehensive details for a specific task using its unique `taskId`, which must correspond to an existing task in AgencyZoom.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.reopenATask",
+      "shortPath": "tasks.reopenATask",
+      "description": "Reopens an existing AgencyZoom task that is currently 'completed' or 'closed', allowing it to be reactivated with optional comments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.searchTasks",
+      "shortPath": "tasks.searchTasks",
+      "description": "Searches and lists tasks, supporting pagination and accepting filter criteria in the POST request body despite an empty request schema.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lifeProfessionalId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadSourceCategoryId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.tasks.updateTask",
+      "shortPath": "tasks.updateTask",
+      "description": "Modifies an existing AgencyZoom task (which must be valid and identified by `taskId` in the path) with new attributes from the request body, which must also contain `taskId`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "invitees",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "assigneeId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dueDatetime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactEmail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeSpecific",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lifeProfessionalId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leadId",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.textThreads.getAListOfProducer",
+      "shortPath": "textThreads.getAListOfProducer",
+      "description": "Retrieves a list of all producers from AgencyZoom, typically related to text thread functionalities. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.textThreads.removeTextThreadEndpoint",
+      "shortPath": "textThreads.removeTextThreadEndpoint",
+      "description": "Call this action to permanently delete an SMS/text message thread in AgencyZoom; the target thread is identified by its `threadId`. Note: This operation is idempotent - deleting a non-existent thread will return success.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.textThreads.searchSmsThreads",
+      "shortPath": "textThreads.searchSmsThreads",
+      "description": "Searches and retrieves SMS threads from AgencyZoom, with search parameters, filters, sorting, and pagination typically provided in the request body of this POST operation. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.textThreads.textDetailThread",
+      "shortPath": "textThreads.textDetailThread",
+      "description": "Retrieves detailed messages for a specific SMS/text thread by its thread ID. Returns all messages in the thread with their content, attachments, sender/recipient information, and metadata. The thread ID can be obtained from the search_sms_threads action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "searchTerm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastDateUTC",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.textThreads.unreadThread",
+      "shortPath": "textThreads.unreadThread",
+      "description": "Updates the read or unread status of a specific SMS/text thread within AgencyZoom.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "markUnread",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "agencyzoom.api.v4sso.authenticateForJwtviaV4Sso",
+      "shortPath": "v4sso.authenticateForJwtviaV4Sso",
+      "description": "Completes AgencyZoom V4 Single Sign-On (SSO) authentication by exchanging an OAuth2 authorization code for a JWT token. Prerequisites: First call get_auth_url_for_v4sso to obtain the authentication URL, then redirect the user to that URL for login. After successful authentication through Vertafore's OAuth provider, the callback will include a 'code' parameter. Use that code with this action to obtain the JWT token for API access. Note: This is typically used during initial authentication setup. The code is single-use, time-limited, and must match the PKCE challenge from the original auth request.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jwt",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ownerAgent",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agencyzoom.api.v4sso.getAuthUrlForV4Sso",
+      "shortPath": "v4sso.getAuthUrlForV4Sso",
+      "description": "Retrieves a fresh authentication URL for AgencyZoom's V4 Single Sign-On (SSO) process; call before each SSO attempt as the URL may change and should not be cached. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "agencyzoom.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agencyzoom.db.leads.search",
+      "entityName": "leads",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agencyzoom.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

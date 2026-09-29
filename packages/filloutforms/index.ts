@@ -284,7 +284,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'databases.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a Zite database [DESTRUCTIVE]',
+		description: 'Permanently delete a Zite database',
 	},
 	'tables.create': {
 		riskLevel: 'write',
@@ -296,7 +296,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'tables.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a Zite table [DESTRUCTIVE]',
+		description: 'Permanently delete a Zite table',
 	},
 	'fields.create': {
 		riskLevel: 'write',
@@ -308,7 +308,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'fields.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a Zite field [DESTRUCTIVE]',
+		description: 'Permanently delete a Zite field',
 	},
 	'submissions.list': {
 		riskLevel: 'read',
@@ -324,7 +324,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'submissions.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a form submission by ID [DESTRUCTIVE]',
+		description: 'Delete a form submission by ID',
 	},
 	'records.list': {
 		riskLevel: 'read',
@@ -344,7 +344,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'records.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a Zite record [DESTRUCTIVE]',
+		description: 'Permanently delete a Zite record',
 	},
 	'webhooks.createForm': {
 		riskLevel: 'write',
@@ -352,7 +352,7 @@ const filloutFormsEndpointMeta = {
 	},
 	'webhooks.removeForm': {
 		riskLevel: 'destructive',
-		description: 'Remove a Fillout form webhook [DESTRUCTIVE]',
+		description: 'Remove a Fillout form webhook',
 	},
 	'webhooks.createDatabase': {
 		riskLevel: 'write',
@@ -364,11 +364,11 @@ const filloutFormsEndpointMeta = {
 	},
 	'webhooks.deleteDatabase': {
 		riskLevel: 'destructive',
-		description: 'Delete a Zite database webhook [DESTRUCTIVE]',
+		description: 'Delete a Zite database webhook',
 	},
 	'token.invalidate': {
 		riskLevel: 'destructive',
-		description: 'Invalidate/revoke an OAuth access token [DESTRUCTIVE]',
+		description: 'Invalidate/revoke an OAuth access token',
 	},
 	'oauth.authorize': {
 		riskLevel: 'read',

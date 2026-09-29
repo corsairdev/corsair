@@ -1,0 +1,794 @@
+{
+  "id": "agilitycms",
+  "displayName": "Agility CMS",
+  "description": "Headless content management system for building and delivering omnichannel digital experiences.",
+  "npmPackageName": "@corsair-dev/agilitycms",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "agilitycms.api.content.getApiTypes",
+      "shortPath": "content.getApiTypes",
+      "description": "Retrieve enum types and metadata definitions used throughout Agility CMS API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getContentModels",
+      "shortPath": "content.getContentModels",
+      "description": "Retrieve content models and page module schema definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: {}[] }[]"
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getItem",
+      "shortPath": "content.getItem",
+      "description": "Fetch details of a content item by Content ID including fields and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "contentId",
+            "optional": false,
+            "type": "number",
+            "description": "Content item ID to retrieve"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          },
+          {
+            "key": "contentLinkDepth",
+            "optional": true,
+            "type": "number",
+            "description": "Depth of linked content items to expand (0-5)"
+          },
+          {
+            "key": "expandAllContentLinks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to automatically expand all nested content links"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentID",
+            "optional": false,
+            "type": "number",
+            "description": "Unique identifier for the content item"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }",
+            "description": "System metadata properties"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{}",
+            "description": "Dynamic content fields key-value dictionary"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getList",
+      "shortPath": "content.getList",
+      "description": "Retrieve a paginated, filterable list of content items by reference name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "referenceName",
+            "optional": false,
+            "type": "string",
+            "description": "Content list reference name (e.g. posts, authors)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          },
+          {
+            "key": "contentLinkDepth",
+            "optional": true,
+            "type": "number",
+            "description": "Depth of linked content items to expand (0-5)"
+          },
+          {
+            "key": "expandAllContentLinks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to automatically expand all nested content links"
+          },
+          {
+            "key": "take",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of items to return (page size)"
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Number of items to skip for pagination"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field name to sort items by (e.g. properties.modified)"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Sort direction: asc or desc"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "OData filter expression (e.g. fields.Title[like]MyPost)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number",
+            "description": "Total number of matching content items"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields: {} }[]",
+            "description": "Array of retrieved content items"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getLogs",
+      "shortPath": "content.getLogs",
+      "description": "Retrieve sync items (content change logs) incrementally using sync tokens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "syncToken",
+            "optional": false,
+            "type": "string",
+            "description": "Sync token for incremental change sync; use '0' for initial sync"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of sync items to return per page (max 500)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "syncToken",
+            "optional": false,
+            "type": "string",
+            "description": "Next sync token to persist; returns '0' when sync is up to date"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ contentID: number, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }, fields?: {} }[]",
+            "description": "List of content items created or updated since last sync"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getPage",
+      "shortPath": "content.getPage",
+      "description": "Retrieve details of a Page including metadata, content zones, and components by page ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "number",
+            "description": "Page ID to retrieve"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          },
+          {
+            "key": "contentLinkDepth",
+            "optional": true,
+            "type": "number",
+            "description": "Depth of linked content items to expand (0-5)"
+          },
+          {
+            "key": "expandAllContentLinks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to automatically expand all nested content links"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageID",
+            "optional": false,
+            "type": "number",
+            "description": "Unique identifier for the page"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Page name"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string",
+            "description": "URL path of the page"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Browser title of the page"
+          },
+          {
+            "key": "menuText",
+            "optional": true,
+            "type": "string",
+            "description": "Menu label text"
+          },
+          {
+            "key": "pageType",
+            "optional": true,
+            "type": "string",
+            "description": "Page type (e.g. static, dynamic)"
+          },
+          {
+            "key": "templateName",
+            "optional": false,
+            "type": "string",
+            "description": "Page template layout name"
+          },
+          {
+            "key": "redirectUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Redirect URL if configured"
+          },
+          {
+            "key": "securePage",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the page requires authentication"
+          },
+          {
+            "key": "seo",
+            "optional": true,
+            "type": "{ metaDescription?: string, metaKeywords?: string, metaHTML?: string, menuVisible?: boolean, sitemapVisible?: boolean }",
+            "description": "SEO and visibility configuration"
+          },
+          {
+            "key": "zones",
+            "optional": true,
+            "type": "{}",
+            "description": "Content zones dictionary mapping zone name to components"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "{ state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number }",
+            "description": "Page system metadata properties"
+          }
+        ]
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getPageModules",
+      "shortPath": "content.getPageModules",
+      "description": "Retrieve page module UI component definitions for building pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, referenceName?: string | null, displayName: string, description?: string | null, fields?: {}[] }[]"
+      }
+    },
+    {
+      "path": "agilitycms.api.content.getSitemapFlat",
+      "shortPath": "content.getSitemapFlat",
+      "description": "Retrieve the flat sitemap dictionary for a specific channel and locale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "channelName",
+            "optional": false,
+            "type": "string",
+            "description": "Digital channel name (e.g. website)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode: fetch for live, preview for staging"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "agilitycms.api.content.syncPages",
+      "shortPath": "content.syncPages",
+      "description": "Synchronize local page data with CMS incrementally using sync tokens",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "instanceGuid",
+            "optional": false,
+            "type": "string",
+            "description": "Agility CMS instance GUID"
+          },
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string",
+            "description": "Language locale code (e.g. en-us)"
+          },
+          {
+            "key": "syncToken",
+            "optional": false,
+            "type": "string",
+            "description": "Sync token for incremental page sync; use '0' for initial sync"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of sync pages to return per page (max 500)"
+          },
+          {
+            "key": "apiType",
+            "optional": false,
+            "type": "fetch | preview",
+            "description": "API access mode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "syncToken",
+            "optional": false,
+            "type": "string",
+            "description": "Next sync token to persist; returns '0' when page sync is up to date"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ pageID: number, name?: string, path?: string | null, title?: string, templateName?: string, properties?: { state?: number, modified?: string, versionID?: number, referenceName?: string, definitionName?: string, itemOrder?: number } }[]",
+            "description": "List of page items created or updated since last sync"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "agilitycms.db.contentItems.search",
+      "entityName": "contentItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentID",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.contentModels.search",
+      "entityName": "contentModels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referenceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.pageModules.search",
+      "entityName": "pageModules",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "referenceName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.pages.search",
+      "entityName": "pages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageID",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "menuText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "redirectUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "securePage",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.sitemapNodes.search",
+      "entityName": "sitemapNodes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageID",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "menuText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isFolder",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "redirectUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.syncItems.search",
+      "entityName": "syncItems",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentID",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "agilitycms.db.syncPages.search",
+      "entityName": "syncPages",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageID",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "templateName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

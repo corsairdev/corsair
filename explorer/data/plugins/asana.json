@@ -1,0 +1,4157 @@
+{
+  "id": "asana",
+  "displayName": "Asana",
+  "description": "Work management platform for tasks, projects, teams, and cross-functional collaboration.",
+  "npmPackageName": "@corsair-dev/asana",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 84,
+    "webhooks": 2,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "workspace_gid",
+        "project_gid"
+      ]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "workspace_gid",
+        "project_gid"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "asana.api.projects.addFollowers",
+      "shortPath": "projects.addFollowers",
+      "description": "Add followers to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, followers?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.addMembers",
+      "shortPath": "projects.addMembers",
+      "description": "Add members to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, members?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, team?: string, workspace?: string, notes?: string, html_notes?: string, color?: string, due_on?: string, start_on?: string, archived?: boolean, followers?: string[], owner?: string, public?: boolean, default_view?: string, privacy_setting?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.createForTeam",
+      "shortPath": "projects.createForTeam",
+      "description": "Create a project for a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, notes?: string, color?: string, due_on?: string, start_on?: string, archived?: boolean, followers?: string[], owner?: string, public?: boolean, default_view?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.createForWorkspace",
+      "shortPath": "projects.createForWorkspace",
+      "description": "Create a project for a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, team?: string, notes?: string, color?: string, due_on?: string, start_on?: string, archived?: boolean, followers?: string[], owner?: string, public?: boolean, default_view?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.duplicate",
+      "shortPath": "projects.duplicate",
+      "description": "Duplicate a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, team?: string, include?: string, schedule_dates?: { should_skip_weekends: boolean, due_on?: string, start_on?: string } }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, status?: string, new_project?: { gid: string, name?: string, resource_type?: string }, new_task?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a project by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.getTaskCounts",
+      "shortPath": "projects.getTaskCounts",
+      "description": "Get task counts for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ num_tasks?: number, num_completed_tasks?: number, num_incomplete_tasks?: number, num_milestones?: number, num_completed_milestones?: number, num_incomplete_milestones?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.getTasks",
+      "shortPath": "projects.getTasks",
+      "description": "Get tasks in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "completed_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.listForWorkspace",
+      "shortPath": "projects.listForWorkspace",
+      "description": "List projects in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.removeFollowers",
+      "shortPath": "projects.removeFollowers",
+      "description": "Remove followers from a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.removeMembers",
+      "shortPath": "projects.removeMembers",
+      "description": "Remove members from a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, notes?: string, html_notes?: string, color?: string, due_on?: string, start_on?: string, archived?: boolean, owner?: string, public?: boolean, default_view?: string, privacy_setting?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, color?: string | null, archived?: boolean, completed?: boolean, due_on?: string | null, start_on?: string | null, owner?: { gid: string, name?: string, resource_type?: string } | null, team?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, members?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], public?: boolean, resource_type?: string, created_at?: string, modified_at?: string, permalink_url?: string, default_view?: string, privacy_setting?: string, icon?: string | null, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.create",
+      "shortPath": "sections.create",
+      "description": "Create a section in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, insert_before?: string, insert_after?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, created_at?: string, project?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.delete",
+      "shortPath": "sections.delete",
+      "description": "Delete a section",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.get",
+      "shortPath": "sections.get",
+      "description": "Get a section by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, created_at?: string, project?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.insert",
+      "shortPath": "sections.insert",
+      "description": "Insert a section at a specific position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ section: string, before_section?: string, after_section?: string }"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.list",
+      "shortPath": "sections.list",
+      "description": "List sections in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, created_at?: string, project?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.sections.update",
+      "shortPath": "sections.update",
+      "description": "Update a section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, created_at?: string, project?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.stories.createComment",
+      "shortPath": "stories.createComment",
+      "description": "Create a comment on a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ text?: string, html_text?: string, is_pinned?: boolean }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, text?: string, html_text?: string, type?: string, resource_type?: string, resource_subtype?: string, created_at?: string, created_by?: { gid: string, name?: string, resource_type?: string } | null, liked?: boolean, num_likes?: number, is_edited?: boolean, is_pinned?: boolean, target?: { gid: string, name?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.stories.delete",
+      "shortPath": "stories.delete",
+      "description": "Delete a story",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.stories.get",
+      "shortPath": "stories.get",
+      "description": "Get a story by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, text?: string, html_text?: string, type?: string, resource_type?: string, resource_subtype?: string, created_at?: string, created_by?: { gid: string, name?: string, resource_type?: string } | null, liked?: boolean, num_likes?: number, is_edited?: boolean, is_pinned?: boolean, target?: { gid: string, name?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.stories.listForTask",
+      "shortPath": "stories.listForTask",
+      "description": "List stories for a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, text?: string, html_text?: string, type?: string, resource_type?: string, resource_subtype?: string, created_at?: string, created_by?: { gid: string, name?: string, resource_type?: string } | null, liked?: boolean, num_likes?: number, is_edited?: boolean, is_pinned?: boolean, target?: { gid: string, name?: string } | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.stories.update",
+      "shortPath": "stories.update",
+      "description": "Update a story",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "story_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ text?: string, html_text?: string, is_pinned?: boolean }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, text?: string, html_text?: string, type?: string, resource_type?: string, resource_subtype?: string, created_at?: string, created_by?: { gid: string, name?: string, resource_type?: string } | null, liked?: boolean, num_likes?: number, is_edited?: boolean, is_pinned?: boolean, target?: { gid: string, name?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, color?: string, notes?: string, workspace?: string, followers?: string[] }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.createInWorkspace",
+      "shortPath": "tags.createInWorkspace",
+      "description": "Create a tag in a workspace",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, color?: string, notes?: string, followers?: string[] }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get a tag by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.getTasks",
+      "shortPath": "tags.getTasks",
+      "description": "Get tasks with a specific tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.listForTask",
+      "shortPath": "tags.listForTask",
+      "description": "List tags on a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.listForWorkspace",
+      "shortPath": "tags.listForWorkspace",
+      "description": "List tags in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Update a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, color?: string, notes?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.addDependencies",
+      "shortPath": "tasks.addDependencies",
+      "description": "Add task dependencies",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dependencies",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.addFollowers",
+      "shortPath": "tasks.addFollowers",
+      "description": "Add followers to a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.addProject",
+      "shortPath": "tasks.addProject",
+      "description": "Add a task to a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.addTag",
+      "shortPath": "tasks.addTag",
+      "description": "Add a tag to a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.addToSection",
+      "shortPath": "tasks.addToSection",
+      "description": "Add a task to a section",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insert_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a new task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, projects?: string[], tags?: string[], followers?: string[], workspace?: string, parent?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, custom_fields?: {}, assignee_section?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.createSubtask",
+      "shortPath": "tasks.createSubtask",
+      "description": "Create a subtask",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, notes?: string, assignee?: string, due_on?: string, due_at?: string, completed?: boolean }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.duplicate",
+      "shortPath": "tasks.duplicate",
+      "description": "Duplicate a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ name?: string, include?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, status?: string, new_project?: { gid: string, name?: string, resource_type?: string }, new_task?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.getAttachments",
+      "shortPath": "tasks.getAttachments",
+      "description": "Get attachments for a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.getStories",
+      "shortPath": "tasks.getStories",
+      "description": "Get stories (activity) for a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, text?: string, html_text?: string, type?: string, resource_type?: string, resource_subtype?: string, created_at?: string, created_by?: { gid: string, name?: string, resource_type?: string } | null, liked?: boolean, num_likes?: number, is_edited?: boolean, is_pinned?: boolean, target?: { gid: string, name?: string } | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.getSubtasks",
+      "shortPath": "tasks.getSubtasks",
+      "description": "Get subtasks of a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.getTags",
+      "shortPath": "tasks.getTags",
+      "description": "Get tags on a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, color?: string | null, notes?: string, resource_type?: string, created_at?: string, workspace?: { gid: string, name?: string, resource_type?: string } | null, followers?: { gid: string, name?: string, resource_type?: string }[], permalink_url?: string }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_task_list",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modified_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.removeFollower",
+      "shortPath": "tasks.removeFollower",
+      "description": "Remove a follower from a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "followers",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.removeProject",
+      "shortPath": "tasks.removeProject",
+      "description": "Remove a task from a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.removeTag",
+      "shortPath": "tasks.removeTag",
+      "description": "Remove a tag from a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.search",
+      "shortPath": "tasks.search",
+      "description": "Search tasks in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resource_subtype",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "section",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_subtask",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_attachment",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_blocking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.setParent",
+      "shortPath": "tasks.setParent",
+      "description": "Set the parent of a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, notes?: string, html_notes?: string, due_on?: string, due_at?: string, start_on?: string, start_at?: string, assignee?: string, completed?: boolean, liked?: boolean, resource_subtype?: string, approval_status?: string, assignee_status?: string, assignee_section?: string, workspace?: string, custom_fields?: {} }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, notes?: string, html_notes?: string, completed?: boolean, due_on?: string | null, due_at?: string | null, start_on?: string | null, start_at?: string | null, assignee?: { gid: string, name?: string, resource_type?: string } | null, assignee_status?: string, assignee_section?: { gid: string, name?: string, resource_type?: string } | null, workspace?: { gid: string, name?: string, resource_type?: string } | null, projects?: { gid: string, name?: string, resource_type?: string }[], tags?: { gid: string, name?: string, resource_type?: string }[], followers?: { gid: string, name?: string, resource_type?: string }[], parent?: { gid: string, name?: string, resource_type?: string } | null, resource_type?: string, resource_subtype?: string, created_at?: string, modified_at?: string, completed_at?: string | null, liked?: boolean, num_likes?: number, permalink_url?: string, num_subtasks?: number, approval_status?: string, custom_fields?: {}[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.addUser",
+      "shortPath": "teams.addUser",
+      "description": "Add a user to a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_admin?: boolean, is_guest?: boolean, is_limited_access?: boolean, team?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name: string, description?: string, html_description?: string, visibility?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, description?: string, html_description?: string, visibility?: string, permalink_url?: string, resource_type?: string, organization?: { gid: string, name?: string, resource_type?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get a team by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, description?: string, html_description?: string, visibility?: string, permalink_url?: string, resource_type?: string, organization?: { gid: string, name?: string, resource_type?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.listForUser",
+      "shortPath": "teams.listForUser",
+      "description": "List teams for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, description?: string, html_description?: string, visibility?: string, permalink_url?: string, resource_type?: string, organization?: { gid: string, name?: string, resource_type?: string } | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.listForWorkspace",
+      "shortPath": "teams.listForWorkspace",
+      "description": "List teams in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, description?: string, html_description?: string, visibility?: string, permalink_url?: string, resource_type?: string, organization?: { gid: string, name?: string, resource_type?: string } | null }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.membershipsGet",
+      "shortPath": "teams.membershipsGet",
+      "description": "Get a team membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_membership_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_admin?: boolean, is_guest?: boolean, is_limited_access?: boolean, team?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.membershipsList",
+      "shortPath": "teams.membershipsList",
+      "description": "List team memberships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_admin?: boolean, is_guest?: boolean, is_limited_access?: boolean, team?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string } }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.membershipsListForTeam",
+      "shortPath": "teams.membershipsListForTeam",
+      "description": "List memberships for a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_admin?: boolean, is_guest?: boolean, is_limited_access?: boolean, team?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string } }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.membershipsListForUser",
+      "shortPath": "teams.membershipsListForUser",
+      "description": "List team memberships for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_admin?: boolean, is_guest?: boolean, is_limited_access?: boolean, team?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string } }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.removeUser",
+      "shortPath": "teams.removeUser",
+      "description": "Remove a user from a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ name?: string, description?: string, html_description?: string, visibility?: string }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, description?: string, html_description?: string, visibility?: string, permalink_url?: string, resource_type?: string, organization?: { gid: string, name?: string, resource_type?: string } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.get",
+      "shortPath": "users.get",
+      "description": "Get a user by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.getCurrent",
+      "shortPath": "users.getCurrent",
+      "description": "Get the currently authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.getFavorites",
+      "shortPath": "users.getFavorites",
+      "description": "Get a user's favorites",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.getTaskList",
+      "shortPath": "users.getTaskList",
+      "description": "Get a user's task list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, owner?: { gid: string, name?: string, resource_type?: string }, workspace?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.getUserTaskList",
+      "shortPath": "users.getUserTaskList",
+      "description": "Get a user task list by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_task_list_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, owner?: { gid: string, name?: string, resource_type?: string }, workspace?: { gid: string, name?: string, resource_type?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.listForTeam",
+      "shortPath": "users.listForTeam",
+      "description": "List users in a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.users.listForWorkspace",
+      "shortPath": "users.listForWorkspace",
+      "description": "List users in a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, email?: string, resource_type?: string, photo?: {} | null, workspaces?: { gid: string, name?: string, resource_type?: string }[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.webhookManagement.create",
+      "shortPath": "webhookManagement.create",
+      "description": "Register a new webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ resource: string, target: string, filters?: { resource_type?: string, resource_subtype?: string, action?: string, fields?: string[] }[] }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, active?: boolean, created_at?: string, target?: string, resource?: { gid: string, name?: string }, filters?: { resource_type?: string, resource_subtype?: string, action?: string, fields?: string[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.webhookManagement.delete",
+      "shortPath": "webhookManagement.delete",
+      "description": "Delete a webhook",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "asana.api.webhookManagement.getList",
+      "shortPath": "webhookManagement.getList",
+      "description": "List webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, active?: boolean, created_at?: string, target?: string, resource?: { gid: string, name?: string }, filters?: { resource_type?: string, resource_subtype?: string, action?: string, fields?: string[] }[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.webhookManagement.update",
+      "shortPath": "webhookManagement.update",
+      "description": "Update a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ filters?: { resource_type?: string, resource_subtype?: string, action?: string, fields?: string[] }[] }"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, active?: boolean, created_at?: string, target?: string, resource?: { gid: string, name?: string }, filters?: { resource_type?: string, resource_subtype?: string, action?: string, fields?: string[] }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.workspaces.get",
+      "shortPath": "workspaces.get",
+      "description": "Get a workspace by GID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, is_organization?: boolean, email_domains?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.workspaces.list",
+      "shortPath": "workspaces.list",
+      "description": "List workspaces",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, name?: string, resource_type?: string, is_organization?: boolean, email_domains?: string[] }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.workspaces.membershipsGet",
+      "shortPath": "workspaces.membershipsGet",
+      "description": "Get a workspace membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_membership_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_active?: boolean, is_admin?: boolean, is_guest?: boolean, workspace?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string }, user_task_list?: { gid: string, name?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.workspaces.membershipsList",
+      "shortPath": "workspaces.membershipsList",
+      "description": "List workspace memberships",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_active?: boolean, is_admin?: boolean, is_guest?: boolean, workspace?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string }, user_task_list?: { gid: string, name?: string } }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "asana.api.workspaces.membershipsListForUser",
+      "shortPath": "workspaces.membershipsListForUser",
+      "description": "List workspace memberships for a user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_gid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "opt_fields",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "opt_pretty",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ gid: string, resource_type?: string, is_active?: boolean, is_admin?: boolean, is_guest?: boolean, workspace?: { gid: string, name?: string, resource_type?: string }, user?: { gid: string, name?: string, resource_type?: string }, user_task_list?: { gid: string, name?: string } }[]"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "{ offset?: string, path?: string, uri?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "asana.webhooks.challenge.challenge",
+      "shortPath": "challenge.challenge",
+      "description": "Asana initial webhook verification handshake via X-Hook-Secret header",
+      "payload": {
+        "kind": "object",
+        "fields": []
+      },
+      "responseType": "{ hookSecret: string }",
+      "usageExample": "asana({\n    webhookHooks: {\n        challenge: {\n            challenge: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "asana.webhooks.tasks.taskEvent",
+      "shortPath": "tasks.taskEvent",
+      "description": "A task event occurred — task was added, changed, or removed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ action: string, created_at?: string, resource?: { gid: string, resource_type: task, resource_subtype?: string, name?: string }, parent?: { gid: string, resource_type?: string, resource_subtype?: string, name?: string } | null, user?: { gid: string, resource_type?: string, name?: string } | null, change?: { field?: string, action?: string, new_value?: any, added_value?: any, removed_value?: any } }[]"
+          }
+        ]
+      },
+      "responseType": "{ action: string, created_at?: string, resource?: { gid: string, resource_type?: string, resource_subtype?: string, name?: string }, parent?: { gid: string, resource_type?: string, resource_subtype?: string, name?: string } | null, user?: { gid: string, resource_type?: string, name?: string } | null, change?: { field?: string, action?: string, new_value?: any, added_value?: any, removed_value?: any } }",
+      "usageExample": "asana({\n    webhookHooks: {\n        tasks: {\n            taskEvent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "asana.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "completed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "due_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalink_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_view",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacy_setting",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.sections.search",
+      "entityName": "sections",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.stories.search",
+      "entityName": "stories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "liked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "num_likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_edited",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_pinned",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalink_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "due_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_on",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "assignee_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_subtype",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modified_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "completed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "liked",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "num_likes",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_subtasks",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "permalink_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "approval_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalink_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "asana.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resource_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

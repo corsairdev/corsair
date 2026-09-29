@@ -1,0 +1,769 @@
+{
+  "id": "browserless",
+  "displayName": "Browserless",
+  "description": "Headless browser API for running Puppeteer and Playwright automation in the cloud.",
+  "npmPackageName": "@corsair-dev/browserless",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 7
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "browserless.api.content.get",
+      "shortPath": "content.get",
+      "description": "POST /content — fully rendered HTML after JavaScript execution",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gotoOptions",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, timeout?: number }"
+          },
+          {
+            "key": "waitForTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, timeout?: number }"
+          },
+          {
+            "key": "bestAttempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.download.create",
+      "shortPath": "download.create",
+      "description": "POST /download — return files Chrome downloaded during Puppeteer code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.function.run",
+      "shortPath": "function.run",
+      "description": "POST /function — run custom Puppeteer code in one session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "base64",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.pdf.create",
+      "shortPath": "pdf.create",
+      "description": "POST /pdf — Chrome print-engine PDF of a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gotoOptions",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, timeout?: number }"
+          },
+          {
+            "key": "waitForTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, timeout?: number }"
+          },
+          {
+            "key": "bestAttempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ format?: Letter | Legal | Tabloid | Ledger | A0 | A1 | A2 | A3 | A4 | A5 | A6, printBackground?: boolean, displayHeaderFooter?: boolean, tagged?: boolean, pageRanges?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.scrape.create",
+      "shortPath": "scrape.create",
+      "description": "POST /scrape — structured JSON via CSS selectors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "elements",
+            "optional": false,
+            "type": "{ selector: string }[]"
+          },
+          {
+            "key": "gotoOptions",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, timeout?: number }"
+          },
+          {
+            "key": "waitForTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, timeout?: number }"
+          },
+          {
+            "key": "bestAttempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ selector: string, results: { attributes?: { name: string, value: string }[], height?: number, html?: string, left?: number, text?: string, top?: number, width?: number }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.screenshot.create",
+      "shortPath": "screenshot.create",
+      "description": "POST /screenshot — PNG, JPEG, or WebP of a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gotoOptions",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, timeout?: number }"
+          },
+          {
+            "key": "waitForTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, timeout?: number }"
+          },
+          {
+            "key": "bestAttempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ fullPage?: boolean, type?: png | jpeg | webp, quality?: number, clip?: { x: number, y: number, width: number, height: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserless.api.unblock.create",
+      "shortPath": "unblock.create",
+      "description": "POST /unblock — bypass bot detection and return content/cookies/screenshot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "browserWSEndpoint",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gotoOptions",
+            "optional": true,
+            "type": "{ waitUntil?: load | domcontentloaded | networkidle0 | networkidle2, timeout?: number }"
+          },
+          {
+            "key": "waitForTimeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "{ selector: string, timeout?: number }"
+          },
+          {
+            "key": "bestAttempt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stealth",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "{ name: string, value: string, domain?: string, path?: string, secure?: boolean, httpOnly?: boolean, expires?: number, sameSite?: Strict | Lax | None, url?: string }[]"
+          },
+          {
+            "key": "screenshot",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "browserWSEndpoint",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "browserless.db.cookies.search",
+      "entityName": "cookies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "secure",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "httpOnly",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "expires",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.files.search",
+      "entityName": "files",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "base64",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "filename",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.html.search",
+      "entityName": "html",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.scrapeGroups.search",
+      "entityName": "scrapeGroups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selector",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.scrapeMatches.search",
+      "entityName": "scrapeMatches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "left",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "top",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.scrapeResults.search",
+      "entityName": "scrapeResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "browserless.db.unblockResults.search",
+      "entityName": "unblockResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "screenshot",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "browserWSEndpoint",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

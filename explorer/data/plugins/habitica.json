@@ -1,0 +1,4609 @@
+{
+  "id": "habitica",
+  "displayName": "Habitica",
+  "description": "Gamified habit tracker that turns tasks and goals into a role-playing game experience.",
+  "npmPackageName": "@corsair-dev/habitica",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "habitica.api.auth.login",
+      "shortPath": "auth.login",
+      "description": "Exchange a password for an API token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newUser",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.auth.register",
+      "shortPath": "auth.register",
+      "description": "Register a new Habitica account and mint its credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "confirmPassword",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newUser",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.auth.social",
+      "shortPath": "auth.social",
+      "description": "Authenticate through a social provider",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network",
+            "optional": false,
+            "type": "facebook | google | apple"
+          },
+          {
+            "key": "authResponse",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "apiToken",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "newUser",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.clone",
+      "shortPath": "challenges.clone",
+      "description": "Duplicate a challenge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "flagCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.create",
+      "shortPath": "challenges.create",
+      "description": "Create a challenge in a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shortName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "prize",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "flagCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.delete",
+      "shortPath": "challenges.delete",
+      "description": "Permanently delete a challenge and its tasks",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.challenges.exportCsv",
+      "shortPath": "challenges.exportCsv",
+      "description": "Export a challenge as CSV",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.get",
+      "shortPath": "challenges.get",
+      "description": "Retrieve a challenge",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "flagCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.join",
+      "shortPath": "challenges.join",
+      "description": "Join a challenge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "official",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "prize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "flagCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.challenges.leave",
+      "shortPath": "challenges.leave",
+      "description": "Leave a challenge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keep",
+            "optional": true,
+            "type": "keep-all | remove-all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.challenges.listByGroup",
+      "shortPath": "challenges.listByGroup",
+      "description": "List a group's challenges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: {}[] | null, flags?: {} | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.challenges.listForUser",
+      "shortPath": "challenges.listForUser",
+      "description": "List the challenges the account takes part in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "member",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "owned",
+            "optional": true,
+            "type": "owned | not_owned"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, name?: string | null, shortName?: string | null, summary?: string | null, description?: string | null, official?: boolean | null, prize?: number | null, memberCount?: number | null, leader?: { id?: string | null, _id?: string | null } | null, group?: { id?: string | null, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, leader?: string | null, categories?: {}[] | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, categories?: {}[] | null, flags?: {} | null, flagCount?: number | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.chat.deleteMessage",
+      "shortPath": "chat.deleteMessage",
+      "description": "Permanently delete a chat message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chatId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previousMsg",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.chat.list",
+      "shortPath": "chat.list",
+      "description": "Read a group's chat messages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, timestamp?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.chat.markSeen",
+      "shortPath": "chat.markSeen",
+      "description": "Mark a group's chat as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.dismissNews",
+      "shortPath": "content.dismissNews",
+      "description": "Dismiss the current announcement",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.get",
+      "shortPath": "content.get",
+      "description": "Fetch the whole game content catalogue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.getByType",
+      "shortPath": "content.getByType",
+      "description": "Fetch the content catalogue with named categories EXCLUDED",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.marketGear",
+      "shortPath": "content.marketGear",
+      "description": "List gear for sale in the market",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.modelPaths",
+      "shortPath": "content.modelPaths",
+      "description": "List a model's field paths and types",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "model",
+            "optional": false,
+            "type": "user | tag | challenge | group | habit | daily | todo | reward"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.news",
+      "shortPath": "content.news",
+      "description": "Read the latest Bailey announcement",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.status",
+      "shortPath": "content.status",
+      "description": "Check that the Habitica API is up",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.timeTravelers",
+      "shortPath": "content.timeTravelers",
+      "description": "List the Time Travellers shop stock",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.validateCoupon",
+      "shortPath": "content.validateCoupon",
+      "description": "Check whether a coupon code is valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.content.worldState",
+      "shortPath": "content.worldState",
+      "description": "Read world events and the world boss",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.exports.history",
+      "shortPath": "exports.history",
+      "description": "Export task history as CSV",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.exports.inbox",
+      "shortPath": "exports.inbox",
+      "description": "Export the inbox as HTML",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.exports.userData",
+      "shortPath": "exports.userData",
+      "description": "Export the whole account as JSON (contains the account email)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a party or guild",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "party | guild"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "private | public"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "challengeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quest",
+            "optional": true,
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+          },
+          {
+            "key": "leaderOnly",
+            "optional": true,
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "purchased",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ lastProcessed?: string | null }"
+          },
+          {
+            "key": "bannedWordsAllowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatLimitCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leaderMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Retrieve a group by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "challengeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quest",
+            "optional": true,
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+          },
+          {
+            "key": "leaderOnly",
+            "optional": true,
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "purchased",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ lastProcessed?: string | null }"
+          },
+          {
+            "key": "bannedWordsAllowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatLimitCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leaderMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.groups.getParty",
+      "shortPath": "groups.getParty",
+      "description": "Retrieve the account's party",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "challengeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quest",
+            "optional": true,
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+          },
+          {
+            "key": "leaderOnly",
+            "optional": true,
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "purchased",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ lastProcessed?: string | null }"
+          },
+          {
+            "key": "bannedWordsAllowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatLimitCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leaderMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.groups.getTavern",
+      "shortPath": "groups.getTavern",
+      "description": "Retrieve the Tavern",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "challengeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quest",
+            "optional": true,
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+          },
+          {
+            "key": "leaderOnly",
+            "optional": true,
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "purchased",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ lastProcessed?: string | null }"
+          },
+          {
+            "key": "bannedWordsAllowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatLimitCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leaderMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.groups.invite",
+      "shortPath": "groups.invite",
+      "description": "Invite people to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "usernames",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "habitica.api.groups.inviteToQuest",
+      "shortPath": "groups.inviteToQuest",
+      "description": "Invite the party to a quest",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "questKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.groups.leave",
+      "shortPath": "groups.leave",
+      "description": "Leave a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keep",
+            "optional": true,
+            "type": "keep-all | remove-all"
+          },
+          {
+            "key": "keepChallenges",
+            "optional": true,
+            "type": "remain-in-challenges | leave-challenges"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paginate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, name?: string | null, type?: string | null, privacy?: string | null, summary?: string | null, description?: string | null, leader?: string | {} | null, memberCount?: number | null, challengeCount?: number | null, balance?: number | null, managers?: {} | null, categories?: {}[] | null, quest?: { key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null } | null, leaderOnly?: { challenges?: boolean | null, getGems?: boolean | null } | null, tasksOrder?: { habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null } | null, purchased?: {} | null, cron?: { lastProcessed?: string | null } | null, bannedWordsAllowed?: boolean | null, chatLimitCount?: number | null, logo?: string | null, leaderMessage?: string | null, chat?: any[] | null, archive?: string | {} | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.groups.listMembers",
+      "shortPath": "groups.listMembers",
+      "description": "List a group's members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "includeAllPublicFields",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, _id?: string | null, auth?: {} | null, profile?: {} | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.groups.removeMember",
+      "shortPath": "groups.removeMember",
+      "description": "Remove a member from the party",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memberId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a group's properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "private | public"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leader",
+            "optional": true,
+            "type": "string | {}"
+          },
+          {
+            "key": "memberCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "challengeCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "managers",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "quest",
+            "optional": true,
+            "type": "{ key?: string | null, active?: boolean | null, leader?: string | null, progress?: { hp?: number | null, collect?: {} | null, rage?: number | null } | null, members?: {} | null, extra?: {} | null }"
+          },
+          {
+            "key": "leaderOnly",
+            "optional": true,
+            "type": "{ challenges?: boolean | null, getGems?: boolean | null }"
+          },
+          {
+            "key": "tasksOrder",
+            "optional": true,
+            "type": "{ habits?: string[] | null, dailys?: string[] | null, todos?: string[] | null, rewards?: string[] | null }"
+          },
+          {
+            "key": "purchased",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "cron",
+            "optional": true,
+            "type": "{ lastProcessed?: string | null }"
+          },
+          {
+            "key": "bannedWordsAllowed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "chatLimitCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "logo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leaderMessage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat",
+            "optional": true,
+            "type": "any[]"
+          },
+          {
+            "key": "archive",
+            "optional": true,
+            "type": "string | {}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Permanently delete a tag",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List every tag on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, challenge?: boolean | null, group?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.addTag",
+      "shortPath": "tasks.addTag",
+      "description": "Apply an existing tag to a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a habit, daily, todo or reward",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "habit | daily | todo | reward"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "str | int | con | per"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ text: string, completed?: boolean }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "daily | weekly | monthly | yearly"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.createChallengeTask",
+      "shortPath": "tasks.createChallengeTask",
+      "description": "Add a task to a challenge",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "habit | daily | todo | reward"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "str | int | con | per"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ text: string, completed?: boolean }[]"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Permanently delete a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.deleteChecklistItem",
+      "shortPath": "tasks.deleteChecklistItem",
+      "description": "Remove a checklist item from a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Retrieve any task by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List the account's tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "habits | dailys | todos | rewards | completedTodos | _allCompletedTodos"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.listChallengeTasks",
+      "shortPath": "tasks.listChallengeTasks",
+      "description": "List a challenge's tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "habits | dailys | todos | rewards"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, _id?: string | null, type?: string | null, text?: string | null, notes?: string | null, alias?: string | null, tags?: string[] | null, value?: number | null, priority?: number | null, attribute?: string | null, userId?: string | null, challenge?: { shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null } | null, group?: { id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null } | null, reminders?: { id?: string | null, startDate?: string | null, time?: string | null }[] | null, byHabitica?: boolean | null, createdAt?: string | null, updatedAt?: string | null, up?: boolean | null, down?: boolean | null, counterUp?: number | null, counterDown?: number | null, frequency?: string | null, history?: { date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[] | null, checklist?: { id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[] | null, collapseChecklist?: boolean | null, completed?: boolean | null, streak?: number | null, repeat?: { m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null } | null, everyX?: number | null, startDate?: string | null, daysOfMonth?: number[] | null, weeksOfMonth?: number[] | null, isDue?: boolean | null, nextDue?: string[] | null, yesterDaily?: boolean | null, date?: string | null, dateCompleted?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.move",
+      "shortPath": "tasks.move",
+      "description": "Move a task to a position in its list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.score",
+      "shortPath": "tasks.score",
+      "description": "Score a task up or down",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "direction",
+            "optional": false,
+            "type": "up | down"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "delta",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_tmp",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "hp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "mp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "exp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lvl",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "points",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "str",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "con",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "int",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "buffs",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "training",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.unlinkAllChallengeTasks",
+      "shortPath": "tasks.unlinkAllChallengeTasks",
+      "description": "Unlink every task of a challenge, optionally deleting members' copies",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "challengeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keep",
+            "optional": true,
+            "type": "keep-all | remove-all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Update a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "str | int | con | per"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ text: string, completed?: boolean }[]"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "daily | weekly | monthly | yearly"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.tasks.updateChecklistItem",
+      "shortPath": "tasks.updateChecklistItem",
+      "description": "Update a checklist item's text",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "attribute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "{ shortName?: string | null, id?: string | null, taskId?: string | null, broken?: string | null, winner?: string | null }"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: string | null, assignedDate?: string | null, assigningUsername?: string | null, assignedUsers?: string[] | null, assignedUsersDetail?: {} | null, taskId?: string | null, managerNotes?: string | null, completedBy?: { userId?: string | null, date?: string | null } | null, approval?: { required?: boolean | null, approved?: boolean | null, requested?: boolean | null } | null }"
+          },
+          {
+            "key": "reminders",
+            "optional": true,
+            "type": "{ id?: string | null, startDate?: string | null, time?: string | null }[]"
+          },
+          {
+            "key": "byHabitica",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "up",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "down",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "counterUp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "counterDown",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "history",
+            "optional": true,
+            "type": "{ date?: number | null, value?: number | null, scoredUp?: number | null, scoredDown?: number | null, isDue?: boolean | null, completed?: boolean | null }[]"
+          },
+          {
+            "key": "checklist",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, completed?: boolean | null, linkId?: string | null }[]"
+          },
+          {
+            "key": "collapseChecklist",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streak",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "repeat",
+            "optional": true,
+            "type": "{ m?: boolean | null, t?: boolean | null, w?: boolean | null, th?: boolean | null, f?: boolean | null, s?: boolean | null, su?: boolean | null }"
+          },
+          {
+            "key": "everyX",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "daysOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "weeksOfMonth",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "isDue",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nextDue",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "yesterDaily",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateCompleted",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.user.addPushDevice",
+      "shortPath": "user.addPushDevice",
+      "description": "Register a push-notification device",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "regId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "android | ios"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "habitica.api.user.deleteMessage",
+      "shortPath": "user.deleteMessage",
+      "description": "Permanently delete an inbox message",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.deletePushDevice",
+      "shortPath": "user.deletePushDevice",
+      "description": "Unregister a push-notification device",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "regId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "habitica.api.user.equip",
+      "shortPath": "user.equip",
+      "description": "Equip or unequip gear, a pet, a mount or a costume",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "equipped | costume | pet | mount | background"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.get",
+      "shortPath": "user.get",
+      "description": "Read the account's user document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userFields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.markNotificationSeen",
+      "shortPath": "user.markNotificationSeen",
+      "description": "Mark one notification as seen",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.markNotificationsSeen",
+      "shortPath": "user.markNotificationsSeen",
+      "description": "Mark several notifications as seen",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "notificationIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.movePinnedItem",
+      "shortPath": "user.movePinnedItem",
+      "description": "Reorder a pinned reward",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.readCard",
+      "shortPath": "user.readCard",
+      "description": "Mark a received card as read",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cardType",
+            "optional": false,
+            "type": "birthday | greeting | nye | thankyou | valentine"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.reset",
+      "shortPath": "user.reset",
+      "description": "Reset the account, deleting every task and returning to level 1",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.user.update",
+      "shortPath": "user.update",
+      "description": "Update user fields by dot path",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updates",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}"
+      }
+    },
+    {
+      "path": "habitica.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register an outbound webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "taskActivity | groupChatReceived | userActivity | questActivity"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "failures",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastFailureAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "habitica.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the account's outbound webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, type?: string | null, label?: string | null, url?: string | null, enabled?: boolean | null, failures?: number | null, lastFailureAt?: string | null, options?: { created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null } | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "habitica.api.webhooks.subscribe",
+      "shortPath": "webhooks.subscribe",
+      "description": "Enable an existing webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "failures",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastFailureAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ created?: boolean | null, updated?: boolean | null, deleted?: boolean | null, scored?: boolean | null, checklistScored?: boolean | null, groupId?: string | null, petHatched?: boolean | null, mountRaised?: boolean | null, leveledUp?: boolean | null, questStarted?: boolean | null, questFinished?: boolean | null, questInvited?: boolean | null }"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "habitica.db.challenges.search",
+      "entityName": "challenges",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "official",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "prize",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "flagCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "habitica.db.groups.search",
+      "entityName": "groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "privacy",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "memberCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "challengeCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "balance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "bannedWordsAllowed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "chatLimitCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "logo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "leaderMessage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "habitica.db.tags.search",
+      "entityName": "tags",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "challenge",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "group",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "habitica.db.tasks.search",
+      "entityName": "tasks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "notes",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "alias",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "value",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "priority",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "attribute",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "userId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "byHabitica",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "up",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "down",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "counterUp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "counterDown",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "frequency",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "collapseChecklist",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "completed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "streak",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "everyX",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isDue",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "yesterDaily",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCompleted",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "habitica.db.webhooks.search",
+      "entityName": "webhooks",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "enabled",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "failures",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "lastFailureAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

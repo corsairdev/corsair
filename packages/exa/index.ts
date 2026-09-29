@@ -237,7 +237,7 @@ const exaEndpointMeta = {
 	},
 	'websets.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a webset [DESTRUCTIVE]',
+		description: 'Delete a webset',
 	},
 	'imports.create': {
 		riskLevel: 'write',
@@ -249,7 +249,7 @@ const exaEndpointMeta = {
 	},
 	'imports.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete an existing import [DESTRUCTIVE]',
+		description: 'Delete an existing import',
 	},
 	'monitors.create': {
 		riskLevel: 'write',

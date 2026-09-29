@@ -1,0 +1,2029 @@
+{
+  "id": "ascora",
+  "displayName": "Ascora",
+  "description": "Field service management software for scheduling jobs, technicians, and service businesses.",
+  "npmPackageName": "@corsair-dev/ascora",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 10
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ascora.api.attachments.upload",
+      "shortPath": "attachments.upload",
+      "description": "Upload a file attachment to an Ascora entity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string",
+            "description": "Official entity GUID."
+          },
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "Enquiry | Job | Quotation | Task | SupplierInvoice | Invoice | Supply | Customer",
+            "description": "Official `EntityType`."
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "File contents as base64."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get a contact by GUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string",
+            "description": "Official contact GUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.contacts.upsert",
+      "shortPath": "contacts.upsert",
+      "description": "Create or update a contact on a customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "Official customer GUID."
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string",
+            "description": "Set to update an existing contact."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "faxNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "defaultContact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactRole",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get a customer by GUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "Official customer GUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with optional filters (FilterText, type, assigned user, pagination)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`. Customer number, email, phone, name."
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CustomerType`."
+          },
+          {
+            "key": "leadSource",
+            "optional": true,
+            "type": "string",
+            "description": "Official `LeadSource`."
+          },
+          {
+            "key": "assignedUser",
+            "optional": true,
+            "type": "string",
+            "description": "Official `AssignedUser`."
+          },
+          {
+            "key": "siteBillingType",
+            "optional": true,
+            "type": "string",
+            "description": "Official `SiteBillingType`. Site / Billing / All."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Official `PhoneNumber`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.customers.upsert",
+      "shortPath": "customers.upsert",
+      "description": "Create a customer or update one when customerId is provided",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "Set to update an existing customer."
+          },
+          {
+            "key": "customerNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactFirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactLastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobileNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "onHold",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "billingCustomerOnHold",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "streetLine1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetSuburb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetPostcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalLine1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalSuburb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalPostcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customerType",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          },
+          {
+            "key": "leadSource",
+            "optional": true,
+            "type": "{ id?: string, name?: string }"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ fieldName: string, fieldValue: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.enquiries.create",
+      "shortPath": "enquiries.create",
+      "description": "Create a quotation/enquiry (POST /Enquiry)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressLine1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressSuburb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressPostcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addressCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "enquiryDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leadSource",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "{ fieldName: string, fieldValue: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.inventory.categories",
+      "shortPath": "inventory.categories",
+      "description": "List inventory categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`."
+          },
+          {
+            "key": "parentOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Official `ParentOnly`."
+          },
+          {
+            "key": "categoryNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Official `CategoryNumber`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ categoryId: string, name?: string | null, categoryNumber?: number, parentCategoryId?: string | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.inventory.kits",
+      "shortPath": "inventory.kits",
+      "description": "List inventory kits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`."
+          },
+          {
+            "key": "favouriteOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Official `FavouriteOnly`."
+          },
+          {
+            "key": "categoryOneId",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CategoryOneId`."
+          },
+          {
+            "key": "categoryTwoId",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CategoryTwoId`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ kitId: string, partNumber?: string | null, description?: string | null, annotation?: string | null, markup?: number, unitCostExTax?: number, unitSellExTax?: number, unitSellIncTax?: number, isTaxable?: boolean, isFavourite?: boolean, pricingMethod?: string | null, categoryOne?: { id?: string | null, name?: string | null } | null, unitOfMeasure?: string | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.inventory.supplies",
+      "shortPath": "inventory.supplies",
+      "description": "List inventory supplies with pricing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`."
+          },
+          {
+            "key": "favouriteOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Official `FavouriteOnly`."
+          },
+          {
+            "key": "categoryOneId",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CategoryOneId`."
+          },
+          {
+            "key": "categoryTwoId",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CategoryTwoId`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ supplyId: string, partNumber?: string | null, description?: string | null, annotation?: string | null, unitCostExTax?: number, unitSellExTax?: number, unitSellIncTax?: number, averageCost?: number, isTaxable?: boolean, isFavourite?: boolean, mustBeOrdered?: boolean, packOrBoxQuantity?: number, location?: string | null, defaultSupplier?: { id?: string | null, name?: string | null } | null, categoryOne?: { id?: string | null, name?: string | null } | null, unitOfMeasure?: string | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Get a job by full job number (e.g. J1)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobNumber",
+            "optional": false,
+            "type": "string",
+            "description": "Official full job number, e.g. J1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ jobId: string, topLevelJobNumber?: string | null, jobNumber?: string | null, jobName?: string | null, jobDescription?: string | null, workUndertaken?: string | null, jobStatus?: number, jobStatusText?: string | null, dateCreated?: string | null, pricingMethod?: string | null, totalIncTax?: number, totalExTax?: number, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, state?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs filtered by status, type, dates, and assignment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "jobStatus",
+            "optional": true,
+            "type": "string",
+            "description": "Official `JobStatus`. NEW, IN-PROGRESS, COMPLETED, CANCELLED, BOOKED, ALL-OPEN, ALL, etc."
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "string",
+            "description": "Official `JobType`."
+          },
+          {
+            "key": "assignedUser",
+            "optional": true,
+            "type": "string",
+            "description": "Official `AssignedUser`."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Official `StartDate`."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Official `EndDate`."
+          },
+          {
+            "key": "includeChildJobs",
+            "optional": true,
+            "type": "boolean",
+            "description": "Official `IncludeChildJobs`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ jobId: string, topLevelJobNumber?: string | null, jobNumber?: string | null, jobName?: string | null, jobDescription?: string | null, workUndertaken?: string | null, jobStatus?: number, jobStatusText?: string | null, dateCreated?: string | null, pricingMethod?: string | null, totalIncTax?: number, totalExTax?: number, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, state?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.jobs.search",
+      "shortPath": "jobs.search",
+      "description": "Search jobs by number, name, address, or customer name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`. Job number, name, or address."
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CustomerName`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ jobId: string, topLevelJobNumber?: string | null, jobNumber?: string | null, jobName?: string | null, jobDescription?: string | null, workUndertaken?: string | null, jobStatus?: number, jobStatusText?: string | null, dateCreated?: string | null, pricingMethod?: string | null, totalIncTax?: number, totalExTax?: number, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, state?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a note on an enquiry, job, quotation, invoice, or customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string",
+            "description": "Official entity GUID."
+          },
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "Enquiry | Job | Quotation | Invoice | Customer",
+            "description": "Official `entityType`."
+          },
+          {
+            "key": "noteContent",
+            "optional": false,
+            "type": "string",
+            "description": "Official `noteContent`."
+          },
+          {
+            "key": "createdByName",
+            "optional": true,
+            "type": "string",
+            "description": "Official `createdByName`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.quotes.labourRoles",
+      "shortPath": "quotes.labourRoles",
+      "description": "List labour roles and hourly rates for quotes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ labourRoleId: string, name?: string | null, hourlyRateExTax?: number }[]"
+      }
+    },
+    {
+      "path": "ascora.api.quotes.list",
+      "shortPath": "quotes.list",
+      "description": "List quotes with optional status, date, and customer filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "filterText",
+            "optional": true,
+            "type": "string",
+            "description": "Official `FilterText`."
+          },
+          {
+            "key": "quoteStatus",
+            "optional": true,
+            "type": "string",
+            "description": "Official `QuoteStatus`. IN-PROGRESS, SENT-TO-CUSTOMER, OPEN, WON, LAST-7-DAYS, ALL, ACCEPTED."
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "string",
+            "description": "Official `JobType`."
+          },
+          {
+            "key": "assignedUser",
+            "optional": true,
+            "type": "string",
+            "description": "Official `AssignedUser`."
+          },
+          {
+            "key": "customerName",
+            "optional": true,
+            "type": "string",
+            "description": "Official `CustomerName`."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Official `StartDate`."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Official `EndDate`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ quoteId: string, quoteNumber?: string | null, quoteName?: string | null, quoteDescription?: string | null, quoteStatus?: number, quotationDate?: string | null, totalIncTax?: number, totalExTax?: number, pricingMethod?: string | null, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.quotes.standardSections",
+      "shortPath": "quotes.standardSections",
+      "description": "List standard quote sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, displayOrder?: number }[]"
+      }
+    },
+    {
+      "path": "ascora.api.quotes.standardStages",
+      "shortPath": "quotes.standardStages",
+      "description": "List standard quote stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string, displayOrder?: number }[]"
+      }
+    },
+    {
+      "path": "ascora.api.supplierInvoices.list",
+      "shortPath": "supplierInvoices.list",
+      "description": "List supplier invoices with optional pagination and filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "supplierName",
+            "optional": true,
+            "type": "string",
+            "description": "Official `SupplierName`."
+          },
+          {
+            "key": "trackingNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Official `TrackingNumber`."
+          },
+          {
+            "key": "toBeSentToAccounting",
+            "optional": true,
+            "type": "boolean",
+            "description": "Official `ToBeSentToAccounting`."
+          },
+          {
+            "key": "invoiceDateStart",
+            "optional": true,
+            "type": "string",
+            "description": "Official `InvoiceDateStart`."
+          },
+          {
+            "key": "invoiceDateEnd",
+            "optional": true,
+            "type": "string",
+            "description": "Official `InvoiceDateEnd`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ supplierInvoiceId: string, supplier?: { id?: string | null, name?: string | null } | null, createdOn?: string | null, invoiceDate?: string | null, dueDate?: string | null, trackingNumber?: string | null, accepted?: boolean, type?: string | null, accountCode?: string | null, isExpense?: boolean, sentToAccounts?: boolean, totalAmountExTax?: number, totalAmountIncTax?: number, lines?: any[] }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.suppliers.get",
+      "shortPath": "suppliers.get",
+      "description": "Get a supplier by GUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": false,
+            "type": "string",
+            "description": "Official supplier GUID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supplier",
+            "optional": true,
+            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.suppliers.list",
+      "shortPath": "suppliers.list",
+      "description": "List suppliers by name, number, or ABN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Official `Page`. Default 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Official `PageSize`. Default 250."
+          },
+          {
+            "key": "supplierName",
+            "optional": true,
+            "type": "string",
+            "description": "Official `SupplierName`."
+          },
+          {
+            "key": "supplierNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Official `SupplierNumber`."
+          },
+          {
+            "key": "businessNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Official `BusinessNumber`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number }[]"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalRecords",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ascora.api.suppliers.upsert",
+      "shortPath": "suppliers.upsert",
+      "description": "Create a supplier or update one when supplierId is provided",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "supplierId",
+            "optional": true,
+            "type": "string",
+            "description": "Set to update an existing supplier."
+          },
+          {
+            "key": "supplierNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "businessNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emailAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetLine1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetSuburb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "streetPostcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalLine1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalLine2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalSuburb",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "postalPostcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactFirstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactLastName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "supplier",
+            "optional": true,
+            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "ascora.db.contacts.search",
+      "entityName": "contacts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobileNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "defaultContact",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.customers.search",
+      "entityName": "customers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "customerName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "companyName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactFirstName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "contactLastName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phoneNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobileNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "onHold",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "streetLine1",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streetSuburb",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streetPostcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streetState",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "streetCountry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.inventoryCategories.search",
+      "entityName": "inventoryCategories",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "categoryNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parentCategoryId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobStatus",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "jobStatusText",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dateCreated",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pricingMethod",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalIncTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.kits.search",
+      "entityName": "kits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "kitId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "partNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unitSellExTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.labourRoles.search",
+      "entityName": "labourRoles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "labourRoleId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "hourlyRateExTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.quotes.search",
+      "entityName": "quotes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quoteId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quoteNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quoteName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "quoteStatus",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "quotationDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalIncTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pricingMethod",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.supplierInvoices.search",
+      "entityName": "supplierInvoices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "supplierInvoiceId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "trackingNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "invoiceDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "dueDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "totalAmountIncTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sentToAccounts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.suppliers.search",
+      "entityName": "suppliers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "supplierId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "businessNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "emailAddress",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "ascora.db.supplies.search",
+      "entityName": "supplies",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "supplyId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "partNumber",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unitCostExTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unitSellExTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "unitSellIncTax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "checkedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

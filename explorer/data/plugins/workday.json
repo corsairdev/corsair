@@ -1,0 +1,5212 @@
+{
+  "id": "workday",
+  "displayName": "Workday",
+  "description": "Enterprise HR and finance cloud suite for workers, payroll, and organizational data.",
+  "npmPackageName": "@corsair-dev/workday",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 85,
+    "webhooks": 0,
+    "db": 8
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "tenant",
+        "host",
+        "tenant_external_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "workday.api.absence.getAbsenceBalance",
+      "shortPath": "absence.getAbsenceBalance",
+      "description": "Retrieves an absence balance by ID (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "absencePlan",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "effective",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.assignment.getAssignmentChangeGroupCostCenters",
+      "shortPath": "assignment.getAssignmentChangeGroupCostCenters",
+      "description": "Retrieves cost center prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.assignment.getAssignmentChangeGroupJobs",
+      "shortPath": "assignment.getAssignmentChangeGroupJobs",
+      "description": "Retrieves job prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.assignment.getAssignmentTypes",
+      "shortPath": "assignment.getAssignmentTypes",
+      "description": "Retrieves assignment type prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.balances.listBalances",
+      "shortPath": "balances.listBalances",
+      "description": "Lists absence balances (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "effective",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.business.createBusinessTitleChange",
+      "shortPath": "business.createBusinessTitleChange",
+      "description": "Creates a business title change for a worker (Common API v1).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.business.getBusinessTitleChange",
+      "shortPath": "business.getBusinessTitleChange",
+      "description": "Retrieves a business title change instance by ID (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.business.getBusinessTitleChangeForWorker",
+      "shortPath": "business.getBusinessTitleChangeForWorker",
+      "description": "Retrieves a business title change for a specific worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.candidate.getCandidateAvailabilityTemplate",
+      "shortPath": "candidate.getCandidateAvailabilityTemplate",
+      "description": "Retrieves candidate availability template for a job posting (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.collection.getCollectionOfJobs",
+      "shortPath": "collection.getCollectionOfJobs",
+      "description": "Retrieves a paginated collection of jobs (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.collection.getCollectionOfPayroll",
+      "shortPath": "collection.getCollectionOfPayroll",
+      "description": "Retrieves a collection of payroll inputs (Payroll v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "payComponent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.company.getCompanyInsiderTypes",
+      "shortPath": "company.getCompanyInsiderTypes",
+      "description": "Retrieves company insider type prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.contingent.getContingentWorkerTypes",
+      "shortPath": "contingent.getContingentWorkerTypes",
+      "description": "Retrieves contingent worker type prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.countries.listCountries",
+      "shortPath": "countries.listCountries",
+      "description": "Retrieves country values for recruiting (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.country.getCountryInfo",
+      "shortPath": "country.getCountryInfo",
+      "description": "Retrieves country info (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.currencies.getCurrencies",
+      "shortPath": "currencies.getCurrencies",
+      "description": "Retrieves currency prompt values for job changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.current.getCurrentUser",
+      "shortPath": "current.getCurrentUser",
+      "description": "Retrieves the authenticated worker profile (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.grants.getGrants",
+      "shortPath": "grants.getGrants",
+      "description": "Retrieves grant prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.headcount.getHeadcountOptions",
+      "shortPath": "headcount.getHeadcountOptions",
+      "description": "Retrieves headcount option prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.history.getHistoryInstanceForWorker",
+      "shortPath": "history.getHistoryInstanceForWorker",
+      "description": "Retrieves a history instance for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.history.getHistoryItemsForWorker",
+      "shortPath": "history.getHistoryItemsForWorker",
+      "description": "Retrieves history items for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.holiday.getHolidayEvents",
+      "shortPath": "holiday.getHolidayEvents",
+      "description": "Retrieves holiday events for workers/time period (Person v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.interview.getInterview",
+      "shortPath": "interview.getInterview",
+      "description": "Retrieves an interview by ID (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.interview.getInterviewFeedback2",
+      "shortPath": "interview.getInterviewFeedback2",
+      "description": "Retrieves interview feedback (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.interviews.listInterviews",
+      "shortPath": "interviews.listInterviews",
+      "description": "Lists interviews (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.createJobChange",
+      "shortPath": "job.createJobChange",
+      "description": "Initiates a job change for a worker (Staffing v6).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobById",
+      "shortPath": "job.getJobById",
+      "description": "Retrieves a single job instance by ID (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangeFrequencies",
+      "shortPath": "job.getJobChangeFrequencies",
+      "description": "Retrieves frequency prompt values for job changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangeLocationInfo",
+      "shortPath": "job.getJobChangeLocationInfo",
+      "description": "Retrieves location info for a job change (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangePosition",
+      "shortPath": "job.getJobChangePosition",
+      "description": "Retrieves position details for a job change (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangeReasonInstance",
+      "shortPath": "job.getJobChangeReasonInstance",
+      "description": "Retrieves a job change reason instance (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangeReasons",
+      "shortPath": "job.getJobChangeReasons",
+      "description": "Retrieves job change reasons collection (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangeReasonValues",
+      "shortPath": "job.getJobChangeReasonValues",
+      "description": "Retrieves job change reason prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangesGroupTemplates",
+      "shortPath": "job.getJobChangesGroupTemplates",
+      "description": "Retrieves job change templates (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangesJobValues",
+      "shortPath": "job.getJobChangesJobValues",
+      "description": "Retrieves job prompt values for job changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobChangesWorkerValues",
+      "shortPath": "job.getJobChangesWorkerValues",
+      "description": "Retrieves worker prompt values for job changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobClassifications",
+      "shortPath": "job.getJobClassifications",
+      "description": "Retrieves job classification prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobPosting",
+      "shortPath": "job.getJobPosting",
+      "description": "Retrieves a job posting including description (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobPostingQuestionnaire",
+      "shortPath": "job.getJobPostingQuestionnaire",
+      "description": "Retrieves questionnaires for a job posting (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobProfilesValues",
+      "shortPath": "job.getJobProfilesValues",
+      "description": "Retrieves job profile prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobRequisitionValues",
+      "shortPath": "job.getJobRequisitionValues",
+      "description": "Retrieves job requisition prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobWorkspace",
+      "shortPath": "job.getJobWorkspace",
+      "description": "Retrieves a workspace for a job (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.getJobWorkspaces",
+      "shortPath": "job.getJobWorkspaces",
+      "description": "Retrieves workspaces for a job (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.listJobPostings",
+      "shortPath": "job.listJobPostings",
+      "description": "Lists job postings (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobRequisition",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "jobSite",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.job.updateJobChangeBusinessTitle",
+      "shortPath": "job.updateJobChangeBusinessTitle",
+      "description": "Partially updates business title on a job change (Staffing v6).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.jobs.listJobs",
+      "shortPath": "jobs.listJobs",
+      "description": "Lists jobs (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.leave.getLeaveStatusValues",
+      "shortPath": "leave.getLeaveStatusValues",
+      "description": "Retrieves leave status prompt values (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.message.updateMessageTemplateById",
+      "shortPath": "message.updateMessageTemplateById",
+      "description": "Updates a message template by ID (Recruiting v4).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.my.getMyJobPostings",
+      "shortPath": "my.getMyJobPostings",
+      "description": "Retrieves job postings for the authenticated recruiter (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "supervisoryOrganization",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.organization.getOrganizationAssignmentBusinessUnits",
+      "shortPath": "organization.getOrganizationAssignmentBusinessUnits",
+      "description": "Retrieves business unit prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.organization.getOrganizationAssignmentCustoms",
+      "shortPath": "organization.getOrganizationAssignmentCustoms",
+      "description": "Retrieves custom org assignment prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.organization.getOrganizationAssignmentFunds",
+      "shortPath": "organization.getOrganizationAssignmentFunds",
+      "description": "Retrieves fund prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.organization.getOrganizationAssignmentRegions",
+      "shortPath": "organization.getOrganizationAssignmentRegions",
+      "description": "Retrieves region prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.organization.getOrganizationAssignmentWorkers",
+      "shortPath": "organization.getOrganizationAssignmentWorkers",
+      "description": "Retrieves worker prompt values for org assignment changes (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "organizationType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.pay.getPayGroupByJobId",
+      "shortPath": "pay.getPayGroupByJobId",
+      "description": "Retrieves the pay group for a job (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.pay.getPaySlipInstancesForWorker",
+      "shortPath": "pay.getPaySlipInstancesForWorker",
+      "description": "Retrieves a pay slip instance for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.pay.getPaySlipsForWorker",
+      "shortPath": "pay.getPaySlipsForWorker",
+      "description": "Retrieves pay slips for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.payroll.createPayrollInputs",
+      "shortPath": "payroll.createPayrollInputs",
+      "description": "Creates payroll inputs (Payroll v1).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.payroll.getPayrollInputInstance",
+      "shortPath": "payroll.getPayrollInputInstance",
+      "description": "Retrieves a payroll input by ID (Payroll v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.payroll.updateAnExistingPayroll",
+      "shortPath": "payroll.updateAnExistingPayroll",
+      "description": "Partially updates a payroll input (Payroll v1).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.proposed.getProposedPositionValues",
+      "shortPath": "proposed.getProposedPositionValues",
+      "description": "Retrieves proposed position prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.prospect.getProspect",
+      "shortPath": "prospect.getProspect",
+      "description": "Retrieves a prospect (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.prospect.getProspectEducations",
+      "shortPath": "prospect.getProspectEducations",
+      "description": "Retrieves prospect educations (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.prospect.getProspectExperiences",
+      "shortPath": "prospect.getProspectExperiences",
+      "description": "Retrieves prospect experiences (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.prospect.getProspectResumeAttachments",
+      "shortPath": "prospect.getProspectResumeAttachments",
+      "description": "Retrieves prospect resume attachments (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.prospect.getProspectSkills",
+      "shortPath": "prospect.getProspectSkills",
+      "description": "Retrieves prospect skills (Recruiting v4).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.supervisory.getSupervisoryOrgValues",
+      "shortPath": "supervisory.getSupervisoryOrgValues",
+      "description": "Retrieves supervisory organization prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.time.createTimeOffRequest",
+      "shortPath": "time.createTimeOffRequest",
+      "description": "Creates a time off request (Absence Management v5).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.time.getTimeOffEntriesForWorker",
+      "shortPath": "time.getTimeOffEntriesForWorker",
+      "description": "Retrieves time off entries for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.time.getTimeOffPlansForWorker",
+      "shortPath": "time.getTimeOffPlansForWorker",
+      "description": "Retrieves time off plans for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.time.getTimeOffStatusValues",
+      "shortPath": "time.getTimeOffStatusValues",
+      "description": "Retrieves time off status prompt values (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.time.getTimeTypes",
+      "shortPath": "time.getTimeTypes",
+      "description": "Retrieves time type prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.work.getWorkStudyAwards",
+      "shortPath": "work.getWorkStudyAwards",
+      "description": "Retrieves work study award prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerBusinessTitleChanges",
+      "shortPath": "worker.getWorkerBusinessTitleChanges",
+      "description": "Retrieves business title changes for a worker (Common API v1).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerEligibleAbsenceTypes",
+      "shortPath": "worker.getWorkerEligibleAbsenceTypes",
+      "description": "Retrieves eligible absence types for a worker (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "effective",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerInfo",
+      "shortPath": "worker.getWorkerInfo",
+      "description": "Retrieves worker staffing information (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerLeavesOfAbsence",
+      "shortPath": "worker.getWorkerLeavesOfAbsence",
+      "description": "Retrieves leaves of absence for a worker (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerServiceDates",
+      "shortPath": "worker.getWorkerServiceDates",
+      "description": "Retrieves service dates for a worker (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerStaffingInformation",
+      "shortPath": "worker.getWorkerStaffingInformation",
+      "description": "Retrieves current staffing information for a worker (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerTimeOffDetails",
+      "shortPath": "worker.getWorkerTimeOffDetails",
+      "description": "Retrieves time off details for a worker (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerTypes",
+      "shortPath": "worker.getWorkerTypes",
+      "description": "Retrieves worker type prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.getWorkerValidTimeOffDates",
+      "shortPath": "worker.getWorkerValidTimeOffDates",
+      "description": "Retrieves valid time off dates for a worker (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "timeOffType",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.worker.retrieveWorkerLeaveOfAbsenceSubresource",
+      "shortPath": "worker.retrieveWorkerLeaveOfAbsenceSubresource",
+      "description": "Retrieves a leave of absence subresource (Absence Management v5).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workerId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subresourceID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "descriptor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.workers.getWorkersCollectionStaffing",
+      "shortPath": "workers.getWorkersCollectionStaffing",
+      "description": "Retrieves workers with staffing information (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeTerminatedWorkers",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workday.api.workspace.getWorkspaceInstances",
+      "shortPath": "workspace.getWorkspaceInstances",
+      "description": "Retrieves workspace prompt values (Staffing v6).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "effectiveDate",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "manager",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "staffingEvent",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "worker",
+            "optional": true,
+            "type": "string | number | boolean | string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string, descriptor?: string, href?: string }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "workday.db.absenceBalances.search",
+      "entityName": "absenceBalances",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "unitOfTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "effectiveDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.interviews.search",
+      "entityName": "interviews",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "interviewDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.jobPostings.search",
+      "entityName": "jobPostings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "jobDescription",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.jobRequisitions.search",
+      "entityName": "jobRequisitions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numberOfOpenings",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "businessTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.payrollInputs.search",
+      "entityName": "payrollInputs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.prospects.search",
+      "entityName": "prospects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "phone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workday.db.workers.search",
+      "entityName": "workers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "descriptor",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "href",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "businessTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryWorkEmail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "primaryWorkPhone",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "workerID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employeeID",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isManager",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

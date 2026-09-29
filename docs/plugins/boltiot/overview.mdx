@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "IoT platform for connecting devices, sensors, and hardware to cloud dashboards."
+---
+
+Use **Bolt IoT** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 7 typed API operations
+- 2 synced entities (`commands`, `devices`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/boltiot
+```
+```bash yarn
+yarn add corsair @corsair-dev/boltiot
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/boltiot
+```
+```bash bun
+bun add corsair @corsair-dev/boltiot
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { boltiot } from '@corsair-dev/boltiot';
+
+export const corsair = createCorsair({
+	plugins: [
+		boltiot(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+boltiot()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'boltiot',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`device.analogRead`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.boltiot.api.device.analogRead({});
+```
+
+
+**`device.digitalWrite`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.boltiot.api.device.digitalWrite({});
+```
+
+
+See the full list on the [API](/plugins/boltiot/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.boltiot.db.<entity>.search()` and `.list()`: `commands`, `devices`.
+
+See [Database](/plugins/boltiot/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/boltiot/api">
+    Every `boltiot.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/boltiot/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

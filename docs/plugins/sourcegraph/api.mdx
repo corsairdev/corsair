@@ -1,0 +1,453 @@
+---
+title: API
+description: "API reference for Sourcegraph: every `sourcegraph.api.*` operation with input and output types."
+---
+
+Every `sourcegraph.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Repository
+
+### compareCommits
+
+`repository.compareCommits`
+
+Compare two commits and list file diffs
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.compareCommits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo` | `string` | Yes | — |
+| `base` | `string` | Yes | — |
+| `head` | `string` | Yes | — |
+| `first` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="repository full type">
+
+```ts
+{
+  comparison?: {
+    range?: {
+      expr?: string
+    } | null,
+    fileDiffs?: {
+      nodes?: {
+        oldPath?: string | null,
+        newPath?: string | null,
+        stat?: {
+          added?: number,
+          changed?: number,
+          deleted?: number
+        }
+      }[],
+      totalCount?: number | null,
+      pageInfo?: {
+        hasNextPage?: boolean,
+        endCursor?: string | null
+      }
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCommitDetails
+
+`repository.getCommitDetails`
+
+Get details for a commit, branch, or tag
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.getCommitDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo` | `string` | Yes | — |
+| `rev` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="repository full type">
+
+```ts
+{
+  commit?: {
+    oid: string,
+    abbreviatedOID?: string,
+    message?: string,
+    subject?: string,
+    body?: string | null,
+    url?: string,
+    canonicalURL?: string,
+    author?: {
+      date?: string,
+      person?: {
+        name?: string | null,
+        email?: string | null,
+        displayName?: string | null
+      } | null
+    },
+    committer?: {
+      date?: string,
+      person?: {
+        name?: string | null,
+        email?: string | null,
+        displayName?: string | null
+      } | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFileContents
+
+`repository.getFileContents`
+
+Fetch file contents on the default branch (HEAD)
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.getFileContents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_name` | `string` | Yes | — |
+| `file_path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="repository full type">
+
+```ts
+{
+  name?: string,
+  defaultBranch?: {
+    displayName?: string | null
+  } | null,
+  commit?: {
+    oid?: string,
+    file?: {
+      name?: string,
+      path?: string,
+      content?: string,
+      binary?: boolean,
+      byteSize?: number
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`repository.list`
+
+List repositories on the Sourcegraph instance
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repositories` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="repositories full type">
+
+```ts
+{
+  nodes?: {
+    name: string,
+    url?: string,
+    description?: string | null,
+    language?: string | null
+  }[],
+  totalCount?: number | null,
+  pageInfo?: {
+    hasNextPage?: boolean,
+    endCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFiles
+
+`repository.listFiles`
+
+List files and directories in a repository path
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.listFiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_name` | `string` | Yes | — |
+| `path` | `string` | No | — |
+| `rev` | `string` | No | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="repository full type">
+
+```ts
+{
+  commit?: {
+    tree?: {
+      path?: string,
+      isRoot?: boolean,
+      entries?: {
+        name?: string,
+        path?: string,
+        isDirectory?: boolean
+      }[]
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLanguages
+
+`repository.listLanguages`
+
+List languages used in a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.repository.listLanguages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repoName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="repository full type">
+
+```ts
+{
+  name?: string,
+  language?: string | null,
+  commit?: {
+    languages?: string[],
+    languageStatistics?: {
+      name?: string,
+      totalBytes?: number,
+      totalLines?: number
+    }[]
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Site
+
+### checkSettingsEditPermission
+
+`site.checkSettingsEditPermission`
+
+Check whether the viewer can edit site settings through the GraphQL API
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.site.checkSettingsEditPermission({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site` | `object` | No | — |
+| `currentUser` | `object` | No | — |
+| `canEditSiteSettings` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site full type">
+
+```ts
+{
+  id?: string,
+  siteID?: string,
+  canReloadSite?: boolean,
+  viewerCanAdminister?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="currentUser full type">
+
+```ts
+{
+  siteAdmin?: boolean,
+  viewerCanAdminister?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### getCurrent
+
+`user.getCurrent`
+
+Retrieve the currently authenticated Sourcegraph user
+
+**Risk:** `read`
+
+```ts
+await corsair.sourcegraph.api.user.getCurrent({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currentUser` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="currentUser full type">
+
+```ts
+{
+  id?: string,
+  username?: string,
+  displayName?: string | null,
+  email?: string | null,
+  siteAdmin?: boolean,
+  viewerCanAdminister?: boolean,
+  avatarURL?: string | null,
+  url?: string,
+  createdAt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

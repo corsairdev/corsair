@@ -1,0 +1,167 @@
+{
+  "id": "youcom",
+  "displayName": "You.com",
+  "description": "AI search engine API for web answers, citations, and research-oriented query results.",
+  "npmPackageName": "@corsair-dev/youcom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 1,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "youcom.api.yousearch.youSearch",
+      "shortPath": "yousearch.youSearch",
+      "description": "Search the web using You.com's search API. Returns LLM-ready web results and news articles.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "day | week | month | year | string"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "AR | AU | AT | BE | BR | CA | CL | DK | FI | FR | DE | HK | IN | ID | IT | JP | KR | MY | MX | NL | NZ | NO | CN | PL | PT | PH | RU | SA | ZA | ES | SE | CH | TW | TR | GB | US"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "AR | EU | BN | BG | CA | ZH-HANS | ZH-HANT | HR | CS | DA | NL | EN | EN-GB | ET | FI | FR | GL | DE | EL | GU | HE | HI | HU | IS | IT | JA | KN | KO | LV | LT | MS | ML | MR | NB | PL | PT-BR | PT-PT | PA | RO | RU | SR | SK | SL | ES | SV | TA | TE | TH | TR | UK | VI"
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict"
+          },
+          {
+            "key": "livecrawl",
+            "optional": true,
+            "type": "web | news | all"
+          },
+          {
+            "key": "livecrawl_formats",
+            "optional": true,
+            "type": "html | markdown[]"
+          },
+          {
+            "key": "include_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "boost_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "crawl_timeout",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ web?: { url: string, title: string, description?: string, snippets?: string[], thumbnail_url?: string, page_age?: string, contents?: { html?: string, markdown?: string }, favicon_url?: string }[], news?: { title: string, description?: string, page_age?: string, thumbnail_url?: string, url: string, contents?: { html?: string, markdown?: string } }[] }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ search_uuid: string, query: string, latency: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "youcom.db.searchResults.search",
+      "entityName": "searchResults",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnail_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "page_age",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "favicon_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "query",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "searchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

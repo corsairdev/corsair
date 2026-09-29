@@ -1,0 +1,215 @@
+---
+title: Database
+description: "Dropbox Sign local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Dropbox Sign plugin syncs data locally. Use `corsair.dropboxsign.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Account
+
+Path: `dropboxsign.db.account.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.account.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email_address` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_locked` | `boolean` | equals |
+| `is_paid_hs` | `boolean` | equals |
+| `is_paid_hf` | `boolean` | equals |
+| `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `role_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `locale` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Api App
+
+Path: `dropboxsign.db.apiApp.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.apiApp.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `client_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `callback_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_approved` | `boolean` | equals |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Bulk Send Job
+
+Path: `dropboxsign.db.bulkSendJob.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.bulkSendJob.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `bulk_send_job_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `is_creator` | `boolean` | equals |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Fax
+
+Path: `dropboxsign.db.fax.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.fax.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `fax_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `original_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `sender` | `string` | equals, contains, startsWith, endsWith, in |
+| `files_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Signature Request
+
+Path: `dropboxsign.db.signatureRequest.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.signatureRequest.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `signature_request_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `original_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `subject` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_complete` | `boolean` | equals |
+| `is_declined` | `boolean` | equals |
+| `has_error` | `boolean` | equals |
+| `files_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `details_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `signing_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Team
+
+Path: `dropboxsign.db.team.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.team.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `team_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `num_members` | `number` | equals, gt, gte, lt, lte, in |
+| `num_sub_teams` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Template
+
+Path: `dropboxsign.db.template.search`
+
+```ts
+const rows = await corsair.dropboxsign.db.template.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `template_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `is_creator` | `boolean` | equals |
+| `is_embedded` | `boolean` | equals |
+| `can_edit` | `boolean` | equals |
+| `is_locked` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

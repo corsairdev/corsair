@@ -1,0 +1,261 @@
+{
+  "id": "countdownapi",
+  "displayName": "CountdownApi",
+  "description": "CountdownApi plugin for Corsair",
+  "npmPackageName": "@corsair-dev/countdownapi",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "countdownapi.api.autocomplete.get",
+      "shortPath": "autocomplete.get",
+      "description": "Get eBay search autocomplete suggestions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ebay_domain",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_metadata",
+            "optional": false,
+            "type": "{ id: string, created_at?: string, processed_at?: string, total_time_taken?: number, ebay_url?: string }"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean, credits_used?: number, credits_remaining?: number }"
+          },
+          {
+            "key": "request_parameters",
+            "optional": true,
+            "type": "{ type: string, ebay_domain?: string, search_term?: string, epid?: string, gtin?: string, url?: string }"
+          },
+          {
+            "key": "autocomplete_results",
+            "optional": false,
+            "type": "{ suggestion: string, type?: string, category_id?: string | number, category_name?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "countdownapi.api.product.get",
+      "shortPath": "product.get",
+      "description": "Get eBay product data using Countdown API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "epid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ebay_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_html",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "skip_gtin_cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_parts_compatibility",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ request_metadata: { id: string, created_at?: string, processed_at?: string, total_time_taken?: number, ebay_url?: string }, request_info?: { success?: boolean, credits_used?: number, credits_remaining?: number }, request_parameters?: { type: string, ebay_domain?: string, search_term?: string, epid?: string, gtin?: string, url?: string }, is_master?: false, product: { title: string, link?: string, epid?: string, gtin?: string, images?: { link: string }[], attributes?: { name: string, value?: string }[] } } | { request_metadata: { id: string, created_at?: string, processed_at?: string, total_time_taken?: number, ebay_url?: string }, request_info?: { success?: boolean, credits_used?: number, credits_remaining?: number }, request_parameters?: { type: string, ebay_domain?: string, search_term?: string, epid?: string, gtin?: string, url?: string }, is_master: true, sold_out?: boolean, top_picks: { product: { title: string, link?: string, epid?: string, gtin?: string, images?: { link: string }[], attributes?: { name: string, value?: string }[] }, all_listings?: { link?: string, count?: number }, seller?: { name?: string, link?: string, feedback_score?: number, positive_feedback_percent?: number | string }, shipping?: { raw?: string, price?: number, currency?: string, location?: string, delivery_estimate?: string }, condition?: { raw?: string, name?: string, is_new?: boolean, is_used?: boolean }, is_auction?: boolean, offer?: { price?: number, raw?: string, currency?: string } }[] } | { request_metadata: { id: string, created_at?: string, processed_at?: string, total_time_taken?: number, ebay_url?: string }, request_info?: { success?: boolean, credits_used?: number, credits_remaining?: number }, request_parameters?: { type: string, ebay_domain?: string, search_term?: string, epid?: string, gtin?: string, url?: string }, redirected?: boolean, redirected_link: string, redirected_epid: string }"
+      }
+    },
+    {
+      "path": "countdownapi.api.search.get",
+      "shortPath": "search.get",
+      "description": "Search eBay products using Countdown API",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ebay_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "listing_type",
+            "optional": true,
+            "type": "all | buy_it_now | auction | accepts_offers"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "best_match | price_high_to_low | price_low_to_high | price_high_to_low_plus_postage | price_low_to_high_plus_postage | newly_listed | ending_soonest"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "all | new | used | open_box | manufacturer_refurbished | seller_refurbished | parts_or_not_working | not_specified"
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "60 | 120 | 240"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authorized_sellers",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "returns_accepted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "free_returns",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "authenticity_verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "deals_and_savings",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sale_items",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "facets",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allow_rewritten_results",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_metadata",
+            "optional": false,
+            "type": "{ id: string, created_at?: string, processed_at?: string, total_time_taken?: number, ebay_url?: string }"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean, credits_used?: number, credits_remaining?: number }"
+          },
+          {
+            "key": "request_parameters",
+            "optional": true,
+            "type": "{ type: string, ebay_domain?: string, search_term?: string, epid?: string, gtin?: string, url?: string }"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{ original_search_term?: string, did_you_mean?: string, did_you_mean_results_count?: number, spelling_correction?: string }"
+          },
+          {
+            "key": "search_results",
+            "optional": false,
+            "type": "{ position?: number, title: string, epid?: string, link: string, image?: string, hotness?: string, condition?: string, is_auction?: boolean, buy_it_now?: boolean, free_returns?: boolean, sponsored?: boolean, item_location?: string, rating?: number, ratings_total?: number, shipping_cost?: number, prices?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }[], price?: { symbol?: string, value?: number, currency?: string, raw?: string, name?: string }, ended?: { type?: string, date?: { raw?: string } }, seller_info?: { name?: string, review_count?: number, positive_feedback_percent?: number } }[]"
+          },
+          {
+            "key": "facets",
+            "optional": true,
+            "type": "{ name: string, display_name?: string, values?: { name: string, count?: number, param_value?: string }[] }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ current_page?: number, total_results?: number | string, has_next_page?: boolean, next_page?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

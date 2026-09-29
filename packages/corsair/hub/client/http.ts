@@ -1,4 +1,8 @@
-import { parseHubApiErrorBody } from '../contracts/connect-api';
+import { ReconnectRequiredError } from '../../core/auth/errors/reconnect-required';
+import {
+	parseHubApiErrorBody,
+	parseHubReconnectBody,
+} from '../contracts/connect-api';
 import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
 import type { HubConfig } from '../types';
 
@@ -77,6 +81,26 @@ export function parseHubApiError(
 	return `Hub API returned HTTP ${status}`;
 }
 
+// A `reconnect_required` body becomes a typed error carrying Hub's scoped connect
+// link, so callers (and the client UI) can act on it instead of parsing a string.
+function throwHubApiError(
+	payload: unknown,
+	status: number,
+	notFoundMessage?: string,
+): never {
+	const reconnect = parseHubReconnectBody(payload);
+	if (reconnect) {
+		throw new ReconnectRequiredError({
+			message: reconnect.message ?? undefined,
+			connectUrl: reconnect.connectUrl,
+			plugin: reconnect.plugin,
+			tenantId: reconnect.tenantId,
+			reason: reconnect.reason ?? undefined,
+		});
+	}
+	throw new Error(parseHubApiError(payload, status, notFoundMessage));
+}
+
 export async function hubApiPost<T>(input: {
 	hub: HubConfig;
 	path: string;
@@ -98,9 +122,7 @@ export async function hubApiPost<T>(input: {
 	const payload = await readHubJsonResponse(response);
 
 	if (!response.ok) {
-		throw new Error(
-			parseHubApiError(payload, response.status, input.notFoundMessage),
-		);
+		throwHubApiError(payload, response.status, input.notFoundMessage);
 	}
 
 	return input.parseResponse(payload);
@@ -124,9 +146,7 @@ export async function hubApiGet<T>(input: {
 	const payload = await readHubJsonResponse(response);
 
 	if (!response.ok) {
-		throw new Error(
-			parseHubApiError(payload, response.status, input.notFoundMessage),
-		);
+		throwHubApiError(payload, response.status, input.notFoundMessage);
 	}
 
 	return input.parseResponse(payload);

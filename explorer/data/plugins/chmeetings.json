@@ -1,0 +1,2114 @@
+{
+  "id": "chmeetings",
+  "displayName": "ChMeetings",
+  "description": "ChMeetings plugin for Corsair",
+  "npmPackageName": "@corsair-dev/chmeetings",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "chmeetings.api.attendance.list",
+      "shortPath": "attendance.list",
+      "description": "List attendance for an occurrence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrence_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "absent | attended"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "ungrouped",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ person?: { person_id?: string | number | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, mobile?: string | null, email?: string | null }, status?: absent | attended, checked_in_at?: string | null, checked_out_at?: string | null, check_in_code?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.events.get",
+      "shortPath": "events.get",
+      "description": "Get an event by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schedule",
+            "optional": true,
+            "type": "{ all_day?: boolean, start_time?: string | null, end_time?: string | null, duration_days?: string | number }"
+          },
+          {
+            "key": "recurrence",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ name?: string | null, formatted_address?: string | null, latitude?: number | string | null, longitude?: number | string | null }"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.events.list",
+      "shortPath": "events.list",
+      "description": "List events in a date range (max 366 days)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number, title?: string | null, description?: string | null, start_date?: string | null, schedule?: { all_day?: boolean, start_time?: string | null, end_time?: string | null, duration_days?: string | number }, recurrence?: {} | null, location?: { name?: string | null, formatted_address?: string | null, latitude?: number | string | null, longitude?: number | string | null } | null, visibility?: string | null, image_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.events.listOccurrences",
+      "shortPath": "events.listOccurrences",
+      "description": "List occurrences for an event in a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ occurrence_id?: string | null, event_id?: string | number, title?: string | null, description?: string | null, start?: string | null, end?: string | null, materialized?: boolean, image_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.families.create",
+      "shortPath": "families.create",
+      "description": "Create a family with members",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ person_id: string | number, family_role: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "family_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.families.delete",
+      "shortPath": "families.delete",
+      "description": "Delete a family",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.families.get",
+      "shortPath": "families.get",
+      "description": "Get a family by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "family_id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.families.list",
+      "shortPath": "families.list",
+      "description": "List families",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ family_id?: string | number, members?: { id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.addMember",
+      "shortPath": "groups.addMember",
+      "description": "Add a person to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "internal | members | public"
+          },
+          {
+            "key": "join_request_option",
+            "optional": true,
+            "type": "open | closed | approval_required"
+          },
+          {
+            "key": "is_visible_to_non_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_members_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_group_leaders_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_chat_enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "internal | members | public"
+          },
+          {
+            "key": "join_request_option",
+            "optional": true,
+            "type": "open | closed | approval_required"
+          },
+          {
+            "key": "is_visible_to_non_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_members_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_group_leaders_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_chat_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get a group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "internal | members | public"
+          },
+          {
+            "key": "join_request_option",
+            "optional": true,
+            "type": "open | closed | approval_required"
+          },
+          {
+            "key": "is_visible_to_non_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_members_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_group_leaders_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_chat_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number, name?: string | null, description?: string | null, privacy?: internal | members | public, join_request_option?: open | closed | approval_required, is_visible_to_non_members?: boolean, is_members_visible?: boolean, is_group_leaders_visible?: boolean, is_chat_enabled?: boolean, created_on?: string | null }[]"
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.removeMember",
+      "shortPath": "groups.removeMember",
+      "description": "Remove a person from a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "internal | members | public"
+          },
+          {
+            "key": "join_request_option",
+            "optional": true,
+            "type": "open | closed | approval_required"
+          },
+          {
+            "key": "is_visible_to_non_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_members_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_group_leaders_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_chat_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "privacy",
+            "optional": true,
+            "type": "internal | members | public"
+          },
+          {
+            "key": "join_request_option",
+            "optional": true,
+            "type": "open | closed | approval_required"
+          },
+          {
+            "key": "is_visible_to_non_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_members_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_group_leaders_visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_chat_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes for a person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number, note?: string | null, person_id?: string | number, created_on?: string | null, updated_on?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.organizations.addPerson",
+      "shortPath": "organizations.addPerson",
+      "description": "Add a person to an organization",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.organizations.get",
+      "shortPath": "organizations.get",
+      "description": "Get an organization by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "diocese | church | ministry"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_main",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.organizations.list",
+      "shortPath": "organizations.list",
+      "description": "List organizations from GET /api/v1/organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: diocese | church | ministry, name?: string | null, parent_id?: string | null, created_on?: string | null, is_main?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.organizations.listPeople",
+      "shortPath": "organizations.listPeople",
+      "description": "List people in an organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_family_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_additional_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_organizations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number, first_name?: string | null, middle_name?: string | null, last_name?: string | null, full_name?: string | null, nick_name?: string | null, native_name?: string | null, email?: string | null, photo?: string | null, birth_date?: string | null, mobile?: string | null, do_not_text?: boolean | null, do_not_email?: boolean | null, created_on?: string | null, updated_on?: string | null, facebook?: string | null, gender?: string | null, social_status?: string | null, marriage_date?: string | null, engagement_date?: string | null, job_title?: string | null, work_place?: string | null, qualification?: string | null, education_level?: string | null, school?: string | null, father_name?: string | null, church?: string | null, is_deacon?: boolean | null, rank?: string | null, bishop_donor?: string | null, family_role?: string | null, family?: { id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null, baptism_date?: string | null, baptism_location?: string | null, grade?: string | null, graduation_year?: string | number | null, telephone?: string | null, talents_and_hobbies?: string | null, is_archived?: boolean, archived_at?: string | null, address?: { country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null } | null, additional_fields?: { field_type: string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.organizations.removePerson",
+      "shortPath": "organizations.removePerson",
+      "description": "Remove a person from an organization",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.create",
+      "shortPath": "people.create",
+      "description": "Create a person via POST /api/v1/people",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nick_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "native_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "do_not_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marriage_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_place",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qualification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "education_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "father_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "church",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deacon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bishop_donor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "grade",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graduation_year",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "talents_and_hobbies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+          },
+          {
+            "key": "additional_fields",
+            "optional": true,
+            "type": "{ field_type: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nick_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "native_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "do_not_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marriage_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_place",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qualification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "education_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "father_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "church",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deacon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bishop_donor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+          },
+          {
+            "key": "baptism_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "grade",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graduation_year",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "talents_and_hobbies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+          },
+          {
+            "key": "additional_fields",
+            "optional": true,
+            "type": "{ field_type: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.delete",
+      "shortPath": "people.delete",
+      "description": "Delete a person via DELETE /api/v1/people/{id}",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.get",
+      "shortPath": "people.get",
+      "description": "Get a person by ID from GET /api/v1/people/{id}",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nick_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "native_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "do_not_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marriage_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_place",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qualification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "education_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "father_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "church",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deacon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bishop_donor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family_role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "family",
+            "optional": true,
+            "type": "{ id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[]"
+          },
+          {
+            "key": "baptism_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "grade",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graduation_year",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "talents_and_hobbies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+          },
+          {
+            "key": "additional_fields",
+            "optional": true,
+            "type": "{ field_type: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.list",
+      "shortPath": "people.list",
+      "description": "List people from GET /api/v1/people",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_family_members",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_additional_fields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_organizations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | number, first_name?: string | null, middle_name?: string | null, last_name?: string | null, full_name?: string | null, nick_name?: string | null, native_name?: string | null, email?: string | null, photo?: string | null, birth_date?: string | null, mobile?: string | null, do_not_text?: boolean | null, do_not_email?: boolean | null, created_on?: string | null, updated_on?: string | null, facebook?: string | null, gender?: string | null, social_status?: string | null, marriage_date?: string | null, engagement_date?: string | null, job_title?: string | null, work_place?: string | null, qualification?: string | null, education_level?: string | null, school?: string | null, father_name?: string | null, church?: string | null, is_deacon?: boolean | null, rank?: string | null, bishop_donor?: string | null, family_role?: string | null, family?: { id?: string | number, person_id?: string | number, first_name?: string | null, last_name?: string | null, full_name?: string | null, family_role?: string | null }[] | null, baptism_date?: string | null, baptism_location?: string | null, grade?: string | null, graduation_year?: string | number | null, telephone?: string | null, talents_and_hobbies?: string | null, is_archived?: boolean, archived_at?: string | null, address?: { country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null } | null, additional_fields?: { field_type: string }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.listOrganizations",
+      "shortPath": "people.listOrganizations",
+      "description": "List a person organizations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "person_id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ total_count?: string | number, page?: string | number, page_size?: string | number }"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, type?: diocese | church | ministry, name?: string | null, parent_id?: string | null, created_on?: string | null, is_main?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.people.update",
+      "shortPath": "people.update",
+      "description": "Update a person via PUT /api/v1/people/{id}",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "middle_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nick_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "native_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "birth_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "do_not_text",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "do_not_email",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "social_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "engagement_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "marriage_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "work_place",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "qualification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "education_level",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "school",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "father_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "church",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deacon",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "rank",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bishop_donor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "baptism_location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "grade",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "graduation_year",
+            "optional": true,
+            "type": "string | number"
+          },
+          {
+            "key": "telephone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "talents_and_hobbies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ country?: string | null, state?: string | null, city?: string | null, building?: string | null, address_line?: string | null, address_line2?: string | null, floor?: string | null, flat?: string | null, zip_code?: string | null }"
+          },
+          {
+            "key": "additional_fields",
+            "optional": true,
+            "type": "{ field_type: string }[]"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "chmeetings.api.settings.get",
+      "shortPath": "settings.get",
+      "description": "Get genders, social statuses, grade values, family roles, and member fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "genders",
+            "optional": false,
+            "type": "unknown[]"
+          },
+          {
+            "key": "social_statuses",
+            "optional": false,
+            "type": "unknown[]"
+          },
+          {
+            "key": "grade_values",
+            "optional": false,
+            "type": "unknown[]"
+          },
+          {
+            "key": "family_roles",
+            "optional": false,
+            "type": "unknown[]"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ sections?: {}[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "chmeetings.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chmeetings.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "chmeetings.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "first_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mobile",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

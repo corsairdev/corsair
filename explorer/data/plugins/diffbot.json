@@ -1,0 +1,3094 @@
+{
+  "id": "diffbot",
+  "displayName": "Diffbot",
+  "description": "Knowledge graph and web extraction API for structured data from articles and pages.",
+  "npmPackageName": "@corsair-dev/diffbot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 14
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "diffbot.api.account.getAccount",
+      "shortPath": "account.getAccount",
+      "description": "Retrieve Diffbot account details, credit balance, and plan usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "planStart",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "planCalls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "apiCalls",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.bulk.createBulk",
+      "shortPath": "bulk.createBulk",
+      "description": "Submit an asynchronous bulk extract job to process multiple URLs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the bulk job (unique per token)"
+          },
+          {
+            "key": "apiUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Full Diffbot Extract API URL (e.g. \"https://api.diffbot.com/v3/article\")"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]",
+            "description": "Array of URLs to process with the Extract API"
+          },
+          {
+            "key": "notifyEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email to notify when processing is completed"
+          },
+          {
+            "key": "maxRounds",
+            "optional": true,
+            "type": "number",
+            "description": "Max rounds of URL processing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.bulk.getBulkData",
+      "shortPath": "bulk.getBulkData",
+      "description": "Download extracted results from a completed bulk extract job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the completed bulk job to download"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv",
+            "description": "Download format (default json)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.bulk.listBulkJobs",
+      "shortPath": "bulk.listBulkJobs",
+      "description": "List all bulk extract jobs associated with the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.bulk.startBulk",
+      "shortPath": "bulk.startBulk",
+      "description": "Start a bulk extract job using query parameters",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Unique name for the bulk extract job"
+          },
+          {
+            "key": "apiUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Full Diffbot Extract API URL"
+          },
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated or space-separated list of URLs to process"
+          },
+          {
+            "key": "notifyEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Notification email address"
+          },
+          {
+            "key": "maxRounds",
+            "optional": true,
+            "type": "number",
+            "description": "Max rounds of URL processing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.bulk.stopBulkJob",
+      "shortPath": "bulk.stopBulkJob",
+      "description": "Pause or stop an active bulk extract job",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the bulk extract job to pause/stop"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.crawl.getCrawlData",
+      "shortPath": "crawl.getCrawlData",
+      "description": "Download extracted data from a completed crawl job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the completed crawl job to download"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | csv",
+            "description": "Download format (default json)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.crawl.manageCrawl",
+      "shortPath": "crawl.manageCrawl",
+      "description": "Inspect, pause, restart, or delete crawl jobs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The name of the crawl job to inspect or modify"
+          },
+          {
+            "key": "pause",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to pause an active crawl job, 0 to resume"
+          },
+          {
+            "key": "restart",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to restart a completed/paused crawl job"
+          },
+          {
+            "key": "delete",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to delete a crawl job and its data"
+          },
+          {
+            "key": "roundProxy",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to rotate proxy IP on each round"
+          },
+          {
+            "key": "maxRounds",
+            "optional": true,
+            "type": "number",
+            "description": "Update max rounds"
+          },
+          {
+            "key": "maxHops",
+            "optional": true,
+            "type": "number",
+            "description": "Update max hops"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.crawl.startCrawl",
+      "shortPath": "crawl.startCrawl",
+      "description": "Initiate a website crawl job starting from seed URLs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Unique name for the crawl job"
+          },
+          {
+            "key": "seeds",
+            "optional": false,
+            "type": "string",
+            "description": "Space-separated seed URL(s) from which the crawl begins"
+          },
+          {
+            "key": "apiUrl",
+            "optional": false,
+            "type": "string",
+            "description": "Full Diffbot Extract API URL used to process pages (e.g. \"https://api.diffbot.com/v3/article\")"
+          },
+          {
+            "key": "maxHops",
+            "optional": true,
+            "type": "number",
+            "description": "Max depth of links to crawl from seeds (default -1 for no limit)"
+          },
+          {
+            "key": "maxRounds",
+            "optional": true,
+            "type": "number",
+            "description": "Max rounds of repeat crawling for recurring crawls"
+          },
+          {
+            "key": "maxTags",
+            "optional": true,
+            "type": "number",
+            "description": "Max tags to extract per page"
+          },
+          {
+            "key": "crawlSubdomains",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to crawl subdomains of seeds"
+          },
+          {
+            "key": "notifyEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email notification upon crawl completion"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.customApi.createCustomApi",
+      "shortPath": "customApi.createCustomApi",
+      "description": "Create or update custom API rules and selectors for URL patterns",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the custom API (e.g. \"myCustomArticleApi\")"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Sample URL that this custom API applies to"
+          },
+          {
+            "key": "pattern",
+            "optional": true,
+            "type": "string",
+            "description": "URL regex pattern to match pages for this custom API"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{}",
+            "description": "Extraction rules and CSS selector definitions"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.customApi.deleteCustomApi",
+      "shortPath": "customApi.deleteCustomApi",
+      "description": "Delete custom API definitions for a given URL pattern",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the custom API to delete"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "URL pattern or test URL of the custom API"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "api",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.customApi.listCustomApis",
+      "shortPath": "customApi.listCustomApis",
+      "description": "List all custom API definitions configured on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customApis",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "apis",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.enhance.combineEntityProfiles",
+      "shortPath": "enhance.combineEntityProfiles",
+      "description": "Combine entity profiles into a unified view with organization affiliations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Person name"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Entity type (defaults to Person)"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address"
+          },
+          {
+            "key": "employer",
+            "optional": true,
+            "type": "string",
+            "description": "Employer name or organization"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Profile URL or organization homepage"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kgversion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.enhance.enhanceEntity",
+      "shortPath": "enhance.enhanceEntity",
+      "description": "Enrich person or organization data with Knowledge Graph records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Entity name (person or organization)"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Entity type filter: \"Organization\" or \"Person\""
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address of the entity"
+          },
+          {
+            "key": "employer",
+            "optional": true,
+            "type": "string",
+            "description": "Current employer of a Person entity"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Homepage or profile URL (e.g. LinkedIn / Website)"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location or address"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Number of matching entity records to return"
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force refresh data from live web sources"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kgversion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "request_ctx",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.enhance.getKgCoverageReportById",
+      "shortPath": "enhance.getKgCoverageReportById",
+      "description": "Download Knowledge Graph coverage report by report ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string",
+            "description": "Coverage report ID generated from DQL query or bulk job"
+          },
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional bulkjob ID associated with the report"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "coverage",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any"
+          },
+          {
+            "key": "csv",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.enhance.resolveLostId",
+      "shortPath": "enhance.resolveLostId",
+      "description": "Resolve lost or legacy identifiers to canonical Knowledge Graph entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The lost or non-canonical identifier to resolve"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "canonicalId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "diffbotUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.extractJob",
+      "shortPath": "extract.extractJob",
+      "description": "Extract structured job posting data including compensation, requirements, and company info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the job posting page"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: job, title?: string, description?: string, company?: {}, locations?: string[], employmentType?: string, compensation?: {}, requirements?: string[], skills?: string[], postedDate?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.extractList",
+      "shortPath": "extract.extractList",
+      "description": "Extract structured items from list-style pages, catalogs, and news indexes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the list / directory / index page"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: list, title?: string, numItems?: number, items?: {}[], pageUrl?: string, humanLanguage?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getAnalyze",
+      "shortPath": "extract.getAnalyze",
+      "description": "Automatically analyze web page to determine its type and extract structured data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to analyze — Diffbot auto-detects the page type"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of optional fields"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          },
+          {
+            "key": "fallback",
+            "optional": true,
+            "type": "string",
+            "description": "API to fall back to if page type cannot be detected (e.g. \"article\")"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "false | true",
+            "description": "Set to \"false\" to disable comment extraction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Detected page type (article, product, discussion, etc.)"
+          },
+          {
+            "key": "humanLanguage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getArticle",
+      "shortPath": "extract.getArticle",
+      "description": "Extract article title, text, author, date, and metadata from any URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the article to extract"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of optional fields (e.g. \"links,meta\")"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds (default 30000)"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "false | true",
+            "description": "Set to \"false\" to disable automatic pagination following"
+          },
+          {
+            "key": "maxTags",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of tags to return"
+          },
+          {
+            "key": "naturalLanguage",
+            "optional": true,
+            "type": "string",
+            "description": "Language hint for NLP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: article, title?: string, text?: string, html?: string, date?: string, estimatedDate?: string, author?: string, authorUrl?: string, siteName?: string, pageUrl?: string, resolvedPageUrl?: string, humanLanguage?: string, numPages?: number, nextPage?: string, nextPages?: string[], images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], videos?: {}[], tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], links?: string[], breadcrumb?: { link?: string, name?: string }[], publisherRegion?: string, publisherCountry?: string, sentiment?: number, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getDiscussion",
+      "shortPath": "extract.getDiscussion",
+      "description": "Extract structured discussion threads, forum posts, and comments from web pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the discussion / forum / comment page"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          },
+          {
+            "key": "maxTags",
+            "optional": true,
+            "type": "number",
+            "description": "Max tags to return"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: discussion, title?: string, text?: string, numPosts?: number, numParticipants?: number, participants?: string[], rssUrl?: string, posts?: {}[], pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getEvent",
+      "shortPath": "extract.getEvent",
+      "description": "Extract event details including dates, venues, organizers, and descriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the event page to extract"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: event, title?: string, description?: string, startDate?: string, endDate?: string, location?: string, venue?: {}, organizer?: string, ticketUrl?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getImage",
+      "shortPath": "extract.getImage",
+      "description": "Extract detailed image information including dimensions and recognition data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the page or image to extract"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: image, url?: string, title?: string, naturalHeight?: number, naturalWidth?: number, width?: number, height?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getProduct",
+      "shortPath": "extract.getProduct",
+      "description": "Extract product price, availability, images, and specifications from any e-commerce URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the product page to extract"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of optional fields"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds (default 30000)"
+          },
+          {
+            "key": "discussion",
+            "optional": true,
+            "type": "false | true",
+            "description": "Set to \"false\" to disable review/discussion extraction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: product, title?: string, text?: string, brand?: string, offerPrice?: string, offerPriceDetails?: { amount?: number, symbol?: string, text?: string }, regularPrice?: string, saveAmount?: string, shippingAmount?: string, availability?: boolean, sku?: string, mpn?: string, upc?: string, isbn?: string, images?: { url?: string, title?: string, width?: number, height?: number, naturalWidth?: number, naturalHeight?: number, primary?: boolean, xpath?: string, attrTitle?: string, attrAlt?: string, caption?: string }[], offers?: {}[], colors?: string[], pageUrl?: string, humanLanguage?: string, tags?: { id?: number, label: string, uri?: string, types?: string[], score?: number, count?: number, prevalence?: number, rdfTypes?: string[] }[], diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.extract.getVideo",
+      "shortPath": "extract.getVideo",
+      "description": "Extract structured metadata from videos including embed HTML and durations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the video page to extract"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Optional fields to return"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Timeout in milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: video, url?: string, title?: string, naturalHeight?: number, naturalWidth?: number, duration?: number, viewCount?: number, uploadDate?: string, author?: string, embedUrl?: string, html?: string, pageUrl?: string, humanLanguage?: string, diffbotUri?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.createKgBulkEnhance",
+      "shortPath": "kgBulkEnhance.createKgBulkEnhance",
+      "description": "Submit an asynchronous bulk enhance job for multiple entities",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ name?: string, type?: string, email?: string, employer?: string, url?: string, phone?: string, location?: string }[]",
+            "description": "Array of entity objects to enhance"
+          },
+          {
+            "key": "notifyEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email address to notify upon job completion"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Custom name for the bulk job"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.deleteKgEnhanceBulkjob",
+      "shortPath": "kgBulkEnhance.deleteKgEnhanceBulkjob",
+      "description": "Delete a Knowledge Graph bulk enhance job and its results",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the bulk enhance job to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.downloadBulkResults",
+      "shortPath": "kgBulkEnhance.downloadBulkResults",
+      "description": "Download bulk enhance results with filtering and custom output formats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the bulk enhance job to download"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | jsonl | csv | xls | xlsx",
+            "description": "Export format"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "DQL filter criteria to apply to the output"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated list of fields to include"
+          },
+          {
+            "key": "head",
+            "optional": true,
+            "type": "number",
+            "description": "Number of records to export"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.getBulkJobStatus",
+      "shortPath": "kgBulkEnhance.getBulkJobStatus",
+      "description": "Poll the status and progress of a Knowledge Graph bulk enhance job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the bulk enhance job to check"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobStatus",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.getBulkResults",
+      "shortPath": "kgBulkEnhance.getBulkResults",
+      "description": "Download results of a completed Knowledge Graph bulk enhance job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the bulk enhance job to download"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json | jsonl | csv | xls | xlsx",
+            "description": "Download output format (default jsonl)"
+          },
+          {
+            "key": "head",
+            "optional": true,
+            "type": "number",
+            "description": "Preview only the first N results from the job"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "raw",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.getBulkSingleResult",
+      "shortPath": "kgBulkEnhance.getBulkSingleResult",
+      "description": "Download single enriched entity result from a bulk enhance job by index",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The bulk enhance job ID"
+          },
+          {
+            "key": "jobIndex",
+            "optional": false,
+            "type": "number",
+            "description": "Zero-indexed position of the entity record within the bulk job"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "jobIndex",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.listBulkJobsStatusForToken",
+      "shortPath": "kgBulkEnhance.listBulkJobsStatusForToken",
+      "description": "List all Knowledge Graph bulk enhance jobs and their statuses for token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "bulkjobs",
+            "optional": true,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.kgBulkEnhance.stopKgBulkJobById",
+      "shortPath": "kgBulkEnhance.stopKgBulkJobById",
+      "description": "Stop or pause an active Knowledge Graph bulk enhance job by ID",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the bulk enhance job to pause/stop"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bulkjobId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search the Diffbot Knowledge Graph using DQL (Diffbot Query Language)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "DQL query string (e.g. \"type:Organization name:\\\"OpenAI\\\"\")"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string",
+            "description": "Entity type filter prepended to query (e.g. \"Organization\")"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "query | text | queryTextFallback | crawl",
+            "description": "Execution mode for the DQL request"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-indexed offset for pagination"
+          },
+          {
+            "key": "col",
+            "optional": true,
+            "type": "string",
+            "description": "Crawl collection name to query"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "kgversion",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "diffbot_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "facet",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "diffbot.api.search.searchCrawlData",
+      "shortPath": "search.searchCrawlData",
+      "description": "Query crawl job collections using DQL or keyword search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "col",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the crawl job collection to search"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search query string or DQL filter"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return (max 25)"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-indexed offset for pagination"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ pageUrl?: string, api?: string, version?: number }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "hits",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "diffbot.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "token",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "plan",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "planStart",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "planCalls",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "apiCalls",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.articles.search",
+      "entityName": "articles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "estimatedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authorUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "siteName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numPages",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "nextPage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publisherRegion",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "publisherCountry",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentiment",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.bulkJobs.search",
+      "entityName": "bulkJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bulkjobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "completed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "failed",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "apiUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "urls",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "downloadUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.crawlJobs.search",
+      "entityName": "crawlJobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sentToCrawler",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "objectsHarvested",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "urlsHarvested",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pageRounds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maxRounds",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "maxHops",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "pause",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "roundProxy",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "seeds",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "apiUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "downloadUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxTags",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.customApis.search",
+      "entityName": "customApis",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "api",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pattern",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "testUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.discussions.search",
+      "entityName": "discussions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numPosts",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "numParticipants",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "rssUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.events.search",
+      "entityName": "events",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "startDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "endDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "organizer",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ticketUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "naturalHeight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "naturalWidth",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "primary",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "xpath",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attrTitle",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "attrAlt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "caption",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "employmentType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postedDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.lists.search",
+      "entityName": "lists",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "numItems",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.organizations.search",
+      "entityName": "organizations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "homepageUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "nbEmployees",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "nbEmployeesMin",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "nbEmployeesMax",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "revenue",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "isPublic",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isNonProfit",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isAcquired",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "isDissolved",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "totalInvestment",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "linkedInUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "twitterUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "facebookUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "githubUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wikipediaUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "crunchbaseUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "angellistUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "naicsClassification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sicClassification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "naceClassification",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "crawlTimestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.people.search",
+      "entityName": "people",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "summary",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "image",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "gender",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "birthDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "deathDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "linkedInUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "twitterUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "facebookUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "githubUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "wikipediaUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "crunchbaseUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "angellistUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "homepageUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "crawlTimestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "importance",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "origin",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "fetchedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.products.search",
+      "entityName": "products",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brand",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "offerPrice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "regularPrice",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "saveAmount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shippingAmount",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "availability",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "sku",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mpn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upc",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "isbn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "diffbot.db.videos.search",
+      "entityName": "videos",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resolvedPageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "naturalHeight",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "naturalWidth",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "duration",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "viewCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "uploadDate",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "embedUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "html",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "humanLanguage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "diffbotUri",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "extractedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

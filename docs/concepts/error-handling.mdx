@@ -130,3 +130,12 @@ handler: async (error, context) => ({
 })
 ```
 
+## Reconnect and auth-missing
+
+The handlers above cover errors from a *connected* integration. When a tenant hasn't connected a plugin yet, or a stored token can no longer be refreshed, Corsair throws a typed error carrying the connect link instead:
+
+- `AuthMissingError` — no usable credential for the tenant. Send them through a connect flow.
+- `ReconnectRequiredError` — a stored connection went stale (for example, a revoked refresh token). Same fix: reconnect.
+
+In a React app, [Corsair Connect](/adapters/react#corsair-connect) turns both into a connect dialog automatically — you don't catch them by hand — and resumes the call when you wrap it in `call`. Anywhere else, read `error.connectUrl` and route the user there.
+

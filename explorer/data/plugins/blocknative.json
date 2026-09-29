@@ -1,0 +1,467 @@
+{
+  "id": "blocknative",
+  "displayName": "Blocknative",
+  "description": "Mempool monitoring API for real-time Ethereum and blockchain transaction tracking.",
+  "npmPackageName": "@corsair-dev/blocknative",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "one"]
+    }
+  ],
+  "api": [
+    {
+      "path": "blocknative.api.gas.getBaseFeeEstimates",
+      "shortPath": "gas.getBaseFeeEstimates",
+      "description": "Get real-time base fee, blob base fee, and priority fee predictions for the next 5 Ethereum blocks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currentBlockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "msSinceLastBlock",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "baseFeePerGas",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "blobBaseFeePerGas",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "estimatedBaseFees",
+            "optional": false,
+            "type": "{}[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blocknative.api.gas.getDistribution",
+      "shortPath": "gas.getDistribution",
+      "description": "Retrieve the current mempool gas price distribution breakdown",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chainid",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentBlockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "msSinceLastBlock",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topNDistribution",
+            "optional": false,
+            "type": "{ distribution: number[][], n: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blocknative.api.gas.getOracles",
+      "shortPath": "gas.getOracles",
+      "description": "Retrieve metadata on supported gas oracles per chain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "oracles",
+            "optional": false,
+            "type": "{ arch?: string, chainId: number, label: string, icon?: string, system?: string, network?: string, addressByVersion?: {}, rpcUrl?: string, blockExplorerUrl?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blocknative.api.gas.getPrices",
+      "shortPath": "gas.getPrices",
+      "description": "Fetch gas price estimates for specific inclusion probabilities (next block or ~10 seconds)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chainid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidenceLevels",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "system",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "maxPrice",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentBlockNumber",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "msSinceLastBlock",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "blockPrices",
+            "optional": false,
+            "type": "{ blockNumber: number, estimatedTransactionCount?: number, baseFeePerGas?: number | null, blobBaseFeePerGas?: number | null, estimatedPrices: { confidence: number, price: number, maxPriorityFeePerGas?: number | null, maxFeePerGas?: number | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "blocknative.api.gas.getSupportedChains",
+      "shortPath": "gas.getSupportedChains",
+      "description": "Retrieve supported chains metadata for Blocknative gas services",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chains",
+            "optional": false,
+            "type": "{ arch?: string, chainId: number, label: string, icon?: string, system?: string, network?: string, features?: string[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "blocknative.db.baseFeeEstimates.search",
+      "entityName": "baseFeeEstimates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "system",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "currentBlockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "msSinceLastBlock",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "baseFeePerGas",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "blobBaseFeePerGas",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blocknative.db.blockPrices.search",
+      "entityName": "blockPrices",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "system",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxPrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currentBlockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "msSinceLastBlock",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blocknative.db.chains.search",
+      "entityName": "chains",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "arch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "system",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blocknative.db.gasDistributions.search",
+      "entityName": "gasDistributions",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "system",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "unit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "maxPrice",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "currentBlockNumber",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "msSinceLastBlock",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "blocknative.db.oracles.search",
+      "entityName": "oracles",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "arch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chainId",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "label",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "icon",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "system",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "network",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "rpcUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "blockExplorerUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,436 @@
+{
+  "id": "clickhouse",
+  "displayName": "ClickHouse",
+  "description": "Columnar analytics database for fast OLAP queries on large-scale event and log data.",
+  "npmPackageName": "@corsair-dev/clickhouse",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "tenant_external_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "clickhouse.api.play.get",
+      "shortPath": "play.get",
+      "description": "Fetch the ClickHouse Play web UI HTML (Monaco editor + query UI).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The Play UI URL"
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "Play UI HTML page (Monaco editor + query UI)"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickhouse.api.query.execute",
+      "shortPath": "query.execute",
+      "description": "Execute a SQL query against the tenant ClickHouse instance and return the result rows. Arbitrary SQL is accepted — destructive statements require explicit permission.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sql",
+            "optional": false,
+            "type": "string",
+            "description": "SQL query to execute against ClickHouse"
+          },
+          {
+            "key": "database",
+            "optional": true,
+            "type": "string",
+            "description": "Default database context (sent as ?database=)"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum rows to return; appended as LIMIT when not present in SQL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "{}[]",
+            "description": "JSONEachRow objects; column names map to native JSON values"
+          },
+          {
+            "key": "rowCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickhouse.api.query.listDatabases",
+      "shortPath": "query.listDatabases",
+      "description": "List all databases on the tenant ClickHouse instance.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "databases",
+            "optional": false,
+            "type": "{ name: string, engine: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickhouse.api.query.listTables",
+      "shortPath": "query.listTables",
+      "description": "List tables in a ClickHouse database with their engine and approximate size.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string",
+            "description": "Database to list tables from"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum tables to return"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Tables to skip before returning rows"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ name: string, engine?: string, totalRows?: number | string | null, totalBytes?: number | string | null }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "Number of tables returned"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickhouse.api.schema.getDatabase",
+      "shortPath": "schema.getDatabase",
+      "description": "Get schema overview for a ClickHouse database; optionally include column definitions for each table.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string",
+            "description": "Database to introspect"
+          },
+          {
+            "key": "includeColumns",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, also fetch column definitions for each table"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tables",
+            "optional": false,
+            "type": "{ name: string, engine?: string, totalRows?: number | string | null, totalBytes?: number | string | null, columns?: { name: string, type: string, position?: number | string | null, comment?: string, defaultExpression?: string }[] }[]"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "clickhouse.api.schema.getTable",
+      "shortPath": "schema.getTable",
+      "description": "Get column-level schema for a ClickHouse table, optionally with sample rows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string",
+            "description": "Database the table belongs to"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string",
+            "description": "Table to introspect"
+          },
+          {
+            "key": "includeSample",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true, include up to `sampleSize` rows from the table"
+          },
+          {
+            "key": "sampleSize",
+            "optional": true,
+            "type": "number",
+            "description": "Sample row count when includeSample is true; defaults to 5"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "database",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "table",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalRows",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "{ name: string, type: string, position?: number | string | null, comment?: string, defaultExpression?: string }[]"
+          },
+          {
+            "key": "sampleRows",
+            "optional": true,
+            "type": "{}[]",
+            "description": "Sample rows; only present when includeSample is true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "clickhouse.db.column.search",
+      "entityName": "column",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "database",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "table",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_expression",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "defaultExpression",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clickhouse.db.database.search",
+      "entityName": "database",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "data_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "metadata_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "uuid",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine_full",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clickhouse.db.queryResult.search",
+      "entityName": "queryResult",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "clickhouse.db.table.search",
+      "entityName": "table",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "database",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "engine",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "comment",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

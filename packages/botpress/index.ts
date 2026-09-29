@@ -483,7 +483,7 @@ const botpressEndpointMeta = {
 	},
 	'workspaces.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a workspace [DESTRUCTIVE]',
+		description: 'Permanently delete a workspace',
 	},
 	'workspaces.list': {
 		riskLevel: 'read',
@@ -585,8 +585,7 @@ const botpressEndpointMeta = {
 	},
 	'integrations.deleteShareableId': {
 		riskLevel: 'destructive',
-		description:
-			'Delete the shareable id for a bot-integration pair [DESTRUCTIVE]',
+		description: 'Delete the shareable id for a bot-integration pair',
 	},
 	'hub.listIntegrations': {
 		riskLevel: 'read',
@@ -639,7 +638,7 @@ const botpressEndpointMeta = {
 	},
 	'files.delete': {
 		riskLevel: 'destructive',
-		description: "Delete a file from a bot's storage [DESTRUCTIVE]",
+		description: "Delete a file from a bot's storage",
 	},
 	'files.listTags': {
 		riskLevel: 'read',
@@ -655,7 +654,7 @@ const botpressEndpointMeta = {
 	},
 	'knowledgeBases.delete': {
 		riskLevel: 'destructive',
-		description: 'Permanently delete a knowledge base [DESTRUCTIVE]',
+		description: 'Permanently delete a knowledge base',
 	},
 	'tools.runVrl': {
 		riskLevel: 'write',

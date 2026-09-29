@@ -910,7 +910,7 @@ const capsuleCrmEndpointMeta = {
 	'parties.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a party [DESTRUCTIVE]',
+		description: 'Delete a party',
 	},
 	'parties.search': {
 		riskLevel: 'read',
@@ -951,7 +951,7 @@ const capsuleCrmEndpointMeta = {
 	'opportunities.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete an opportunity [DESTRUCTIVE]',
+		description: 'Delete an opportunity',
 	},
 	'opportunities.search': {
 		riskLevel: 'read',
@@ -996,7 +996,7 @@ const capsuleCrmEndpointMeta = {
 	'projects.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a project [DESTRUCTIVE]',
+		description: 'Delete a project',
 	},
 	'projects.search': {
 		riskLevel: 'read',
@@ -1037,7 +1037,7 @@ const capsuleCrmEndpointMeta = {
 	'tasks.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a task [DESTRUCTIVE]',
+		description: 'Delete a task',
 	},
 	'entries.listByDate': {
 		riskLevel: 'read',
@@ -1062,7 +1062,7 @@ const capsuleCrmEndpointMeta = {
 	'entries.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete an entry [DESTRUCTIVE]',
+		description: 'Delete an entry',
 	},
 	'categories.list': {
 		riskLevel: 'read',
@@ -1083,7 +1083,7 @@ const capsuleCrmEndpointMeta = {
 	'categories.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a category [DESTRUCTIVE]',
+		description: 'Delete a category',
 	},
 	'milestones.list': {
 		riskLevel: 'read',
@@ -1104,7 +1104,7 @@ const capsuleCrmEndpointMeta = {
 	'milestones.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a milestone [DESTRUCTIVE]',
+		description: 'Delete a milestone',
 	},
 	'titles.list': {
 		riskLevel: 'read',
@@ -1117,7 +1117,7 @@ const capsuleCrmEndpointMeta = {
 	'titles.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a title [DESTRUCTIVE]',
+		description: 'Delete a title',
 	},
 	'customFields.list': {
 		riskLevel: 'read',
@@ -1138,7 +1138,7 @@ const capsuleCrmEndpointMeta = {
 	'customFields.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a custom field definition [DESTRUCTIVE]',
+		description: 'Delete a custom field definition',
 	},
 	'lostReasons.list': {
 		riskLevel: 'read',
@@ -1159,7 +1159,7 @@ const capsuleCrmEndpointMeta = {
 	'lostReasons.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a lost reason [DESTRUCTIVE]',
+		description: 'Delete a lost reason',
 	},
 	'stages.list': {
 		riskLevel: 'read',
@@ -1180,7 +1180,7 @@ const capsuleCrmEndpointMeta = {
 	'stages.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a stage [DESTRUCTIVE]',
+		description: 'Delete a stage',
 	},
 	'tracks.get': {
 		riskLevel: 'read',
@@ -1197,7 +1197,7 @@ const capsuleCrmEndpointMeta = {
 	'tracks.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a track [DESTRUCTIVE]',
+		description: 'Delete a track',
 	},
 	'tracks.listForEntity': {
 		riskLevel: 'read',
@@ -1222,7 +1222,7 @@ const capsuleCrmEndpointMeta = {
 	'trackDefinitions.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a track definition [DESTRUCTIVE]',
+		description: 'Delete a track definition',
 	},
 	'boards.list': {
 		riskLevel: 'read',
@@ -1239,7 +1239,7 @@ const capsuleCrmEndpointMeta = {
 	'boards.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete (archive) a board [DESTRUCTIVE]',
+		description: 'Delete (archive) a board',
 	},
 	'boards.restore': {
 		riskLevel: 'write',
@@ -1340,7 +1340,7 @@ const capsuleCrmEndpointMeta = {
 	'tags.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a tag [DESTRUCTIVE]',
+		description: 'Delete a tag',
 	},
 	'filters.run': {
 		riskLevel: 'read',

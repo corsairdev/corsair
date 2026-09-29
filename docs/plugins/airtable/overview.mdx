@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Airtable plugin for Corsair"
+description: "Spreadsheet-database hybrid for organizing records, workflows, and collaborative project data."
 ---
 
 Use **Airtable** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -92,7 +92,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`bases.getMany`**
+**List accessible bases**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -100,11 +100,15 @@ await tenant.airtable.api.bases.getMany({});
 ```
 
 
-**`records.create`**
+**Create a record**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.airtable.api.records.create({});
+await tenant.airtable.api.records.create({
+	baseId: 'appXXXXXXXXXXXXXX',
+	tableIdOrName: 'tblXXXXXXXXXXXXXX',
+	fields: { Name: 'Ada Lovelace' },
+});
 ```
 
 
@@ -112,15 +116,37 @@ See the full list on the [API](/plugins/airtable/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.airtable.db.<entity>.search()` and `.list()`: `bases`, `records`.
+Search synced Airtable records without calling the API again.
 
-See [Database](/plugins/airtable/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.airtable.db.records.search({
+	data: { tableId: 'tblXXXXXXXXXXXXXX' },
+	limit: 20,
+});
+```
+
+Synced entities: `bases`, `records`. See [Database](/plugins/airtable/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+React when an Airtable base sends a change notification.
 
-See [Webhooks](/plugins/airtable/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+airtable({
+    webhookHooks: {
+        events: {
+            event: {
+                after: async (ctx, result) => {
+                    console.log('Airtable event:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/airtable/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

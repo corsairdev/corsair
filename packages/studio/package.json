@@ -1,7 +1,15 @@
 {
   "name": "@corsair-dev/studio",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Local dashboard for inspecting and configuring your Corsair instance",
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "homepage": "https://corsair.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/studio"
+  },
   "type": "module",
   "exports": {
     "./server": {

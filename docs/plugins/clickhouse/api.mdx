@@ -1,0 +1,289 @@
+---
+title: API
+description: "API reference for ClickHouse: every `clickhouse.api.*` operation with input and output types."
+---
+
+Every `clickhouse.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Play
+
+### get
+
+`play.get`
+
+Fetch the ClickHouse Play web UI HTML (Monaco editor + query UI).
+
+**Risk:** `read`
+
+```ts
+await corsair.clickhouse.api.play.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The Play UI URL |
+| `html` | `string` | Yes | Play UI HTML page (Monaco editor + query UI) |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+## Query
+
+### execute
+
+`query.execute`
+
+Execute a SQL query against the tenant ClickHouse instance and return the result rows. Arbitrary SQL is accepted — destructive statements require explicit permission.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.clickhouse.api.query.execute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sql` | `string` | Yes | SQL query to execute against ClickHouse |
+| `database` | `string` | No | Default database context (sent as ?database=) |
+| `limit` | `number` | No | Maximum rows to return; appended as LIMIT when not present in SQL |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[]` | Yes | JSONEachRow objects; column names map to native JSON values |
+| `rowCount` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDatabases
+
+`query.listDatabases`
+
+List all databases on the tenant ClickHouse instance.
+
+**Risk:** `read`
+
+```ts
+await corsair.clickhouse.api.query.listDatabases({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `databases` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="databases full type">
+
+```ts
+{
+  name: string,
+  engine: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTables
+
+`query.listTables`
+
+List tables in a ClickHouse database with their engine and approximate size.
+
+**Risk:** `read`
+
+```ts
+await corsair.clickhouse.api.query.listTables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | Database to list tables from |
+| `limit` | `number` | No | Maximum tables to return |
+| `offset` | `number` | No | Tables to skip before returning rows |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+| `count` | `number` | Yes | Number of tables returned |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  name: string,
+  engine?: string,
+  totalRows?: number | string | null,
+  totalBytes?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schema
+
+### getDatabase
+
+`schema.getDatabase`
+
+Get schema overview for a ClickHouse database; optionally include column definitions for each table.
+
+**Risk:** `read`
+
+```ts
+await corsair.clickhouse.api.schema.getDatabase({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | Database to introspect |
+| `includeColumns` | `boolean` | No | When true, also fetch column definitions for each table |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | — |
+| `tables` | `object[]` | Yes | — |
+| `count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  name: string,
+  engine?: string,
+  totalRows?: number | string | null,
+  totalBytes?: number | string | null,
+  columns?: {
+    name: string,
+    type: string,
+    position?: number | string | null,
+    comment?: string,
+    defaultExpression?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTable
+
+`schema.getTable`
+
+Get column-level schema for a ClickHouse table, optionally with sample rows.
+
+**Risk:** `read`
+
+```ts
+await corsair.clickhouse.api.schema.getTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | Database the table belongs to |
+| `table` | `string` | Yes | Table to introspect |
+| `includeSample` | `boolean` | No | When true, include up to `sampleSize` rows from the table |
+| `sampleSize` | `number` | No | Sample row count when includeSample is true; defaults to 5 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `string` | Yes | — |
+| `table` | `string` | Yes | — |
+| `engine` | `string` | No | — |
+| `totalRows` | `number \| string` | No | — |
+| `columns` | `object[]` | Yes | — |
+| `sampleRows` | `object[]` | No | Sample rows; only present when includeSample is true |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  name: string,
+  type: string,
+  position?: number | string | null,
+  comment?: string,
+  defaultExpression?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="sampleRows full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

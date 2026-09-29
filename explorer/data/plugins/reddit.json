@@ -1,0 +1,1628 @@
+{
+  "id": "reddit",
+  "displayName": "Reddit",
+  "description": "Social news platform for subreddits, posts, comments, moderation, and community discussions.",
+  "npmPackageName": "@corsair-dev/reddit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 4
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "subreddit_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "reddit.api.feeds.getAll",
+      "shortPath": "feeds.getAll",
+      "description": "Get posts from /r/all feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.feeds.getPopular",
+      "shortPath": "feeds.getPopular",
+      "description": "Get posts from /r/popular feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.listings.subredditsNew",
+      "shortPath": "listings.subredditsNew",
+      "description": "Get new subreddit listings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddits",
+            "optional": false,
+            "type": "{ id: string, name: string, display_name: string, display_name_prefixed: string, title: string, description: string | null, description_html: string | null, public_description: string | null, subscribers: number, active_user_count?: number | null, accounts_active?: number | null, over18: boolean, quarantine: boolean, restrict_posting?: boolean, restrict_commenting?: boolean, icon_img: string | null, banner_img: string | null, community_icon: string | null, primary_color: string | null, created_utc: number, created: number, lang: string, allow_discovery?: boolean, submit_text_label?: string | null, wiki_enabled?: boolean, subreddit_type?: string }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.listings.subredditsPopular",
+      "shortPath": "listings.subredditsPopular",
+      "description": "Get popular subreddit listings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddits",
+            "optional": false,
+            "type": "{ id: string, name: string, display_name: string, display_name_prefixed: string, title: string, description: string | null, description_html: string | null, public_description: string | null, subscribers: number, active_user_count?: number | null, accounts_active?: number | null, over18: boolean, quarantine: boolean, restrict_posting?: boolean, restrict_commenting?: boolean, icon_img: string | null, banner_img: string | null, community_icon: string | null, primary_color: string | null, created_utc: number, created: number, lang: string, allow_discovery?: boolean, submit_text_label?: string | null, wiki_enabled?: boolean, subreddit_type?: string }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.posts.getById",
+      "shortPath": "posts.getById",
+      "description": "Get posts by fullname IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.posts.getComments",
+      "shortPath": "posts.getComments",
+      "description": "Get a post and its comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "confidence | top | new | controversial | old | random | qa"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }"
+          },
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: string, name: string, body: string, body_html: string, author: string | null, author_fullname?: string, score: number, ups: number, downs: number, depth?: number, parent_id: string, link_id: string, created_utc: number, controversiality: number, gilded?: number, edited: boolean | number, score_hidden?: boolean, collapsed?: boolean, archived?: boolean, locked?: boolean, stickied?: boolean, permalink: string, subreddit: string, subreddit_name_prefixed: string, over_18?: boolean }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.search.global",
+      "shortPath": "search.global",
+      "description": "Search all of Reddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevance | hot | top | new | comments"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "restrict_sr",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sr_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "link | sr | user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.search.subreddit",
+      "shortPath": "search.subreddit",
+      "description": "Search within a subreddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevance | hot | top | new | comments"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.search.subreddits",
+      "shortPath": "search.subreddits",
+      "description": "Search for subreddits by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddits",
+            "optional": false,
+            "type": "{ id: string, name: string, display_name: string, display_name_prefixed: string, title: string, description: string | null, description_html: string | null, public_description: string | null, subscribers: number, active_user_count?: number | null, accounts_active?: number | null, over18: boolean, quarantine: boolean, restrict_posting?: boolean, restrict_commenting?: boolean, icon_img: string | null, banner_img: string | null, community_icon: string | null, primary_color: string | null, created_utc: number, created: number, lang: string, allow_discovery?: boolean, submit_text_label?: string | null, wiki_enabled?: boolean, subreddit_type?: string }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getAbout",
+      "shortPath": "subreddits.getAbout",
+      "description": "Get subreddit metadata and info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "display_name_prefixed",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "description_html",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "public_description",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "active_user_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "accounts_active",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "over18",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "quarantine",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "restrict_posting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "restrict_commenting",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icon_img",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "banner_img",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "community_icon",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "primary_color",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_utc",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "lang",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "allow_discovery",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "submit_text_label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "wiki_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "subreddit_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getControversial",
+      "shortPath": "subreddits.getControversial",
+      "description": "Get controversial posts from a subreddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getHot",
+      "shortPath": "subreddits.getHot",
+      "description": "Get hot posts from a subreddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getNew",
+      "shortPath": "subreddits.getNew",
+      "description": "Get new posts from a subreddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getRising",
+      "shortPath": "subreddits.getRising",
+      "description": "Get rising posts from a subreddit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.subreddits.getTop",
+      "shortPath": "subreddits.getTop",
+      "description": "Get top posts from a subreddit with time filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subreddit",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.users.getAbout",
+      "shortPath": "users.getAbout",
+      "description": "Get user profile information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "link_karma",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "comment_karma",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_karma",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "is_employee",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_mod",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_gold",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_utc",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_verified_email",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "icon_img",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "is_suspended",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "pref_show_snoovatar",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "accept_followers",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.users.getComments",
+      "shortPath": "users.getComments",
+      "description": "Get a user's comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "new | hot | top"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comments",
+            "optional": false,
+            "type": "{ id: string, name: string, body: string, body_html: string, author: string | null, author_fullname?: string, score: number, ups: number, downs: number, depth?: number, parent_id: string, link_id: string, created_utc: number, controversiality: number, gilded?: number, edited: boolean | number, score_hidden?: boolean, collapsed?: boolean, archived?: boolean, locked?: boolean, stickied?: boolean, permalink: string, subreddit: string, subreddit_name_prefixed: string, over_18?: boolean }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.users.getOverview",
+      "shortPath": "users.getOverview",
+      "description": "Get a user's mixed posts and comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "new | hot | top"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "({ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number } | { id: string, name: string, body: string, body_html: string, author: string | null, author_fullname?: string, score: number, ups: number, downs: number, depth?: number, parent_id: string, link_id: string, created_utc: number, controversiality: number, gilded?: number, edited: boolean | number, score_hidden?: boolean, collapsed?: boolean, archived?: boolean, locked?: boolean, stickied?: boolean, permalink: string, subreddit: string, subreddit_name_prefixed: string, over_18?: boolean })[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "reddit.api.users.getSubmitted",
+      "shortPath": "users.getSubmitted",
+      "description": "Get a user's submitted posts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "new | hot | top"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "t",
+            "optional": true,
+            "type": "hour | day | week | month | year | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ id: string, name: string, title: string, selftext: string | null, selftext_html: string | null, url: string, author: string | null, author_fullname?: string, subreddit: string, subreddit_name_prefixed: string, subreddit_id?: string, score: number, ups: number, downs: number, upvote_ratio: number, num_comments: number, over_18: boolean, spoiler: boolean, stickied: boolean, archived?: boolean, locked?: boolean, hide_score?: boolean, created_utc: number, permalink: string, thumbnail: string, total_awards_received?: number }[]"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dist",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "reddit.db.comments.search",
+      "entityName": "comments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "body",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "depth",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_utc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "reddit.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "selftext",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subreddit",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "score",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "ups",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "downs",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "upvote_ratio",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "num_comments",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "permalink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "thumbnail",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "over_18",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "spoiler",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "stickied",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_utc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "reddit.db.subreddits.search",
+      "entityName": "subreddits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "display_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "public_description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscribers",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "active_user_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "over18",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_utc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "reddit.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "link_karma",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "comment_karma",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "total_karma",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "is_suspended",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_utc",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

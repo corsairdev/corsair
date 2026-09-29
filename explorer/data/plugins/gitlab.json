@@ -1,0 +1,6078 @@
+{
+  "id": "gitlab",
+  "displayName": "GitLab",
+  "description": "DevOps platform for Git repos, CI/CD pipelines, issues, and complete software delivery.",
+  "npmPackageName": "@corsair-dev/gitlab",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 62,
+    "webhooks": 5,
+    "db": 11
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature",
+        "project_id",
+        "group_id"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "gitlab.api.branches.create",
+      "shortPath": "branches.create",
+      "description": "Create a new branch",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "protected",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "developers_can_push",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "developers_can_merge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_push",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.branches.delete",
+      "shortPath": "branches.delete",
+      "description": "Delete a branch",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.branches.get",
+      "shortPath": "branches.get",
+      "description": "Get a specific branch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "branch",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "merged",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "protected",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "developers_can_push",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "developers_can_merge",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "can_push",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.branches.list",
+      "shortPath": "branches.list",
+      "description": "List branches in a repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name: string, merged?: boolean, protected?: boolean, default?: boolean, developers_can_push?: boolean, developers_can_merge?: boolean, can_push?: boolean, web_url?: string, commit?: { id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string } }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.commits.get",
+      "shortPath": "commits.get",
+      "description": "Get a specific commit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "sha",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "short_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authored_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "committed_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "committer_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "committer_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ additions?: number, deletions?: number, total?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.commits.getDiff",
+      "shortPath": "commits.getDiff",
+      "description": "Get the diff of a commit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "sha",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ old_path: string, new_path: string, a_mode?: string, b_mode?: string, diff: string, new_file?: boolean, renamed_file?: boolean, deleted_file?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.commits.list",
+      "shortPath": "commits.list",
+      "description": "List commits in a repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "ref_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "with_stats",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Get a specific group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "with_projects",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "top_level_only",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, path?: string, full_path?: string, full_name?: string, description?: string | null, visibility?: string, parent_id?: number | null, web_url?: string, created_at?: string, avatar_url?: string | null }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.groups.listProjects",
+      "shortPath": "groups.listProjects",
+      "description": "List projects in a group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "simple",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, path?: string, path_with_namespace?: string, description?: string | null, default_branch?: string | null, visibility?: string, ssh_url_to_repo?: string, http_url_to_repo?: string, web_url?: string, archived?: boolean, created_at?: string, last_activity_at?: string, creator_id?: number, namespace?: { id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }, owner?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, star_count?: number, forks_count?: number, open_issues_count?: number, topics?: string[], empty_repo?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.issues.create",
+      "shortPath": "issues.create",
+      "description": "Create a new issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.issues.createNote",
+      "shortPath": "issues.createNote",
+      "description": "Add a comment to an issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "issue_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noteable_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "noteable_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noteable_iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolvable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.issues.delete",
+      "shortPath": "issues.delete",
+      "description": "Delete an issue [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "issue_iid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.issues.get",
+      "shortPath": "issues.get",
+      "description": "Get a specific issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "issue_iid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.issues.list",
+      "shortPath": "issues.list",
+      "description": "List issues in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "opened | closed | all"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, iid: number, project_id: number, title: string, description?: string | null, state?: string, created_at?: string, updated_at?: string, closed_at?: string | null, closed_by?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null, author?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, assignee?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null, assignees?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[], labels?: string[], milestone?: { id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null, web_url?: string, confidential?: boolean, due_date?: string | null, weight?: number | null, references?: { short?: string, relative?: string, full?: string } }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.issues.listNotes",
+      "shortPath": "issues.listNotes",
+      "description": "List comments on an issue",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "issue_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | updated_at"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, body: string, author?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, created_at?: string, updated_at?: string, system?: boolean, noteable_id?: number, noteable_type?: string, noteable_iid?: number, resolvable?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.issues.update",
+      "shortPath": "issues.update",
+      "description": "Update an existing issue",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "issue_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_event",
+            "optional": true,
+            "type": "close | reopen"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "confidential",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "weight",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a new label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_merge_requests_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_project_label",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a label",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "label_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.labels.list",
+      "shortPath": "labels.list",
+      "description": "List labels in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, color?: string, text_color?: string, description?: string | null, open_issues_count?: number, closed_issues_count?: number, open_merge_requests_count?: number, subscribed?: boolean, is_project_label?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update a label",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "label_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "new_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text_color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "closed_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_merge_requests_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "is_project_label",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.approve",
+      "shortPath": "mergeRequests.approve",
+      "description": "Approve a merge request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.create",
+      "shortPath": "mergeRequests.create",
+      "description": "Create a new merge request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "source_branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "reviewer_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "remove_source_branch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "squash",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "reviewers",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "merge_commit_sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detailed_merge_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_conflicts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "changes_count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.createNote",
+      "shortPath": "mergeRequests.createNote",
+      "description": "Add a comment to a merge request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "system",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noteable_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "noteable_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "noteable_iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "resolvable",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.delete",
+      "shortPath": "mergeRequests.delete",
+      "description": "Delete a merge request [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.get",
+      "shortPath": "mergeRequests.get",
+      "description": "Get a specific merge request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "reviewers",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "merge_commit_sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detailed_merge_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_conflicts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "changes_count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.list",
+      "shortPath": "mergeRequests.list",
+      "description": "List merge requests in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "opened | closed | merged | all"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "reviewer_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "source_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "created_by_me | assigned_to_me | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, iid: number, project_id: number, title: string, description?: string | null, state?: string, source_branch?: string, target_branch?: string, created_at?: string, updated_at?: string, merged_at?: string | null, closed_at?: string | null, merged_by?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null, author?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, assignee?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } | null, assignees?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[], reviewers?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[], labels?: string[], milestone?: { id: number, iid?: number, title: string, state?: string, due_date?: string | null } | null, merge_commit_sha?: string | null, sha?: string, web_url?: string, detailed_merge_status?: string, has_conflicts?: boolean, draft?: boolean, changes_count?: string | null, references?: { short?: string, relative?: string, full?: string } }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.listNotes",
+      "shortPath": "mergeRequests.listNotes",
+      "description": "List comments on a merge request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "created_at | updated_at"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, body: string, author?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, created_at?: string, updated_at?: string, system?: boolean, noteable_id?: number, noteable_type?: string, noteable_iid?: number, resolvable?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.merge",
+      "shortPath": "mergeRequests.merge",
+      "description": "Merge a merge request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "merge_commit_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squash_commit_message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "squash",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "should_remove_source_branch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "merge_when_pipeline_succeeds",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "reviewers",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "merge_commit_sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detailed_merge_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_conflicts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "changes_count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.mergeRequests.update",
+      "shortPath": "mergeRequests.update",
+      "description": "Update a merge request",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "merge_request_iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "assignee_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "assignee_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "reviewer_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state_event",
+            "optional": true,
+            "type": "close | reopen"
+          },
+          {
+            "key": "remove_source_branch",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "squash",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "target_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "closed_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "merged_by",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "assignees",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "reviewers",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "milestone",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }"
+          },
+          {
+            "key": "merge_commit_sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "detailed_merge_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_conflicts",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "changes_count",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "references",
+            "optional": true,
+            "type": "{ short?: string, relative?: string, full?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.milestones.create",
+      "shortPath": "milestones.create",
+      "description": "Create a new milestone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.milestones.delete",
+      "shortPath": "milestones.delete",
+      "description": "Delete a milestone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.milestones.get",
+      "shortPath": "milestones.get",
+      "description": "Get a specific milestone",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.milestones.list",
+      "shortPath": "milestones.list",
+      "description": "List milestones in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | closed"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, iid?: number, project_id?: number, title: string, description?: string | null, state?: string, due_date?: string | null, start_date?: string | null, created_at?: string, updated_at?: string, web_url?: string }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.milestones.update",
+      "shortPath": "milestones.update",
+      "description": "Update a milestone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "milestone_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state_event",
+            "optional": true,
+            "type": "close | activate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.cancel",
+      "shortPath": "pipelines.cancel",
+      "description": "Cancel a running pipeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.create",
+      "shortPath": "pipelines.create",
+      "description": "Create a new pipeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "ref",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "{ key: string, value: string, variable_type?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.delete",
+      "shortPath": "pipelines.delete",
+      "description": "Delete a pipeline",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.get",
+      "shortPath": "pipelines.get",
+      "description": "Get a specific pipeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List pipelines for a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, iid?: number, project_id?: number, status?: string, source?: string, ref?: string, sha?: string, web_url?: string, created_at?: string, updated_at?: string, started_at?: string | null, finished_at?: string | null, name?: string | null, user?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string } }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.listJobs",
+      "shortPath": "pipelines.listJobs",
+      "description": "List jobs in a pipeline",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "scope",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name?: string, status?: string, stage?: string, ref?: string, created_at?: string, started_at?: string | null, finished_at?: string | null, duration?: number | null, web_url?: string, pipeline?: { id: number, status?: string } }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.pipelines.retry",
+      "shortPath": "pipelines.retry",
+      "description": "Retry a failed pipeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "pipeline_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "iid",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "finished_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a new project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "namespace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          },
+          {
+            "key": "initialize_with_readme",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_with_namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ssh_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "{ id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "empty_repo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.projects.fork",
+      "shortPath": "projects.fork",
+      "description": "Fork a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "namespace_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace_path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_with_namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ssh_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "{ id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "empty_repo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a specific project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "license",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_with_namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ssh_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "{ id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "empty_repo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List projects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "owned",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "membership",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "starred",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "simple",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string, path?: string, path_with_namespace?: string, description?: string | null, default_branch?: string | null, visibility?: string, ssh_url_to_repo?: string, http_url_to_repo?: string, web_url?: string, archived?: boolean, created_at?: string, last_activity_at?: string, creator_id?: number, namespace?: { id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }, owner?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, star_count?: number, forks_count?: number, open_issues_count?: number, topics?: string[], empty_repo?: boolean }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Update an existing project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | internal | private"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "path_with_namespace",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "default_branch",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ssh_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "http_url_to_repo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_activity_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "namespace",
+            "optional": true,
+            "type": "{ id: number, name?: string, path?: string, kind?: string, full_path?: string, web_url?: string }"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "star_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forks_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "open_issues_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "topics",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "empty_repo",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.releases.create",
+      "shortPath": "releases.create",
+      "description": "Create a new release",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "released_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestones",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "released_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upcoming_release",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          },
+          {
+            "key": "milestones",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.releases.delete",
+      "shortPath": "releases.delete",
+      "description": "Delete a release",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "gitlab.api.releases.get",
+      "shortPath": "releases.get",
+      "description": "Get a specific release",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "released_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upcoming_release",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          },
+          {
+            "key": "milestones",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.releases.list",
+      "shortPath": "releases.list",
+      "description": "List releases in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ tag_name: string, name?: string | null, description?: string | null, created_at?: string, released_at?: string, upcoming_release?: boolean, author?: { id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }, commit?: { id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }, milestones?: { id: number, iid?: number, title: string, state?: string, due_date?: string | null }[] }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.releases.update",
+      "shortPath": "releases.update",
+      "description": "Update a release",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "released_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "milestones",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "released_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "upcoming_release",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          },
+          {
+            "key": "milestones",
+            "optional": true,
+            "type": "{ id: number, iid?: number, title: string, state?: string, due_date?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.repository.compare",
+      "shortPath": "repository.compare",
+      "description": "Compare branches, tags, or commits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "straight",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }"
+          },
+          {
+            "key": "commits",
+            "optional": true,
+            "type": "{ id: string, short_id?: string, title?: string, message?: string, author_name?: string, author_email?: string, authored_date?: string, committed_date?: string, committer_name?: string, committer_email?: string, parent_ids?: string[], web_url?: string }[]"
+          },
+          {
+            "key": "diffs",
+            "optional": true,
+            "type": "{ old_path: string, new_path: string, a_mode?: string, b_mode?: string, diff: string, new_file?: boolean, renamed_file?: boolean, deleted_file?: boolean }[]"
+          },
+          {
+            "key": "compare_timeout",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "compare_same_ref",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.repository.getFile",
+      "shortPath": "repository.getFile",
+      "description": "Get a file from the repository",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "file_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "content_sha256",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blob_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_commit_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.repository.getTree",
+      "shortPath": "repository.getTree",
+      "description": "List repository tree (files and directories)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, type: string, path: string, mode?: string }[]"
+      }
+    },
+    {
+      "path": "gitlab.api.users.getCurrentUser",
+      "shortPath": "users.getCurrentUser",
+      "description": "Get the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "bot",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "two_factor_enabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.users.getUser",
+      "shortPath": "users.getUser",
+      "description": "Get a specific user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "web_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gitlab.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, username: string, name?: string | null, state?: string, avatar_url?: string | null, web_url?: string }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "gitlab.webhooks.issue",
+      "shortPath": "issue",
+      "description": "An issue event from GitLab (open, update, close)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_kind",
+            "optional": false,
+            "type": "issue"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string, avatar_url?: string }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string, web_url?: string, path_with_namespace?: string }"
+          },
+          {
+            "key": "object_attributes",
+            "optional": true,
+            "type": "{ id?: number, iid?: number, title?: string, state?: string, action?: string, url?: string, description?: string | null, confidential?: boolean }"
+          }
+        ]
+      },
+      "responseType": "{ object_kind: issue, event_type?: string, user?: { id?: number, name?: string, username?: string, avatar_url?: string }, project?: { id?: number, name?: string, web_url?: string, path_with_namespace?: string }, object_attributes?: { id?: number, iid?: number, title?: string, state?: string, action?: string, url?: string, description?: string | null, confidential?: boolean } }",
+      "usageExample": "gitlab({\n    webhookHooks: {\n        issue: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "gitlab.webhooks.mergeRequest",
+      "shortPath": "mergeRequest",
+      "description": "A merge request event from GitLab (open, update, merge, close)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_kind",
+            "optional": false,
+            "type": "merge_request"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string, avatar_url?: string }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string, web_url?: string, path_with_namespace?: string }"
+          },
+          {
+            "key": "object_attributes",
+            "optional": true,
+            "type": "{ id?: number, iid?: number, title?: string, state?: string, source_branch?: string, target_branch?: string, action?: string, url?: string, description?: string | null, merge_status?: string, draft?: boolean }"
+          }
+        ]
+      },
+      "responseType": "{ object_kind: merge_request, event_type?: string, user?: { id?: number, name?: string, username?: string, avatar_url?: string }, project?: { id?: number, name?: string, web_url?: string, path_with_namespace?: string }, object_attributes?: { id?: number, iid?: number, title?: string, state?: string, source_branch?: string, target_branch?: string, action?: string, url?: string, description?: string | null, merge_status?: string, draft?: boolean } }",
+      "usageExample": "gitlab({\n    webhookHooks: {\n        mergeRequest: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "gitlab.webhooks.note",
+      "shortPath": "note",
+      "description": "A comment event from GitLab (new comments on issues, MRs, commits)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_kind",
+            "optional": false,
+            "type": "note"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string, avatar_url?: string }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string, web_url?: string, path_with_namespace?: string }"
+          },
+          {
+            "key": "object_attributes",
+            "optional": true,
+            "type": "{ id?: number, note?: string, noteable_type?: string, noteable_id?: number, url?: string, action?: string }"
+          },
+          {
+            "key": "issue",
+            "optional": true,
+            "type": "{ id?: number, iid?: number, title?: string }"
+          },
+          {
+            "key": "merge_request",
+            "optional": true,
+            "type": "{ id?: number, iid?: number, title?: string }"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "{ id?: string, message?: string }"
+          }
+        ]
+      },
+      "responseType": "{ object_kind: note, event_type?: string, user?: { id?: number, name?: string, username?: string, avatar_url?: string }, project?: { id?: number, name?: string, web_url?: string, path_with_namespace?: string }, object_attributes?: { id?: number, note?: string, noteable_type?: string, noteable_id?: number, url?: string, action?: string }, issue?: { id?: number, iid?: number, title?: string }, merge_request?: { id?: number, iid?: number, title?: string }, commit?: { id?: string, message?: string } }",
+      "usageExample": "gitlab({\n    webhookHooks: {\n        note: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "gitlab.webhooks.pipeline",
+      "shortPath": "pipeline",
+      "description": "A pipeline event from GitLab (status change)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_kind",
+            "optional": false,
+            "type": "pipeline"
+          },
+          {
+            "key": "object_attributes",
+            "optional": true,
+            "type": "{ id?: number, iid?: number, ref?: string, status?: string, source?: string, created_at?: string, finished_at?: string | null, duration?: number | null }"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number, name?: string, username?: string, avatar_url?: string }"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string, web_url?: string, path_with_namespace?: string }"
+          },
+          {
+            "key": "builds",
+            "optional": true,
+            "type": "{ id?: number, stage?: string, name?: string, status?: string }[]"
+          }
+        ]
+      },
+      "responseType": "{ object_kind: pipeline, object_attributes?: { id?: number, iid?: number, ref?: string, status?: string, source?: string, created_at?: string, finished_at?: string | null, duration?: number | null }, user?: { id?: number, name?: string, username?: string, avatar_url?: string }, project?: { id?: number, name?: string, web_url?: string, path_with_namespace?: string }, builds?: { id?: number, stage?: string, name?: string, status?: string }[] }",
+      "usageExample": "gitlab({\n    webhookHooks: {\n        pipeline: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "gitlab.webhooks.push",
+      "shortPath": "push",
+      "description": "A push event from GitLab (git push to repository)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object_kind",
+            "optional": false,
+            "type": "push"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "checkout_sha",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_username",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_avatar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "{ id?: number, name?: string, web_url?: string, path_with_namespace?: string, default_branch?: string }"
+          },
+          {
+            "key": "commits",
+            "optional": true,
+            "type": "{ id: string, message?: string, title?: string, timestamp?: string, url?: string, author?: { name?: string, email?: string }, added?: string[], modified?: string[], removed?: string[] }[]"
+          },
+          {
+            "key": "total_commits_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "responseType": "{ object_kind: push, event_name?: string, before?: string, after?: string, ref?: string, checkout_sha?: string | null, user_id?: number, user_name?: string, user_username?: string, user_avatar?: string, project_id?: number, project?: { id?: number, name?: string, web_url?: string, path_with_namespace?: string, default_branch?: string }, commits?: { id: string, message?: string, title?: string, timestamp?: string, url?: string, author?: { name?: string, email?: string }, added?: string[], modified?: string[], removed?: string[] }[], total_commits_count?: number }",
+      "usageExample": "gitlab({\n    webhookHooks: {\n        push: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "gitlab.db.branches.search",
+      "entityName": "branches",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merged",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "protected",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "default",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "developers_can_push",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "developers_can_merge",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "can_push",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.commits.search",
+      "entityName": "commits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "short_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "message",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "authored_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "committed_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "committer_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "committer_email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.groups.search",
+      "entityName": "groups",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "full_path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.issues.search",
+      "entityName": "issues",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "iid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "milestone_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "author_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "assignee_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "confidential",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.labels.search",
+      "entityName": "labels",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text_color",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "open_issues_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "closed_issues_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "subscribed",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "is_project_label",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.mergeRequests.search",
+      "entityName": "mergeRequests",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "iid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source_branch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "target_branch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merged_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "closed_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "merge_commit_sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "author_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "assignee_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "has_conflicts",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "draft",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.milestones.search",
+      "entityName": "milestones",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "iid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "due_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_date",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.pipelines.search",
+      "entityName": "pipelines",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "iid",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "project_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "source",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ref",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "sha",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updated_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "started_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "finished_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.projects.search",
+      "entityName": "projects",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "path_with_namespace",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "default_branch",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "visibility",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "ssh_url_to_repo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "http_url_to_repo",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "archived",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "last_activity_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "creator_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "namespace_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "star_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "forks_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "open_issues_count",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.releases.search",
+      "entityName": "releases",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tag_name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "description",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "released_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "upcoming_release",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    },
+    {
+      "path": "gitlab.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "avatar_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "web_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "bio",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "location",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "is_admin",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "bot",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

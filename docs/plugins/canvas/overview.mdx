@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Canvas plugin for Corsair"
+description: "Learning management system for courses, assignments, grades, and educational content."
 ---
 
-Use **Canvas** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **Canvas LMS** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -46,8 +46,8 @@ export const corsair = createCorsair({
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
 	hub: {
-		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
-		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
 	},
 });
 ```
@@ -71,7 +71,7 @@ More: [API Key](/concepts/api-key)
 </Tab>
 <Tab title="OAuth 2.0">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Canvas OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Canvas LMS OAuth app.
 
 ```ts
 canvas({

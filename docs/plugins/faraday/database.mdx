@@ -1,0 +1,433 @@
+---
+title: Database
+description: "Faraday local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Faraday plugin syncs data locally. Use `corsair.faraday.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `faraday.db.accounts.search`
+
+```ts
+const rows = await corsair.faraday.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `contract_started_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `parent_account_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `stripe_customer_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Cohorts
+
+Path: `faraday.db.cohorts.search`
+
+```ts
+const rows = await corsair.faraday.db.cohorts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Connections
+
+Path: `faraday.db.connections.search`
+
+```ts
+const rows = await corsair.faraday.db.connections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Datasets
+
+Path: `faraday.db.datasets.search`
+
+```ts
+const rows = await corsair.faraday.db.datasets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Graph Edges
+
+Path: `faraday.db.graphEdges.search`
+
+```ts
+const rows = await corsair.faraday.db.graphEdges.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `downstream_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `downstream_literate` | `string` | equals, contains, startsWith, endsWith, in |
+| `downstream_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `downstream_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `upstream_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `upstream_literate` | `string` | equals, contains, startsWith, endsWith, in |
+| `upstream_status` | `string` | equals, contains, startsWith, endsWith, in |
+| `upstream_type` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Outcomes
+
+Path: `faraday.db.outcomes.search`
+
+```ts
+const rows = await corsair.faraday.db.outcomes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Persona Sets
+
+Path: `faraday.db.personaSets.search`
+
+```ts
+const rows = await corsair.faraday.db.personaSets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Places
+
+Path: `faraday.db.places.search`
+
+```ts
+const rows = await corsair.faraday.db.places.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scopes
+
+Path: `faraday.db.scopes.search`
+
+```ts
+const rows = await corsair.faraday.db.scopes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Streams
+
+Path: `faraday.db.streams.search`
+
+```ts
+const rows = await corsair.faraday.db.streams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Targets
+
+Path: `faraday.db.targets.search`
+
+```ts
+const rows = await corsair.faraday.db.targets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Traits
+
+Path: `faraday.db.traits.search`
+
+```ts
+const rows = await corsair.faraday.db.traits.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `archived_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_changed_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status_error` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_read_input_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_config_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_updated_output_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Webhook Endpoints
+
+Path: `faraday.db.webhookEndpoints.search`
+
+```ts
+const rows = await corsair.faraday.db.webhookEndpoints.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

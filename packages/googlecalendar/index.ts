@@ -175,7 +175,7 @@ const googleCalendarEndpointMeta = {
 	},
 	'events.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a calendar event [DESTRUCTIVE]',
+		description: 'Delete a calendar event',
 	},
 	'calendar.getAvailability': {
 		riskLevel: 'read',
@@ -223,7 +223,12 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			providerName: 'Google',
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
-			scopes: ['https://www.googleapis.com/auth/calendar'],
+			scopes: [
+				'https://www.googleapis.com/auth/calendar.events',
+				// calendar.getAvailability hits freeBusy.query, which events
+				// scope does not cover. Narrowest scope that does.
+				'https://www.googleapis.com/auth/calendar.freebusy',
+			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		hooks: options.hooks,

@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Corporate card and spend management platform for startups and growing businesses."
+---
+
+Use **Brex** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 86 typed API operations
+- 18 synced entities (`budgets`, `cards`, `cashAccounts`, `company`, `departments`, `expenses`, and 12 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/brex
+```
+```bash yarn
+yarn add corsair @corsair-dev/brex
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/brex
+```
+```bash bun
+bun add corsair @corsair-dev/brex
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { brex } from '@corsair-dev/brex';
+
+export const corsair = createCorsair({
+	plugins: [
+		brex(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+brex()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Brex OAuth app.
+
+```ts
+brex({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'brex',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`accounts.getCash`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.brex.api.accounts.getCash({});
+```
+
+
+**`budgets.archive`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.brex.api.budgets.archive({});
+```
+
+
+See the full list on the [API](/plugins/brex/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.brex.db.<entity>.search()` and `.list()`: `budgets`, `cards`, `cashAccounts`, `company`, `departments`, `expenses`, `fields`, `legalEntities`, `locations`, `referrals`, `spendLimits`, `titles`, `transactions`, `transfers`, `trips`, `users`, `vendors`, `webhooks`.
+
+See [Database](/plugins/brex/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/brex/api">
+    Every `brex.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/brex/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

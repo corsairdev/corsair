@@ -3140,54 +3140,6 @@ await corsair.algolia.api.indices.getTaskStatus({});
 
 ---
 
-### indexExists
-
-`indices.indexExists`
-
-Tool to check if an Algolia index exists. Use before performing index operations to prevent accidental index creation. Results are scoped to the Algolia app ID configured in the Composio connection. Example: IndexExists(index_name='products').
-
-**Risk:** `read`
-
-```ts
-await corsair.algolia.api.indices.indexExists({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `index_name` | `string` | Yes | — |
-| `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-| `region` | `string` | No | — |
-| `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output:** `any`
-
-
----
-
 ### listIndices
 
 `indices.listIndices`

@@ -254,7 +254,7 @@ const beaconstacEndpointMeta = {
 	},
 	'qrTemplates.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a QR Code template by ID [DESTRUCTIVE]',
+		description: 'Delete a QR Code template by ID',
 	},
 	'tags.create': {
 		riskLevel: 'write',
@@ -270,7 +270,7 @@ const beaconstacEndpointMeta = {
 	},
 	'tags.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a tag by ID [DESTRUCTIVE]',
+		description: 'Delete a tag by ID',
 	},
 	'users.create': {
 		riskLevel: 'write',
@@ -298,7 +298,7 @@ const beaconstacEndpointMeta = {
 	},
 	'qrcodes.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a QR Code by ID [DESTRUCTIVE]',
+		description: 'Delete a QR Code by ID',
 	},
 	'bulkQrcodes.list': {
 		riskLevel: 'read',

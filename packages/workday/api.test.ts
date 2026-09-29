@@ -71,7 +71,7 @@ describe('Workday Plugin', () => {
 		}
 	});
 
-	it('registers 13 Composio-aligned triggers', () => {
+	it('registers 13 Workday triggers', () => {
 		const plugin = workday(pluginOpts);
 		const hooks = plugin.webhooks as Record<string, unknown> | undefined;
 		expect(Object.keys(hooks ?? {}).sort()).toEqual(
@@ -406,7 +406,7 @@ describe('Workday Plugin', () => {
 			path: '/workers/{ID}',
 			method: 'GET',
 		});
-		// Composio alias of WorkersApi.getStaffingInformation (Staffing docs).
+		// Alias of WorkersApi.getStaffingInformation (Staffing docs).
 		expect(byName.getWorkerInfo).toMatchObject({
 			service: 'staffing',
 			version: 'v6',
@@ -414,7 +414,7 @@ describe('Workday Plugin', () => {
 			method: 'GET',
 		});
 		expect(byName.getJobById?.queryParams).toEqual([]);
-		// JobsApi.getCollection — Composio exposes two aliases, same docs path/params.
+		// JobsApi.getCollection — two aliases, same docs path/params.
 		expect(byName.getCollectionOfJobs).toMatchObject({
 			service: 'staffing',
 			path: '/jobs',

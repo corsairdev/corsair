@@ -220,7 +220,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.clearSheet': {
 		riskLevel: 'destructive',
-		description: 'Clear all data from a sheet [DESTRUCTIVE]',
+		description: 'Clear all data from a sheet',
 	},
 	'sheets.createSheet': {
 		riskLevel: 'write',
@@ -234,7 +234,7 @@ const googleSheetsEndpointMeta = {
 	},
 	'sheets.deleteRowsOrColumns': {
 		riskLevel: 'destructive',
-		description: 'Delete rows or columns from a sheet [DESTRUCTIVE]',
+		description: 'Delete rows or columns from a sheet',
 	},
 	'sheets.listSheetsInSpreadsheet': {
 		riskLevel: 'read',
@@ -283,7 +283,9 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
 				'https://www.googleapis.com/auth/spreadsheets',
-				'https://www.googleapis.com/auth/drive.readonly',
+				// spreadsheets.delete issues DELETE /drive/v3/files/{id};
+				// drive.readonly cannot write.
+				'https://www.googleapis.com/auth/drive',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
