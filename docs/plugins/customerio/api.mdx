@@ -1,0 +1,947 @@
+---
+title: API
+description: "API reference for Customer.io: every `customerio.api.*` operation with input and output types."
+---
+
+Every `customerio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Broadcasts
+
+### getTrigger
+
+`broadcasts.getTrigger`
+
+Get details of a specific broadcast trigger
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.broadcasts.getTrigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `number` | Yes | — |
+| `trigger_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `broadcast_id` | `number` | No | — |
+| `campaign_id` | `number` | No | — |
+| `state` | `string` | No | — |
+| `data` | `lazy` | No | — |
+| `created` | `number \| string` | No | — |
+| `created_at` | `number \| string` | No | — |
+| `processed_at` | `number \| string` | No | — |
+
+
+
+---
+
+### listTriggers
+
+`broadcasts.listTriggers`
+
+List API trigger instances for a broadcast
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.broadcasts.listTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `triggers` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="triggers full type">
+
+```ts
+{
+  id: number,
+  broadcast_id?: number,
+  campaign_id?: number,
+  state?: string,
+  data?: lazy,
+  created?: number | string,
+  created_at?: number | string,
+  processed_at?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trigger
+
+`broadcasts.trigger`
+
+Trigger a Customer.io broadcast to a defined audience
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.broadcasts.trigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `broadcast_id` | `number` | Yes | — |
+| `data` | `lazy` | No | — |
+| `recipients` | `lazy` | No | — |
+| `ids` | `string[]` | No | — |
+| `emails` | `string[]` | No | — |
+| `per_user_data` | `object[]` | No | — |
+| `data_file_url` | `string` | No | — |
+| `email_add_duplicates` | `boolean` | No | — |
+| `email_ignore_missing` | `boolean` | No | — |
+| `id_ignore_missing` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="per_user_data full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  data?: lazy
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `broadcast_id` | `number` | No | — |
+| `trigger_id` | `number` | No | — |
+| `created` | `number \| string` | No | — |
+
+
+
+---
+
+## Cdp
+
+### batch
+
+`cdp.batch`
+
+Send multiple CDP calls (identify, track, page, screen, group, alias) in one batch
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.cdp.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batch` | `object[]` | Yes | — |
+| `context` | `lazy` | No | — |
+
+<AccordionGroup>
+<Accordion title="batch full type">
+
+```ts
+(
+  {
+    type: identify,
+    userId?: string,
+    anonymousId?: string,
+    traits?: lazy,
+    context?: lazy,
+    timestamp?: string
+  } | {
+    type: track,
+    userId?: string,
+    anonymousId?: string,
+    event: string,
+    properties?: lazy,
+    context?: lazy,
+    timestamp?: string
+  } | {
+    type: page,
+    userId?: string,
+    anonymousId?: string,
+    name?: string,
+    properties?: lazy,
+    context?: lazy,
+    timestamp?: string
+  } | {
+    type: screen,
+    userId?: string,
+    anonymousId?: string,
+    name: string,
+    properties?: lazy,
+    context?: lazy,
+    timestamp?: string
+  } | {
+    type: group,
+    userId?: string,
+    anonymousId?: string,
+    groupId: string,
+    traits?: lazy,
+    context?: lazy,
+    timestamp?: string
+  } | {
+    type: alias,
+    userId: string,
+    previousId: string,
+    context?: lazy,
+    timestamp?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### page
+
+`cdp.page`
+
+Track a website page view via the CDP API
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.cdp.page({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `anonymousId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `properties` | `lazy` | No | — |
+| `context` | `lazy` | No | — |
+| `timestamp` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### screen
+
+`cdp.screen`
+
+Track a mobile screen view via the CDP API
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.cdp.screen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `anonymousId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `properties` | `lazy` | No | — |
+| `context` | `lazy` | No | — |
+| `timestamp` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Collections
+
+### list
+
+`collections.list`
+
+List Collections metadata in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.collections.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  schema?: lazy,
+  rows?: number,
+  bytes?: number,
+  created?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### addPerson
+
+`groups.addPerson`
+
+Add a person to a group (company, account or project)
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.groups.addPerson({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+| `traits` | `lazy` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Info
+
+### listIps
+
+`info.listIps`
+
+List IP addresses used by Customer.io for sending messages
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.info.listIps({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip_addresses` | `string[]` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List messages sent from the workspace with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `start` | `string` | No | — |
+| `drafts` | `boolean` | No | — |
+| `type` | `email \| push \| sms \| in_app \| inbox \| whatsapp` | No | — |
+| `campaign_id` | `number` | No | — |
+| `newsletter_id` | `number` | No | — |
+| `action_id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | number,
+  type?: string,
+  customer_id?: string,
+  campaign_id?: number,
+  newsletter_id?: number,
+  action_id?: number,
+  subject?: string,
+  created?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Newsletters
+
+### list
+
+`newsletters.list`
+
+List one-time sends (newsletters) with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.newsletters.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `start` | `string` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `newsletters` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="newsletters full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  content_ids?: number[],
+  sent_at?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### alias
+
+`profiles.alias`
+
+Merge two profiles by aliasing the secondary into the primary
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.profiles.alias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `primary` | `object` | Yes | — |
+| `secondary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="primary full type">
+
+```ts
+{
+  id?: string | number,
+  email?: string,
+  cio_id?: string
+}
+```
+</Accordion>
+
+<Accordion title="secondary full type">
+
+```ts
+{
+  id?: string | number,
+  email?: string,
+  cio_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### identify
+
+`profiles.identify`
+
+Identify a person and assign traits (creates or updates the profile)
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.profiles.identify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+| `created_at` | `number` | No | — |
+| `attributes` | `lazy` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### reportPush
+
+`profiles.reportPush`
+
+Report delivery metrics via the metrics endpoint (push events endpoint is deprecated)
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.profiles.reportPush({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivery_id` | `string` | Yes | — |
+| `metric` | `bounced \| clicked \| converted \| deferred \| delivered \| dropped \| opened \| spammed` | No | — |
+| `event` | `bounced \| clicked \| converted \| deferred \| delivered \| dropped \| opened \| spammed` | No | — |
+| `href` | `string` | No | — |
+| `reason` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `recipient` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### suppress
+
+`profiles.suppress`
+
+Suppress a profile: permanently deletes it and blocks re-adding
+
+**Risk:** `destructive`
+
+```ts
+await corsair.customerio.api.profiles.suppress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### trackEvent
+
+`profiles.trackEvent`
+
+Record an event for a person
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.profiles.trackEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `data` | `lazy` | No | — |
+| `timestamp` | `number` | No | — |
+| `type` | `string` | No | — |
+| `anonymous_id` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### unsubscribe
+
+`profiles.unsubscribe`
+
+Unsubscribe a person from emails for a specific delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.customerio.api.profiles.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivery_id` | `string` | Yes | — |
+| `unsubscribe` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Reporting Webhooks
+
+### list
+
+`reportingWebhooks.list`
+
+List reporting webhook configurations in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.reportingWebhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reporting_webhooks` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="reporting_webhooks full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  endpoint?: string,
+  events?: string[],
+  disabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### get
+
+`segments.get`
+
+Get details of a specific segment
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.segments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  type?: string,
+  created?: number | string,
+  updated?: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List segments in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.segments.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  id: number,
+  name?: string,
+  description?: string,
+  type?: string,
+  created?: number | string,
+  updated?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### membership
+
+`segments.membership`
+
+List customers in a segment with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.segments.membership({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment_id` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `start` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `lazy[]` | No | — |
+| `ids` | `string[]` | No | — |
+| `next` | `string` | No | — |
+
+
+
+---
+
+## Snippets
+
+### list
+
+`snippets.list`
+
+List reusable content snippets in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.snippets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snippets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="snippets full type">
+
+```ts
+{
+  name: string,
+  value?: string,
+  updated_at?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactional
+
+### list
+
+`transactional.list`
+
+List transactional message templates and their IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.customerio.api.transactional.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id?: string | number,
+  transactional_id?: string | number,
+  name?: string,
+  trigger_name?: string,
+  description?: string,
+  created_at?: number | string,
+  updated_at?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,95 @@
+---
+title: Python
+sidebarTitle: Python
+description: Call your hosted Corsair Cloud project from Python. Pure stdlib, no dependencies.
+icon: "/icons/python.svg"
+---
+
+`corsair-cloud` is a small Python client for a hosted [Corsair Cloud](/cloud/overview)
+project. It has no dependencies and works on Python 3.10+. Give it your API key,
+and every plugin your runtime has is callable over HTTP.
+
+## 1. Install
+
+```bash
+pip install corsair-cloud
+```
+
+## 2. Add your API key
+
+Copy your project's **API key** (`ck_cloud_…`) from the dashboard Overview page.
+It's a server secret; keep it in an environment variable, not in source. The
+client derives its own URL from the key, so it's the only value you pass:
+
+```python
+import os
+from corsair_cloud import CorsairCloud
+
+corsair = CorsairCloud(api_key=os.environ["CORSAIR_CLOUD_KEY"])
+```
+
+## 3. Make a call
+
+Pick a user (a "tenant"), then call any operation on any plugin your runtime has:
+
+```python
+pages = corsair.with_tenant("acme").call("notion", "pages.searchPage", {"query": "roadmap"})
+```
+
+`with_tenant("acme")` runs the call as your user "acme", using that user's
+connected account. `call(plugin, op, args)` returns the operation's result
+directly. The three arguments map onto one request:
+`POST /acme/notion/call/pages.searchPage` with body `{"args": {"query": "roadmap"}}`.
+
+## 4. Connect a user's account
+
+A tenant can only call Notion after they have connected their Notion account.
+Create a connect link and send the user to it:
+
+```python
+link = corsair.manage.create_connect_link("notion", "acme")
+# redirect the user to link["connectUrl"]
+```
+
+After they authorize, check who is connected:
+
+```python
+status = corsair.manage.connection_status("acme")
+# {"notion": "connected"}
+```
+
+## Manage tenants and connections
+
+```python
+corsair.manage.create_tenant("acme")          # add a tenant
+corsair.manage.tenants()                       # list tenants
+corsair.manage.connection_status("acme")       # {"notion": "connected"}
+corsair.manage.create_connect_link("notion", "acme")
+corsair.manage.disconnect("notion", "acme")    # revoke a connection
+```
+
+## Handle errors
+
+Any non-2xx response raises `CorsairError`:
+
+```python
+from corsair_cloud import CorsairError
+
+try:
+    corsair.with_tenant("acme").call("notion", "pages.searchPage", {})
+except CorsairError as e:
+    if e.code == "not_connected":
+        # send the user through create_connect_link first
+        ...
+    else:
+        raise
+```
+
+The fields you will use most:
+
+| Field | Example | Meaning |
+| --- | --- | --- |
+| `.code` | `not_connected` | Machine-readable reason. Branch on this. |
+| `.status` | `409` | HTTP status. |
+| `.message` | `"Notion is not connected for acme"` | Human-readable detail. |
+| `.provider_status` | `429` | The upstream provider's status, when the error came from them. |
