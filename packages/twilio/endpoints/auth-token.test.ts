@@ -38,6 +38,8 @@ const ctx = {
 
 // Inputs carry only the fields each handler reads. Full zod-valid inputs
 // would couple this token test to unrelated endpoint validation, hence any.
+// Each case is an opaque invocation thunk: only the arguments it records
+// on the mocked request matter, so the resolved payload stays unknown.
 const cases: [string, () => Promise<unknown>][] = [
 	[
 		'messages.send',
