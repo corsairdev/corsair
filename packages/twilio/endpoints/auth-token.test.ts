@@ -22,6 +22,13 @@ const mockedRequest = client.makeTwilioRequest as jest.MockedFunction<
 
 const TOKEN_WITH_COLONS = 'tok:en:123';
 
+/**
+ * Minimal endpoint context. The six endpoints under test only read ctx.key,
+ * ctx.options, ctx.keys.get_accountSid, and ctx.db, so the stub provides
+ * exactly those. The full endpoint context type additionally carries
+ * database clients and key managers, hence the any below keeps this
+ * token-focused test decoupled from unrelated infrastructure types.
+ */
 const ctx = {
 	key: `AC123:${TOKEN_WITH_COLONS}`,
 	options: {},
@@ -29,6 +36,8 @@ const ctx = {
 	db: {},
 } as any;
 
+// Inputs carry only the fields each handler reads. Full zod-valid inputs
+// would couple this token test to unrelated endpoint validation, hence any.
 const cases: [string, () => Promise<unknown>][] = [
 	[
 		'messages.send',
@@ -44,6 +53,8 @@ const cases: [string, () => Promise<unknown>][] = [
 describe('Twilio endpoints auth token', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		// Outputs are irrelevant here: assertions target the request
+		// arguments, so the mocked response is an empty payload cast onward.
 		mockedRequest.mockResolvedValue({} as never);
 	});
 
@@ -53,7 +64,11 @@ describe('Twilio endpoints auth token', () => {
 			await call();
 
 			expect(mockedRequest).toHaveBeenCalledTimes(1);
-			const [, accountSid, authToken] = mockedRequest.mock.calls[0]!;
+			const recorded = mockedRequest.mock.calls[0];
+			if (!recorded) {
+				throw new Error('expected makeTwilioRequest to be called once');
+			}
+			const [, accountSid, authToken] = recorded;
 			expect(accountSid).toBe('AC123');
 			expect(authToken).toBe(TOKEN_WITH_COLONS);
 		},
