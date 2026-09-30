@@ -39,6 +39,7 @@ import { errorHandlers } from './error-handlers';
 import { MailtrapSchema } from './schema';
 import { resolveMailtrapOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchMailtrapTenantWebhook } from './webhooks/tenant-matcher';
+import { AuthMissingError } from 'corsair';
 
 export type MailtrapPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -682,7 +683,10 @@ export function mailtrap<const T extends MailtrapPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('mailtrap', 'api_key')
+				}
+				return res
 			}
 
 			return '';
