@@ -262,9 +262,15 @@ const getResponseBody = async (response: Response): Promise<any> => {
 			const contentType = response.headers.get('Content-Type');
 			if (contentType) {
 				const jsonTypes = ['application/json', 'application/problem+json'];
-				const isJSON = jsonTypes.some((type) =>
-					contentType.toLowerCase().startsWith(type),
-				);
+				// Also accept any structured +json suffix (RFC 6839), e.g. JSON:API's
+				// application/vnd.api+json or application/vnd.github.v3+json.
+				const mediaType = (contentType.split(';')[0] ?? '')
+					.trim()
+					.toLowerCase();
+				const isJSON =
+					jsonTypes.some((type) =>
+						contentType.toLowerCase().startsWith(type),
+					) || mediaType.endsWith('+json');
 				if (isJSON) {
 					return await response.json();
 				} else {
