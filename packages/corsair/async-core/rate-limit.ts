@@ -57,7 +57,10 @@ export function extractRateLimitInfo(
 				const resetMs =
 					timestamp > 1000000000000 ? timestamp : timestamp * 1000;
 				info.rateLimitReset = resetMs;
-				if (resetMs > now) {
+				// retry-after is the server's explicit instruction for this response;
+				// the window reset is only a fallback when it is absent (e.g. GitHub
+				// secondary limits send a short retry-after and a reset up to an hour out).
+				if (info.retryAfter === undefined && resetMs > now) {
 					info.retryAfter = resetMs - now;
 				}
 			}
