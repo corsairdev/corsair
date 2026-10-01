@@ -3,7 +3,7 @@
  * the cache writes they perform, and what reaches the event log. Network access
  * is mocked, so this runs in CI.
  */
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	Clients,
 	Company,
@@ -17,7 +17,7 @@ import {
 	Users,
 } from './endpoints';
 import { isNonIdempotent } from './error-handlers';
-import { harvestEndpointMeta } from './index';
+import { harvest, harvestEndpointMeta } from './index';
 
 // The event-log payload is asserted directly further down: it is the one place
 // caller-supplied text could leak into durable storage, so it needs to be
@@ -700,5 +700,49 @@ describe('delete results', () => {
 		await expect(
 			Invoices.removePayment(ctx, { invoice_id: 9, payment_id: 11 }),
 		).resolves.toEqual({ success: true, id: 11 });
+	});
+});
+
+describe('keyBuilder', () => {
+	type KeyBuilderCtx = {
+		authType: 'oauth_2';
+		options: Record<string, never>;
+		tenantId: string;
+		keys: { get_access_token: () => Promise<string | null> };
+	};
+
+	function buildKey(
+		accessToken: string | null,
+		options: { key?: string } = {},
+	): Promise<string> {
+		const keyBuilder = harvest(options).keyBuilder as unknown as (
+			ctx: KeyBuilderCtx,
+			source: 'endpoint' | 'webhook',
+		) => Promise<string>;
+		return keyBuilder(
+			{
+				authType: 'oauth_2',
+				options: {},
+				tenantId: 'tenant',
+				keys: { get_access_token: async () => accessToken },
+			},
+			'endpoint',
+		);
+	}
+
+	it('returns the stored access token', async () => {
+		await expect(buildKey('stored-token')).resolves.toBe('stored-token');
+	});
+
+	it('throws AuthMissingError when the keystore has no access token', async () => {
+		await expect(buildKey(null)).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when the stored access token is empty', async () => {
+		await expect(buildKey('')).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('prefers options.key over the keystore', async () => {
+		await expect(buildKey(null, { key: 'explicit' })).resolves.toBe('explicit');
 	});
 });
