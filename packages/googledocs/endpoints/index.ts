@@ -11,6 +11,7 @@ export const DocumentsEndpoints = {
 	copyDocument: Documents.copyDocument,
 	getDocument: Documents.getDocument,
 	getDocumentPlaintext: Documents.getDocumentPlaintext,
+	listDocumentTabs: Documents.listDocumentTabs,
 	updateDocumentMarkdown: Documents.updateDocumentMarkdown,
 	updateDocumentSectionMarkdown: Documents.updateDocumentSectionMarkdown,
 	updateDocumentStyle: Documents.updateDocumentStyle,
