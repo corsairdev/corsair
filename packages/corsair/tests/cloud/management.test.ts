@@ -110,15 +110,20 @@ describe('buildCloudV1Management', () => {
 
 	it('connections.list hits GET /v1/connections with filters as a query string', async () => {
 		const t = transportWith(
-			ok([
-				{
-					object: 'connection',
-					instance: 'users',
-					tenant: 'acme',
-					integration: 'slack',
-					status: 'connected',
-				},
-			]),
+			ok({
+				object: 'list',
+				data: [
+					{
+						object: 'connection',
+						instance: 'users',
+						tenant: 'acme',
+						integration: 'slack',
+						status: 'connected',
+					},
+				],
+				has_more: false,
+				next_cursor: null,
+			}),
 		);
 		const m = buildCloudV1Management(t);
 		const rows = await m.connections.list({
@@ -140,7 +145,9 @@ describe('buildCloudV1Management', () => {
 	});
 
 	it('connections.list omits the query string when no filters are given', async () => {
-		const t = transportWith(ok([]));
+		const t = transportWith(
+			ok({ object: 'list', data: [], has_more: false, next_cursor: null }),
+		);
 		const m = buildCloudV1Management(t);
 		await m.connections.list();
 		expect(t.fetch.mock.calls[0][0]).toBe(
@@ -150,19 +157,24 @@ describe('buildCloudV1Management', () => {
 
 	it('grants.list hits GET /v1/grants?tenant= and maps each grant', async () => {
 		const t = transportWith(
-			ok([
-				{
-					object: 'grant',
-					id: 'grant_1',
-					recipient: 'user@x.com',
-					tenant: 'acme',
-					instances: [
-						{ instance: 'users', tenant: 'acme', permission: 'read' },
-					],
-					url: 'https://grant/1',
-					created: '2026-01-01',
-				},
-			]),
+			ok({
+				object: 'list',
+				data: [
+					{
+						object: 'grant',
+						id: 'grant_1',
+						recipient: 'user@x.com',
+						tenant: 'acme',
+						instances: [
+							{ instance: 'users', tenant: 'acme', permission: 'readonly' },
+						],
+						url: 'https://grant/1',
+						created: '2026-01-01',
+					},
+				],
+				has_more: false,
+				next_cursor: null,
+			}),
 		);
 		const m = buildCloudV1Management(t);
 		const grants = await m.grants.list({ tenant: 'acme' });
@@ -174,7 +186,7 @@ describe('buildCloudV1Management', () => {
 				id: 'grant_1',
 				recipient: 'user@x.com',
 				tenant: 'acme',
-				instances: [{ instance: 'users', tenant: 'acme', permission: 'read' }],
+				instances: [{ instance: 'users', tenant: 'acme', permission: 'readonly' }],
 				url: 'https://grant/1',
 				created: '2026-01-01',
 			},
@@ -207,14 +219,14 @@ describe('buildCloudV1Management', () => {
 				id: 'grant_2',
 				recipient: null,
 				tenant: null,
-				instances: [{ instance: 'users', permission: 'write' }],
+				instances: [{ instance: 'users', permission: 'readwrite' }],
 				url: 'https://grant/2',
 				created: '2026-01-02',
 			}),
 		);
 		const m = buildCloudV1Management(t);
 		const grant = await m.grants.mint({
-			instances: [{ instance: 'users', permission: 'write' }],
+			instances: [{ instance: 'users', permission: 'readwrite' }],
 			idempotencyKey: 'idem_1',
 		});
 		const [url, init] = t.fetch.mock.calls[0];
@@ -222,7 +234,7 @@ describe('buildCloudV1Management', () => {
 		expect(init.method).toBe('POST');
 		expect(init.headers['idempotency-key']).toBe('idem_1');
 		expect(JSON.parse(init.body)).toEqual({
-			instances: [{ instance: 'users', permission: 'write' }],
+			instances: [{ instance: 'users', permission: 'readwrite' }],
 		});
 		expect(grant.id).toBe('grant_2');
 	});
@@ -234,14 +246,14 @@ describe('buildCloudV1Management', () => {
 				id: 'grant_1',
 				recipient: null,
 				tenant: null,
-				instances: [{ instance: 'users', permission: 'read' }],
+				instances: [{ instance: 'users', permission: 'readonly' }],
 				url: null,
 				created: '2026-01-01',
 			}),
 		);
 		const m = buildCloudV1Management(t);
 		await m.grants.update('grant_1', {
-			instances: [{ instance: 'users', permission: 'read' }],
+			instances: [{ instance: 'users', permission: 'readonly' }],
 		});
 		const [url, init] = t.fetch.mock.calls[0];
 		expect(url).toBe('https://api.corsair.cloud/v1/grants/grant_1');

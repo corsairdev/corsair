@@ -28,14 +28,21 @@ export function cloudUrlFromKey(apiKey: string): string | null {
 	return `https://${CLOUD_API_HOST}/${slug}/api/corsair`;
 }
 
-// The hub v1 management API lives on the same host as the project (no slug
-// segment). Derive it from cloudUrlFromKey's host rather than CLOUD_API_HOST
-// directly, so a custom-host key still resolves consistently.
+// The hub v1 management API lives on the same host as the project base (no slug
+// segment) — so a data-plane `url` override and the management base always share
+// a host. A dev who points `url` at a local proxy gets management there too,
+// never silently back at prod.
+export function cloudManagementUrlFromBase(baseUrl: string): string {
+	const { protocol, host } = new URL(baseUrl);
+	return `${protocol}//${host}/v1`;
+}
+
+// Derive it from cloudUrlFromKey's host rather than CLOUD_API_HOST directly, so
+// a custom-host key still resolves consistently.
 export function cloudManagementUrlFromKey(apiKey: string): string | null {
 	const projectUrl = cloudUrlFromKey(apiKey);
 	if (!projectUrl) return null;
-	const { protocol, host } = new URL(projectUrl);
-	return `${protocol}//${host}/v1`;
+	return cloudManagementUrlFromBase(projectUrl);
 }
 
 // The project key rides as a bearer token, so http:// would leak it in

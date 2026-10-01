@@ -40,10 +40,15 @@ export type CloudConnection = {
 	status: string;
 };
 
+// The grant permission tiers the hub accepts (grants.ts validateInstances).
+// A union, not a bare string, so an invalid value is a compile error here
+// rather than a 400 at runtime.
+export type CloudPermission = 'admin' | 'readwrite' | 'readonly';
+
 export type CloudGrantInstance = {
 	instance: string;
 	tenant?: string;
-	permission: string;
+	permission: CloudPermission;
 };
 
 export type CloudGrant = {
@@ -57,13 +62,13 @@ export type CloudGrant = {
 
 export type MintGrantInput = {
 	recipient?: string;
-	instances: { instance: string; permission: string; tenant?: string }[];
+	instances: { instance: string; permission: CloudPermission; tenant?: string }[];
 	/** Passed through as the Idempotency-Key header when set. */
 	idempotencyKey?: string;
 };
 
 export type UpdateGrantInput = {
-	instances: { instance: string; permission: string; tenant?: string }[];
+	instances: { instance: string; permission: CloudPermission; tenant?: string }[];
 	recipient?: string;
 };
 
@@ -201,21 +206,21 @@ export function buildCloudV1Management(transport: CloudTransport) {
 				tenant?: string;
 				integration?: string;
 			}) =>
-				request<Raw[]>(
+				request<{ data: Raw[] }>(
 					'GET',
 					`/connections${queryString({
 						instance: filters?.instance,
 						tenant: filters?.tenant,
 						integration: filters?.integration,
 					})}`,
-				).then((rows) => rows.map(mapConnection)),
+				).then((res) => res.data.map(mapConnection)),
 		},
 		grants: {
 			list: (opts?: { tenant?: string }) =>
-				request<Raw[]>(
+				request<{ data: Raw[] }>(
 					'GET',
 					`/grants${queryString({ tenant: opts?.tenant })}`,
-				).then((rows) => rows.map(mapGrant)),
+				).then((res) => res.data.map(mapGrant)),
 			get: (id: string) =>
 				request<Raw>('GET', `/grants/${encodeURIComponent(id)}`).then(mapGrant),
 			mint: (input: MintGrantInput) => {

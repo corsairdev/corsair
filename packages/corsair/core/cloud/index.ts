@@ -15,6 +15,7 @@ import { buildCloudV1Management } from './management';
 import { CLOUD_ROUTES } from './routes';
 import {
 	assertCloudUrlSecure,
+	cloudManagementUrlFromBase,
 	cloudManagementUrlFromKey,
 	cloudUrlFromKey,
 } from './url';
@@ -279,8 +280,13 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// reach the project (e.g. a bare dev key with a custom `url`) should still
 	// build a working client — it just can't resolve v1, so those calls fail
 	// only when actually made.
+	// Honor a data-plane `url` override for management too (same host + /v1), so
+	// a local/proxied `url` never leaves management calls silently pointed at prod.
 	const managementUrl =
-		config.managementUrl?.trim() || cloudManagementUrlFromKey(trimmedKey);
+		config.managementUrl?.trim() ||
+		(config.url?.trim()
+			? cloudManagementUrlFromBase(config.url.trim())
+			: cloudManagementUrlFromKey(trimmedKey));
 	const v1 = managementUrl
 		? (() => {
 				assertCloudUrlSecure(managementUrl, 'Cloud management URL');
