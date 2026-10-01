@@ -27,6 +27,7 @@ import {
 	Stats,
 	Suppressions,
 } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
 import type {
 	MailtrapEndpointInputs,
 	MailtrapEndpointOutputs,
@@ -39,7 +40,6 @@ import { errorHandlers } from './error-handlers';
 import { MailtrapSchema } from './schema';
 import { resolveMailtrapOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchMailtrapTenantWebhook } from './webhooks/tenant-matcher';
-import { AuthMissingError } from 'corsair';
 
 export type MailtrapPluginOptions = {
 	authType?: PickAuth<'api_key'>;
