@@ -17,10 +17,18 @@ describe('parseDurationMs', () => {
 		expect(parseDurationMs('0s')).toBe(0);
 	});
 
-	it.each(['1.5h', '500ms', '', 'abc', '10', '5x', ' 30s', '30s ', '1h30'])(
-		'falls back to the default for %p',
-		(input) => {
-			expect(parseDurationMs(input)).toBe(DEFAULT_MS);
-		},
-	);
+	it.each([
+		'1.5h',
+		'500ms',
+		'',
+		'abc',
+		'10',
+		'5x',
+		' 30s',
+		'30s ',
+		'30s\n',
+		'1h30',
+	])('falls back to the default for %p', (input) => {
+		expect(parseDurationMs(input)).toBe(DEFAULT_MS);
+	});
 });
