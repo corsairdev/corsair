@@ -11,8 +11,13 @@ import type { CloudTransport } from './http';
 import { cloudRequest, stripTrailingSlashes } from './http';
 import type { CreateCloudConnectLinkInput } from './manage';
 import { buildCloudManagement } from './manage';
+import { buildCloudV1Management } from './management';
 import { CLOUD_ROUTES } from './routes';
-import { assertCloudUrlSecure, cloudUrlFromKey } from './url';
+import {
+	assertCloudUrlSecure,
+	cloudManagementUrlFromKey,
+	cloudUrlFromKey,
+} from './url';
 
 const CLOUD_SINGLE_TENANT_ID = 'default';
 
@@ -157,6 +162,9 @@ export type CorsairCloudConfig = {
 	apiKey: string;
 	/** Internal override (dev/testing). Prod resolves the URL from the key. */
 	url?: string;
+	/** Hub v1 management API base override (dev/testing). Prod derives it from
+	 * the key's host (same host as `url`, no slug segment, `/v1`). */
+	managementUrl?: string;
 	/** Reserved for future connect/callback signing; unused by the HTTP client. */
 	signingSecret?: string;
 	fetch?: typeof fetch;
@@ -209,10 +217,18 @@ async function fetchInstanceMap(
 // Project-scoped management: tenant is a project concept (one identity per
 // project), so it stays at the project level. Credential-touching management
 // (connect/status/disconnect) is per-instance — it lives on the instance handle.
+// project/instances/grants/connections/keys wrap the hub v1 REST API (see
+// management.ts) — a separate contract from tenants/permissions above, which
+// stay VM-local. Hub v1 also exposes /tenants; reconciling that with
+// manage.tenants is a deferred, separate decision — not built here.
 export type CorsairCloudManage = Pick<
 	CorsairManageNamespace,
 	'tenants' | 'permissions'
->;
+> &
+	Pick<
+		ReturnType<typeof buildCloudV1Management>,
+		'project' | 'instances' | 'grants' | 'connections' | 'keys'
+	>;
 
 // One instance, chosen by name. Per-op calls go through withTenant; the
 // credential-touching management ops act on this instance's own credential
@@ -259,6 +275,40 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		fetch: config.fetch,
 	};
 
+	// Resolved lazily, not required at construction: a key/url combo that can't
+	// reach the project (e.g. a bare dev key with a custom `url`) should still
+	// build a working client — it just can't resolve v1, so those calls fail
+	// only when actually made.
+	const managementUrl =
+		config.managementUrl?.trim() || cloudManagementUrlFromKey(trimmedKey);
+	const v1 = managementUrl
+		? (() => {
+				assertCloudUrlSecure(managementUrl, 'Cloud management URL');
+				return buildCloudV1Management({
+					baseUrl: managementUrl,
+					apiKey: trimmedKey,
+					fetch: config.fetch,
+				});
+			})()
+		: ({
+				project: { get: () => deferredCloudError('manage.project.get') },
+				keys: { get: () => deferredCloudError('manage.keys.get') },
+				instances: {
+					list: () => deferredCloudError('manage.instances.list'),
+					get: () => deferredCloudError('manage.instances.get'),
+				},
+				connections: {
+					list: () => deferredCloudError('manage.connections.list'),
+				},
+				grants: {
+					list: () => deferredCloudError('manage.grants.list'),
+					get: () => deferredCloudError('manage.grants.get'),
+					mint: () => deferredCloudError('manage.grants.mint'),
+					update: () => deferredCloudError('manage.grants.update'),
+					revoke: () => deferredCloudError('manage.grants.revoke'),
+				},
+			} as unknown as ReturnType<typeof buildCloudV1Management>);
+
 	// One resolve call per corsairCloud() instance, shared across every
 	// withInstance() and cached for its lifetime — concurrent callers await the
 	// same in-flight promise instead of firing duplicate requests.
@@ -281,6 +331,11 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		manage: {
 			tenants: projectManage.tenants,
 			permissions: projectManage.permissions,
+			project: v1.project,
+			instances: v1.instances,
+			grants: v1.grants,
+			connections: v1.connections,
+			keys: v1.keys,
 		} as unknown as CorsairCloudManage,
 		withInstance: (name: string): CorsairCloudInstanceHandle<Registry> => {
 			const getTransport = async (): Promise<CloudTransport> => {
