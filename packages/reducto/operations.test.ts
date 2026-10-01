@@ -28,6 +28,7 @@ jest.mock('./client', () => {
 const mockRequest = jest.mocked(makeReductoRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
+// unknown: tests call endpoints with a stub context, not the full plugin context.
 type AnyEndpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
 
 function createContext() {
@@ -36,7 +37,9 @@ function createContext() {
 		options: { baseUrl: 'https://platform.reducto.ai' },
 		db: {
 			jobs: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
 				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+				deleteByEntityId: jest.fn().mockResolvedValue(true),
 			},
 		},
 	};
@@ -269,14 +272,21 @@ describe('Reducto endpoint routing', () => {
 		);
 	});
 
-	it('jobs.cancel posts /cancel/{job_id}', async () => {
+	it('jobs.cancel posts /cancel/{job_id} and keeps earlier cache fields', async () => {
 		mockRequest.mockResolvedValue({});
 		const ctx = createContext();
+		ctx.db.jobs.findByEntityId.mockResolvedValue({
+			data: { jobId: 'job-1', type: 'Parse', numPages: 4 },
+		});
 		await (Jobs.cancel as AnyEndpoint)(ctx, { job_id: 'job-1' });
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('/cancel/{job_id}');
 		expect(ctx.db.jobs.upsertByEntityId).toHaveBeenCalledWith(
 			'job-1',
-			expect.objectContaining({ status: 'Cancelled' }),
+			expect.objectContaining({
+				status: 'Cancelled',
+				type: 'Parse',
+				numPages: 4,
+			}),
 		);
 	});
 
@@ -295,14 +305,8 @@ describe('Reducto endpoint routing', () => {
 				query: { include_persisted: true },
 			}),
 		);
-		expect(ctx.db.jobs.upsertByEntityId).toHaveBeenCalledWith(
-			'job-1',
-			expect.objectContaining({ jobId: 'job-1' }),
-		);
-		expect(ctx.db.jobs.upsertByEntityId).not.toHaveBeenCalledWith(
-			'job-1',
-			expect.objectContaining({ status: expect.anything() }),
-		);
+		expect(ctx.db.jobs.deleteByEntityId).toHaveBeenCalledWith('job-1');
+		expect(ctx.db.jobs.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('files.upload posts multipart /upload and does not log the file', async () => {

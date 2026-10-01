@@ -1,14 +1,18 @@
 import type { ReductoContext } from '../index';
+import type { Job } from '../schema/database';
+import { JobStatus, JobType } from '../schema/database';
 
 type JobRow = {
 	jobId: string;
 	status?: string | null;
 	type?: string | null;
+	// unknown: OpenAPI types source as an unconstrained object or null.
 	source?: unknown;
 	numPages?: number | null;
 	totalPages?: number | null;
 	duration?: number | null;
 	providerCreatedAt?: string | null;
+	// unknown: OpenAPI types bucket as an unconstrained object or null.
 	bucket?: unknown;
 	studioLink?: string | null;
 };
@@ -71,27 +75,54 @@ function rowFromRecord(
 	return row;
 }
 
-async function upsert(ctx: ReductoContext, row: JobRow): Promise<void> {
-	const data: Record<string, unknown> = {
-		jobId: row.jobId,
-		updatedAt: new Date(),
-	};
-	if (row.status !== undefined) data.status = row.status;
-	if (row.type !== undefined) data.type = row.type;
-	if (row.source !== undefined) data.source = row.source;
-	if (row.numPages !== undefined) data.numPages = row.numPages;
-	if (row.totalPages !== undefined) data.totalPages = row.totalPages;
-	if (row.duration !== undefined) data.duration = row.duration;
-	if (row.providerCreatedAt !== undefined) {
-		data.providerCreatedAt = row.providerCreatedAt;
-	}
-	if (row.bucket !== undefined) data.bucket = row.bucket;
-	if (row.studioLink !== undefined) data.studioLink = row.studioLink;
+function statusValue(value: string | null): Job['status'] {
+	if (value === null) return null;
+	const parsed = JobStatus.safeParse(value);
+	return parsed.success ? parsed.data : undefined;
+}
 
+function typeValue(value: string | null): Job['type'] {
+	if (value === null) return null;
+	const parsed = JobType.safeParse(value);
+	return parsed.success ? parsed.data : undefined;
+}
+
+async function upsert(ctx: ReductoContext, row: JobRow): Promise<void> {
 	try {
+		// upsertByEntityId replaces the stored JSON. Read the row first so a
+		// later {job_id} or status update does not drop type, pages, or created time.
+		const existing = await ctx.db.jobs.findByEntityId(row.jobId);
+		const data: Job = {
+			...(existing?.data ?? {}),
+			jobId: row.jobId,
+			updatedAt: new Date(),
+		};
+		if (row.status !== undefined) data.status = statusValue(row.status);
+		if (row.type !== undefined) data.type = typeValue(row.type);
+		if (row.source !== undefined) data.source = row.source;
+		if (row.numPages !== undefined) data.numPages = row.numPages;
+		if (row.totalPages !== undefined) data.totalPages = row.totalPages;
+		if (row.duration !== undefined) data.duration = row.duration;
+		if (row.providerCreatedAt !== undefined) {
+			data.providerCreatedAt = row.providerCreatedAt;
+		}
+		if (row.bucket !== undefined) data.bucket = row.bucket;
+		if (row.studioLink !== undefined) data.studioLink = row.studioLink;
+
 		await ctx.db.jobs.upsertByEntityId(row.jobId, data);
 	} catch (error) {
 		console.warn(`[reducto] Failed to cache job ${row.jobId}:`, error);
+	}
+}
+
+export async function forgetJob(
+	ctx: ReductoContext,
+	jobId: string,
+): Promise<void> {
+	try {
+		await ctx.db.jobs.deleteByEntityId(jobId);
+	} catch (error) {
+		console.warn(`[reducto] Failed to drop cached job ${jobId}:`, error);
 	}
 }
 

@@ -28,11 +28,13 @@ export const Job = z.object({
 	jobId: z.string(),
 	status: JobStatus.nullable().optional(),
 	type: JobType.nullable().optional(),
+	// z.unknown() is used because OpenAPI types SingleJob.source as an unconstrained object or null.
 	source: z.unknown().nullable().optional(),
 	numPages: z.number().nullable().optional(),
 	totalPages: z.number().nullable().optional(),
 	duration: z.number().nullable().optional(),
 	providerCreatedAt: z.string().nullable().optional(),
+	// z.unknown() is used because OpenAPI types SingleJob.bucket as an unconstrained object or null.
 	bucket: z.unknown().nullable().optional(),
 	studioLink: z.string().nullable().optional(),
 	updatedAt: z.coerce.date().optional(),

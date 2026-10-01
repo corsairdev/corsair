@@ -8,10 +8,15 @@ import { ApiError, request } from 'corsair/http';
 export class ReductoAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// unknown: Reducto error bodies are JSON objects, strings, or omitted.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
-	constructor(message: string, options?: { cause?: Error; body?: unknown }) {
+	constructor(
+		message: string,
+		// unknown: same as body above. The provider does not fix an error shape.
+		options?: { cause?: Error; body?: unknown },
+	) {
 		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'ReductoAPIError';
 		this.body = options?.body;

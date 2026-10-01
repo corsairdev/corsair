@@ -1,5 +1,5 @@
 import type { ReductoEndpoints } from '../index';
-import { rememberJobStatus } from './cache';
+import { forgetJob, rememberJobStatus } from './cache';
 import { callReducto } from './call';
 import {
 	CancelJobResponseSchema,
@@ -80,6 +80,8 @@ export const remove: ReductoEndpoints['deleteJob'] = async (ctx, input) => {
 			query: { include_persisted: body.include_persisted },
 		}),
 		(body) => ({ jobId: body.job_id }),
+		false,
 	);
+	await forgetJob(ctx, response.job_id);
 	return response;
 };

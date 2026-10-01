@@ -190,6 +190,7 @@ export const WebhookConfigSchema = z.discriminatedUnion('mode', [
 
 export const AsyncConfigSchema = z
 	.object({
+		// z.unknown() is used because async metadata is a caller-defined map.
 		metadata: z.record(z.string(), z.unknown()).nullable().optional(),
 		priority: z.boolean().optional(),
 		webhook: WebhookConfigSchema.nullable().optional(),
@@ -214,6 +215,7 @@ export const ParseAsyncInputSchema = ParseInputSchema.extend({
 
 export const InstructionsSchema = z
 	.object({
+		// z.unknown() is used because instructions.schema is the caller's JSON Schema.
 		schema: z.unknown().optional(),
 		system_prompt: z.string().optional(),
 	})
@@ -298,6 +300,7 @@ const editFields = {
 	document_url: z.union([z.string().min(1), UploadRefSchema]),
 	edit_instructions: z.string().min(1),
 	edit_options: EditOptionsSchema.optional(),
+	// z.unknown() is used because form_schema items are caller-supplied field locations.
 	form_schema: z.array(z.unknown()).nullable().optional(),
 	priority: z.boolean().optional(),
 };
@@ -319,6 +322,7 @@ export const ClassifyInputSchema = z
 	.object({
 		input: DocumentInputSchema,
 		classification_schema: z.array(ClassificationCategorySchema).optional(),
+		// z.unknown() is used because OpenAPI leaves category_groups as an open object.
 		category_groups: z.record(z.string(), z.unknown()).optional(),
 		page_range: PageRangeInputSchema,
 		document_metadata: z.string().nullable().optional(),
@@ -410,6 +414,7 @@ export const FullResultSchema = z
 				.object({
 					content: z.string(),
 					embed: z.string().optional(),
+					// z.unknown() is used because block layout fields vary by parse model.
 					blocks: z.array(z.unknown()).optional(),
 				})
 				.loose(),
@@ -439,6 +444,7 @@ export const AsyncJobIdResponseSchema = z
 export const ExtractResponseSchema = z
 	.object({
 		usage: ExtractUsageSchema,
+		// z.unknown() is used because extract result values follow the caller's schema.
 		result: z.union([
 			z.array(z.unknown()),
 			z.record(z.string(), z.unknown()),
@@ -471,6 +477,7 @@ export const SplitResponseSchema = z
 				})
 				.loose(),
 			UrlResultSchema,
+			// z.unknown() is used because deep split returns a shape other than splits[].
 			z.record(z.string(), z.unknown()),
 		]),
 		job_id: z.string().nullable().optional(),
@@ -482,6 +489,7 @@ export const EditResponseSchema = z
 	.object({
 		document_url: z.string(),
 		job_id: z.string().nullable().optional(),
+		// z.unknown() is used because returned form_schema widgets are provider-defined.
 		form_schema: z.array(z.unknown()).nullable().optional(),
 		usage: ParseUsageSchema.nullable().optional(),
 	})
@@ -503,6 +511,7 @@ export const PipelineResponseSchema = z
 	.object({
 		job_id: z.string(),
 		usage: ParseUsageSchema,
+		// z.unknown() is used because a pipeline result is the Studio pipeline's own schema.
 		result: z.unknown(),
 	})
 	.loose();
@@ -510,16 +519,20 @@ export const PipelineResponseSchema = z
 export const JobResponseSchema = z
 	.object({
 		status: z.string(),
+		// z.unknown() is used because a finished job result is the payload of whichever operation ran.
 		result: z.unknown().nullable().optional(),
 		progress: z.number().nullable().optional(),
 		reason: z.string().nullable().optional(),
+		// z.unknown() is used because job error bodies are unstructured provider objects.
 		error: z.unknown().nullable().optional(),
 		type: z.string().nullable().optional(),
+		// z.unknown() is used because OpenAPI types source as an unconstrained object or null.
 		source: z.unknown().nullable().optional(),
 		num_pages: z.number().nullable().optional(),
 		total_pages: z.number().nullable().optional(),
 		duration: z.number().nullable().optional(),
 		created_at: z.string().nullable().optional(),
+		// z.unknown() is used because OpenAPI types bucket as an unconstrained object or null.
 		bucket: z.unknown().nullable().optional(),
 	})
 	.loose();
@@ -531,10 +544,12 @@ export const JobSummarySchema = z
 		type: z.string(),
 		raw_config: z.string().optional(),
 		created_at: z.string(),
+		// z.unknown() is used because OpenAPI types source as an unconstrained object or null.
 		source: z.unknown().nullable().optional(),
 		num_pages: z.number().nullable().optional(),
 		total_pages: z.number().nullable().optional(),
 		duration: z.number().nullable().optional(),
+		// z.unknown() is used because OpenAPI types bucket as an unconstrained object or null.
 		bucket: z.unknown().nullable().optional(),
 	})
 	.loose();
@@ -555,6 +570,7 @@ export const DeleteJobResponseSchema = z
 // OpenAPI declares an empty schema for cancel. A JSON object, null, or an
 // omitted body are all valid.
 export const CancelJobResponseSchema = z.union([
+	// z.unknown() is used because OpenAPI declares an empty object schema for cancel.
 	z.record(z.string(), z.unknown()),
 	z.null(),
 	z.undefined(),

@@ -12,12 +12,15 @@ export async function callReducto<TInput, TOutput>(
 	operation: string,
 	inputSchema: Schema<TInput>,
 	outputSchema: Schema<TOutput>,
+	// unknown: endpoint input is raw until inputSchema.parse.
 	input: unknown,
 	build: (validated: TInput) => ReductoRequestOptions & { url: string },
 	logFields: (validated: TInput, response: TOutput) => Record<string, unknown>,
+	remember = true,
 ): Promise<TOutput> {
 	const validated = inputSchema.parse(input);
 	const { url, ...request } = build(validated);
+	// unknown: the HTTP body is untyped until outputSchema.parse below.
 	const raw = await makeReductoRequest<unknown>(url, ctx.key, {
 		...request,
 		baseUrl: ctx.options.baseUrl,
@@ -30,7 +33,7 @@ export async function callReducto<TInput, TOutput>(
 		typeof validated.job_id === 'string'
 			? validated.job_id
 			: undefined;
-	await rememberJob(ctx, response, requestedJobId);
+	if (remember) await rememberJob(ctx, response, requestedJobId);
 	await logEventFromContext(
 		ctx,
 		operation,

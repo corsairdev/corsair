@@ -5,6 +5,7 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<ReductoAPIError>).status;
 }
 
+// unknown: error bodies are JSON objects, strings, or omitted.
 function bodyText(body: unknown): string {
 	if (body == null) {
 		return '';
@@ -61,18 +62,16 @@ export const errorHandlers = {
 			const status = getStatus(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Parse, extract, upload, and the other POSTs bill on success. A 500 can
+		// arrive after Reducto already created the job, so the call is not retried.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	TIMEOUT_ERROR: {
 		match: (error: Error) =>
 			messageIncludes(error, ['timeout', 'timed out', 'aborted']),
-		handler: async () => ({
-			maxRetries: 1,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Same as a 500: the request may have been accepted. Retrying would
+		// create a second job and a second charge.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,
