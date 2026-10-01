@@ -1,0 +1,515 @@
+openapi: 3.1.0
+info:
+  title: Corsair Cloud Management API
+  version: "2026-09-29"
+  description: |
+    The Corsair Cloud management API lets a developer manage their project
+    programmatically from their own backend — the same operations the Corsair
+    console performs, over REST.
+
+    **One key, one project.** Every request authenticates with a single project
+    key, `ck_cloud_<slug>.<secret>`, sent as a bearer token. The key identifies
+    the project, so no project id appears in any path. One key has full
+    management authority over one project; keep it server-side.
+
+    **Two planes.** This API is the *management* plane (projects, instances,
+    tenants, connections, MCP grants). Running a tool for a tenant and reading
+    live connection status happen on the *data* plane — the instance runtime,
+    reached through the Corsair SDK — and are not part of this API.
+servers:
+  - url: https://api.corsair.cloud/v1
+    description: Production
+security:
+  - projectKey: []
+tags:
+  - name: Project
+    description: The project and its deployment status.
+  - name: Instances
+    description: A project's instances — the test/live boundary. Each instance is credential-isolated.
+  - name: Tenants
+    description: The developer's end-users, as project-scoped identities.
+  - name: Connections
+    description: A tenant's live auth for one integration on one instance — the (instance × tenant × integration) intersection.
+  - name: Grants
+    description: MCP links — a signed URL scoped to a tenant and a set of instances at a permission.
+  - name: Keys
+    description: The project key.
+
+paths:
+  /project:
+    get:
+      tags: [Project]
+      operationId: getProject
+      summary: Retrieve the project
+      description: Returns the project, its instance count, its deployment status, and its OAuth MCP URL.
+      responses:
+        "200":
+          description: The project.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Project" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /keys:
+    get:
+      tags: [Keys]
+      operationId: getKeys
+      summary: Reveal the project key
+      description: |
+        Returns the plaintext project key. Authenticating already proves you
+        hold it; this is a self-service lookup for a backend that needs to read
+        its own key back (e.g. to render it once in a setup screen).
+      responses:
+        "200":
+          description: The project key.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Key" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /instances:
+    get:
+      tags: [Instances]
+      operationId: listInstances
+      summary: List instances
+      responses:
+        "200":
+          description: A list of instances.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Instance" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /instances/{key}:
+    get:
+      tags: [Instances]
+      operationId: getInstance
+      summary: Retrieve an instance
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: The instance key (e.g. `users`, `app`).
+          schema: { type: string }
+      responses:
+        "200":
+          description: The instance.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Instance" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /tenants:
+    get:
+      tags: [Tenants]
+      operationId: listTenants
+      summary: List tenants
+      responses:
+        "200":
+          description: A list of tenants.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Tenant" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Tenants]
+      operationId: createTenant
+      summary: Create a tenant
+      description: Idempotent on `tenant_id` — re-creating an existing tenant returns it rather than erroring. Rejects a duplicate email.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [tenant_id]
+              properties:
+                tenant_id:
+                  type: string
+                  description: Your identifier for the end-user. You own this id.
+                email:
+                  type: string
+                  description: Optional. Must be unique within the project.
+                label:
+                  type: string
+                  description: Optional human-readable label.
+      responses:
+        "201":
+          description: The created (or existing) tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /tenants/{id}:
+    get:
+      tags: [Tenants]
+      operationId: getTenant
+      summary: Retrieve a tenant
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: The tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [Tenants]
+      operationId: updateTenant
+      summary: Update a tenant
+      description: Updates only the fields you send.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                label: { type: string }
+      responses:
+        "200":
+          description: The updated tenant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Tenant" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "409": { $ref: "#/components/responses/Conflict" }
+
+  /connections:
+    get:
+      tags: [Connections]
+      operationId: listConnections
+      summary: List connections
+      description: |
+        A connection is a tenant's live auth for one integration on one
+        instance. Filter by any combination of the three axes to narrow the
+        list; omitting all three returns every connection in the project.
+      parameters:
+        - { name: instance, in: query, required: false, schema: { type: string } }
+        - { name: tenant, in: query, required: false, schema: { type: string } }
+        - { name: integration, in: query, required: false, description: "Plugin id, e.g. `slack`.", schema: { type: string } }
+      responses:
+        "200":
+          description: A list of connections.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Connection" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /grants:
+    get:
+      tags: [Grants]
+      operationId: listGrants
+      summary: List grants
+      parameters:
+        - { name: tenant, in: query, required: false, description: "Only grants that act as this tenant on some instance.", schema: { type: string } }
+      responses:
+        "200":
+          description: A list of grants.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/List"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: { $ref: "#/components/schemas/Grant" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+    post:
+      tags: [Grants]
+      operationId: createGrant
+      summary: Mint a grant (MCP link)
+      description: |
+        Mints a new MCP link scoped to the given instances at the given
+        permissions. The returned `url` is a live, tenant-scoped bearer secret —
+        it is shown once here; it is never re-displayed. To replace a leaked
+        link, revoke it and mint a new one.
+
+        Every instance named must already exist in the project.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: Reserved for safe retries. Accepted today; replay de-duplication is not yet enforced.
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GrantInput" }
+      responses:
+        "200":
+          description: The minted grant, including its one-time `url`.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Grant" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+
+  /grants/{id}:
+    get:
+      tags: [Grants]
+      operationId: getGrant
+      summary: Retrieve a grant
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: The grant. The `url` is only populated at mint time; a retrieved grant does not re-expose the secret.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Grant" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    patch:
+      tags: [Grants]
+      operationId: updateGrant
+      summary: Update a grant's scope
+      description: Edits which instances the grant reaches and at what permission. The URL is the grant's immutable address and does not change.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GrantInput" }
+      responses:
+        "200":
+          description: The updated grant.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Grant" }
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+    delete:
+      tags: [Grants]
+      operationId: revokeGrant
+      summary: Revoke a grant
+      description: Immediately invalidates the grant's URL. Irreversible — mint a new grant to restore access.
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Confirmation the grant was revoked.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object: { const: grant }
+                  id: { type: string }
+                  revoked: { const: true }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+components:
+  securitySchemes:
+    projectKey:
+      type: http
+      scheme: bearer
+      description: "The project key `ck_cloud_<slug>.<secret>`, sent as `Authorization: Bearer <key>`."
+
+  responses:
+    Unauthorized:
+      description: The project key is missing or invalid.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    NotFound:
+      description: No such resource in this project.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    BadRequest:
+      description: The request was malformed or failed validation.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: The write conflicts with existing state (e.g. a duplicate email).
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+  schemas:
+    List:
+      type: object
+      description: The envelope every list endpoint returns.
+      required: [object, data, has_more, next_cursor]
+      properties:
+        object: { const: list }
+        data: { type: array }
+        has_more:
+          type: boolean
+          description: Whether more results exist beyond this page.
+        next_cursor:
+          type: [string, "null"]
+          description: Cursor for the next page, or null when there are no more.
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [type, code, message]
+          properties:
+            type:
+              type: string
+              description: Error category.
+              enum: [authentication_error, invalid_request_error, not_found, conflict, rate_limit_error, api_error]
+            code:
+              type: string
+              description: A machine-readable code, e.g. `resource_missing`.
+            message:
+              type: string
+              description: A human-readable explanation.
+            param:
+              type: string
+              description: The offending field, when the error is about one.
+
+    Project:
+      type: object
+      properties:
+        object: { const: project }
+        id: { type: string, description: "The project slug." }
+        status:
+          type: string
+          description: Deployment status, rolled up across the project's instances.
+          enum: [pending, applying, running, stopped, error]
+        instances: { type: integer, description: "Number of instances." }
+        mcp_oauth_url:
+          type: [string, "null"]
+          description: The project's OAuth MCP URL (same for every tenant; auth happens inside the client). Null until the project is deployed.
+        created: { type: string, format: date-time }
+
+    Key:
+      type: object
+      properties:
+        object: { const: key }
+        project_key: { type: string, description: "The plaintext `ck_cloud_` key." }
+
+    Instance:
+      type: object
+      properties:
+        object: { const: instance }
+        id: { type: string, description: "The instance key — its canonical address." }
+        instance_key: { type: string }
+        writable:
+          type: boolean
+          description: Whether the instance's default policy allows writes.
+        credential_source:
+          type: [string, "null"]
+          enum: [app_owned, user_owned, null]
+          description: Whose credentials the runtime uses. Null until deployed.
+        quota_limit: { type: [integer, "null"] }
+        quota_window: { type: [string, "null"] }
+
+    Tenant:
+      type: object
+      properties:
+        object: { const: tenant }
+        id: { type: string, description: "Your tenant id." }
+        email: { type: [string, "null"] }
+        label: { type: [string, "null"] }
+        created: { type: string, format: date-time }
+
+    Connection:
+      type: object
+      properties:
+        object: { const: connection }
+        instance: { type: string }
+        tenant: { type: string }
+        integration: { type: string, description: "Plugin id." }
+        status:
+          type: string
+          enum: [connected, expired]
+          description: "`connected` = live auth; `expired` = the stored credential's expiry has passed."
+
+    Permission:
+      type: string
+      enum: [admin, readwrite, readonly]
+      description: |
+        The access tier on an instance. `readonly` = read tools only; `readwrite`
+        = read + write; `admin` = read + write + connect-link minting.
+
+    GrantInstanceInput:
+      type: object
+      required: [instance, permission]
+      properties:
+        instance: { type: string, description: "An instance key in this project." }
+        permission: { $ref: "#/components/schemas/Permission" }
+        tenant:
+          type: string
+          description: Optional per-instance tenant override. Defaults to the grant's tenant.
+
+    GrantInput:
+      type: object
+      required: [instances]
+      properties:
+        recipient:
+          type: string
+          description: Optional label for who the link is for (metadata only).
+        instances:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/GrantInstanceInput" }
+
+    GrantInstance:
+      type: object
+      properties:
+        instance: { type: string }
+        tenant: { type: [string, "null"] }
+        permission: { $ref: "#/components/schemas/Permission" }
+
+    Grant:
+      type: object
+      properties:
+        object: { const: grant }
+        id: { type: string, description: "The grant id, which is also its URL token." }
+        recipient: { type: [string, "null"] }
+        tenant:
+          type: [string, "null"]
+          description: Legacy project-level tenant (null on modern grants, whose tenant is per-instance).
+        instances:
+          type: array
+          items: { $ref: "#/components/schemas/GrantInstance" }
+        url:
+          type: [string, "null"]
+          description: The live MCP link. Returned only at mint time; null on retrieval.
+        created: { type: string, format: date-time }
