@@ -1,0 +1,10 @@
+---
+title: Database
+description: "The Remoet plugin stores no local entities: every operation calls the Remoet API."
+---
+
+The Remoet plugin does not sync data locally. It declares no entities, so there is no `corsair.remoet.db` to search. Read the user's data through the [API](/plugins/remoet/api) operations instead: `profile.get`, the `list` operations and `feed.list`.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
