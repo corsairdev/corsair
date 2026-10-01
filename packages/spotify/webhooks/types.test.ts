@@ -6,7 +6,7 @@ import { verifySpotifyWebhookSignature } from './types';
 describe('verifySpotifyWebhookSignature', () => {
 	const secret = 'my-super-secret-key';
 	const payload: SpotifyWebhookPayload = {
-		type: 'example',
+		type: 'test.event',
 		created_at: '2026-05-22T00:00:00Z',
 		data: { id: '123' },
 	};

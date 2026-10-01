@@ -6,11 +6,11 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
@@ -33,10 +33,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SpotifySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
 import { matchSpotifyTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, SpotifyWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 /**
  * Plugin options type - configure authentication and behavior
@@ -117,14 +114,11 @@ export type SpotifyEndpoints = {
 	tracksSearch: SpotifyEndpoint<'tracksSearch'>;
 };
 
-type SpotifyWebhook<
-	K extends keyof SpotifyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<SpotifyContext, TEvent, SpotifyWebhookOutputs[K]>;
-
-export type SpotifyWebhooks = {
-	example: SpotifyWebhook<'example', ExampleEvent>;
-};
+/**
+ * Spotify does not offer a public webhook API, so there are no triggers to
+ * register. See https://github.com/spotify/web-api/issues/538
+ */
+export type SpotifyWebhooks = Record<string, never>;
 
 export type SpotifyBoundWebhooks = BindWebhooks<SpotifyWebhooks>;
 
@@ -298,19 +292,12 @@ export const spotifyEndpointSchemas = {
 	},
 } as const;
 
-const spotifyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const spotifyWebhooksNested = {} as const;
 
-const spotifyWebhookSchemas = {
-	'example.example': {
-		description: 'An example Spotify webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const;
+const spotifyWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof spotifyWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'oauth_2';
 
@@ -596,10 +583,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 // Webhook Type Exports
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type {
-	ExampleEvent,
-	SpotifyWebhookOutputs,
-} from './webhooks/types';
+export type { SpotifyWebhookOutputs } from './webhooks/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Endpoint Type Exports
