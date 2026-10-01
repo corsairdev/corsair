@@ -103,9 +103,19 @@ export function evaluatePermission(
 // Duration Parsing
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds. */
+const DEFAULT_DURATION_MS = 10 * 60 * 1_000;
+const DURATION_PATTERN = /^(?:\d+[dhms])+$/;
+
+/**
+ * Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds.
+ * Only a full duration string is accepted. Anything else ('1.5h', '500ms', '')
+ * falls back to 10 minutes. A valid '0s' returns 0.
+ */
 export function parseDurationMs(duration: string): number {
-	const regex = /(\d+)(d|h|m|s)/g;
+	if (!DURATION_PATTERN.test(duration)) {
+		return DEFAULT_DURATION_MS;
+	}
+	const regex = /(\d+)([dhms])/g;
 	let total = 0;
 	let match: RegExpExecArray | null;
 	while ((match = regex.exec(duration)) !== null) {
@@ -125,7 +135,7 @@ export function parseDurationMs(duration: string): number {
 				break;
 		}
 	}
-	return total > 0 ? total : 10 * 60 * 1_000;
+	return total;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
