@@ -1,0 +1,72 @@
+---
+title: Overview
+description: Manage your Corsair Cloud project from your own backend over REST, with one project key.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+The management API is how your backend runs the project. Everything the Corsair
+console does by hand, you can do over HTTP: create the users you serve, enable
+integrations, hand out MCP links, and read who is connected to what.
+
+It pairs with the data plane. The management API shapes the project; the
+[Corsair SDK](/docs) runs the actual tool calls for a user. A management request
+never runs a tool, and a tool call never changes the project.
+
+## One key, one project
+
+Every request carries one bearer token, your project key:
+
+```
+Authorization: Bearer ck_cloud_<slug>.<secret>
+```
+
+The key names the project, so no project id ever appears in a path. One key has
+full authority over one project. Keep it on your server, never in a browser or a
+mobile app. See [Authentication](/docs/v1-guides/authentication).
+
+The base URL is the same for everyone:
+
+```
+https://api.corsair.cloud/v1
+```
+
+## The objects
+
+A project is a small tree, and the whole API is reading and writing it.
+
+- **Instances** are your test/live boundary. The first is usually `users`; a
+  second might be `app`. Each one is credential-isolated, so a tool call scoped
+  to `users` can never write on `app`.
+- **Tenants** are the people you serve. You pick the id (`dave`, a user row id,
+  whatever you map to). Corsair holds their tokens; you never see them.
+- **Connections** are where it gets specific. A connection is one tenant's live
+  auth for one integration on one instance. It is the point where all three axes
+  meet, so you address it by fixing the axes you care about and listing the rest:
+  `GET /connections?instance=users&tenant=dave`.
+- **Grants** are MCP links. A grant is a signed URL scoped to a tenant across a
+  set of instances, each at a permission (`readonly`, `readwrite`, or `admin`).
+  You mint one and hand it to Claude, ChatGPT, or your own agent code.
+
+<Callout title="Connections are made on the connect sheet">
+You do not inject a token through this API. To connect a tenant, mint a connect
+link and let them authorize the integration themselves. The management API lists
+the result and its status; it never holds the credential.
+</Callout>
+
+## Conventions
+
+Lists come back in one envelope, always:
+
+```json
+{ "object": "list", "data": [ ... ], "has_more": false, "next_cursor": null }
+```
+
+Single objects carry their own `object` and `id`. Errors carry one shape too.
+Read [Errors](/docs/v1-guides/errors) once and you can handle every endpoint.
+
+## Next
+
+Start with the [Quickstart](/docs/v1-guides/quickstart): one key, one tenant, one
+MCP link, in about ten lines. Then browse the full [API reference](/docs/v1) for
+every field on every endpoint.

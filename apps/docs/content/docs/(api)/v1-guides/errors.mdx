@@ -1,0 +1,53 @@
+---
+title: Errors
+description: One error shape across every endpoint, with conventional HTTP status codes.
+---
+
+Every error returns the same JSON, so you write the handling once:
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "invalid_request",
+    "message": "instances must be a non-empty array",
+    "param": "instances"
+  }
+}
+```
+
+`type` is the broad category. `code` is a stable machine string you can branch
+on. `message` is for a human. `param` names the offending field when the error
+is about one, and is absent otherwise.
+
+## Status codes
+
+| Status | type | When |
+|--------|------|------|
+| `400` | `invalid_request_error` | The body or a parameter failed validation (a missing field, a bad permission, an instance or tenant that does not exist in the project). |
+| `401` | `authentication_error` | The project key is missing or wrong. |
+| `404` | `not_found` | No such resource in your project. Also what you get when you reference another project's id, so a wrong id never reveals whether it exists elsewhere. |
+| `409` | `conflict` | The write clashes with existing state, such as a duplicate tenant email. |
+| `500` | `api_error` | Something broke on our side. Safe to retry. |
+
+## Handling it
+
+Branch on the HTTP status for flow, and read `message` for the detail. In the
+SDK, a non-2xx response throws a `ManagementApiError` carrying the same fields:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+
+try {
+  await corsair.manage.grants.mint({
+    instances: [{ instance: 'nope', permission: 'readonly', tenant: 'dave' }],
+  });
+} catch (err) {
+  // err.status === 400, err.message === "no instance 'nope' in this project"
+}
+```
+
+A `404` on a resource you expect usually means a typo in an id, not a real gap.
+A `409` on tenant creation means the email is already taken by another tenant.

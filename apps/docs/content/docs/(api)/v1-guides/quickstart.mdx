@@ -1,0 +1,114 @@
+---
+title: Quickstart
+description: From a project key to a working MCP link in three calls.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+This walks the common path: register a user, mint them an MCP link, and check
+what they are connected to. You need a project key (`ck_cloud_…`) from the
+console Overview page, and a project with at least one instance already set up.
+
+Set the key once:
+
+```bash
+export CORSAIR_KEY="ck_cloud_acme.xxxxxxxx"
+```
+
+## 1. Create a tenant
+
+A tenant is one of your users. You choose the id.
+
+```bash
+curl -s https://api.corsair.cloud/v1/tenants \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "tenant_id": "dave", "email": "dave@acme.com" }'
+```
+
+```json
+{ "object": "tenant", "id": "dave", "email": "dave@acme.com", "label": null, "created": "2026-10-01T12:00:00.000Z" }
+```
+
+Creating a tenant that already exists returns it rather than failing, so this is
+safe to call on every login.
+
+## 2. Mint an MCP link
+
+Give Dave admin on his own instance and read-only on the shared feed. The reply
+includes the `url` once; it is a tenant-scoped secret, so store it or hand it
+straight to the agent.
+
+<Tabs items={['curl', 'SDK']}>
+<Tab value="curl">
+```bash
+curl -s https://api.corsair.cloud/v1/grants \
+  -H "Authorization: Bearer $CORSAIR_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "recipient": "dave@acme.com",
+    "instances": [
+      { "instance": "users", "permission": "admin", "tenant": "dave" },
+      { "instance": "app",   "permission": "readonly", "tenant": "dave" }
+    ]
+  }'
+```
+</Tab>
+<Tab value="SDK">
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+
+const grant = await corsair.manage.grants.mint({
+  recipient: 'dave@acme.com',
+  instances: [
+    { instance: 'users', permission: 'admin', tenant: 'dave' },
+    { instance: 'app', permission: 'readonly', tenant: 'dave' },
+  ],
+});
+
+console.log(grant.url); // https://mcp.corsair.cloud/acme/mcpg_…/mcp
+```
+</Tab>
+</Tabs>
+
+Paste that `url` into Claude or ChatGPT as a custom connector and Dave's tools
+are live. The link acts as Dave everywhere, bounded by the per-instance
+permissions you set.
+
+<Callout type="warn" title="A grant is only as good as its references">
+Every `instance` and `tenant` you name must already exist in the project. Name
+one that does not and the call returns `400` rather than minting a link that
+silently does nothing.
+</Callout>
+
+## 3. See who is connected
+
+Connections are the (instance, tenant, integration) intersection. Filter by any
+of the three:
+
+<Tabs items={['curl', 'SDK']}>
+<Tab value="curl">
+```bash
+curl -s "https://api.corsair.cloud/v1/connections?tenant=dave" \
+  -H "Authorization: Bearer $CORSAIR_KEY"
+```
+</Tab>
+<Tab value="SDK">
+```ts
+const connections = await corsair.manage.connections.list({ tenant: 'dave' });
+// [{ object: 'connection', instance: 'users', tenant: 'dave', integration: 'gmail', status: 'connected' }]
+```
+</Tab>
+</Tabs>
+
+A `status` of `expired` means the stored credential's expiry has passed and the
+tenant needs to reconnect that integration.
+
+## Where next
+
+The [full API reference](/docs/v1) documents every endpoint and field. For the
+credential-touching steps (connecting and disconnecting a tenant's integration),
+use the per-instance handle on the SDK, `corsair.withInstance('users').connect`.

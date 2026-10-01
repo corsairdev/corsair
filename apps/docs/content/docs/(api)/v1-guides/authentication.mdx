@@ -1,0 +1,66 @@
+---
+title: Authentication
+description: One project key, sent as a bearer token. That is the whole auth model.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+Every request authenticates with your project key as a bearer token:
+
+```bash
+curl https://api.corsair.cloud/v1/project \
+  -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
+```
+
+There is nothing else to sign and no second header. The key hashes to exactly
+one project, so the API knows which project you mean without a slug in the path.
+
+## The key
+
+A project key looks like `ck_cloud_<slug>.<secret>`. The `<slug>` part is public
+(it also appears in your MCP URLs); the `<secret>` after the dot is the half that
+must stay private. One key carries full management authority over its project:
+it can mint and revoke MCP links, create tenants, and read every connection. So
+treat it like a production database password.
+
+<Callout type="warn" title="Server-side only">
+Never ship a `ck_cloud_` key to a browser, a mobile app, or anywhere a user
+could read it. A leaked key lets anyone manage your whole project. If one leaks,
+rotate it from the console and update your backend.
+</Callout>
+
+## Reading the key back
+
+A backend that needs its own key (to render it once in a setup screen, say) can
+read it:
+
+```bash
+curl https://api.corsair.cloud/v1/keys \
+  -H "Authorization: Bearer ck_cloud_acme.xxxxxxxx"
+```
+
+```json
+{ "object": "key", "project_key": "ck_cloud_acme.xxxxxxxx" }
+```
+
+Authenticating already proves you hold the key, so this returns the same secret
+you sent. Rotation lives in the console, not this endpoint.
+
+## The SDK
+
+The SDK takes the key and derives the base URL from it, so the key is the entire
+configuration:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_KEY! });
+```
+
+Pass `managementUrl` only when you are pointing a local or proxied setup
+somewhere other than production.
+
+## Failures
+
+A missing or wrong key returns `401` with an `authentication_error`. See
+[Errors](/docs/v1-guides/errors) for the shape.
