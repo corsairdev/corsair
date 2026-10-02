@@ -339,6 +339,8 @@ export type ExternalReductoPlugin<T extends ReductoPluginOptions> =
 	BaseReductoPlugin<T>;
 
 export function reducto<const T extends ReductoPluginOptions>(
+	// Empty options still have to satisfy the caller's T. There is no value
+	// that is both `{}` and an arbitrary T, so the default is asserted.
 	incomingOptions: ReductoPluginOptions & T = {} as ReductoPluginOptions & T,
 ): ExternalReductoPlugin<T> {
 	const options = {

@@ -7,10 +7,6 @@ import {
 	PipelineResponseSchema,
 } from './types';
 
-function asBody(value: object): Record<string, unknown> {
-	return value as Record<string, unknown>;
-}
-
 export const run: ReductoEndpoints['pipeline'] = async (ctx, input) => {
 	return callReducto(
 		ctx,
@@ -18,7 +14,7 @@ export const run: ReductoEndpoints['pipeline'] = async (ctx, input) => {
 		PipelineInputSchema,
 		PipelineResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/pipeline', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/pipeline', body }),
 		(body, response) => ({
 			jobId: response.job_id,
 			pipelineId: body.pipeline_id,
@@ -36,7 +32,7 @@ export const runAsync: ReductoEndpoints['pipelineAsync'] = async (
 		PipelineAsyncInputSchema,
 		AsyncJobIdResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/pipeline_async', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/pipeline_async', body }),
 		(body, response) => ({
 			jobId: response.job_id,
 			pipelineId: body.pipeline_id,

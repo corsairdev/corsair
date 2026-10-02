@@ -100,7 +100,12 @@ describe('Reducto plugin', () => {
 		const plugin = reducto({ key: 'local-key' });
 		expect(plugin.keyBuilder).toBeDefined();
 		const key = await plugin.keyBuilder!(
-			{ authType: 'api_key', keys: { get_api_key: async () => null } } as never,
+			// keyBuilder only reads authType and keys here. The rest of the
+			// plugin context is not used, so the stub is not the full type.
+			{
+				authType: 'api_key',
+				keys: { get_api_key: async () => null },
+			} as never,
 			'endpoint',
 		);
 		expect(key).toBe('local-key');
@@ -216,8 +221,9 @@ describeIfApiKey('Reducto live API', () => {
 			expect(deleted.file_id).toBe(uploaded.file_id);
 		} catch (error) {
 			expect(error).toBeInstanceOf(ReductoAPIError);
-			expect((error as ReductoAPIError).status).toBe(422);
-			expect((error as ReductoAPIError).message).toContain('NOT_APPLICABLE');
+			if (!(error instanceof ReductoAPIError)) return;
+			expect(error.status).toBe(422);
+			expect(error.message).toContain('NOT_APPLICABLE');
 		}
 	});
 

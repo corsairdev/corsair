@@ -12,10 +12,13 @@ function reductoError(
 }
 
 function classify(error: Error): string {
-	for (const name of Object.keys(errorHandlers)) {
-		const handler = errorHandlers[name as keyof typeof errorHandlers];
-		if (handler.match(error)) return name;
-	}
+	if (errorHandlers.VALIDATION_ERROR.match(error)) return 'VALIDATION_ERROR';
+	if (errorHandlers.RATE_LIMIT_ERROR.match(error)) return 'RATE_LIMIT_ERROR';
+	if (errorHandlers.AUTH_ERROR.match(error)) return 'AUTH_ERROR';
+	if (errorHandlers.BAD_REQUEST_ERROR.match(error)) return 'BAD_REQUEST_ERROR';
+	if (errorHandlers.SERVER_ERROR.match(error)) return 'SERVER_ERROR';
+	if (errorHandlers.TIMEOUT_ERROR.match(error)) return 'TIMEOUT_ERROR';
+	if (errorHandlers.DEFAULT.match()) return 'DEFAULT';
 	return 'UNMATCHED';
 }
 

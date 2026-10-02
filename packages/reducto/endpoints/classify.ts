@@ -7,10 +7,6 @@ import {
 	ClassifyResponseSchema,
 } from './types';
 
-function asBody(value: object): Record<string, unknown> {
-	return value as Record<string, unknown>;
-}
-
 export const classify: ReductoEndpoints['classify'] = async (ctx, input) => {
 	return callReducto(
 		ctx,
@@ -18,7 +14,7 @@ export const classify: ReductoEndpoints['classify'] = async (ctx, input) => {
 		ClassifyInputSchema,
 		ClassifyResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/classify', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/classify', body }),
 		(body, response) => ({
 			jobId: response.job_id,
 			categories: body.classification_schema?.length ?? 0,
@@ -39,7 +35,7 @@ export const classifyAsync: ReductoEndpoints['classifyAsync'] = async (
 		(body) => ({
 			method: 'POST',
 			url: '/classify_async',
-			body: asBody(body),
+			body,
 		}),
 		(_body, response) => ({ jobId: response.job_id }),
 	);

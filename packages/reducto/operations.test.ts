@@ -18,6 +18,7 @@ jest.mock('corsair/core', () => ({
 }));
 
 jest.mock('./client', () => {
+	// jest.requireActual is typed as any. The module's own type is the real export.
 	const actual = jest.requireActual('./client') as typeof import('./client');
 	return {
 		...actual,

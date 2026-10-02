@@ -7,10 +7,6 @@ import {
 	ParseResponseSchema,
 } from './types';
 
-function asBody(value: object): Record<string, unknown> {
-	return value as Record<string, unknown>;
-}
-
 export const parse: ReductoEndpoints['parse'] = async (ctx, input) => {
 	return callReducto(
 		ctx,
@@ -18,7 +14,7 @@ export const parse: ReductoEndpoints['parse'] = async (ctx, input) => {
 		ParseInputSchema,
 		ParseResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/parse', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/parse', body }),
 		(_body, response) => ({
 			jobId: response.job_id,
 			pages: response.usage.num_pages,
@@ -36,7 +32,7 @@ export const parseAsync: ReductoEndpoints['parseAsync'] = async (
 		ParseAsyncInputSchema,
 		AsyncJobIdResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/parse_async', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/parse_async', body }),
 		(_body, response) => ({ jobId: response.job_id }),
 	);
 };

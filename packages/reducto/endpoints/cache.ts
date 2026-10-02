@@ -128,6 +128,7 @@ export async function forgetJob(
 
 export async function rememberJob(
 	ctx: ReductoContext,
+	// unknown: the parsed response is one of several operation payloads. Only job fields are read.
 	response: unknown,
 	fallbackJobId?: string,
 ): Promise<void> {

@@ -59,7 +59,9 @@ export type ReductoQueryValue = string | number | boolean | undefined;
 
 export type ReductoRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	body?: Record<string, unknown>;
+	// Validated endpoint inputs are specific objects. An index signature would
+	// force a cast at every call.
+	body?: object;
 	query?: Record<string, ReductoQueryValue>;
 	path?: Record<string, string>;
 	formData?: Record<string, unknown>;

@@ -7,10 +7,6 @@ import {
 	SplitResponseSchema,
 } from './types';
 
-function asBody(value: object): Record<string, unknown> {
-	return value as Record<string, unknown>;
-}
-
 export const split: ReductoEndpoints['split'] = async (ctx, input) => {
 	return callReducto(
 		ctx,
@@ -18,7 +14,7 @@ export const split: ReductoEndpoints['split'] = async (ctx, input) => {
 		SplitInputSchema,
 		SplitResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/split', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/split', body }),
 		(body, response) => ({
 			jobId: response.job_id,
 			sections: body.split_description.length,
@@ -36,7 +32,7 @@ export const splitAsync: ReductoEndpoints['splitAsync'] = async (
 		SplitAsyncInputSchema,
 		AsyncJobIdResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/split_async', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/split_async', body }),
 		(_body, response) => ({ jobId: response.job_id }),
 	);
 };

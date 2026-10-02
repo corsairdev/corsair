@@ -1,8 +1,12 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import type { ReductoAPIError } from './client';
+import { ReductoAPIError } from './client';
+
+function asReductoError(error: Error): ReductoAPIError | undefined {
+	return error instanceof ReductoAPIError ? error : undefined;
+}
 
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<ReductoAPIError>).status;
+	return asReductoError(error)?.status;
 }
 
 // unknown: error bodies are JSON objects, strings, or omitted.
@@ -21,8 +25,8 @@ function bodyText(body: unknown): string {
 }
 
 function messageIncludes(error: Error, needles: string[]): boolean {
-	const body = (error as Partial<ReductoAPIError>).body;
-	const haystack = `${error.message} ${bodyText(body)}`.toLowerCase();
+	const haystack =
+		`${error.message} ${bodyText(asReductoError(error)?.body)}`.toLowerCase();
 	return needles.some((needle) => haystack.includes(needle));
 }
 
@@ -40,10 +44,11 @@ export const errorHandlers = {
 		// Same billing rule as the transport retry: only GET is replayed.
 		// A 429 on a write is returned as-is, with no Retry-After wait.
 		handler: async (error: Error) => {
-			if ((error as Partial<ReductoAPIError>).method !== 'GET') {
+			const reductoError = asReductoError(error);
+			if (reductoError?.method !== 'GET') {
 				return { maxRetries: 0 };
 			}
-			const retryAfter = (error as Partial<ReductoAPIError>).retryAfter;
+			const retryAfter = reductoError.retryAfter;
 			return {
 				maxRetries: 3,
 				headersRetryAfterMs: retryAfter,

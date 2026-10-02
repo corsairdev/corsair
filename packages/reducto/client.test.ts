@@ -18,7 +18,7 @@ const mockRequest = jest.mocked(request);
 
 function apiError(
 	status: number,
-	body: unknown,
+	body: { error: { name: string } },
 	retryAfter?: number,
 ): ApiError {
 	const result: ApiResult = {
@@ -106,13 +106,18 @@ describe('makeReductoRequest', () => {
 		const error = await makeReductoRequest('/parse', 'test-key', {
 			method: 'POST',
 			body: { input: 'https://example.com/a.pdf' },
-		}).catch((caught: unknown) => caught);
+		}).then(
+			() => {
+				throw new Error('expected ReductoAPIError');
+			},
+			(caught: Error) => caught,
+		);
 
 		expect(error).toBeInstanceOf(ReductoAPIError);
-		const reductoError = error as ReductoAPIError;
-		expect(reductoError.status).toBe(422);
-		expect(reductoError.method).toBe('POST');
-		expect(reductoError.retryAfter).toBe(1500);
-		expect(reductoError.message).toContain('NOT_APPLICABLE');
+		if (!(error instanceof ReductoAPIError)) return;
+		expect(error.status).toBe(422);
+		expect(error.method).toBe('POST');
+		expect(error.retryAfter).toBe(1500);
+		expect(error.message).toContain('NOT_APPLICABLE');
 	});
 });

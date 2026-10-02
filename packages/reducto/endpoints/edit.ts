@@ -7,10 +7,6 @@ import {
 	EditResponseSchema,
 } from './types';
 
-function asBody(value: object): Record<string, unknown> {
-	return value as Record<string, unknown>;
-}
-
 export const edit: ReductoEndpoints['edit'] = async (ctx, input) => {
 	return callReducto(
 		ctx,
@@ -18,7 +14,7 @@ export const edit: ReductoEndpoints['edit'] = async (ctx, input) => {
 		EditInputSchema,
 		EditResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/edit', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/edit', body }),
 		(_body, response) => ({ jobId: response.job_id }),
 	);
 };
@@ -30,7 +26,7 @@ export const editAsync: ReductoEndpoints['editAsync'] = async (ctx, input) => {
 		EditAsyncInputSchema,
 		AsyncJobIdResponseSchema,
 		input,
-		(body) => ({ method: 'POST', url: '/edit_async', body: asBody(body) }),
+		(body) => ({ method: 'POST', url: '/edit_async', body }),
 		(_body, response) => ({ jobId: response.job_id }),
 	);
 };
