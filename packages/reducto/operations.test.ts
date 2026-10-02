@@ -291,12 +291,13 @@ describe('Reducto endpoint routing', () => {
 	});
 
 	it('jobs.delete sends DELETE /job/{job_id}', async () => {
-		mockRequest.mockResolvedValue({ job_id: 'job-1' });
+		mockRequest.mockResolvedValue({ job_id: 'echoed-other' });
 		const ctx = createContext();
-		await (Jobs.remove as AnyEndpoint)(ctx, {
+		const result = await (Jobs.remove as AnyEndpoint)(ctx, {
 			job_id: 'job-1',
 			include_persisted: true,
 		});
+		expect(result).toMatchObject({ job_id: 'echoed-other' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/job/{job_id}',
 			'test-key',

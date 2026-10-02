@@ -67,6 +67,9 @@ export const cancel: ReductoEndpoints['cancelJob'] = async (ctx, input) => {
 };
 
 export const remove: ReductoEndpoints['deleteJob'] = async (ctx, input) => {
+	// The cache key is the id the caller asked to delete. The 202 body is not
+	// required to echo it.
+	const { job_id } = DeleteJobInputSchema.parse(input);
 	const response = await callReducto(
 		ctx,
 		'reducto.jobs.delete',
@@ -82,6 +85,6 @@ export const remove: ReductoEndpoints['deleteJob'] = async (ctx, input) => {
 		(body) => ({ jobId: body.job_id }),
 		false,
 	);
-	await forgetJob(ctx, response.job_id);
+	await forgetJob(ctx, job_id);
 	return response;
 };

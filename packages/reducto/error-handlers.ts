@@ -37,7 +37,12 @@ export const errorHandlers = {
 			if (getStatus(error) === 429) return true;
 			return messageIncludes(error, ['rate limit', 'too many requests']);
 		},
+		// Same billing rule as the transport retry: only GET is replayed.
+		// A 429 on a write is returned as-is, with no Retry-After wait.
 		handler: async (error: Error) => {
+			if ((error as Partial<ReductoAPIError>).method !== 'GET') {
+				return { maxRetries: 0 };
+			}
 			const retryAfter = (error as Partial<ReductoAPIError>).retryAfter;
 			return {
 				maxRetries: 3,

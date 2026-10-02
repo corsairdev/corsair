@@ -11,15 +11,21 @@ export class ReductoAPIError extends Error {
 	// unknown: Reducto error bodies are JSON objects, strings, or omitted.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
+	public readonly method?: ReductoRequestOptions['method'];
 
 	constructor(
 		message: string,
 		// unknown: same as body above. The provider does not fix an error shape.
-		options?: { cause?: Error; body?: unknown },
+		options?: {
+			cause?: Error;
+			body?: unknown;
+			method?: ReductoRequestOptions['method'];
+		},
 	) {
 		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'ReductoAPIError';
 		this.body = options?.body;
+		this.method = options?.method;
 
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
@@ -102,8 +108,14 @@ export async function makeReductoRequest<T>(
 	};
 
 	try {
+		// Parse, extract, upload, and the other writes bill if Reducto already
+		// accepted them. The shared client retries 429s, including via
+		// Retry-After, so that retry stays on GET.
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: REDUCTO_RATE_LIMIT_CONFIG,
+			rateLimitConfig:
+				method === 'GET'
+					? REDUCTO_RATE_LIMIT_CONFIG
+					: { ...REDUCTO_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
@@ -115,11 +127,15 @@ export async function makeReductoRequest<T>(
 				error.message && error.message !== '[object Object]'
 					? `${error.message}: ${detail}`
 					: detail;
-			throw new ReductoAPIError(message, { cause: error, body: error.body });
+			throw new ReductoAPIError(message, {
+				cause: error,
+				body: error.body,
+				method,
+			});
 		}
 		if (error instanceof Error) {
-			throw new ReductoAPIError(error.message, { cause: error });
+			throw new ReductoAPIError(error.message, { cause: error, method });
 		}
-		throw new ReductoAPIError('Unknown Reducto API error');
+		throw new ReductoAPIError('Unknown Reducto API error', { method });
 	}
 }
