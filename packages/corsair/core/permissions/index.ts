@@ -115,23 +115,29 @@ const UNIT_MS: Record<string, number> = {
  * Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds.
  * Only a full duration string is accepted. Anything else ('1.5h', '500ms', '')
  * falls back to 10 minutes. A valid '0s' returns 0.
+ * A non-string (a number or null from an untyped caller) also falls back, matching
+ * the old regex, which stringified its input instead of returning 0 or throwing.
  */
 export function parseDurationMs(duration: string): number {
-	if (duration.length === 0) return DEFAULT_DURATION_MS;
+	const raw: unknown = duration;
+	if (typeof raw !== 'string' || raw.length === 0) return DEFAULT_DURATION_MS;
 
 	let total = 0;
 	let i = 0;
-	while (i < duration.length) {
+	while (i < raw.length) {
 		const start = i;
-		while (i < duration.length) {
-			const code = duration.charCodeAt(i);
+		while (i < raw.length) {
+			const code = raw.charCodeAt(i);
 			if (code < 48 || code > 57) break;
 			i++;
 		}
-		if (i === start || i === duration.length) return DEFAULT_DURATION_MS;
-		const unit = UNIT_MS[duration.charAt(i)];
+		if (i === start || i === raw.length) return DEFAULT_DURATION_MS;
+		const unit = UNIT_MS[raw.charAt(i)];
 		if (unit === undefined) return DEFAULT_DURATION_MS;
-		total += Number.parseInt(duration.slice(start, i), 10) * unit;
+		const value = Number.parseInt(raw.slice(start, i), 10);
+		if (!Number.isFinite(value)) return DEFAULT_DURATION_MS;
+		total += value * unit;
+		if (!Number.isFinite(total)) return DEFAULT_DURATION_MS;
 		i++;
 	}
 	return total;

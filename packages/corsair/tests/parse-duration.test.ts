@@ -30,12 +30,25 @@ describe('parseDurationMs', () => {
 		'30s\n',
 		'30s\r',
 		'1h30',
+		`${'9'.repeat(400)}d`,
 	])('falls back to the default for %p', (input) => {
 		expect(parseDurationMs(input)).toBe(DEFAULT_MS);
 	});
+
+	it.each([30, null])(
+		'falls back to the default for non-string %p',
+		(input) => {
+			expect(parseDurationMs(input as unknown as string)).toBe(DEFAULT_MS);
+		},
+	);
 });
 
 describe('enforcePermission zero timeout', () => {
+	/**
+	 * Permission-store stub. The chain is cast to CorsairDatabase because it
+	 * only implements the query methods enforcePermission calls, not the full
+	 * Kysely database.
+	 */
 	function approvalDb() {
 		let inserts = 0;
 		const chain = {
@@ -66,6 +79,7 @@ describe('enforcePermission zero timeout', () => {
 			},
 		};
 		return {
+			// Cast: stub covers enforcePermission's query chain, not the full Kysely type.
 			db: { db: chain } as unknown as CorsairDatabase,
 			inserts: () => inserts,
 		};
