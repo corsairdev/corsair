@@ -70,6 +70,24 @@ describe('request() response body parsing', () => {
 		});
 	});
 
+	it('keeps the raw error text when a +json body is not valid JSON', async () => {
+		respondWith('upstream timed out', 'application/vnd.api+json', 502);
+
+		const error = await request(config, options).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).body).toBe('upstream timed out');
+	});
+
+	it('keeps an empty +json error body as text', async () => {
+		respondWith('', 'application/vnd.api+json', 500);
+
+		const error = await request(config, options).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).body).toBe('');
+	});
+
 	it('keeps non-JSON responses as text', async () => {
 		respondWith('hello', 'text/plain');
 

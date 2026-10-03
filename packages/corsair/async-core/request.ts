@@ -272,7 +272,14 @@ const getResponseBody = async (response: Response): Promise<any> => {
 						contentType.toLowerCase().startsWith(type),
 					) || mediaType.endsWith('+json');
 				if (isJSON) {
-					return await response.json();
+					// Keep the raw text when the body is empty or not valid JSON, so
+					// error details still reach ApiError.body.
+					const text = await response.text();
+					try {
+						return JSON.parse(text);
+					} catch {
+						return text;
+					}
 				} else {
 					return await response.text();
 				}
