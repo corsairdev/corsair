@@ -11,6 +11,7 @@ describe('TurbotPipes Live API Tests', () => {
 		authType: 'api_key' as const,
 		schema: {} as any,
 		options: { key } as any,
+		$getAccountId: jest.fn().mockResolvedValue('acc_1'),
 		keys: {
 			get_api_key: jest.fn().mockResolvedValue(key),
 			get_access_token: jest.fn(),
