@@ -1,0 +1,680 @@
+---
+title: Database
+description: "FinerWorks local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The FinerWorks plugin syncs data locally. Use `corsair.finerworks.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Addresses
+
+Path: `finerworks.db.addresses.search`
+
+```ts
+const rows = await corsair.finerworks.db.addresses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `first_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `last_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `company_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `address_1` | `string` | equals, contains, startsWith, endsWith, in |
+| `address_2` | `string` | equals, contains, startsWith, endsWith, in |
+| `address_3` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `province` | `string` | equals, contains, startsWith, endsWith, in |
+| `zip_postal_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `country_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `address_order_po` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Company Info
+
+Path: `finerworks.db.companyInfo.search`
+
+```ts
+const rows = await corsair.finerworks.db.companyInfo.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `site_id` | `number` | equals, gt, gte, lt, lte, in |
+| `lobby_hours` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Frame Collections
+
+Path: `finerworks.db.frameCollections.search`
+
+```ts
+const rows = await corsair.finerworks.db.frameCollections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon_url_1` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon_url_2` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon_url_3` | `string` | equals, contains, startsWith, endsWith, in |
+| `starting_price` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Frames
+
+Path: `finerworks.db.frames.search`
+
+```ts
+const rows = await corsair.finerworks.db.frames.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `thickness` | `number` | equals, gt, gte, lt, lte, in |
+| `depth` | `number` | equals, gt, gte, lt, lte, in |
+| `float_offset` | `number` | equals, gt, gte, lt, lte, in |
+| `rabbet` | `number` | equals, gt, gte, lt, lte, in |
+| `lip` | `number` | equals, gt, gte, lt, lte, in |
+| `profile_svg_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `sample_image_url_1` | `string` | equals, contains, startsWith, endsWith, in |
+| `sample_image_url_2` | `string` | equals, contains, startsWith, endsWith, in |
+| `sample_image_url_3` | `string` | equals, contains, startsWith, endsWith, in |
+| `min_width` | `number` | equals, gt, gte, lt, lte, in |
+| `min_height` | `number` | equals, gt, gte, lt, lte, in |
+| `max_width` | `number` | equals, gt, gte, lt, lte, in |
+| `max_height` | `number` | equals, gt, gte, lt, lte, in |
+| `price_level` | `number` | equals, gt, gte, lt, lte, in |
+| `allow_glazing` | `boolean` | equals |
+| `allow_matting` | `boolean` | equals |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `composite` | `string` | equals, contains, startsWith, endsWith, in |
+| `segment_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `sample_length` | `number` | equals, gt, gte, lt, lte, in |
+| `class_alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `starting_price` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `type_description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Galleries
+
+Path: `finerworks.db.galleries.search`
+
+```ts
+const rows = await corsair.finerworks.db.galleries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `alias` | `string` | equals, contains, startsWith, endsWith, in |
+| `personal` | `boolean` | equals |
+| `visible` | `boolean` | equals |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `keywords` | `string` | equals, contains, startsWith, endsWith, in |
+| `image_count` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Gallery Themes
+
+Path: `finerworks.db.galleryThemes.search`
+
+```ts
+const rows = await corsair.finerworks.db.galleryThemes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `slug` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `background` | `string` | equals, contains, startsWith, endsWith, in |
+| `foreground` | `string` | equals, contains, startsWith, endsWith, in |
+| `primary_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `secondary_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `accent_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `surface` | `string` | equals, contains, startsWith, endsWith, in |
+| `muted` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Glazing
+
+Path: `finerworks.db.glazing.search`
+
+```ts
+const rows = await corsair.finerworks.db.glazing.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `composite` | `number` | equals, gt, gte, lt, lte, in |
+| `image_1` | `string` | equals, contains, startsWith, endsWith, in |
+| `starting_price` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Images
+
+Path: `finerworks.db.images.search`
+
+```ts
+const rows = await corsair.finerworks.db.images.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `guid` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `file_size` | `number` | equals, gt, gte, lt, lte, in |
+| `thumbnail_file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `preview_file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `hires_file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_thumbnail_uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `public_preview_uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `private_hires_uri` | `string` | equals, contains, startsWith, endsWith, in |
+| `personal_gallery_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `members_gallery_category` | `string` | equals, contains, startsWith, endsWith, in |
+| `pix_w` | `number` | equals, gt, gte, lt, lte, in |
+| `pix_h` | `number` | equals, gt, gte, lt, lte, in |
+| `date_added` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `date_expires` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `artistname` | `string` | equals, contains, startsWith, endsWith, in |
+| `rank` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Mats
+
+Path: `finerworks.db.mats.search`
+
+```ts
+const rows = await corsair.finerworks.db.mats.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `core_color` | `string` | equals, contains, startsWith, endsWith, in |
+| `thickness` | `number` | equals, gt, gte, lt, lte, in |
+| `min_width` | `number` | equals, gt, gte, lt, lte, in |
+| `min_height` | `number` | equals, gt, gte, lt, lte, in |
+| `max_width` | `number` | equals, gt, gte, lt, lte, in |
+| `max_height` | `number` | equals, gt, gte, lt, lte, in |
+| `composite` | `string` | equals, contains, startsWith, endsWith, in |
+| `starting_price` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Media Types
+
+Path: `finerworks.db.mediaTypes.search`
+
+```ts
+const rows = await corsair.finerworks.db.mediaTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `product_type_id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon_url` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Orders
+
+Path: `finerworks.db.orders.search`
+
+```ts
+const rows = await corsair.finerworks.db.orders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_confirmation_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_po` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_status_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_status_label` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_source` | `string` | equals, contains, startsWith, endsWith, in |
+| `processing` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Order Status Definitions
+
+Path: `finerworks.db.orderStatusDefinitions.search`
+
+```ts
+const rows = await corsair.finerworks.db.orderStatusDefinitions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_status_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_status_label` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Prices
+
+Path: `finerworks.db.prices.search`
+
+```ts
+const rows = await corsair.finerworks.db.prices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_qty` | `number` | equals, gt, gte, lt, lte, in |
+| `product_sku` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_price` | `number` | equals, gt, gte, lt, lte, in |
+| `add_frame_price` | `number` | equals, gt, gte, lt, lte, in |
+| `add_mat_1_price` | `number` | equals, gt, gte, lt, lte, in |
+| `add_mat_2_price` | `number` | equals, gt, gte, lt, lte, in |
+| `add_glazing_price` | `number` | equals, gt, gte, lt, lte, in |
+| `add_color_correct_price` | `number` | equals, gt, gte, lt, lte, in |
+| `total_price` | `number` | equals, gt, gte, lt, lte, in |
+| `geo_price` | `number` | equals, gt, gte, lt, lte, in |
+| `info` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Product Types
+
+Path: `finerworks.db.productTypes.search`
+
+```ts
+const rows = await corsair.finerworks.db.productTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `icon_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `color_code` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Shipments
+
+Path: `finerworks.db.shipments.search`
+
+```ts
+const rows = await corsair.finerworks.db.shipments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `creation_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `shipment_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `eta_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `delivery_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `weight` | `number` | equals, gt, gte, lt, lte, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `depth` | `number` | equals, gt, gte, lt, lte, in |
+| `tracking_number` | `string` | equals, contains, startsWith, endsWith, in |
+| `tracking_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `carrier` | `string` | equals, contains, startsWith, endsWith, in |
+| `service` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Shipping Options
+
+Path: `finerworks.db.shippingOptions.search`
+
+```ts
+const rows = await corsair.finerworks.db.shippingOptions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `shipping_method` | `string` | equals, contains, startsWith, endsWith, in |
+| `shipping_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `shipping_class_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_international` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Shipping Quotes
+
+Path: `finerworks.db.shippingQuotes.search`
+
+```ts
+const rows = await corsair.finerworks.db.shippingQuotes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_po` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Style Types
+
+Path: `finerworks.db.styleTypes.search`
+
+```ts
+const rows = await corsair.finerworks.db.styleTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `can_frame` | `boolean` | equals |
+| `can_mat` | `boolean` | equals |
+| `can_glaze` | `boolean` | equals |
+| `custom_sizing` | `boolean` | equals |
+| `border_size` | `number` | equals, gt, gte, lt, lte, in |
+| `bleed_amt` | `number` | equals, gt, gte, lt, lte, in |
+| `corner_radius` | `number` | equals, gt, gte, lt, lte, in |
+| `depth` | `number` | equals, gt, gte, lt, lte, in |
+| `icon_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `allow_decimal` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Submitted Orders
+
+Path: `finerworks.db.submittedOrders.search`
+
+```ts
+const rows = await corsair.finerworks.db.submittedOrders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_po` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_confirmation_id` | `number` | equals, gt, gte, lt, lte, in |
+| `order_guid` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_confirmation_datetime` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_source` | `string` | equals, contains, startsWith, endsWith, in |
+| `order_status` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## User Accounts
+
+Path: `finerworks.db.userAccounts.search`
+
+```ts
+const rows = await corsair.finerworks.db.userAccounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_id` | `number` | equals, gt, gte, lt, lte, in |
+| `account_username` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_email` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_firstname` | `string` | equals, contains, startsWith, endsWith, in |
+| `account_lastname` | `string` | equals, contains, startsWith, endsWith, in |
+| `logo_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `payment_profile_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Virtual Inventory Products
+
+Path: `finerworks.db.virtualInventoryProducts.search`
+
+```ts
+const rows = await corsair.finerworks.db.virtualInventoryProducts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `sku` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_code` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_guid` | `string` | equals, contains, startsWith, endsWith, in |
+| `image_guid` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description_short` | `string` | equals, contains, startsWith, endsWith, in |
+| `description_long` | `string` | equals, contains, startsWith, endsWith, in |
+| `artist` | `string` | equals, contains, startsWith, endsWith, in |
+| `monetary_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `quantity` | `number` | equals, gt, gte, lt, lte, in |
+| `quantity_in_stock` | `number` | equals, gt, gte, lt, lte, in |
+| `track_inventory` | `boolean` | equals |
+| `per_item_price` | `number` | equals, gt, gte, lt, lte, in |
+| `total_price` | `number` | equals, gt, gte, lt, lte, in |
+| `asking_price` | `number` | equals, gt, gte, lt, lte, in |
+| `geo_price` | `number` | equals, gt, gte, lt, lte, in |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `valid` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
