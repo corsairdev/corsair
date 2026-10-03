@@ -17,6 +17,7 @@ import {
 	Users,
 } from './endpoints';
 import { isNonIdempotent } from './error-handlers';
+import type { HarvestKeyBuilderContext, HarvestPluginOptions } from './index';
 import { harvest, harvestEndpointMeta } from './index';
 
 // The event-log payload is asserted directly further down: it is the one place
@@ -704,30 +705,52 @@ describe('delete results', () => {
 });
 
 describe('keyBuilder', () => {
-	type KeyBuilderCtx = {
-		authType: 'oauth_2';
-		options: Record<string, never>;
-		tenantId: string;
-		keys: { get_access_token: () => Promise<string | null> };
-	};
+	/** Account key manager stub. keyBuilder only reads get_access_token. */
+	function stubKeys(
+		accessToken: string | null,
+	): HarvestKeyBuilderContext['keys'] {
+		const ignore = async (): Promise<void> => undefined;
+		return {
+			get_dek: async () => 'dek',
+			issue_new_dek: async () => 'dek',
+			get_access_token: async () => accessToken,
+			set_access_token: ignore,
+			get_refresh_token: async () => null,
+			set_refresh_token: ignore,
+			get_expires_at: async () => null,
+			set_expires_at: ignore,
+			get_scope: async () => null,
+			set_scope: ignore,
+			get_webhook_signature: async () => null,
+			set_webhook_signature: ignore,
+			get_integration_credentials: async () => ({
+				client_id: null,
+				client_secret: null,
+				redirect_url: null,
+			}),
+		};
+	}
 
+	/**
+	 * Runs the plugin keyBuilder with a HarvestKeyBuilderContext. The plugin
+	 * is pinned to HarvestPluginOptions so the callback accepts that context
+	 * instead of the generic `never` parameter.
+	 */
 	function buildKey(
 		accessToken: string | null,
 		options: { key?: string } = {},
 	): Promise<string> {
-		const keyBuilder = harvest(options).keyBuilder as unknown as (
-			ctx: KeyBuilderCtx,
-			source: 'endpoint' | 'webhook',
-		) => Promise<string>;
-		return keyBuilder(
-			{
-				authType: 'oauth_2',
-				options: {},
-				tenantId: 'tenant',
-				keys: { get_access_token: async () => accessToken },
-			},
-			'endpoint',
-		);
+		const keyBuilder = harvest<HarvestPluginOptions>(options).keyBuilder;
+		if (!keyBuilder) {
+			throw new Error('harvest plugin must define keyBuilder');
+		}
+		const ctx: HarvestKeyBuilderContext = {
+			authType: 'oauth_2',
+			options: {},
+			tenantId: 'tenant',
+			keys: stubKeys(accessToken),
+		};
+		return Promise.resolve(keyBuilder(ctx, 'endpoint'));
 	}
 
 	it('returns the stored access token', async () => {
@@ -735,7 +758,10 @@ describe('keyBuilder', () => {
 	});
 
 	it('throws AuthMissingError when the keystore has no access token', async () => {
-		await expect(buildKey(null)).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(buildKey(null)).rejects.toMatchObject({
+			pluginId: 'harvest',
+			authType: 'oauth_2',
+		});
 	});
 
 	it('throws AuthMissingError when the stored access token is empty', async () => {

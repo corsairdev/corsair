@@ -750,6 +750,11 @@ export function harvest<const T extends HarvestPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the Harvest bearer token. Throws AuthMissingError when the
+		 * stored OAuth access token is missing, so the request is not sent
+		 * with an empty Authorization header.
+		 */
 		keyBuilder: async (ctx: HarvestKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
