@@ -23,19 +23,23 @@ function stubCtx(
 	};
 }
 
+/**
+ * Invokes keyBuilder with a TogglKeyBuilderContext. The plugin is pinned to
+ * TogglPluginOptions so the callback accepts that context.
+ */
 async function resolveKey(
-	plugin: ReturnType<typeof toggl>,
+	plugin: ReturnType<typeof toggl<TogglPluginOptions>>,
 	ctx: TogglKeyBuilderContext,
 ): Promise<string> {
 	const build = plugin.keyBuilder;
 	if (!build) {
 		throw new Error('toggl plugin must define keyBuilder');
 	}
-	return build(ctx, 'endpoint');
+	return Promise.resolve(build(ctx, 'endpoint'));
 }
 
 describe('toggl keyBuilder authentication', () => {
-	const plugin = toggl();
+	const plugin = toggl<TogglPluginOptions>();
 
 	it('throws AuthMissingError when no api key is stored', async () => {
 		await expect(resolveKey(plugin, stubCtx(null))).rejects.toBeInstanceOf(
@@ -50,15 +54,10 @@ describe('toggl keyBuilder authentication', () => {
 	});
 
 	it('reports toggl / api_key on the thrown error', async () => {
-		const err: unknown = await resolveKey(plugin, stubCtx(null)).catch(
-			(e: unknown) => e,
-		);
-		expect(err).toBeInstanceOf(AuthMissingError);
-		if (!(err instanceof AuthMissingError)) {
-			throw new Error('expected AuthMissingError');
-		}
-		expect(err.pluginId).toBe('toggl');
-		expect(err.authType).toBe('api_key');
+		await expect(resolveKey(plugin, stubCtx(null))).rejects.toMatchObject({
+			pluginId: 'toggl',
+			authType: 'api_key',
+		});
 	});
 
 	it('returns the stored api key', async () => {
@@ -68,7 +67,7 @@ describe('toggl keyBuilder authentication', () => {
 	});
 
 	it('returns options.key without reading the key manager', async () => {
-		const withKey = toggl({ key: 'option-token' });
+		const withKey = toggl<TogglPluginOptions>({ key: 'option-token' });
 		await expect(resolveKey(withKey, stubCtx(null))).resolves.toBe(
 			'option-token',
 		);

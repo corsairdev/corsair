@@ -863,6 +863,10 @@ export function toggl<const T extends TogglPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the Toggl API token. Throws AuthMissingError when the stored
+		 * key is missing, so the request is not sent as Basic auth of `:api_token`.
+		 */
 		keyBuilder: async (ctx: TogglKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
