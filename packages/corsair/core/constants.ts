@@ -667,6 +667,7 @@ export const ProviderDisplayNames = {
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
 	tpscheck: 'TPSCheck',
+	turbotpipes: 'Turbot Pipes',
 	trello: 'Trello',
 	tripadvisor: 'Tripadvisor',
 	twentyonerisk: 'TwentyOneRisk',
@@ -1023,6 +1024,7 @@ export type AllProviders =
 	| 'toggl'
 	| 'tokenmetrics'
 	| 'tpscheck'
+	| 'turbotpipes'
 	| 'trello'
 	| 'tripadvisor'
 	| 'twentyonerisk'
