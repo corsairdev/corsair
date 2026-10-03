@@ -27,7 +27,7 @@ export const BaseProviders = [
 	'agentmail',
 	'agentql',
 	'agenty',
-	'agiled',
+
 	'agilitycms',
 	'ahrefs',
 	'aimlapi',
@@ -295,6 +295,7 @@ export const BaseProviders = [
 	'sourcegraph',
 	'spoki',
 	'spotify',
+	'starton',
 	'strava',
 	'streamtime',
 	'stripe',
@@ -376,7 +377,6 @@ export const ProviderDisplayNames = {
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	agenty: 'Agenty',
-	agiled: 'Agiled',
 	agilitycms: 'Agility CMS',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
@@ -644,6 +644,7 @@ export const ProviderDisplayNames = {
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
+	starton: 'Starton',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
 	stripe: 'Stripe',
@@ -1000,6 +1001,7 @@ export type AllProviders =
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
+	| 'starton'
 	| 'strava'
 	| 'streamtime'
 	| 'stripe'
