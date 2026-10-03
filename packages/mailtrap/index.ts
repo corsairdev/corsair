@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Account,
 	ContactFields,
@@ -27,7 +28,6 @@ import {
 	Stats,
 	Suppressions,
 } from './endpoints';
-import { AuthMissingError } from 'corsair/core';
 import type {
 	MailtrapEndpointInputs,
 	MailtrapEndpointOutputs,
@@ -684,9 +684,9 @@ export function mailtrap<const T extends MailtrapPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new AuthMissingError('mailtrap', 'api_key')
+					throw new AuthMissingError('mailtrap', 'api_key');
 				}
-				return res
+				return res;
 			}
 
 			return '';
