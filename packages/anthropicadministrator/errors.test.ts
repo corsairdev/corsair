@@ -1,8 +1,6 @@
 import { ApiError, request } from 'corsair/http';
-import {
-	AnthropicAdministratorAPIError,
-	makeAnthropicAdministratorRequest,
-} from './client';
+import { AnthropicAdministratorAPIError } from './api-error';
+import { makeAnthropicAdministratorRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -141,7 +139,12 @@ describe('request path bounds', () => {
 		const getUser = groups.users?.getUser;
 		if (!getUser) throw new Error('missing endpoint');
 		await getUser(
-			{ key: 'k', options: {}, db: {} },
+			{
+				key: 'k',
+				options: {},
+				keys: { get_api_key: async () => 'k' },
+				db: {},
+			},
 			{ user_id: '{a'.repeat(50) },
 		);
 
