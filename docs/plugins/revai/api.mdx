@@ -1,0 +1,145 @@
+---
+title: API
+description: "API reference for RevAI: every `revai.api.*` operation with input and output types."
+---
+
+Every `revai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Jobs
+
+### getJob
+
+`jobs.getJob`
+
+Get an async job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `completed_on` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `language` | `string` | No | — |
+| `failure` | `string` | No | — |
+| `duration_seconds` | `number` | No | — |
+
+
+
+---
+
+### getTranscript
+
+`jobs.getTranscript`
+
+Get transcript of a job
+
+**Risk:** `read`
+
+```ts
+await corsair.revai.api.jobs.getTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  monologues: any[]
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### submitJob
+
+`jobs.submitJob`
+
+Submit an async job
+
+**Risk:** `write`
+
+```ts
+await corsair.revai.api.jobs.submitJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `media_url` | `string` | Yes | — |
+| `metadata` | `string` | No | — |
+| `language` | `string` | No | — |
+| `notification_config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="notification_config full type">
+
+```ts
+{
+  url: string,
+  auth_headers?: {
+    Authorization: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `created_on` | `string` | No | — |
+| `completed_on` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `metadata` | `string` | No | — |
+| `language` | `string` | No | — |
+| `failure` | `string` | No | — |
+| `duration_seconds` | `number` | No | — |
+
+
+
+---
+
