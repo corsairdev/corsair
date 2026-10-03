@@ -7,6 +7,7 @@ export const get: PagerdutyEndpoints['usersGet'] = async (ctx, input) => {
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['usersGet']
 	>(`users/${input.id}`, ctx.key, {
+		authType: ctx.options.authType,
 		query: {
 			...(input.include && { 'include[]': input.include.join(',') }),
 		},

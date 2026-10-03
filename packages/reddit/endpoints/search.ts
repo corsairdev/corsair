@@ -14,6 +14,8 @@ export const searchGlobal: RedditEndpoints['searchGlobal'] = async (
 	input,
 ) => {
 	const raw = await makeRedditRequest<RedditListingRaw>('/search.json', {
+		token: ctx.key,
+		authType: ctx.options.authType,
 		query: input,
 	});
 
@@ -43,6 +45,8 @@ export const searchSubreddit: RedditEndpoints['searchSubreddit'] = async (
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		`/r/${subreddit}/search.json`,
 		{
+			token: ctx.key,
+			authType: ctx.options.authType,
 			query: { ...query, restrict_sr: true },
 		},
 	);
@@ -72,6 +76,8 @@ export const searchSubreddits: RedditEndpoints['searchSubreddits'] = async (
 	const raw = await makeRedditRequest<RedditListingRaw>(
 		'/subreddits/search.json',
 		{
+			token: ctx.key,
+			authType: ctx.options.authType,
 			query: input,
 		},
 	);

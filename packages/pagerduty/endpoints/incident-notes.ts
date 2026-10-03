@@ -10,6 +10,7 @@ export const create: PagerdutyEndpoints['incidentNotesCreate'] = async (
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentNotesCreate']
 	>(`incidents/${input.incident_id}/notes`, ctx.key, {
+		authType: ctx.options.authType,
 		method: 'POST',
 		body: {
 			note: {
@@ -34,6 +35,7 @@ export const list: PagerdutyEndpoints['incidentNotesList'] = async (
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['incidentNotesList']
 	>(`incidents/${input.incident_id}/notes`, ctx.key, {
+		authType: ctx.options.authType,
 		query: {
 			limit: input.limit,
 			offset: input.offset,

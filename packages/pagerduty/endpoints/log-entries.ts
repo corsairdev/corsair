@@ -7,6 +7,7 @@ export const get: PagerdutyEndpoints['logEntriesGet'] = async (ctx, input) => {
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['logEntriesGet']
 	>(`log_entries/${input.id}`, ctx.key, {
+		authType: ctx.options.authType,
 		query: {
 			...(input.include && { 'include[]': input.include.join(',') }),
 		},
@@ -28,6 +29,7 @@ export const list: PagerdutyEndpoints['logEntriesList'] = async (
 	const result = await makePagerdutyRequest<
 		PagerdutyEndpointOutputs['logEntriesList']
 	>('log_entries', ctx.key, {
+		authType: ctx.options.authType,
 		query: {
 			limit: input.limit,
 			offset: input.offset,

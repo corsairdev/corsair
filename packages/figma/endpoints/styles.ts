@@ -7,7 +7,7 @@ export const get: FigmaEndpoints['stylesGet'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<FigmaEndpointOutputs['stylesGet']>(
 		`v1/styles/${input.key}`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', authType: ctx.options.authType },
 	);
 
 	await logEventFromContext(ctx, 'figma.styles.get', { ...input }, 'completed');
@@ -24,6 +24,7 @@ export const getForTeam: FigmaEndpoints['stylesGetForTeam'] = async (
 	>(`v1/teams/${team_id}/styles`, ctx.key, {
 		method: 'GET',
 		query: { ...queryParams },
+		authType: ctx.options.authType,
 	});
 
 	await logEventFromContext(

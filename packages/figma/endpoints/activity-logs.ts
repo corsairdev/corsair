@@ -6,7 +6,11 @@ import type { FigmaEndpointOutputs } from './types';
 export const list: FigmaEndpoints['activityLogsList'] = async (ctx, input) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['activityLogsList']
-	>(`v1/activity_logs`, ctx.key, { method: 'GET', query: { ...input } });
+	>(`v1/activity_logs`, ctx.key, {
+		method: 'GET',
+		query: { ...input },
+		authType: ctx.options.authType,
+	});
 
 	await logEventFromContext(
 		ctx,

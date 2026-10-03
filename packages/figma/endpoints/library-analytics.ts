@@ -11,6 +11,7 @@ export const componentActions: FigmaEndpoints['libraryAnalyticsComponentActions'
 		>(`v1/analytics/libraries/${file_key}/component/actions`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -30,6 +31,7 @@ export const componentUsages: FigmaEndpoints['libraryAnalyticsComponentUsages'] 
 		>(`v1/analytics/libraries/${file_key}/component/usages`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -49,6 +51,7 @@ export const styleActions: FigmaEndpoints['libraryAnalyticsStyleActions'] =
 		>(`v1/analytics/libraries/${file_key}/style/actions`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -68,6 +71,7 @@ export const styleUsages: FigmaEndpoints['libraryAnalyticsStyleUsages'] =
 		>(`v1/analytics/libraries/${file_key}/style/usages`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -87,6 +91,7 @@ export const variableActions: FigmaEndpoints['libraryAnalyticsVariableActions'] 
 		>(`v1/analytics/libraries/${file_key}/variable/actions`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -106,6 +111,7 @@ export const variableUsages: FigmaEndpoints['libraryAnalyticsVariableUsages'] =
 		>(`v1/analytics/libraries/${file_key}/variable/usages`, ctx.key, {
 			method: 'GET',
 			query: { ...queryParams },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(

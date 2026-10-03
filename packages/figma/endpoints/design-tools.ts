@@ -20,6 +20,7 @@ export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
 				}>(`v1/files/${input.file_key}`, ctx.key, {
 					method: 'GET',
 					query: { depth: input.max_depth },
+					authType: ctx.options.authType,
 				});
 				files.push({ key: input.file_key, ...fileResult });
 			} catch (error) {
@@ -33,7 +34,10 @@ export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
 					name?: string;
 					// unknown: project file list items have dynamic structure per Figma API response
 					files?: unknown[];
-				}>(`v1/projects/${input.project_id}/files`, ctx.key, { method: 'GET' });
+				}>(`v1/projects/${input.project_id}/files`, ctx.key, {
+					method: 'GET',
+					authType: ctx.options.authType,
+				});
 				projects.push({ id: input.project_id, ...projectResult });
 				if (projectResult.files) {
 					files.push(...projectResult.files);
@@ -52,7 +56,10 @@ export const discoverResources: FigmaEndpoints['designToolsDiscoverResources'] =
 					name?: string;
 					// unknown: team project list items have dynamic structure per Figma API response
 					projects?: unknown[];
-				}>(`v1/teams/${input.team_id}/projects`, ctx.key, { method: 'GET' });
+				}>(`v1/teams/${input.team_id}/projects`, ctx.key, {
+					method: 'GET',
+					authType: ctx.options.authType,
+				});
 				teams.push({ id: input.team_id, ...teamResult });
 				if (teamResult.projects) {
 					projects.push(...teamResult.projects);
@@ -91,6 +98,7 @@ export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens
 					};
 				}>(`v1/files/${input.file_key}/variables/local`, ctx.key, {
 					method: 'GET',
+					authType: ctx.options.authType,
 				});
 				if (variablesResult.meta?.variables) {
 					tokens['variables'] = variablesResult.meta.variables;
@@ -112,7 +120,10 @@ export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens
 				const stylesResult = await makeFigmaRequest<{
 					// unknown: style items within meta have dynamic properties not fully typed by Figma API
 					meta?: { styles?: unknown[] };
-				}>(`v1/files/${input.file_key}/styles`, ctx.key, { method: 'GET' });
+				}>(`v1/files/${input.file_key}/styles`, ctx.key, {
+					method: 'GET',
+					authType: ctx.options.authType,
+				});
 				if (stylesResult.meta?.styles) {
 					tokens['styles'] = stylesResult.meta.styles;
 				}
@@ -131,6 +142,7 @@ export const extractDesignTokens: FigmaEndpoints['designToolsExtractDesignTokens
 				}>(`v1/files/${input.file_key}/nodes`, ctx.key, {
 					method: 'GET',
 					query: { ids: input.extract_from_nodes },
+					authType: ctx.options.authType,
 				});
 				if (nodesResult.nodes) {
 					tokens['nodes'] = nodesResult.nodes;
@@ -176,6 +188,7 @@ export const extractPrototypeInteractions: FigmaEndpoints['designToolsExtractPro
 				query: {
 					geometry: 'paths',
 				},
+				authType: ctx.options.authType,
 			});
 
 			if (fileResult.flows) {
@@ -226,6 +239,7 @@ export const downloadImages: FigmaEndpoints['designToolsDownloadImages'] =
 				svg_outline_text: input.svg_outline_text,
 				svg_simplify_stroke: input.svg_simplify_stroke,
 			},
+			authType: ctx.options.authType,
 		});
 
 		const result: FigmaEndpointOutputs['designToolsDownloadImages'] = {

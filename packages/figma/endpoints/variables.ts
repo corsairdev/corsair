@@ -11,6 +11,7 @@ export const createModifyDelete: FigmaEndpoints['variablesCreateModifyDelete'] =
 		>(`v1/files/${file_key}/variables`, ctx.key, {
 			method: 'POST',
 			body: { ...body },
+			authType: ctx.options.authType,
 		});
 
 		await logEventFromContext(
@@ -28,7 +29,10 @@ export const getLocal: FigmaEndpoints['variablesGetLocal'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['variablesGetLocal']
-	>(`v1/files/${input.file_key}/variables/local`, ctx.key, { method: 'GET' });
+	>(`v1/files/${input.file_key}/variables/local`, ctx.key, {
+		method: 'GET',
+		authType: ctx.options.authType,
+	});
 
 	if (ctx.db.fileMetadata) {
 		try {
@@ -57,6 +61,7 @@ export const getPublished: FigmaEndpoints['variablesGetPublished'] = async (
 		FigmaEndpointOutputs['variablesGetPublished']
 	>(`v1/files/${input.file_key}/variables/published`, ctx.key, {
 		method: 'GET',
+		authType: ctx.options.authType,
 	});
 
 	if (ctx.db.fileMetadata) {

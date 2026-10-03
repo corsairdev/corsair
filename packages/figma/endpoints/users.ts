@@ -9,7 +9,7 @@ export const getCurrent: FigmaEndpoints['usersGetCurrent'] = async (
 ) => {
 	const result = await makeFigmaRequest<
 		FigmaEndpointOutputs['usersGetCurrent']
-	>(`v1/me`, ctx.key, { method: 'GET' });
+	>(`v1/me`, ctx.key, { method: 'GET', authType: ctx.options.authType });
 
 	await logEventFromContext(
 		ctx,

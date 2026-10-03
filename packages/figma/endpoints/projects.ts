@@ -7,7 +7,10 @@ export const getTeamProjects: FigmaEndpoints['projectsGetTeamProjects'] =
 	async (ctx, input) => {
 		const result = await makeFigmaRequest<
 			FigmaEndpointOutputs['projectsGetTeamProjects']
-		>(`v1/teams/${input.team_id}/projects`, ctx.key, { method: 'GET' });
+		>(`v1/teams/${input.team_id}/projects`, ctx.key, {
+			method: 'GET',
+			authType: ctx.options.authType,
+		});
 
 		await logEventFromContext(
 			ctx,
