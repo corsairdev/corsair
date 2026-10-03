@@ -67,9 +67,14 @@ describe('toggl keyBuilder authentication', () => {
 	});
 
 	it('returns options.key without reading the key manager', async () => {
+		let reads = 0;
+		const ctx = stubCtx(null);
+		ctx.keys.get_api_key = async () => {
+			reads += 1;
+			return null;
+		};
 		const withKey = toggl<TogglPluginOptions>({ key: 'option-token' });
-		await expect(resolveKey(withKey, stubCtx(null))).resolves.toBe(
-			'option-token',
-		);
+		await expect(resolveKey(withKey, ctx)).resolves.toBe('option-token');
+		expect(reads).toBe(0);
 	});
 });
