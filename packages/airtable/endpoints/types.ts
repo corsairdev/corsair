@@ -88,6 +88,8 @@ export const AirtableEndpointInputSchemas = {
 	recordsGet: RecordsGetInputSchema,
 	recordsSearch: RecordsSearchInputSchema,
 	recordsUpdate: RecordsUpdateInputSchema,
+	webhooksGetPayloads: WebhooksGetPayloadsInputSchema,
+	/** @deprecated Use `webhooksGetPayloads`. Kept so code that reads the old key still compiles. */
 	webhookGetPayloads: WebhooksGetPayloadsInputSchema,
 } as const;
 
@@ -211,6 +213,8 @@ export const AirtableEndpointOutputSchemas = {
 	recordsGet: RecordsGetResponseSchema,
 	recordsSearch: RecordsSearchResponseSchema,
 	recordsUpdate: RecordsUpdateResponseSchema,
+	webhooksGetPayloads: WebhooksGetPayloadsResponseSchema,
+	/** @deprecated Use `webhooksGetPayloads`. Kept so code that reads the old key still compiles. */
 	webhookGetPayloads: WebhooksGetPayloadsResponseSchema,
 } as const;
 
