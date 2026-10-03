@@ -1,0 +1,23 @@
+name: Good first issue
+description: An issue reserved for first-time contributors
+title: '[good first issue] '
+labels: ['good first issue']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **First-time contributors only.** If you have already had a pull request merged in this repository, do not take this issue — we will not merge it.
+
+        Comment `/assign` to claim this issue. Do not open a PR until you are assigned. You may have only one assigned issue at a time. Unassigned PRs will be closed.
+  - type: textarea
+    attributes:
+      label: Task
+      description: What should a first-time contributor change?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Acceptance
+      description: How will we know this is done?
+    validations:
+      required: true
