@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	AccountEndpoints,
 	CollectionsEndpoints,
@@ -42,7 +43,7 @@ import { errorHandlers } from './error-handlers';
 import { HuggingFaceSchema } from './schema';
 
 export type HuggingFacePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	/** Access token override for tests / local calls (hf_... or OAuth token). */
 	key?: string;
 	hooks?: InternalHuggingFacePlugin['hooks'];
@@ -1520,6 +1521,9 @@ export const huggingFaceAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
+	managed: {
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseHuggingFacePlugin<T extends HuggingFacePluginOptions> =
@@ -1552,6 +1556,23 @@ export function huggingface<const T extends HuggingFacePluginOptions>(
 		authConfig: huggingFaceAuthConfig,
 		schema: HuggingFaceSchema,
 		options,
+		oauthConfig: {
+			providerName: 'Hugging Face',
+			authUrl: 'https://huggingface.co/oauth/authorize',
+			tokenUrl: 'https://huggingface.co/oauth/token',
+			scopes: [
+				'openid',
+				'profile',
+				'email',
+				'read-repos',
+				'write-repos',
+				'manage-repos',
+				'read-collections',
+				'write-collections',
+				'inference-api',
+			],
+			tokenAuthMethod: 'basic',
+		},
 		hooks: options.hooks,
 		endpoints: huggingFaceEndpointsNested,
 		webhooks: {},
@@ -1587,7 +1608,11 @@ export function huggingface<const T extends HuggingFacePluginOptions>(
 				return res;
 			}
 
-			return '';
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'huggingface');
+			}
+
+			throw new AuthMissingError('huggingface', 'oauth_2');
 		},
 	} satisfies InternalHuggingFacePlugin;
 }

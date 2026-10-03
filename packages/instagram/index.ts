@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 
 import {
 	attachInstagramRefreshAuth,
@@ -67,6 +68,9 @@ export const InstagramWebhooksNested = {
 export const instagramAuthConfig = {
 	oauth_2: {
 		//OAuth2 plugins, client_id and client_secret are always provided by the base framework and must not be declared in the integration array
+		integration: [] as const,
+	},
+	managed: {
 		integration: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -529,7 +533,7 @@ const InstagramWebhookSchemas = {
 } as const;
 
 export type InstagramPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	credentials?: InstagramCredentials;
 	/** Verify token configured in the Meta app dashboard for webhook URL verification. */
@@ -625,6 +629,10 @@ export function instagram<const T extends InstagramPluginOptions>(
 		keyBuilder: async (ctx: InstagramKeyBuilderContext) => {
 			if (options.key) {
 				return options.key;
+			}
+
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'instagram');
 			}
 
 			if (ctx.authType !== 'oauth_2') {

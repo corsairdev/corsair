@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	supabaseEndpointMeta as generatedSupabaseEndpointMeta,
 	supabaseEndpointSchemas,
@@ -25,7 +26,7 @@ export const supabaseEndpointMeta =
 	>;
 
 export type SupabasePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	projectApiKey?: string;
 	hooks?: InternalSupabasePlugin['hooks'];
@@ -52,6 +53,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 export const supabaseAuthConfig = {
 	api_key: {},
 	oauth_2: {},
+	managed: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseSupabasePlugin<T extends SupabasePluginOptions> = CorsairPlugin<
@@ -118,6 +120,10 @@ export function supabase<const T extends SupabasePluginOptions>(
 					throw new AuthMissingError('supabase', 'oauth_2');
 				}
 				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'supabase');
 			}
 
 			throw new AuthMissingError('supabase', ctx.authType);

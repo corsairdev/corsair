@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import {
 	normalizeConfluenceCloudUrl,
 	resolveConfluenceCloudResource,
@@ -30,7 +31,7 @@ import { errorHandlers } from './error-handlers';
 import { ConfluenceSchema } from './schema';
 
 export type ConfluencePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	/** Atlassian account email used with a Confluence Cloud API token. */
 	email?: string;
@@ -123,6 +124,9 @@ export const confluenceAuthConfig = {
 	oauth_2: {
 		account: ['cloud_id', 'cloud_url'] as const,
 	},
+	managed: {
+		account: ['cloud_id', 'cloud_url'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseConfluencePlugin<T extends ConfluencePluginOptions> =
@@ -202,15 +206,22 @@ export function confluence<const T extends ConfluencePluginOptions>(
 				return `${email}:${apiToken}`;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await getOAuthAccessToken(ctx, {
-					plugin: 'confluence',
-					tokenUrl: 'https://auth.atlassian.com/oauth/token',
-					bodyFormat: 'json',
-				});
+			if (
+				source === 'endpoint' &&
+				(ctx.authType === 'oauth_2' || ctx.authType === 'managed')
+			) {
+				const accessToken =
+					ctx.authType === 'managed'
+						? await resolveManagedAccessToken(ctx, 'confluence')
+						: await getOAuthAccessToken(ctx, {
+								plugin: 'confluence',
+								tokenUrl: 'https://auth.atlassian.com/oauth/token',
+								bodyFormat: 'json',
+							});
 
 				// Atlassian Cloud API calls are keyed by the site's cloud_id — resolve
-				// and persist it once, or when the configured site changes.
+				// and persist it once, or when the configured site changes. Managed
+				// delivery does not populate these fields, so both flows resolve here.
 				const [storedCloudId, storedCloudUrl] = await Promise.all([
 					ctx.keys.get_cloud_id(),
 					ctx.keys.get_cloud_url(),

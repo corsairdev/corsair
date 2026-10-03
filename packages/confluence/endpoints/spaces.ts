@@ -9,14 +9,15 @@ export const list: ConfluenceEndpoints['spacesList'] = async (ctx, input) => {
 	const cloudUrl =
 		ctx.options.cloudUrl ?? (await ctx.keys.get_cloud_url()) ?? '';
 	const cloudId =
-		ctx.options.authType === 'oauth_2'
+		ctx.options.authType === 'oauth_2' || ctx.options.authType === 'managed'
 			? ((await ctx.keys.get_cloud_id()) ?? undefined)
 			: undefined;
 
 	const result = await makeConfluenceRequest('spaces', ctx.key, cloudUrl, {
 		method: 'GET',
 		base: '/wiki/api/v2',
-		authType: ctx.options.authType,
+		authType:
+			ctx.options.authType === 'managed' ? 'oauth_2' : ctx.options.authType,
 		cloudId,
 		query: {
 			...(validated.key && { keys: validated.key }),

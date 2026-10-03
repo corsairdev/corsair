@@ -11,6 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { resolveManagedAccessToken } from 'corsair/hub';
 import { BITBUCKET_AUTH_URL, BITBUCKET_TOKEN_URL } from './client';
 import { BitbucketEndpoints } from './endpoints';
 import {
@@ -23,9 +24,10 @@ import { BitbucketSchema } from './schema';
 const bitbucketEndpointsNested = BitbucketEndpoints;
 export const bitbucketAuthConfig = {
 	oauth_2: { account: ['account_id'] as const },
+	managed: { account: ['account_id'] as const },
 } as const satisfies PluginAuthConfig;
 export type BitbucketPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalBitbucketPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -1083,6 +1085,10 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: BitbucketKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
+			if (ctx.authType === 'managed') {
+				return resolveManagedAccessToken(ctx, 'bitbucket');
+			}
+
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2')
 				throw new AuthMissingError('bitbucket', 'oauth_2');
 			return getOAuthAccessToken(ctx, {

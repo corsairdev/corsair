@@ -168,10 +168,11 @@ describe('exist plugin shape', () => {
 		]);
 	});
 
-	it('exposes only OAuth2 auth, scoped by tenant external id', () => {
+	it('exposes OAuth2 and managed auth, scoped by tenant external id', () => {
 		const plugin = exist();
 		expect(plugin.authConfig).toEqual({
 			oauth_2: { account: ['tenant_external_id'] },
+			managed: { account: ['tenant_external_id'] },
 		});
 	});
 
