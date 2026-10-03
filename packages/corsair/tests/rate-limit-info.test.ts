@@ -1,4 +1,5 @@
 import {
+	calculateRetryDelay,
 	DEFAULT_RATE_LIMIT_CONFIG,
 	extractRateLimitInfo,
 } from '../async-core/rate-limit';
@@ -43,5 +44,57 @@ describe('extractRateLimitInfo', () => {
 
 		expect(info.retryAfter).toBe(5_000);
 		expect(info.rateLimitReset).toBeUndefined();
+	});
+
+	it('falls back to x-ratelimit-reset when retry-after is negative', () => {
+		const resetInAMinute = Math.floor(Date.now() / 1000) + 60;
+
+		const info = extractRateLimitInfo(
+			response429({
+				'retry-after': '-5',
+				'x-ratelimit-reset': String(resetInAMinute),
+			}),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBeGreaterThan(55_000);
+		expect(info.retryAfter).toBeLessThanOrEqual(60_000);
+	});
+
+	it('parses an HTTP-date retry-after over a later x-ratelimit-reset', () => {
+		const retryAt = new Date(Date.now() + 30_000).toUTCString();
+		const resetInAnHour = Math.floor(Date.now() / 1000) + 3600;
+
+		const info = extractRateLimitInfo(
+			response429({
+				'retry-after': retryAt,
+				'x-ratelimit-reset': String(resetInAnHour),
+			}),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBeGreaterThan(25_000);
+		expect(info.retryAfter).toBeLessThanOrEqual(30_000);
+	});
+
+	it('clamps an HTTP-date retry-after in the past to zero', () => {
+		const info = extractRateLimitInfo(
+			response429({
+				'retry-after': new Date(Date.now() - 60_000).toUTCString(),
+			}),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBe(0);
+	});
+
+	it('keeps an explicit zero retry-after', () => {
+		const info = extractRateLimitInfo(
+			response429({ 'retry-after': '0' }),
+			DEFAULT_RATE_LIMIT_CONFIG,
+		);
+
+		expect(info.retryAfter).toBe(0);
+		expect(calculateRetryDelay(1, info, DEFAULT_RATE_LIMIT_CONFIG)).toBe(0);
 	});
 });
