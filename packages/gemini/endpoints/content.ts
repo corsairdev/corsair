@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GeminiEndpoints } from '..';
 import { makeGeminiRequest } from '../client';
-import { stripMarkdownFences } from './text-utils';
 import type {
 	CountTokensResponse,
 	EmbedContentResponse,
@@ -77,9 +76,14 @@ export const generateContent: GeminiEndpoints['generateContent'] = async (
 		},
 	});
 
-	const firstText = response.candidates?.[0]?.content?.parts?.find(
+	const textParts = response.candidates?.[0]?.content?.parts?.filter(
 		(part) => typeof part.text === 'string',
-	)?.text;
+	);
+
+	const fullText =
+		textParts && textParts.length > 0
+			? textParts.map((part) => part.text).join('')
+			: undefined;
 
 	await logEventFromContext(
 		ctx,
@@ -89,6 +93,6 @@ export const generateContent: GeminiEndpoints['generateContent'] = async (
 	);
 	return {
 		...response,
-		text: firstText !== undefined ? stripMarkdownFences(firstText) : undefined,
+		text: fullText,
 	};
 };
