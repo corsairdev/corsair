@@ -148,10 +148,7 @@ export const BaseProviders = [
 	'confluence',
 	'connecteam',
 	'contentfulgraphql',
-	'contextsevenmcp',
-	'convoloai',
-	'cosmic',
-	'countdownapi',
+	'convex',
 	'crowterminal',
 	'currentsapi',
 	'cursor',
@@ -497,10 +494,7 @@ export const ProviderDisplayNames = {
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
 	contentfulgraphql: 'Contentful GraphQL',
-	contextsevenmcp: 'Context7',
-	convoloai: 'ConvoloAi',
-	cosmic: 'Cosmic',
-	countdownapi: 'Countdown API',
+	convex: 'Convex',
 	crowterminal: 'CrowTerminal',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
@@ -853,10 +847,7 @@ export type AllProviders =
 	| 'confluence'
 	| 'connecteam'
 	| 'contentfulgraphql'
-	| 'contextsevenmcp'
-	| 'convoloai'
-	| 'cosmic'
-	| 'countdownapi'
+	| 'convex'
 	| 'crowterminal'
 	| 'currentsapi'
 	| 'cursor'
