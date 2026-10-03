@@ -44,6 +44,8 @@ type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	gmail:
 		'https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_96dp.png',
+	googlecontacts:
+		'https://www.gstatic.com/images/branding/product/2x/contacts_96dp.png',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
 	googlesheets:

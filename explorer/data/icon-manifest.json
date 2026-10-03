@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-09-23T22:05:34.078Z",
+  "generatedAt": "2026-09-24T06:18:54.373Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 345,
-  "succeeded": 345,
+  "total": 346,
+  "succeeded": 346,
   "failed": 0,
   "domains": {
     "ably": "ably.io",
@@ -198,6 +198,7 @@
     "googlebigquery": "googlebigquery.com",
     "googlecalendar": "calendar.google.com",
     "googlecloudvision": "googlecloudvision.com",
+    "googlecontacts": "contacts.google.com",
     "googledocs": "docs.google.com",
     "googledrive": "drive.google.com",
     "googlemaps": "googlemaps.com",
@@ -355,8 +356,7 @@
     "zoominfo": "zoominfo.com"
   },
   "sources": {
-    "gmail": "url-override",
-    "googlesheets": "url-override",
+    "googlecontacts": "url-override",
     "ably": "twenty-icons",
     "abstract": "twenty-icons",
     "abuseipdb": "twenty-icons",
@@ -541,6 +541,7 @@
     "github": "twenty-icons",
     "gitlab": "twenty-icons",
     "gladia": "twenty-icons",
+    "gmail": "url-override",
     "googleaddressvalidation": "twenty-icons",
     "googleanalytics": "twenty-icons",
     "googlebigquery": "twenty-icons",
@@ -550,6 +551,7 @@
     "googledrive": "twenty-icons",
     "googlemaps": "twenty-icons",
     "googlemeet": "twenty-icons",
+    "googlesheets": "url-override",
     "grafana": "twenty-icons",
     "griptape": "twenty-icons",
     "groqcloud": "twenty-icons",

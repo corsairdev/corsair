@@ -1,0 +1,147 @@
+---
+title: Overview
+description: "Read and manage a user's Google contacts, contact groups, and auto-saved \"other contacts\" through the People API."
+---
+
+Use **Google Contacts** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 17 typed API operations
+- 2 synced entities (`contactGroups`, `contacts`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/googlecontacts
+```
+```bash yarn
+yarn add corsair @corsair-dev/googlecontacts
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/googlecontacts
+```
+```bash bun
+bun add corsair @corsair-dev/googlecontacts
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { googlecontacts } from '@corsair-dev/googlecontacts';
+
+export const corsair = createCorsair({
+	plugins: [
+		googlecontacts(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Google Contacts OAuth app.
+
+```ts
+googlecontacts()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'googlecontacts',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecontacts.api.contacts.search({
+	query: 'ada',
+	readMask: ['names', 'emailAddresses'],
+});
+```
+
+
+**Create a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.googlecontacts.api.contacts.create({
+	person: {
+		names: [{ givenName: 'Ada', familyName: 'Lovelace' }],
+		emailAddresses: [{ value: 'ada@example.com' }],
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/googlecontacts/api) page.
+
+## Query synced data
+
+Search synced contacts without hitting the People API.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.googlecontacts.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `contactGroups`, `contacts`. See [Database](/plugins/googlecontacts/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/googlecontacts/api">
+    Every `googlecontacts.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/googlecontacts/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
