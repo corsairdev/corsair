@@ -41,9 +41,14 @@ export function extractRateLimitInfo(
 	if (config.headerNames.retryAfter) {
 		const retryAfter = response.headers.get(config.headerNames.retryAfter);
 		if (retryAfter) {
+			// Retry-After is either delay-seconds or an HTTP-date (RFC 9110).
 			const seconds = parseInt(retryAfter, 10);
-			if (!isNaN(seconds)) {
-				info.retryAfter = seconds * 1000;
+			const delay = !isNaN(seconds)
+				? seconds * 1000
+				: Math.max(0, Date.parse(retryAfter) - Date.now());
+			// Ignore negative or unparseable values so the reset fallback still applies.
+			if (Number.isFinite(delay) && delay >= 0) {
+				info.retryAfter = delay;
 			}
 		}
 	}
@@ -57,7 +62,10 @@ export function extractRateLimitInfo(
 				const resetMs =
 					timestamp > 1000000000000 ? timestamp : timestamp * 1000;
 				info.rateLimitReset = resetMs;
-				if (resetMs > now) {
+				// retry-after is the server's explicit instruction for this response;
+				// the window reset is only a fallback when it is absent (e.g. GitHub
+				// secondary limits send a short retry-after and a reset up to an hour out).
+				if (info.retryAfter === undefined && resetMs > now) {
 					info.retryAfter = resetMs - now;
 				}
 			}
@@ -112,7 +120,7 @@ export function calculateRetryDelay(
 	rateLimitInfo: RateLimitInfo,
 	config: RateLimitConfig,
 ): number {
-	if (rateLimitInfo.retryAfter) {
+	if (rateLimitInfo.retryAfter !== undefined) {
 		return rateLimitInfo.retryAfter;
 	}
 
