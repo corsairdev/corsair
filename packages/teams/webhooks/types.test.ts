@@ -1,5 +1,9 @@
 import type { TeamsNotification, TeamsWebhookPayload } from './types';
-import { createTeamsNotificationMatch, verifyTeamsClientState } from './types';
+import {
+	createTeamsNotificationMatch,
+	verifyTeamsClientState,
+	verifyTeamsWebhook,
+} from './types';
 
 const CLIENT_STATE = 'teams-client-state';
 
@@ -21,6 +25,41 @@ function payload(
 ): TeamsWebhookPayload<TeamsNotification> {
 	return { value: notifications };
 }
+
+describe('verifyTeamsWebhook', () => {
+	it('skips app-side verification when Hub already verified the delivery', () => {
+		// Hub-verified deliveries arrive with ctx.key withheld by contract; the
+		// handler must trust Hub, not 401 on the missing key.
+		const result = verifyTeamsWebhook(
+			{ payload: payload([notification()]), hubVerified: true },
+			undefined,
+		);
+		expect(result).toEqual({ valid: true });
+	});
+
+	it('still verifies the stored clientState on the direct (no-Hub) path', () => {
+		const good = verifyTeamsWebhook(
+			{ payload: payload([notification()]) },
+			CLIENT_STATE,
+		);
+		expect(good).toEqual({ valid: true });
+
+		const missingKey = verifyTeamsWebhook(
+			{ payload: payload([notification()]) },
+			undefined,
+		);
+		expect(missingKey).toEqual({
+			valid: false,
+			error: 'clientState is required',
+		});
+
+		const mismatch = verifyTeamsWebhook(
+			{ payload: payload([notification({ clientState: 'wrong' })]) },
+			CLIENT_STATE,
+		);
+		expect(mismatch).toEqual({ valid: false, error: 'clientState mismatch' });
+	});
+});
 
 describe('verifyTeamsClientState', () => {
 	it('should fail closed when the expected client state is missing', () => {

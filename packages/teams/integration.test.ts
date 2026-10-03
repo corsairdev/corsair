@@ -1,7 +1,5 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
-import { createCorsairOrm } from 'corsair/orm';
-import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { teams } from './index';
 
 const configuredAccessToken = process.env.TEAMS_ACCESS_TOKEN?.trim();
@@ -20,6 +18,9 @@ function parsePayload(payload: unknown): unknown {
 
 async function createTeamsClient() {
 	const accessToken = configuredAccessToken!;
+	const { createIntegrationAndAccount, createTestDatabase } = await import(
+		'corsair/tests'
+	);
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'teams', 'default');
@@ -31,6 +32,12 @@ async function createTeamsClient() {
 	});
 
 	return { corsair, testDb };
+}
+
+async function createOrm(database: unknown) {
+	const { createCorsairOrm } = await import('corsair/orm');
+	type CorsairOrmDatabase = Parameters<typeof createCorsairOrm>[0];
+	return createCorsairOrm(database as CorsairOrmDatabase);
 }
 
 describeIf('Teams plugin integration', () => {
@@ -45,7 +52,7 @@ describeIf('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 			expect(Array.isArray(result.value)).toBe(true);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.teams.list' },
 			});
@@ -75,7 +82,7 @@ describeIf('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 			expect(result.id).toBe(teamId);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.teams.get' },
 			});
@@ -107,7 +114,7 @@ describeIf('Teams plugin integration', () => {
 
 			expect(result).toBeDefined();
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.teams.create' },
 			});
@@ -142,7 +149,7 @@ describeIf('Teams plugin integration', () => {
 
 			expect(result).toBeDefined();
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.teams.update' },
 			});
@@ -177,7 +184,7 @@ describeIf('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 			expect(Array.isArray(result.value)).toBe(true);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.channels.list' },
 			});
@@ -211,7 +218,7 @@ describeIf('Teams plugin integration', () => {
 			expect(result).toBeDefined();
 			expect(result.id).toBe(channelId);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const events = await orm.events.findMany({
 				where: { event_type: 'teams.channels.get' },
 			});
@@ -240,7 +247,7 @@ describeIf('Teams plugin integration', () => {
 			expect(created).toBeDefined();
 			expect(created.id).toBeDefined();
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const createEvents = await orm.events.findMany({
 				where: { event_type: 'teams.channels.create' },
 			});
@@ -313,7 +320,7 @@ describeIf('Teams plugin integration', () => {
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 
 			// send
 			const sendInput = {
@@ -445,7 +452,7 @@ describeIf('Teams plugin integration', () => {
 			expect(list).toBeDefined();
 			expect(Array.isArray(list.value)).toBe(true);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const listEvents = await orm.events.findMany({
 				where: { event_type: 'teams.members.list' },
 			});
@@ -484,7 +491,7 @@ describeIf('Teams plugin integration', () => {
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 
 			const existingMembers = await corsair.teams.api.members.list({ teamId });
 			const memberUserIds = new Set(
@@ -556,7 +563,7 @@ describeIf('Teams plugin integration', () => {
 			expect(list).toBeDefined();
 			expect(Array.isArray(list.value)).toBe(true);
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const listEvents = await orm.events.findMany({
 				where: { event_type: 'teams.chats.list' },
 			});
@@ -623,7 +630,7 @@ describeIf('Teams plugin integration', () => {
 			expect(created).toBeDefined();
 			expect(created.id).toBeDefined();
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 			const createEvents = await orm.events.findMany({
 				where: { event_type: 'teams.chats.create' },
 			});
@@ -647,7 +654,7 @@ describeIf('Teams plugin integration', () => {
 			const chatId = listed.value?.[0]?.id ?? '';
 			expect(chatId).toBeTruthy();
 
-			const orm = createCorsairOrm(testDb.database);
+			const orm = await createOrm(testDb.database);
 
 			const sendInput = {
 				chatId,
