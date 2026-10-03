@@ -104,8 +104,12 @@ export function evaluatePermission(
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DEFAULT_DURATION_MS = 10 * 60 * 1_000;
-// No `$`. Some engines let `$` match before a trailing newline, so "30s\n" would parse as 30s.
-const DURATION_PATTERN = /^(?:\d+[dhms])+/;
+const UNIT_MS: Record<string, number> = {
+	d: 86_400_000,
+	h: 3_600_000,
+	m: 60_000,
+	s: 1_000,
+};
 
 /**
  * Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds.
@@ -113,29 +117,22 @@ const DURATION_PATTERN = /^(?:\d+[dhms])+/;
  * falls back to 10 minutes. A valid '0s' returns 0.
  */
 export function parseDurationMs(duration: string): number {
-	const matched = DURATION_PATTERN.exec(duration);
-	if (!matched || matched[0].length !== duration.length) {
-		return DEFAULT_DURATION_MS;
-	}
-	const regex = /(\d+)([dhms])/g;
+	if (duration.length === 0) return DEFAULT_DURATION_MS;
+
 	let total = 0;
-	let match: RegExpExecArray | null;
-	while ((match = regex.exec(duration)) !== null) {
-		const value = parseInt(match[1]!, 10);
-		switch (match[2]) {
-			case 'd':
-				total += value * 86_400_000;
-				break;
-			case 'h':
-				total += value * 3_600_000;
-				break;
-			case 'm':
-				total += value * 60_000;
-				break;
-			case 's':
-				total += value * 1_000;
-				break;
+	let i = 0;
+	while (i < duration.length) {
+		const start = i;
+		while (i < duration.length) {
+			const code = duration.charCodeAt(i);
+			if (code < 48 || code > 57) break;
+			i++;
 		}
+		if (i === start || i === duration.length) return DEFAULT_DURATION_MS;
+		const unit = UNIT_MS[duration.charAt(i)];
+		if (unit === undefined) return DEFAULT_DURATION_MS;
+		total += Number.parseInt(duration.slice(start, i), 10) * unit;
+		i++;
 	}
 	return total;
 }
