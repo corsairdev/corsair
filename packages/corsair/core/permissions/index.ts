@@ -104,7 +104,8 @@ export function evaluatePermission(
 // ─────────────────────────────────────────────────────────────────────────────
 
 const DEFAULT_DURATION_MS = 10 * 60 * 1_000;
-const DURATION_PATTERN = /^(?:\d+[dhms])+$/;
+// No `$`. Some engines let `$` match before a trailing newline, so "30s\n" would parse as 30s.
+const DURATION_PATTERN = /^(?:\d+[dhms])+/;
 
 /**
  * Parses a duration string ('30s', '10m', '1h', '2h30m', '1d') into milliseconds.
@@ -112,7 +113,8 @@ const DURATION_PATTERN = /^(?:\d+[dhms])+$/;
  * falls back to 10 minutes. A valid '0s' returns 0.
  */
 export function parseDurationMs(duration: string): number {
-	if (!DURATION_PATTERN.test(duration)) {
+	const matched = DURATION_PATTERN.exec(duration);
+	if (!matched || matched[0].length !== duration.length) {
 		return DEFAULT_DURATION_MS;
 	}
 	const regex = /(\d+)([dhms])/g;
@@ -416,10 +418,20 @@ export async function enforcePermission(
 		};
 	}
 
-	// No existing actionable record — create a new pending approval request
+	// No existing actionable record — create a new pending approval request.
+	// A timeout of 0 (parseDurationMs('0s')) would insert a row that is already
+	// expired, so the next call inserts another. Block without writing.
+	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
+	if (!(timeoutMs > 0)) {
+		console.log(
+			`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — approval timeout is ${timeoutMs}ms.`,
+			`\n  Action: ${description}`,
+		);
+		return { result: 'blocked', reason: 'timeout' };
+	}
+
 	const id = uuidv4();
 	const token = randomBytes(32).toString('hex');
-	const timeoutMs = opts.timeoutMs ?? 10 * 60 * 1_000;
 	const expiresAt = new Date(Date.now() + timeoutMs).toISOString();
 
 	await opts.db.db

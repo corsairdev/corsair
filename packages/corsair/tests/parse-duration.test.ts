@@ -1,4 +1,5 @@
-import { parseDurationMs } from '../core/permissions';
+import { enforcePermission, parseDurationMs } from '../core/permissions';
+import type { CorsairDatabase } from '../db/kysely/database';
 
 const DEFAULT_MS = 10 * 60 * 1_000;
 
@@ -27,8 +28,87 @@ describe('parseDurationMs', () => {
 		' 30s',
 		'30s ',
 		'30s\n',
+		'30s\r',
 		'1h30',
 	])('falls back to the default for %p', (input) => {
 		expect(parseDurationMs(input)).toBe(DEFAULT_MS);
+	});
+});
+
+describe('enforcePermission zero timeout', () => {
+	function approvalDb() {
+		let inserts = 0;
+		const chain = {
+			selectFrom() {
+				return chain;
+			},
+			selectAll() {
+				return chain;
+			},
+			where() {
+				return chain;
+			},
+			orderBy() {
+				return chain;
+			},
+			limit() {
+				return chain;
+			},
+			executeTakeFirst: async () => undefined,
+			insertInto() {
+				return chain;
+			},
+			values() {
+				return chain;
+			},
+			execute: async () => {
+				inserts += 1;
+			},
+		};
+		return {
+			db: { db: chain } as unknown as CorsairDatabase,
+			inserts: () => inserts,
+		};
+	}
+
+	const base = {
+		pluginId: 'toggl',
+		endpointPath: 'timeEntries.create',
+		args: { a: 1 },
+		mode: 'strict' as const,
+		riskLevel: 'write' as const,
+	};
+
+	beforeEach(() => {
+		jest.spyOn(console, 'log').mockImplementation(() => {});
+	});
+
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('does not insert an already-expired approval when the timeout is 0', async () => {
+		const store = approvalDb();
+		const result = await enforcePermission({
+			...base,
+			db: store.db,
+			timeoutMs: 0,
+		});
+
+		expect(result).toEqual({ result: 'blocked', reason: 'timeout' });
+		expect(store.inserts()).toBe(0);
+	});
+
+	it('still inserts a pending approval for a positive timeout', async () => {
+		const store = approvalDb();
+		const result = await enforcePermission({
+			...base,
+			db: store.db,
+			timeoutMs: 30_000,
+		});
+
+		expect(result.result).toBe('blocked');
+		expect(result.reason).toBe('pending');
+		expect(store.inserts()).toBe(1);
 	});
 });
