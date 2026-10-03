@@ -317,6 +317,7 @@ export const BaseProviders = [
 	'toggl',
 	'tokenmetrics',
 	'tpscheck',
+	'turbotpipes',
 	'trello',
 	'tripadvisor',
 	'twentyonerisk',
