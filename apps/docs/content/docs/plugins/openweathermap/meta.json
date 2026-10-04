@@ -1,4 +1,5 @@
 {
+  "title": "OpenWeatherMap",
   "pages": [
     "overview",
     "api",
