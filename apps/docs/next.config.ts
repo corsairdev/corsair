@@ -10,6 +10,13 @@ const config: NextConfig = {
 		webpackMemoryOptimizations: true,
 	},
 	redirects: getAllRedirects,
+	// The .md route reads MDX off disk at request time, which tracing can't infer.
+	outputFileTracingIncludes: {
+		'/api/md/[...slug]': ['./content/docs/**/*.mdx'],
+	},
+	rewrites: async () => [
+		{ source: '/:slug(.*).md', destination: '/api/md/:slug' },
+	],
 };
 
 const withMDX = createMDX();

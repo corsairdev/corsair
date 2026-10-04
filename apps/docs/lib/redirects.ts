@@ -276,6 +276,9 @@ const mintlifyRedirects: Redirect[] = [
 
 export function getAllRedirects(): Redirect[] {
 	return [
+		// "/" is owned by the optional catch-all route, so the landing redirect
+		// has to live here rather than as an app/page.tsx.
+		{ source: '/', destination: '/introduction', permanent: false },
 		{ source: '/landing', destination: '/introduction', permanent: true },
 		{ source: '/docs/:path*', destination: '/:path*', permanent: true },
 		{

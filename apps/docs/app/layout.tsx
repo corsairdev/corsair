@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { fontVariables } from '@/lib/fonts';
+import { SITE_URL } from '@/lib/site';
 import './global.css';
 
 export const metadata: Metadata = {
-	metadataBase: new URL('https://docs.corsair.dev'),
+	metadataBase: new URL(SITE_URL),
 	title: {
 		default: 'Corsair Docs',
 		template: '%s · Corsair Docs',

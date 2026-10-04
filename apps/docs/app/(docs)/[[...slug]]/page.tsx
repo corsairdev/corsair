@@ -11,17 +11,16 @@ import { notFound } from 'next/navigation';
 import { getMDXComponents } from '@/components/mdx';
 import { OpenAPIPage } from '@/components/openapi-page';
 import { openapi } from '@/lib/openapi';
-import {
-	DOCS_REVALIDATE_SECONDS,
-	getPrerenderedDocParams,
-} from '@/lib/rendering';
+import { getPrerenderedDocParams } from '@/lib/rendering';
 import { source } from '@/lib/source';
 
 interface PageProps {
 	params: Promise<{ slug?: string[] }>;
 }
 
-export const revalidate = DOCS_REVALIDATE_SECONDS;
+// One hour. Literal, not a constant: Next statically analyses this export and
+// rejects anything it can't evaluate at build time.
+export const revalidate = 3600;
 export const dynamicParams = true;
 
 export function generateStaticParams() {
@@ -75,5 +74,6 @@ export async function generateMetadata(props: PageProps): Promise<Metadata> {
 	return {
 		title: page.data.title,
 		description: page.data.description,
+		alternates: { canonical: page.url },
 	};
 }
