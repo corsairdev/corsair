@@ -1,5 +1,7 @@
-import type { RawWebhookRequest } from 'corsair/core';
+import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
 
-export function matchTurbotPipesTenantWebhook(_request: RawWebhookRequest): string | null {
+export function matchTurbotPipesTenantWebhook(
+	_request: RawWebhookRequest,
+): WebhookTenantMatch | null {
 	return null;
 }
