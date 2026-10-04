@@ -93,4 +93,36 @@ describe('request() response body parsing', () => {
 
 		await expect(request(config, options)).resolves.toBe('hello');
 	});
+
+	it('still reads json() from a partial Response stub without clone()', async () => {
+		const payload = Object.assign([{ id: 1 }], { total: 1 });
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			url: 'https://api.example.com/things',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			json: async () => payload,
+			text: async () => '',
+		})) as unknown as typeof fetch;
+
+		await expect(request(config, options)).resolves.toBe(payload);
+	});
+
+	it('returns no body for a stub without headers', async () => {
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		global.fetch = jest.fn(async () => ({
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			url: 'https://api.example.com/things',
+			json: async () => ({ id: 1 }),
+		})) as unknown as typeof fetch;
+
+		await expect(request(config, options)).resolves.toBeUndefined();
+		expect(consoleError).not.toHaveBeenCalled();
+		consoleError.mockRestore();
+	});
 });

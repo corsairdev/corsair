@@ -248,7 +248,7 @@ const getResponseHeader = (
 	responseHeader?: string,
 ): string | undefined => {
 	if (responseHeader) {
-		const content = response.headers.get(responseHeader);
+		const content = response.headers?.get(responseHeader);
 		if (isString(content)) {
 			return content;
 		}
@@ -259,7 +259,7 @@ const getResponseHeader = (
 const getResponseBody = async (response: Response): Promise<any> => {
 	if (response.status !== 204) {
 		try {
-			const contentType = response.headers.get('Content-Type');
+			const contentType = response.headers?.get('Content-Type');
 			if (contentType) {
 				const jsonTypes = ['application/json', 'application/problem+json'];
 				// Also accept any structured +json suffix (RFC 6839), e.g. JSON:API's
@@ -272,13 +272,18 @@ const getResponseBody = async (response: Response): Promise<any> => {
 						contentType.toLowerCase().startsWith(type),
 					) || mediaType.endsWith('+json');
 				if (isJSON) {
-					// Keep the raw text when the body is empty or not valid JSON, so
-					// error details still reach ApiError.body.
-					const text = await response.text();
+					// Keep a copy of the body so the raw text can still reach
+					// ApiError.body when it is empty or not valid JSON. Partial
+					// Response stubs without clone() keep the old behavior.
+					const copy =
+						typeof response.clone === 'function' ? response.clone() : undefined;
 					try {
-						return JSON.parse(text);
-					} catch {
-						return text;
+						return await response.json();
+					} catch (error) {
+						if (!copy) {
+							throw error;
+						}
+						return await copy.text();
 					}
 				} else {
 					return await response.text();
