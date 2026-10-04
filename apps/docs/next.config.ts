@@ -17,6 +17,13 @@ const config: NextConfig = {
 	rewrites: async () => [
 		{ source: '/:slug(.*).md', destination: '/api/md/:slug' },
 	],
+	webpack: (config) => {
+		// The filesystem cache holds the whole 1298-module MDX graph in the heap to
+		// serialise it, which alone pushes the build past --max-old-space-size=8192.
+		// Off: peak 4.9GB and compiles; on: OOM (exit 134) at ~429s. CI is cold anyway.
+		config.cache = false;
+		return config;
+	},
 };
 
 const withMDX = createMDX();
