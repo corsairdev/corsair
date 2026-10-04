@@ -272,19 +272,19 @@ const getResponseBody = async (response: Response): Promise<any> => {
 						contentType.toLowerCase().startsWith(type),
 					) || mediaType.endsWith('+json');
 				if (isJSON) {
-					// Keep a copy of the body so the raw text can still reach
-					// ApiError.body when it is empty or not valid JSON. Partial
-					// Response stubs without clone() keep the old behavior.
-					const copy =
-						typeof response.clone === 'function' ? response.clone() : undefined;
-					try {
-						return await response.json();
-					} catch (error) {
-						if (!copy) {
-							throw error;
+					// An error body feeds ApiError.body, so read it as text once and
+					// keep the raw text when it is empty or not valid JSON. Success
+					// bodies go straight to json(). Partial Response stubs without
+					// text() keep the json() path.
+					if (!response.ok && typeof response.text === 'function') {
+						const text = await response.text();
+						try {
+							return JSON.parse(text);
+						} catch {
+							return text;
 						}
-						return await copy.text();
 					}
+					return await response.json();
 				} else {
 					return await response.text();
 				}

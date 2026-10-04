@@ -94,19 +94,42 @@ describe('request() response body parsing', () => {
 		await expect(request(config, options)).resolves.toBe('hello');
 	});
 
-	it('still reads json() from a partial Response stub without clone()', async () => {
+	it('reads an ok JSON body with json() only, without clone() or text()', async () => {
 		const payload = Object.assign([{ id: 1 }], { total: 1 });
+		const json = jest.fn(async () => payload);
+		const text = jest.fn(async () => '');
+		const clone = jest.fn();
 		global.fetch = jest.fn(async () => ({
 			ok: true,
 			status: 200,
 			statusText: 'OK',
 			url: 'https://api.example.com/things',
 			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => payload,
-			text: async () => '',
+			json,
+			text,
+			clone,
 		})) as unknown as typeof fetch;
 
 		await expect(request(config, options)).resolves.toBe(payload);
+		expect(json).toHaveBeenCalledTimes(1);
+		expect(text).not.toHaveBeenCalled();
+		expect(clone).not.toHaveBeenCalled();
+	});
+
+	it('reads an error body from a stub that only implements json()', async () => {
+		global.fetch = jest.fn(async () => ({
+			ok: false,
+			status: 400,
+			statusText: 'Bad Request',
+			url: 'https://api.example.com/things',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			json: async () => ({ message: 'bad input' }),
+		})) as unknown as typeof fetch;
+
+		const error = await request(config, options).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).body).toEqual({ message: 'bad input' });
 	});
 
 	it('returns no body for a stub without headers', async () => {
