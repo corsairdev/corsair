@@ -32,6 +32,37 @@ export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+// RFC 9110 HTTP-date: IMF-fixdate, then the obsolete RFC 850 and asctime forms.
+const IMF_FIXDATE =
+	/^[A-Z][a-z]{2}, \d{2} [A-Z][a-z]{2} \d{4} \d{2}:\d{2}:\d{2} GMT$/;
+const RFC850_DATE =
+	/^[A-Z][a-z]+, \d{2}-[A-Z][a-z]{2}-\d{2} \d{2}:\d{2}:\d{2} GMT$/;
+const ASCTIME_DATE =
+	/^[A-Z][a-z]{2} [A-Z][a-z]{2} [ \d]\d \d{2}:\d{2}:\d{2} \d{4}$/;
+
+/**
+ * Parses a Retry-After value into milliseconds. RFC 9110 allows only
+ * delay-seconds (digits) or an HTTP-date, so anything else, such as "0.5"
+ * or "-5", returns undefined.
+ */
+function parseRetryAfter(value: string): number | undefined {
+	const trimmed = value.trim();
+	if (/^\d+$/.test(trimmed)) {
+		return Number(trimmed) * 1000;
+	}
+	let date: number | undefined;
+	if (IMF_FIXDATE.test(trimmed) || RFC850_DATE.test(trimmed)) {
+		date = Date.parse(trimmed);
+	} else if (ASCTIME_DATE.test(trimmed)) {
+		// asctime carries no zone but is always GMT.
+		date = Date.parse(`${trimmed} GMT`);
+	}
+	if (date === undefined || !Number.isFinite(date)) {
+		return undefined;
+	}
+	return Math.max(0, date - Date.now());
+}
+
 export function extractRateLimitInfo(
 	response: Response,
 	config: RateLimitConfig,
@@ -41,13 +72,9 @@ export function extractRateLimitInfo(
 	if (config.headerNames.retryAfter) {
 		const retryAfter = response.headers.get(config.headerNames.retryAfter);
 		if (retryAfter) {
-			// Retry-After is either delay-seconds or an HTTP-date (RFC 9110).
-			const seconds = parseInt(retryAfter, 10);
-			const delay = !isNaN(seconds)
-				? seconds * 1000
-				: Math.max(0, Date.parse(retryAfter) - Date.now());
-			// Ignore negative or unparseable values so the reset fallback still applies.
-			if (Number.isFinite(delay) && delay >= 0) {
+			const delay = parseRetryAfter(retryAfter);
+			// Ignore invalid values so the reset fallback still applies.
+			if (delay !== undefined) {
 				info.retryAfter = delay;
 			}
 		}
