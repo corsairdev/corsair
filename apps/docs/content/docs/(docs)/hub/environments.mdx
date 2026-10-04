@@ -61,17 +61,26 @@ When you deploy, switch your env vars from development keys to production keys a
 ### Deploy setup
 
 <Steps>
-  <Step title="Activate production in the dashboard">
+  <Step>
+
+  ## Activate production in the dashboard
+
     Open your project, switch the environment picker to **Production**, and go to **Delivery URLs**. Register your handler, for example `https://your-app.com/api/corsair`.
   </Step>
-  <Step title="Set production credentials on your host">
+  <Step>
+
+  ## Set production credentials on your host
+
     ```bash
     CORSAIR_API_KEY=ck_prod_...
     CORSAIR_SIGNING_SECRET=...
     CORSAIR_KEK=...
     ```
   </Step>
-  <Step title="Deploy">
+  <Step>
+
+  ## Deploy
+
     Production connect, credential delivery, and approval flows now POST signed envelopes to your registered URL.
   </Step>
 </Steps>

@@ -51,7 +51,10 @@ npm install @corsair-dev/slack        # one per integration
 ## Quickstart
 
 <Steps>
-<Step title="Create the Corsair instance">
+<Step>
+
+## Create the Corsair instance
+
 Build it once and reuse it. `authType: 'managed'` lets Corsair hold the OAuth connection; the tokens stay encrypted in your database under your `kek`.
 
 ```ts corsair.ts
@@ -68,7 +71,10 @@ export const corsair = createCorsair({
 ```
 </Step>
 
-<Step title="Build the tools">
+<Step>
+
+## Build the tools
+
 `corsairTools` is async. It returns one LlamaIndex tool per operation, ready for any agent.
 
 ```ts
@@ -79,7 +85,10 @@ const tools = await corsairTools({ corsair, plugin: 'slack' });
 ```
 </Step>
 
-<Step title="Give them to an agent">
+<Step>
+
+## Give them to an agent
+
 ```ts agent.ts
 import { agent } from '@llamaindex/workflow';
 import { openai } from '@llamaindex/openai';

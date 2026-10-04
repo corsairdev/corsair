@@ -31,7 +31,10 @@ Optional `apiDomain` must be an HTTPS `zohoapis.*` origin.
 
 <Steps>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <Tabs items={["npm", "yarn", "pnpm", "bun"]}>
 
 <Tab value="npm">
@@ -62,7 +65,10 @@ bun add corsair @corsair-dev/zohoinventory
 
 </Step>
 
-<Step title="Add the plugin">
+<Step>
+
+## Add the plugin
+
 ```ts corsair.ts
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
@@ -87,7 +93,10 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 
 </Step>
 
-<Step title="Choose authentication">
+<Step>
+
+## Choose authentication
+
 <Tabs items={["Managed OAuth (Recommended)", "OAuth 2.0"]}>
 <Tab value="Managed OAuth (Recommended)">
 
@@ -117,7 +126,10 @@ More: [OAuth 2.0](/concepts/oauth)
 
 </Step>
 
-<Step title="Connect a tenant">
+<Step>
+
+## Connect a tenant
+
 Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
 ```ts

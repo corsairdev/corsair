@@ -20,7 +20,10 @@ Use **Figma** through Corsair: one client, typed API calls, local DB sync, and i
 
 <Steps>
 
-<Step title="Install">
+<Step>
+
+## Install
+
 <Tabs items={["npm", "yarn", "pnpm", "bun"]}>
 
 <Tab value="npm">
@@ -51,7 +54,10 @@ bun add corsair @corsair-dev/figma
 
 </Step>
 
-<Step title="Add the plugin">
+<Step>
+
+## Add the plugin
+
 ```ts corsair.ts
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
@@ -74,7 +80,10 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 
 </Step>
 
-<Step title="Choose authentication">
+<Step>
+
+## Choose authentication
+
 <Tabs items={["API Key (Recommended)"]}>
 <Tab value="API Key (Recommended)">
 
@@ -93,7 +102,10 @@ More: [API Key](/concepts/api-key)
 
 </Step>
 
-<Step title="Connect a tenant">
+<Step>
+
+## Connect a tenant
+
 Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
 ```ts

@@ -75,10 +75,16 @@ With Hub you register **one** callback URL with the provider. Hub receives the c
 Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then pass the `hub` block to `createCorsair`.
 
 <Steps>
-  <Step title="Create an organization and project">
+  <Step>
+
+  ## Create an organization and project
+
     Sign in to the dashboard, create an organization, then create your first project. You get **development** and **production** environments automatically.
   </Step>
-  <Step title="Copy development credentials">
+  <Step>
+
+  ## Copy development credentials
+
     Open the **Keys** tab (development environment). Add the API key and signing secret to your local env. Use development keys locally; switch to production keys when you deploy.
 
     ```bash .env.local
@@ -87,13 +93,22 @@ Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then
     CORSAIR_KEK=...
     ```
   </Step>
-  <Step title="Register the OAuth redirect URL (BYO plugins)">
+  <Step>
+
+  ## Register the OAuth redirect URL (BYO plugins)
+
     For plugins where you bring your own OAuth app, register `https://auth.corsair.dev/oauth/callback` in each provider console (GitHub, Google, etc.). This is the single callback Hub holds for every environment. Managed plugins skip this step; Corsair hosts the OAuth app.
   </Step>
-  <Step title="Mount the handler and run locally">
+  <Step>
+
+  ## Mount the handler and run locally
+
     Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL, so no dashboard registration is needed.
   </Step>
-  <Step title="Activate production when you deploy">
+  <Step>
+
+  ## Activate production when you deploy
+
     Switch to the **production** environment in the dashboard, register your public HTTPS delivery URL, and set `ck_prod_…` credentials in your deployed env. See [Environments](/hub/environments).
   </Step>
 </Steps>

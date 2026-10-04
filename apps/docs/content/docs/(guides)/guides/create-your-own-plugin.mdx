@@ -15,7 +15,10 @@ The fastest way to build a custom plugin is to use the built-in generator. It sc
 
 <Steps>
 
-<Step title="Fork or clone the Corsair repo">
+<Step>
+
+## Fork or clone the Corsair repo
+
 Plugins live inside the monorepo alongside the core library.
 
 ```bash
@@ -26,7 +29,10 @@ pnpm install
 
 </Step>
 
-<Step title="Run the plugin generator">
+<Step>
+
+## Run the plugin generator
+
 Pass your plugin name in **PascalCase**, for example `Stripe`, `GoogleCalendar`, or `HubSpot`.
 
 ```bash
@@ -66,7 +72,10 @@ It also automatically registers your plugin in `packages/corsair/core/constants.
 
 </Step>
 
-<Step title="Choose your auth type">
+<Step>
+
+## Choose your auth type
+
 Open `packages/<yourplugin>/index.ts` and update the auth type to match the API you're integrating with.
 
 **API key** (most REST APIs):
@@ -95,7 +104,10 @@ export const stripeAuthConfig = {
 
 </Step>
 
-<Step title="Let Claude Code implement it">
+<Step>
+
+## Let Claude Code implement it
+
 Point Claude Code at the API docs for your integration and let it do the heavy lifting.
 
 Open Claude Code in the repo root and give it a prompt like:
@@ -114,7 +126,10 @@ Claude Code can read the scaffold, understand the patterns from existing plugins
 
 </Step>
 
-<Step title="Typecheck and build">
+<Step>
+
+## Typecheck and build
+
 ```bash
 cd packages/<yourplugin>
 pnpm typecheck
@@ -135,7 +150,10 @@ export const corsair = createCorsair({
 
 </Step>
 
-<Step title="Test your plugin">
+<Step>
+
+## Test your plugin
+
 The repo includes a ready-made testing sandbox at `demo/testing/`. Add your plugin there and run scripts against it without setting up a new project.
 
 **1. Add your plugin as a workspace dependency in `demo/testing/package.json`:**

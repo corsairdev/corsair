@@ -19,13 +19,22 @@ Corsair Workflows are durable, multi-step automations that run against the integ
 A workflow moves through three places:
 
 <Steps>
-<Step title="Author in Hub">
+<Step>
+
+## Author in Hub
+
 Workflows are authored and managed in Hub, which handles the scheduling and durable orchestration. From your app you run and inspect them through `corsair.workflows`. Call `corsair.workflows.run(id, { payload })`, `.list()`, or `.get(id)`. These need `hub` configured on `createCorsair`.
 </Step>
-<Step title="Trigger">
+<Step>
+
+## Trigger
+
 A run starts one of three ways: **manually** from your app (`corsair.workflows.run(id)`), from an incoming **webhook**, or on a **schedule** (cron/cadence) configured in Hub.
 </Step>
-<Step title="Execute in your app">
+<Step>
+
+## Execute in your app
+
 Your app runs the delivered workflow in a locked-down sandbox, against a tenant-scoped `corsair` client. Because it executes where your integrations and credentials already live, a workflow can call any plugin you've connected, and Hub never sees a token.
 </Step>
 </Steps>

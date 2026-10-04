@@ -2,7 +2,9 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 <Steps>
 
-<Step title="Create the client">
+<Step>
+
+## Create the client
 
 ```ts corsair-client.ts
 import { createCorsairClient } from "corsair";
@@ -14,7 +16,9 @@ export const client = createCorsairClient({ baseURL: "/api/corsair" });
 
 </Step>
 
-<Step title="Read what's connected">
+<Step>
+
+## Read what's connected
 
 ```ts connections.ts
 const status = await client.connectionStatus.get({ tenantId: "acme" });
@@ -25,7 +29,9 @@ const status = await client.connectionStatus.get({ tenantId: "acme" });
 
 </Step>
 
-<Step title="Mint a connect link">
+<Step>
+
+## Mint a connect link
 
 ```ts connect.ts
 const { connectUrl } = await client.connect.createLink({
