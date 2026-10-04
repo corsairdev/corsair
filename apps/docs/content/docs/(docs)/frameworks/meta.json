@@ -1,0 +1,18 @@
+{
+	"title": "Frameworks",
+	"pages": [
+		"---Full-stack---",
+		"next",
+		"nuxt",
+		"sveltekit",
+		"remix",
+		"astro",
+		"tanstack",
+		"---Backend---",
+		"node",
+		"express",
+		"fastify",
+		"hono",
+		"nestjs"
+	]
+}

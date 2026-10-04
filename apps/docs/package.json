@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "generate:openapi": "bun scripts/generate-openapi.ts",
-    "dev": "pnpm generate:openapi && next dev --webpack",
-    "build": "pnpm generate:openapi && next build --webpack",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
+    "dev:openapi": "pnpm generate:openapi && pnpm dev",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' next build --webpack",
+    "build:openapi": "pnpm generate:openapi && pnpm build",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },

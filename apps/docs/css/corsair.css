@@ -1,0 +1,12 @@
+/* Neutral ink palette — no teal accents */
+@theme {
+  --color-fd-primary: var(--color-fd-foreground);
+  --color-fd-primary-foreground: var(--color-fd-background);
+  --color-fd-ring: color-mix(in oklch, var(--color-fd-foreground) 22%, transparent);
+}
+
+.dark {
+  --color-fd-primary: var(--color-fd-foreground);
+  --color-fd-primary-foreground: var(--color-fd-background);
+  --color-fd-ring: color-mix(in oklch, var(--color-fd-foreground) 28%, transparent);
+}

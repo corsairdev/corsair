@@ -3,8 +3,11 @@ title: Corsair Cloud
 description: A hosted runtime for your integrations. You have an API key, and every tool call is one HTTP request.
 ---
 
+
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
+
+import ConnectExample from '../../../snippets/connect-next.mdx';
 
 Corsair Cloud runs the integration layer for you. Instead of building and
 hosting a server that talks to Notion, Slack, GitHub, and the rest, you get a
@@ -30,7 +33,7 @@ see [Server vs. browser](#server-vs-browser).
 Install the client for your language and make one call. Every language takes the
 key and nothing else.
 
-<Tabs items={['TypeScript', 'Python', 'Go', 'Swift', 'curl']}>
+<Tabs items={["TypeScript", "Python", "Go", "Swift", "curl"]}>
 
 <Tab value="TypeScript">
 ```ts
@@ -102,7 +105,7 @@ silently scoped to the wrong user.
 The runtime holds the tenants and which accounts each has connected. List them
 to line up against your own users:
 
-<Tabs items={['TypeScript', 'Python']}>
+<Tabs items={["TypeScript", "Python"]}>
 
 <Tab value="TypeScript">
 ```ts
@@ -133,7 +136,7 @@ bring-your-own-DB (coming soon).
 Before a tenant can call Notion, they have to connect their Notion account.
 Corsair Cloud runs the OAuth. Create a connect link and send your user to it:
 
-<Tabs items={['TypeScript', 'Python']}>
+<Tabs items={["TypeScript", "Python"]}>
 
 <Tab value="TypeScript">
 ```ts
@@ -158,7 +161,7 @@ When they finish authorizing, the runtime stores their token, encrypted at rest
 with a key Corsair holds. Raw provider tokens never sit in your store. Check who
 is connected any time:
 
-<Tabs items={['TypeScript', 'Python']}>
+<Tabs items={["TypeScript", "Python"]}>
 
 <Tab value="TypeScript">
 ```ts
@@ -184,12 +187,9 @@ The runtime has one contract and two ways to reach it:
   calls the runtime, the path in every example above.
 - **From a browser (React).** Browser code must never see the key. Stand up a
   route in *your own* app that injects the bearer server-side. `corsair/connect`
-  builds that route from just the key.
+  builds that route from just the key:
 
-<Callout type="info">
-The `corsair/connect` route snippet (`/snippets/connect-next.mdx` in the
-Mintlify source) is not ported yet — see `MIGRATION.md`.
-</Callout>
+<ConnectExample />
 
 Then wrap your app in `CorsairProvider` and use `useCorsair()` to drive the
 connect flow and read connection state. The key stays on your server the whole
@@ -219,6 +219,7 @@ provider).
 
 ## Next steps
 
-- [Python client](/docs/clients/python)
-- [Go client](/docs/clients/go)
-- [Swift client](/docs/clients/swift)
+- [Python client](/clients/python)
+- [Go client](/clients/go)
+- [Swift client](/clients/swift)
+

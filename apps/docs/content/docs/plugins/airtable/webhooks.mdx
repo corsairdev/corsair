@@ -1,0 +1,143 @@
+---
+title: Webhooks
+description: "Airtable incoming webhooks: event paths, payloads, and response data."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+The Airtable plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/airtable/overview) for setup context and the exact URL shape).
+
+<Callout type="info">
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+## Webhook map
+
+- `events`
+  - `event` (`events.event`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Events
+
+### Event
+
+`events.event`
+
+On new Airtable event — fires when records or tables change
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `base` | `object` | Yes | — |
+| `webhook` | `object` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `actionMetadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="base full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="webhook full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="actionMetadata full type">
+
+```ts
+{
+  source?: string,
+  sourceMetadata?: {
+    user?: {
+      id: string,
+      email?: string,
+      name?: string
+    }
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+<Accordions>
+<Accordion title="Response data full type">
+
+```ts
+{
+  base: {
+    id: string
+  },
+  webhook: {
+    id: string
+  },
+  timestamp: string,
+  actionMetadata?: {
+    source?: string,
+    sourceMetadata?: {
+      user?: {
+        id: string,
+        email?: string,
+        name?: string
+      }
+    }
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+**`webhookHooks` example**
+
+```ts
+airtable({
+    webhookHooks: {
+        events: {
+            event: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+

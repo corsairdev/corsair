@@ -1,0 +1,13 @@
+{
+  "title": "Guides",
+  "root": true,
+  "pages": [
+    "---Guides---",
+    "guides/plugins",
+    "guides/create-your-own-plugin",
+    "guides/dashboard",
+    "guides/plugin-credentials",
+    "guides/webhooks",
+    "guides/workflows"
+  ]
+}

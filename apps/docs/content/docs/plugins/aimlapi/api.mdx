@@ -1,0 +1,1766 @@
+---
+title: API
+description: "API reference for AIML API: every `aimlapi.api.*` operation with input and output types."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Every `aimlapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Callout type="info">
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+## Assistants
+
+### create
+
+`assistants.create`
+
+Create a new AIMLAPI assistant.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.assistants.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `tools` | `any[]` | No | — |
+| `toolResources` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="toolResources full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### delete
+
+`assistants.delete`
+
+Delete an assistant.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.assistants.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `assistantId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+
+---
+
+### get
+
+`assistants.get`
+
+Retrieve an assistant by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.assistants.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `assistantId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### list
+
+`assistants.list`
+
+List configured assistants.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.assistants.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `object` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+
+
+
+---
+
+### update
+
+`assistants.update`
+
+Update an assistant definition.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.assistants.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `assistantId` | `string` | Yes | — |
+| `model` | `string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `tools` | `any[]` | No | — |
+| `toolResources` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="toolResources full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Batches
+
+### list
+
+`batches.list`
+
+List or retrieve batch processing status and results.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.batches.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `batchId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Billing
+
+### getBalance
+
+`billing.getBalance`
+
+Retrieve account billing balance.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.billing.getBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `current_balance` | `number` | No | — |
+| `balance` | `number` | No | — |
+| `currency` | `string` | No | — |
+
+
+
+
+---
+
+## Chat
+
+### createCompletion
+
+`chat.createCompletion`
+
+Generate a chat completion using an AIMLAPI-compatible model.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.chat.createCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `maxTokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `frequencyPenalty` | `number` | No | — |
+| `presencePenalty` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `tools` | `any[]` | No | — |
+| `toolChoice` | `any` | No | — |
+| `responseFormat` | `any` | No | — |
+| `seed` | `number` | No | — |
+| `n` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: string,
+  content: string
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `model` | `string` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message: {
+    role: string,
+    content: string
+  },
+  finish_reason?: string,
+  finishReason?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Luma
+
+### getGeneration
+
+`luma.getGeneration`
+
+Retrieve a Luma video generation by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.luma.getGeneration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `generationId` | `string` | No | — |
+| `ids` | `string` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `video` | `any` | No | — |
+| `error` | `any` | No | — |
+| `meta` | `any` | No | — |
+
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Create a message in a thread.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `role` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `attachments` | `any[]` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### delete
+
+`messages.delete`
+
+Delete a message.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.messages.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Retrieve a message by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages in a thread.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `object` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Update a message.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `messageId` | `string` | Yes | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List models currently available to the AIMLAPI account.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<Accordions>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  provider?: string,
+  info?: {
+    name?: string,
+    developer?: string,
+    description?: string,
+    contextLength?: number,
+    maxTokens?: number,
+    url?: string,
+    docsUrl?: string,
+    docs_url?: string,
+    releasedAt?: string
+  },
+  features?: string[],
+  endpoints?: string[],
+  aliases?: string[],
+  tags?: string[],
+  metadata?: {
+  }
+}[] | {
+  object?: string,
+  data: {
+    id: string,
+    type?: string,
+    name?: string,
+    provider?: string,
+    info?: {
+      name?: string,
+      developer?: string,
+      description?: string,
+      contextLength?: number,
+      maxTokens?: number,
+      url?: string,
+      docsUrl?: string,
+      docs_url?: string,
+      releasedAt?: string
+    },
+    features?: string[],
+    endpoints?: string[],
+    aliases?: string[],
+    tags?: string[],
+    metadata?: {
+    }
+  }[],
+  has_more?: boolean,
+  first_id?: string,
+  last_id?: string
+}
+```
+</Accordion>
+</Accordions>
+
+
+---
+
+### listWithDetails
+
+`models.listWithDetails`
+
+List models with pagination metadata and expanded details.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.models.listWithDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `model` | `string` | No | — |
+
+
+
+
+**Output:** `object`
+
+<Accordions>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  type?: string,
+  name?: string,
+  provider?: string,
+  info?: {
+    name?: string,
+    developer?: string,
+    description?: string,
+    contextLength?: number,
+    maxTokens?: number,
+    url?: string,
+    docsUrl?: string,
+    docs_url?: string,
+    releasedAt?: string
+  },
+  features?: string[],
+  endpoints?: string[],
+  aliases?: string[],
+  tags?: string[],
+  metadata?: {
+  }
+}[] | {
+  object?: string,
+  data: {
+    id: string,
+    type?: string,
+    name?: string,
+    provider?: string,
+    info?: {
+      name?: string,
+      developer?: string,
+      description?: string,
+      contextLength?: number,
+      maxTokens?: number,
+      url?: string,
+      docsUrl?: string,
+      docs_url?: string,
+      releasedAt?: string
+    },
+    features?: string[],
+    endpoints?: string[],
+    aliases?: string[],
+    tags?: string[],
+    metadata?: {
+    }
+  }[],
+  has_more?: boolean,
+  first_id?: string,
+  last_id?: string
+}
+```
+</Accordion>
+</Accordions>
+
+
+---
+
+## Responses
+
+### get
+
+`responses.get`
+
+Retrieve a response by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.responses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `responseId` | `string` | Yes | — |
+| `include` | `string[]` | No | — |
+| `startingAfter` | `number` | No | — |
+| `includeObfuscation` | `boolean` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Runs
+
+### cancel
+
+`runs.cancel`
+
+Cancel an in-progress run.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.runs.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### create
+
+`runs.create`
+
+Create a run for a thread and assistant.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.runs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `assistantId` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `additionalInstructions` | `string` | No | — |
+| `tools` | `any[]` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### get
+
+`runs.get`
+
+Retrieve a run by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.runs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### list
+
+`runs.list`
+
+List runs for a thread.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.runs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `threadId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `object` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+
+
+
+---
+
+### submitToolOutputs
+
+`runs.submitToolOutputs`
+
+Submit tool outputs for a run.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.runs.submitToolOutputs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+| `toolOutputs` | `any[]` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### update
+
+`runs.update`
+
+Update a run.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.runs.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Run Steps
+
+### get
+
+`runSteps.get`
+
+Retrieve a single run step.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.runSteps.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### list
+
+`runSteps.list`
+
+List run steps for a run.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.runSteps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `threadId` | `string` | Yes | — |
+| `runId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `object` | `string` | No | — |
+| `data` | `any[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `first_id` | `string` | No | — |
+| `last_id` | `string` | No | — |
+
+
+
+
+---
+
+## Threads
+
+### create
+
+`threads.create`
+
+Create an AIMLAPI thread.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.threads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `messages` | `object[]` | No | — |
+| `toolResources` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: string,
+  content: string
+}[]
+```
+</Accordion>
+
+<Accordion title="toolResources full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### delete
+
+`threads.delete`
+
+Delete a thread.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.threads.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+
+---
+
+### get
+
+`threads.get`
+
+Retrieve a thread by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.aimlapi.api.threads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### update
+
+`threads.update`
+
+Update thread metadata or resources.
+
+**Risk:** `write`
+
+```ts
+await corsair.aimlapi.api.threads.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `threadId` | `string` | Yes | — |
+| `toolResources` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="toolResources full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `created_at` | `number` | No | — |
+| `status` | `string` | No | — |
+| `model` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+

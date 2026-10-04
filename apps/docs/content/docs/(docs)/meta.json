@@ -1,5 +1,36 @@
 {
   "title": "Docs",
   "root": true,
-  "pages": ["cloud"]
+  "pages": [
+    "---Get Started---",
+    "introduction",
+    "quick-start",
+    "cloud/overview",
+    "use-cases",
+    "---Frameworks---",
+    "frameworks",
+    "clients",
+    "---Adapters---",
+    "mcp-adapters",
+    "---Workflow engines---",
+    "guides/inngest",
+    "guides/temporal",
+    "guides/trigger-dev",
+    "guides/hatchet",
+    "---Workflows (beta)---",
+    "workflows/overview",
+    "workflows/triggering",
+    "workflows/execution",
+    "---Reference---",
+    "concepts/api",
+    "concepts/auth",
+    "concepts/provisioning",
+    "concepts/database",
+    "concepts/hooks",
+    "hub/overview",
+    "concepts/integrations",
+    "concepts/multi-tenancy",
+    "concepts/permissions",
+    "concepts/webhooks"
+  ]
 }

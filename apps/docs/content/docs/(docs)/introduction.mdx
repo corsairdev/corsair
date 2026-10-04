@@ -1,0 +1,111 @@
+---
+title: Introduction
+description: Open-source integration layer for agents and apps.
+---
+
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Corsair is an open-source integration layer for apps and agents. Connect to GitHub, Slack, Gmail, and the rest of the catalog through one syntax. Corsair handles OAuth, token refresh, webhooks, multi-tenancy, and rate limits.
+
+You run it inside your own app. Credentials stay encrypted in your database. [Hub](/hub/overview) hosts connect pages and OAuth callbacks so you do not build those public URLs yourself.
+
+## How it works
+
+<Steps>
+
+<Step>
+
+### Wire once
+
+Install `@corsair-dev/<plugin>` packages and pass your database connection:
+
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+
+export const corsair = createCorsair({
+  plugins: [github(), slack()],
+  database: db,
+  kek: process.env.CORSAIR_KEK!,
+  hub: {
+    projectApiKey: process.env.CORSAIR_API_KEY!,
+    signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+  },
+});
+```
+
+</Step>
+
+<Step>
+
+### Call the provider
+
+Every plugin shares the same shape: `corsair.[plugin].api.[resource].[action]()`.
+
+```ts route.ts
+await corsair.github.api.issues.create({
+  owner: 'acme',
+  repo: 'app',
+  title: 'Bug',
+});
+
+await corsair.slack.api.messages.post({
+  channel: 'C123',
+  text: 'On it.',
+});
+```
+
+</Step>
+
+<Step>
+
+### Read from `.db`
+
+API calls and webhooks keep `corsair_entities` current. Scope to a tenant and query your database instead of fanning out to GitHub on every page load:
+
+```ts route.ts
+const tenant = corsair.withTenant('user_abc123');
+
+const issues = await tenant.github.db.issues.search({
+  data: { state: 'open' },
+});
+```
+
+See [Database](/concepts/database) for the table layout and sync behavior.
+
+</Step>
+
+</Steps>
+
+## Get started
+
+<Cards>
+  <Card title="Quick start" href="/quick-start">
+    Empty project to a connected integration in five steps.
+  </Card>
+  <Card title="Set up with your agent" href="/getting-started/set-up-with-your-agent">
+    One prompt for your coding agent to wire Corsair in.
+  </Card>
+  <Card title="Pick your framework" href="/frameworks/next">
+    Next, Node, Express, Hono, SvelteKit, Remix, Astro — mount the route in yours.
+  </Card>
+  <Card title="Browse plugins" href="/guides/plugins">
+    Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and the rest of the catalog.
+  </Card>
+</Cards>
+
+## Core concepts
+
+- [Integrations](/concepts/integrations) — add plugins, same syntax everywhere
+- [Multi-tenancy](/concepts/multi-tenancy) — `withTenant()` and per-customer isolation
+- [Database](/concepts/database) — `.db` search, sync, and `corsair_entities`
+- [Webhooks](/concepts/webhooks) — one handler, typed plugin routes
+- [Permissions](/concepts/permissions) — approval gates on destructive calls
+- [Hub](/hub/overview) — hosted connect flows and OAuth callbacks
+
+## For agents
+
+Corsair fits agentic workflows: expose your instance over MCP (`list_operations`, `get_schema`, `run_script`), or point a coding agent at [llms.txt](https://docs.corsair.dev/llms.txt) and the [docs MCP](https://mcp.corsair.dev/mcp). Start with [Set up with your agent](/getting-started/set-up-with-your-agent) or the [MCP adapters](/mcp-adapters/mcp-adapters) guide.

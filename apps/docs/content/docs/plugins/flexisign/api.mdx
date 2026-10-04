@@ -1,0 +1,82 @@
+---
+title: API
+description: "API reference for Flexisign: every `flexisign.api.*` operation with input and output types."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Every `flexisign.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Callout type="info">
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+## List
+
+### templates
+
+`list.templates`
+
+List all available document templates in FlexiSign
+
+**Risk:** `read`
+
+```ts
+await corsair.flexisign.api.list.templates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `status` | `string` | Yes | — |
+| `code` | `number` | Yes | — |
+| `data` | `object` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  list: {
+    _id: string,
+    name: string
+  }[],
+  meta: {
+    total: number,
+    limit: number,
+    page: number,
+    pages: number,
+    previousPage?: number | null,
+    nextPage?: number | null
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+

@@ -1,0 +1,264 @@
+---
+title: API
+description: "API reference for Chaser: every `chaser.api.*` operation with input and output types."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Every `chaser.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Callout type="info">
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+## Credit Notes
+
+### list
+
+`creditNotes.list`
+
+List all credit notes
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.creditNotes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  amount: number,
+  currency: string,
+  status: string
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Customers
+
+### list
+
+`customers.list`
+
+List all customers
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email?: string,
+  status?: string
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Get an invoice by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `customer_id` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `due_date` | `string` | No | — |
+
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List all invoices
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.invoices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `customer_external_id` | `string` | No | — |
+
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  customer_id: string,
+  amount: number,
+  currency: string,
+  status: string,
+  due_date?: string
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Get organization details
+
+**Risk:** `read`
+
+```ts
+await corsair.chaser.api.organization.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | — |
+
+
+
+
+---
+
+

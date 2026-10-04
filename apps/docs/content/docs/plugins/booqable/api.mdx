@@ -1,0 +1,5315 @@
+---
+title: API
+description: "API reference for Booqable: every `booqable.api.*` operation with input and output types."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Every `booqable.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Callout type="info">
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+## Barcodes
+
+### listBarcodes
+
+`barcodes.listBarcodes`
+
+Retrieve a list of barcodes.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.barcodes.listBarcodes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: barcodes,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Bundle Items
+
+### listBundleItems
+
+`bundleItems.listBundleItems`
+
+Retrieve a list of bundle items.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.bundleItems.listBundleItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: bundle_items,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Bundles
+
+### searchBundles
+
+`bundles.searchBundles`
+
+Search bundles with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.bundles.searchBundles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: bundles,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Clusters
+
+### listClusters
+
+`clusters.listClusters`
+
+Retrieve a list of clusters.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.clusters.listClusters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: clusters,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Companies
+
+### updateCompany
+
+`companies.updateCompany`
+
+Update the current company information.
+
+**Risk:** `write`
+
+```ts
+await corsair.booqable.api.companies.updateCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: companies,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Coupons
+
+### listCoupons
+
+`coupons.listCoupons`
+
+Retrieve a list of coupons.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.coupons.listCoupons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: coupons,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Customers
+
+### createCustomer
+
+`customers.createCustomer`
+
+Create a new customer in Booqable.
+
+**Risk:** `write`
+
+```ts
+await corsair.booqable.api.customers.createCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: customers,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### deleteCustomer
+
+`customers.deleteCustomer`
+
+Delete (archive) a customer by ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.booqable.api.customers.deleteCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output:** `object`
+
+<Accordions>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type: customers,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  },
+  included?: {
+    id: string,
+    type: string,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  }[],
+  links?: {
+  },
+  meta?: {
+  }
+} | {
+  data: null,
+  links?: {
+  },
+  meta?: {
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+
+---
+
+### getCustomer
+
+`customers.getCustomer`
+
+Fetch a specific customer by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.customers.getCustomer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: customers,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### getCustomers
+
+`customers.getCustomers`
+
+Retrieve a paginated list of customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.customers.getCustomers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: customers,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### searchCustomers
+
+`customers.searchCustomers`
+
+Search customers with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.customers.searchCustomers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: customers,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Default Properties
+
+### listDefaultProperties
+
+`defaultProperties.listDefaultProperties`
+
+Retrieve default property definitions.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.defaultProperties.listDefaultProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: default_properties,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Documents
+
+### listDocuments
+
+`documents.listDocuments`
+
+Retrieve a list of documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.documents.listDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: documents,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### searchDocuments
+
+`documents.searchDocuments`
+
+Search documents with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.documents.searchDocuments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: documents,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Email Templates
+
+### listEmailTemplates
+
+`emailTemplates.listEmailTemplates`
+
+List email templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.emailTemplates.listEmailTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: email_templates,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Employees
+
+### listEmployees
+
+`employees.listEmployees`
+
+Retrieve a list of employees.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.employees.listEmployees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: employees,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Inventory Breakdowns
+
+### listInventoryBreakdowns
+
+`inventoryBreakdowns.listInventoryBreakdowns`
+
+Retrieve inventory breakdowns by status and product.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.inventoryBreakdowns.listInventoryBreakdowns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: inventory_breakdowns,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Inventory Levels
+
+### getInventoryLevels
+
+`inventoryLevels.getInventoryLevels`
+
+Fetch inventory levels for products across locations.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.inventoryLevels.getInventoryLevels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: inventory_levels,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Items
+
+### listItems
+
+`items.listItems`
+
+Retrieve a list of items (products and product groups).
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.items.listItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: items,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### searchItems
+
+`items.searchItems`
+
+Search items with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.items.searchItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: items,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Lines
+
+### listLines
+
+`lines.listLines`
+
+Retrieve a paginated list of order lines.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.lines.listLines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: lines,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Locations
+
+### listLocations
+
+`locations.listLocations`
+
+Retrieve a list of locations.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.locations.listLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: locations,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Notes
+
+### listNotes
+
+`notes.listNotes`
+
+Retrieve a list of notes.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.notes.listNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: notes,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Orders
+
+### createOrder
+
+`orders.createOrder`
+
+Create a new order.
+
+**Risk:** `write`
+
+```ts
+await corsair.booqable.api.orders.createOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: orders,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### deleteOrder
+
+`orders.deleteOrder`
+
+Delete (archive) an order by ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.booqable.api.orders.deleteOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output:** `object`
+
+<Accordions>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type: orders,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  },
+  included?: {
+    id: string,
+    type: string,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  }[],
+  links?: {
+  },
+  meta?: {
+  }
+} | {
+  data: null,
+  links?: {
+  },
+  meta?: {
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+
+---
+
+### getNewOrder
+
+`orders.getNewOrder`
+
+Retrieve a new order template with default values.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.orders.getNewOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: orders,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### getOrder
+
+`orders.getOrder`
+
+Retrieve a specific order by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.orders.getOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: orders,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### listOrders
+
+`orders.listOrders`
+
+Retrieve a paginated list of orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.orders.listOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: orders,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### searchOrders
+
+`orders.searchOrders`
+
+Search orders with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.orders.searchOrders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: orders,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Payment Methods
+
+### listPaymentMethods
+
+`paymentMethods.listPaymentMethods`
+
+Retrieve a list of payment methods.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.paymentMethods.listPaymentMethods({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: payment_methods,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Payments
+
+### listPayments
+
+`payments.listPayments`
+
+List all payments.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.payments.listPayments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: payments,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Photos
+
+### listPhotos
+
+`photos.listPhotos`
+
+Retrieve a paginated list of photos.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.photos.listPhotos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: photos,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Plannings
+
+### listPlannings
+
+`plannings.listPlannings`
+
+Retrieve planning records for reservations.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.plannings.listPlannings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: plannings,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### searchPlannings
+
+`plannings.searchPlannings`
+
+Search plannings with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.plannings.searchPlannings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: plannings,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Price Rulesets
+
+### listPriceRulesets
+
+`priceRulesets.listPriceRulesets`
+
+List price rulesets.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.priceRulesets.listPriceRulesets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: price_rulesets,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Price Structures
+
+### listPriceStructures
+
+`priceStructures.listPriceStructures`
+
+List price structures.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.priceStructures.listPriceStructures({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: price_structures,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Product Groups
+
+### createProductGroup
+
+`productGroups.createProductGroup`
+
+Create a new product group.
+
+**Risk:** `write`
+
+```ts
+await corsair.booqable.api.productGroups.createProductGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: product_groups,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### deleteProductGroup
+
+`productGroups.deleteProductGroup`
+
+Delete a product group by ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.booqable.api.productGroups.deleteProductGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output:** `object`
+
+<Accordions>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type: product_groups,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  },
+  included?: {
+    id: string,
+    type: string,
+    attributes?: {
+    },
+    relationships?: {
+    }
+  }[],
+  links?: {
+  },
+  meta?: {
+  }
+} | {
+  data: null,
+  links?: {
+  },
+  meta?: {
+  }
+}
+```
+</Accordion>
+</Accordions>
+
+
+---
+
+### getProductGroup
+
+`productGroups.getProductGroup`
+
+Fetch a specific product group by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.productGroups.getProductGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: product_groups,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### listProductGroups
+
+`productGroups.listProductGroups`
+
+List product groups with filtering and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.productGroups.listProductGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: product_groups,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Products
+
+### getProduct
+
+`products.getProduct`
+
+Fetch a specific product by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.products.getProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: products,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+### listProducts
+
+`products.listProducts`
+
+Retrieve a paginated list of products.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.products.listProducts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: products,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Properties
+
+### listProperties
+
+`properties.listProperties`
+
+Retrieve a list of custom properties.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.properties.listProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: properties,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Provinces
+
+### listProvinces
+
+`provinces.listProvinces`
+
+Retrieve a list of provinces.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.provinces.listProvinces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: provinces,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Stock Item Plannings
+
+### listStockItemPlannings
+
+`stockItemPlannings.listStockItemPlannings`
+
+Retrieve stock item plannings.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.stockItemPlannings.listStockItemPlannings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: stock_item_plannings,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Stock Items
+
+### listStockItems
+
+`stockItems.listStockItems`
+
+Retrieve a list of stock items.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.stockItems.listStockItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: stock_items,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Tax Rates
+
+### listTaxRates
+
+`taxRates.listTaxRates`
+
+Retrieve a list of tax rates.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.taxRates.listTaxRates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: tax_rates,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Tax Values
+
+### listTaxValues
+
+`taxValues.listTaxValues`
+
+Retrieve a list of tax values.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.taxValues.listTaxValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: tax_values,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+## Users
+
+### listUsers
+
+`users.listUsers`
+
+Retrieve a list of users.
+
+**Risk:** `read`
+
+```ts
+await corsair.booqable.api.users.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `companySlug` | `string` | No | — |
+| `body` | `any` | No | — |
+| `query` | `object` | No | — |
+| `headers` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="query full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="headers full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `data` | `object[]` | Yes | — |
+| `included` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+
+<Accordions>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: users,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+

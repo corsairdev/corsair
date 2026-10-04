@@ -1,0 +1,328 @@
+---
+title: Webhooks
+description: "WhatsApp incoming webhooks: event paths, payloads, and response data."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+The WhatsApp plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/whatsapp/overview) for setup context and the exact URL shape).
+
+<Callout type="info">
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Callout>
+
+## Webhook map
+
+- `messages`
+  - `received` (`messages.received`)
+  - `statusChanged` (`messages.statusChanged`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Messages
+
+### Received
+
+`messages.received`
+
+Incoming WhatsApp messages from customers
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `businessAccountId` | `string` | Yes | — |
+| `phoneNumberId` | `string` | Yes | — |
+| `displayPhoneNumber` | `string` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+
+<Accordions>
+<Accordion title="contacts full type">
+
+```ts
+{
+  wa_id: string,
+  profile?: {
+    name?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  id: string,
+  from: string,
+  timestamp: string,
+  type: string,
+  context?: {
+    from?: string,
+    id?: string,
+    referred_product?: {
+    }
+  },
+  text?: {
+    body: string
+  },
+  image?: {
+    caption?: string
+  },
+  audio?: {
+  },
+  document?: {
+    caption?: string
+  },
+  video?: {
+    caption?: string
+  },
+  sticker?: {
+  },
+  location?: {
+  },
+  contacts?: {
+  }[],
+  interactive?: {
+    button_reply?: {
+      title?: string
+    },
+    list_reply?: {
+      title?: string
+    }
+  },
+  button?: {
+    text?: string
+  },
+  order?: {
+  },
+  referral?: {
+  },
+  errors?: {
+  }[]
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+<Accordions>
+<Accordion title="Response data full type">
+
+```ts
+{
+  businessAccountId: string,
+  phoneNumberId: string,
+  displayPhoneNumber: string,
+  contacts: {
+    wa_id: string,
+    profile?: {
+      name?: string
+    }
+  }[],
+  messages: {
+    id: string,
+    from: string,
+    timestamp: string,
+    type: string,
+    context?: {
+      from?: string,
+      id?: string,
+      referred_product?: {
+      }
+    },
+    text?: {
+      body: string
+    },
+    image?: {
+      caption?: string
+    },
+    audio?: {
+    },
+    document?: {
+      caption?: string
+    },
+    video?: {
+      caption?: string
+    },
+    sticker?: {
+    },
+    location?: {
+    },
+    contacts?: {
+    }[],
+    interactive?: {
+      button_reply?: {
+        title?: string
+      },
+      list_reply?: {
+        title?: string
+      }
+    },
+    button?: {
+      text?: string
+    },
+    order?: {
+    },
+    referral?: {
+    },
+    errors?: {
+    }[]
+  }[]
+}
+```
+</Accordion>
+</Accordions>
+
+**`webhookHooks` example**
+
+```ts
+whatsapp({
+    webhookHooks: {
+        messages: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Status Changed
+
+`messages.statusChanged`
+
+WhatsApp sent, delivered, read, failed, deleted, or error updates
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `businessAccountId` | `string` | Yes | — |
+| `phoneNumberId` | `string` | Yes | — |
+| `displayPhoneNumber` | `string` | Yes | — |
+| `statuses` | `object[]` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+
+
+<Accordions>
+<Accordion title="statuses full type">
+
+```ts
+{
+  id: string,
+  status: sent | delivered | read | failed | deleted,
+  timestamp: string,
+  recipient_id?: string,
+  conversation?: {
+  },
+  pricing?: {
+  },
+  errors?: {
+    code?: number,
+    title?: string,
+    message?: string,
+    error_data?: {
+      details?: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+<Accordions>
+<Accordion title="Response data full type">
+
+```ts
+{
+  businessAccountId: string,
+  phoneNumberId: string,
+  displayPhoneNumber: string,
+  statuses: {
+    id: string,
+    status: sent | delivered | read | failed | deleted,
+    timestamp: string,
+    recipient_id?: string,
+    conversation?: {
+    },
+    pricing?: {
+    },
+    errors?: {
+      code?: number,
+      title?: string,
+      message?: string,
+      error_data?: {
+        details?: string
+      }
+    }[]
+  }[],
+  errors: {
+  }[]
+}
+```
+</Accordion>
+</Accordions>
+
+**`webhookHooks` example**
+
+```ts
+whatsapp({
+    webhookHooks: {
+        messages: {
+            statusChanged: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+

@@ -67,7 +67,7 @@ reference in the tab's nav (`content/docs/(api)/meta.json`).
 
 ## Not done here (flagged, not silently dropped)
 
-- Search (Fumadocs needs `fumadocs-core` search wired explicitly).
+- Search: `app/api/search/route.ts` via `createFromSource(source)` + ⌘K in `RootProvider`.
 - `docs.json`'s `redirects` array → `next.config.mjs` `redirects()`.
 - Canonical OpenAPI source decision: this PR renders
   `packages/corsair/core/cloud/management-v1.openapi.yaml` (the SDK's copy).

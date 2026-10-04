@@ -1,0 +1,116 @@
+---
+title: API
+description: "API reference for Perplexity: every `perplexityai.api.*` operation with input and output types."
+---
+
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+Every `perplexityai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Callout type="info">
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Callout>
+
+## Chat
+
+### completions
+
+`chat.completions`
+
+Create a chat completion
+
+**Risk:** `read`
+
+```ts
+await corsair.perplexityai.api.chat.completions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `model` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `return_citations` | `boolean` | No | — |
+| `return_images` | `boolean` | No | — |
+| `stream` | `boolean` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+
+
+<Accordions>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant,
+  content: string
+}[]
+```
+</Accordion>
+</Accordions>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+
+| Parameter | Type | Required | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+| `citations` | `string[]` | No | — |
+| `images` | `string[]` | No | — |
+
+
+<Accordions>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  finish_reason?: string | null,
+  message?: {
+    role: string,
+    content: string
+  },
+  delta?: {
+    role?: string,
+    content?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number
+}
+```
+</Accordion>
+</Accordions>
+
+
+
+---
+
+
