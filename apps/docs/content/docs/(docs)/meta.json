@@ -18,7 +18,7 @@
     "guides/trigger-dev",
     "guides/hatchet",
     "---Workflows (beta)---",
-    "workflows/overview",
+    "[Overview](/workflows/overview)",
     "workflows/triggering",
     "workflows/execution",
     "---Reference---",

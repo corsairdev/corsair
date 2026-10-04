@@ -381,12 +381,16 @@ export async function oauthCallbackHandler(req: Request, res: Response) {
 
 ## Security checklist
 
-<Callout type="info">`createLink` is behind authentication. `tenantId` comes from your session, not user input</Callout>
-<Callout type="info">`manual.baseUrl` and `manual.redirectUri` use your HTTPS domain in production</Callout>
-<Callout type="info">The connect page calls `resolve(state)`, and Corsair verifies the HMAC before returning the OAuth URL</Callout>
-<Callout type="info">The callback calls `oauthCallback({ code, state })`, and Corsair re-verifies state and exchanges the code</Callout>
-<Callout type="info">All user-controlled values are HTML-escaped before rendering error pages</Callout>
-<Callout type="info">OAuth redirect URI registered with the provider matches `manual.redirectUri` exactly</Callout>
+<Callout type="success">
+
+- `createLink` is behind authentication. `tenantId` comes from your session, not user input
+- `manual.baseUrl` and `manual.redirectUri` use your HTTPS domain in production
+- The connect page calls `resolve(state)`, and Corsair verifies the HMAC before returning the OAuth URL
+- The callback calls `oauthCallback({ code, state })`, and Corsair re-verifies state and exchanges the code
+- All user-controlled values are HTML-escaped before rendering error pages
+- OAuth redirect URI registered with the provider matches `manual.redirectUri` exactly
+
+</Callout>
 
 ## Hub mode
 

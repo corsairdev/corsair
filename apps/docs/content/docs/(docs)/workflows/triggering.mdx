@@ -32,7 +32,7 @@ const { status, runId } = await corsair.workflows.run('wf_123', {
 
 It resolves to `{ status, runId? }`, where `status` is `'ok'` when the run was accepted, and `runId` identifies it.
 
-<Callout type="info">
+<Callout type="tip">
 Pass an `idempotencyKey` whenever a trigger might fire more than once (a retried request, an at-least-once queue). Two `run()` calls with the same key produce one run, not two.
 </Callout>
 
