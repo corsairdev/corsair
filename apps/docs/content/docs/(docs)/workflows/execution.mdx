@@ -13,7 +13,7 @@ Workflows execute inside your app. Hub delivers each run to the route you alread
 
 Add `allowWorkflowExecution: true` to the `hub` block of `createCorsair`:
 
-```ts src/server/corsair.ts
+```ts title="src/server/corsair.ts"
 export const corsair = createCorsair({
     plugins: [slack(), github()],
     database: db,

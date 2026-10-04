@@ -145,7 +145,7 @@ bun add --dev @types/pg
 <Accordions>
 <Accordion title="View migration SQL">
 
-```sql migration.sql
+```sql title="migration.sql"
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -235,7 +235,7 @@ Get-Content migration.sql | sqlite3 corsair.db
 <Accordions>
 <Accordion title="View migration SQL">
 
-```sql migration.sql
+```sql title="migration.sql"
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -319,7 +319,7 @@ psql $env:DATABASE_URL -f migration.sql
 <Accordions>
 <Accordion title="View Drizzle schema">
 
-```ts src/server/db/schema.ts
+```ts title="src/server/db/schema.ts"
 import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
 
 export const corsairIntegrations = pgTable('corsair_integrations', {
@@ -392,7 +392,7 @@ npx drizzle-kit push
 <Accordions>
 <Accordion title="View Prisma schema">
 
-```prisma schema.prisma
+```prisma title="schema.prisma"
 model CorsairIntegration {
   id        String           @id
   createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz

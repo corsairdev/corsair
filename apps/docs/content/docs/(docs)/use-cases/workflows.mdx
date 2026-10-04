@@ -19,7 +19,7 @@ Every webhook event accepts an `after` hook, which runs once the event is saved 
 
 <Callout type="info">These examples assume `multiTenancy: true` (the [quick-start](/quick-start) setup), so they scope each call with `corsair.withTenant(ctx.tenantId)`. On a single-tenant instance, drop `withTenant` and call the plugin `.api` directly.</Callout>
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestClosed: {
@@ -67,7 +67,7 @@ Because these are function calls rather than a graph, branching and early return
 
 Use `before` to drop events you don't care about. Throwing stops processing, and the event isn't written to your database:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -94,7 +94,7 @@ Filtering in `before` is cheaper than filtering in `after`, since it avoids the 
 
 Webhook senders expect a fast response. If a step calls an LLM, sends email, or generates a report, hand it to a job queue and return:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -109,7 +109,7 @@ github({
 })
 ```
 
-```ts inngest/functions.ts
+```ts title="inngest/functions.ts"
 export const reviewPR = inngest.createFunction(
     { id: 'review-pr' },
     { event: 'github/pr-opened' },

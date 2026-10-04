@@ -32,7 +32,7 @@ Build the instance once. The handler and your read/write code both import it.
 
 Export the adapter from a splat server route.
 
-```ts src/routes/api/corsair/$.ts
+```ts title="src/routes/api/corsair/$.ts"
 import { toTanStackHandler } from 'corsair';
 import { corsair } from '~/server/corsair';
 
@@ -51,7 +51,7 @@ Every read and write is scoped to a tenant id, whatever stable id identifies the
 
 Wrap the read in a server function so it runs on the server and its return type reaches the client. Load it from a route with `loader`, and the `.db` result is fully typed in the component.
 
-```tsx src/routes/issues.tsx
+```tsx title="src/routes/issues.tsx"
 import { createServerFn } from '@tanstack/react-start';
 import { createFileRoute } from '@tanstack/react-router';
 import { corsair } from '~/server/corsair';

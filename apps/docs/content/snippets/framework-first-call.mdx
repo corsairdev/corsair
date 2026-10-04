@@ -5,7 +5,7 @@ Onboard a user to an integration by creating a connect link and redirecting. Cor
 <Tabs items={["React", "Vanilla JS"]}>
   <Tab value="React">
 
-```tsx connect-github.tsx
+```tsx title="connect-github.tsx"
 "use client";
 import { useConnectionStatus, useCreateConnectLink } from "./corsair-client";
 
@@ -32,7 +32,7 @@ export function ConnectGitHub({ tenantId }: { tenantId: string }) {
   </Tab>
   <Tab value="Vanilla JS">
 
-```ts connect.ts
+```ts title="connect.ts"
 // create a connect link and send the user to it
 const { connectUrl } = await client.connect.createLink({
     plugin: "github",

@@ -15,7 +15,7 @@ When an AI agent calls Corsair, you need guardrails. Permissions let you set a p
 
 With Corsair Hub, permission approvals are handled automatically. If you're building the review UI yourself, see [Handling permission approvals](#handling-permission-approvals).
 
-```ts corsair.ts highlight={14-20}
+```ts title="corsair.ts" highlight={14-20}
 import { createCorsair } from "corsair";
 import { github } from "@corsair-dev/github";
 
@@ -84,7 +84,7 @@ If you already ran the [quick start](/quick-start) migration, add this table onc
 <Accordions>
 <Accordion title="View migration SQL">
 
-```sql permissions.sql
+```sql title="permissions.sql"
 CREATE TABLE IF NOT EXISTS corsair_permissions (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -128,7 +128,7 @@ Get-Content permissions.sql | sqlite3 corsair.db
 <Accordions>
 <Accordion title="View migration SQL">
 
-```sql permissions.sql
+```sql title="permissions.sql"
 CREATE TABLE IF NOT EXISTS corsair_permissions (
     id TEXT PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -203,7 +203,7 @@ Set a default mode per plugin with `permissions.mode`. Each mode maps risk level
 
 `cautious` is a good default for agent workloads. Agents can read and write freely, but destructive actions need a human in the loop.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     permissions: { mode: "cautious" },
 })
@@ -229,7 +229,7 @@ Policies come from the mode matrix above, unless you override a specific endpoin
 
 Use `permissions.overrides` to tighten or loosen individual endpoints beyond the mode default. Keys are dot-notation paths through the plugin's endpoint tree, and invalid paths are compile-time errors.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     permissions: {
         mode: "cautious",
@@ -272,7 +272,7 @@ Configure timeouts and blocking behavior at the root with `createCorsair({ permi
 The old `approval: { ... }` key still works but is **deprecated**. Rename it to `permissions`. TypeScript will strike through `approval` in your editor. A runtime warning is logged on startup if you still use it.
 </Callout>
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     permissions: {
         timeout: "30m",      // duration string: '30s', '10m', '1h', '2h30m', '1d'
@@ -332,7 +332,7 @@ Best when:
 
 With **hub** config, Corsair automatically returns a hosted approval URL in the agent message (see [Approvals on Hub](/hub/permissions)). With **manual** config, set `approvalBaseUrl` and optionally customize via `onApprovalRequired`:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 manual: {
     approvalBaseUrl: `${PUBLIC_URL}/approve`,
     onApprovalRequired: ({ approvalUrl }) =>
@@ -352,7 +352,7 @@ Best when:
 - You have a review UI open alongside the agent session
 - You want approval to feel immediate. Approve in the UI, and the agent continues automatically
 
-```ts corsair.ts
+```ts title="corsair.ts"
 permissions: {
     timeout: "10m",
     onTimeout: "deny",
@@ -364,7 +364,7 @@ permissions: {
 
 Pass a function to switch modes per request, useful when approval behavior depends on runtime context:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 permissions: {
     timeout: "30m",
     onTimeout: "deny",
@@ -380,7 +380,7 @@ How you approve is entirely up to you. A few common patterns:
 
 **Automated reviewer agent**: send the pending request to a second agent that evaluates whether the action is safe, then programmatically sets `status` to `approved` or `denied`. Useful when you want policy checks without a human in the loop for every write.
 
-```ts review-page.ts
+```ts title="review-page.ts"
 import { corsair } from "./corsair";
 
 export async function getReviewDetails(token: string) {
@@ -409,7 +409,7 @@ When using [MCP adapters](/mcp-adapters/mcp-adapters), permissions gate `run_scr
 
 With **hub** config, blocked calls automatically include a hosted approval URL for the agent. With **manual** config, set `manual.approvalBaseUrl` (and optionally `manual.onApprovalRequired`) so agents receive a review link:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     hub: { /* connect via hosted UI */ },
     permissions: {
@@ -430,7 +430,7 @@ After approval, the agent retries the same call. Corsair finds the `approved` re
 
 If you don't want to wait for the agent to retry after approval, call `executePermission` once `status` is `approved`. It replays the frozen args directly, no LLM involved:
 
-```ts approve-handler.ts
+```ts title="approve-handler.ts"
 import { executePermission } from "corsair";
 import { corsair } from "./corsair";
 

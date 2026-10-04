@@ -3,7 +3,7 @@ import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 <Tabs items={["React", "Vanilla JS"]}>
   <Tab value="React">
 
-```tsx corsair-client.ts
+```tsx title="corsair-client.ts"
 "use client";
 import { createCorsairReactClient } from "corsair/client/react";
 
@@ -18,7 +18,7 @@ Full hook list, including `useTenants`, `usePlugin`, and `useOAuthCallback`, on 
   </Tab>
   <Tab value="Vanilla JS">
 
-```ts corsair-client.ts
+```ts title="corsair-client.ts"
 import { createCorsairClient } from "corsair";
 
 export const client = createCorsairClient({ baseURL: "/api/corsair" });

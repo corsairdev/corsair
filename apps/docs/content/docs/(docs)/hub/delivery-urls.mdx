@@ -27,7 +27,7 @@ flowchart LR
 
 Your app exposes the delivery endpoint through the mounted Corsair handler. `toNextJsHandler` serves Hub delivery at the base path automatically:
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
 
@@ -42,7 +42,7 @@ You do **not** put the delivery URL in your `hub` config. It is resolved per env
 
 When your app uses a **development** API key (`ck_dev_…`), the SDK opens a Corsair-provided tunnel so Hub can reach your local app with the same signed POST it uses in production:
 
-```bash .env.local
+```bash title=".env.local"
 CORSAIR_API_KEY=ck_dev_...
 CORSAIR_SIGNING_SECRET=...
 # Optional override for the local mount path:

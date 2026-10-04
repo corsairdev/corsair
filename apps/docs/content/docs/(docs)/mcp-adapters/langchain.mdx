@@ -57,7 +57,7 @@ npm install @langchain/openai @langchain/langgraph
 
 Build it once and reuse it. `authType: 'managed'` lets Corsair hold the OAuth connection; the tokens stay encrypted in your database under your `kek`.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from 'corsair';
 import { slack } from '@corsair-dev/slack';
 import { database } from './db';
@@ -89,7 +89,7 @@ const tools = await corsairTools({ corsair, plugin: 'slack' });
 
 ## Give them to an agent
 
-```ts agent.ts
+```ts title="agent.ts"
 import { ChatOpenAI } from '@langchain/openai';
 import { createReactAgent } from '@langchain/langgraph/prebuilt';
 import { corsairTools } from '@corsair-dev/langchain';

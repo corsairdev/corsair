@@ -29,7 +29,7 @@ Build the instance once. The handler and your read/write code both import it.
 
 The adapter reads the raw stream itself, so no `express.json()` and no body-parser wiring. Mount one line during bootstrap.
 
-```ts main.ts
+```ts title="main.ts"
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { toExpressHandler } from 'corsair';
@@ -61,7 +61,7 @@ const tenant = this.corsair.withTenant(await getTenantId(req));
 
 The handler serves Hub delivery; your business logic reads and writes through the same instance. Provide it once, then inject it, and the corsair instance becomes a first-class Nest dependency.
 
-```ts corsair.module.ts
+```ts title="corsair.module.ts"
 import { Global, Module } from '@nestjs/common';
 import { corsair } from './corsair';
 
@@ -75,7 +75,7 @@ export const CORSAIR = Symbol('CORSAIR');
 export class CorsairModule {}
 ```
 
-```ts issues.controller.ts
+```ts title="issues.controller.ts"
 import { Body, Controller, Get, Inject, Post, Req } from '@nestjs/common';
 import type { Request } from 'express';
 import { CORSAIR } from './corsair.module';

@@ -6,7 +6,7 @@ description: Add as many as you want, same syntax, same patterns.
 
 Corsair supports hundreds of integrations through its SDK. Add as many as you need and interact with them all using the same consistent syntax.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from "corsair";
 import { slack } from "@corsair-dev/slack";
 import { linear } from "@corsair-dev/linear";
@@ -29,7 +29,7 @@ export const corsair = createCorsair({
 
 Every integration uses the exact same patterns. No need to learn each SDK's unique quirks.
 
-```ts example.ts
+```ts title="example.ts"
 // Slack
 await corsair.slack.api.messages.post({
     channel: "C01234567",
@@ -49,7 +49,7 @@ await corsair.linear.api.issues.create({
 
 Every integration is fully typed. Your editor shows available methods, required parameters, and response shapes.
 
-```ts example.ts
+```ts title="example.ts"
 // TypeScript knows all available endpoints
 corsair.slack.api.channels.create({ name: "engineering" });
 corsair.slack.api.channels.archive({ channel: "C01234567" });
@@ -78,7 +78,7 @@ plugins: [
 
 Just add plugins to the array. Each integration is configured independently.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     plugins: [
         slack({

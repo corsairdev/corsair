@@ -29,7 +29,7 @@ npm i corsair @corsair-dev/github
 
 ## 2. Create `corsair.ts` and link your database
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import "dotenv/config";
 
 import { createCorsair } from "corsair";
@@ -60,7 +60,7 @@ You do not put the delivery URL in your `hub` config; it is resolved per environ
 
 Copy the values from your project's **Keys** tab. Never commit them.
 
-```bash .env
+```bash title=".env"
 CORSAIR_API_KEY=ck_dev_...
 CORSAIR_SIGNING_SECRET=...
 CORSAIR_KEK=...

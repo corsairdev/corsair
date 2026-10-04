@@ -23,7 +23,7 @@ Redirect to `connectUrl`. That is the entire client-side contract.
 
 ## Setup
 
-```ts server.ts
+```ts title="server.ts"
 export const corsair = createCorsair({
   plugins: [github(), slack()],
   database,
@@ -39,7 +39,7 @@ Use a **development** key (`ck_dev_…`) locally and a **production** key (`ck_p
 
 Mount one route (optional catch-all so bare `/api/corsair` hits hub delivery too):
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
 
@@ -66,7 +66,7 @@ Hub delivers results to your handler. In development the SDK auto-detects the de
 
 ## Create a connect link
 
-```ts backend.ts
+```ts title="backend.ts"
 const { connectUrl } = await client.connect.createLink({
   plugin: "github",
   tenantId: "acme",
@@ -76,7 +76,7 @@ window.location.href = connectUrl;
 
 In React:
 
-```tsx connect-button.tsx
+```tsx title="connect-button.tsx"
 function ConnectGithub({ tenantId }: { tenantId: string }) {
   const { mutate, loading } = useCreateConnectLink();
 
@@ -98,7 +98,7 @@ function ConnectGithub({ tenantId }: { tenantId: string }) {
 
 After a successful connect, `useConnectionStatus({ tenantId })` reflects the new state:
 
-```tsx status.tsx
+```tsx title="status.tsx"
 const { data, refetch } = useConnectionStatus({ tenantId: "acme" });
 // data: { github: 'connected', slack: 'not_connected', ... }
 ```

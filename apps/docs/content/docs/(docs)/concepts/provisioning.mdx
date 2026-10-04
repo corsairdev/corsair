@@ -29,7 +29,7 @@ Provisioning touches only these two credential tables. The other three (entities
 
 Call it from your backend, most often on signup, with no deploy per tenant.
 
-```ts onboarding.ts
+```ts title="onboarding.ts"
 import { setupCorsair } from 'corsair';
 import { corsair } from '@/server/corsair';
 
@@ -123,7 +123,7 @@ Multi-tenant: passing integration fields together with a `tenantId` in `setupCor
 
 ## Multi-tenant
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     multiTenancy: true,
     plugins: [github(), linear()],

@@ -18,7 +18,7 @@ No separate workflow engine needed. It's just TypeScript.
 
 Every webhook event in Corsair supports an `after` hook, a function that runs after the event is saved to your database. Inside it, you have full access to `corsair` and can call any plugin API.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -47,7 +47,7 @@ That's a workflow. A GitHub PR opens, and a Slack message is sent.
 
 **Notify Slack when a PR is merged:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestClosed: {
@@ -67,7 +67,7 @@ github({
 
 **Alert on new stars:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         starCreated: {
@@ -89,7 +89,7 @@ github({
 
 **Create a GitHub issue when someone posts in #bugs:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     webhookHooks: {
         messages: {
@@ -119,7 +119,7 @@ slack({
 
 **When a PR merges, post a Slack message, then create a Linear issue to track follow-up:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestClosed: {
@@ -155,7 +155,7 @@ github({
 
 Use `before` to reject events before they hit your database or `after` handler:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -185,7 +185,7 @@ Throwing in `before` stops processing entirely. The event isn't saved to your da
 
 For heavy processing (LLM calls, sending emails, generating reports), fire a background job instead of doing work inline:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         pullRequestOpened: {
@@ -204,7 +204,7 @@ github({
 })
 ```
 
-```ts inngest/functions.ts
+```ts title="inngest/functions.ts"
 export const reviewPR = inngest.createFunction(
     { id: 'review-pr' },
     { event: 'github/pr-opened' },

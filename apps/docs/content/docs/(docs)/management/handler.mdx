@@ -50,7 +50,7 @@ Each adapter is a thin wrapper around `managementHandler`. All three are exporte
 
 ### Next.js
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
 
@@ -63,7 +63,7 @@ Works in App Router. `GET`, `POST`, and `OPTIONS` share one handler: hub deliver
 
 ### Express
 
-```ts server.ts
+```ts title="server.ts"
 import express from "express";
 import { toExpressHandler } from "corsair";
 import { corsair } from "./corsair";
@@ -76,7 +76,7 @@ The adapter bridges Express's `(req, res)` to a Fetch `Request` and back.
 
 ### Hono
 
-```ts server.ts
+```ts title="server.ts"
 import { Hono } from "hono";
 import { toHonoHandler } from "corsair";
 import { corsair } from "./corsair";
@@ -91,7 +91,7 @@ The Hono context is mapped to the underlying `Request`/`Response`.
 
 Sometimes you don't want HTTP. You want to call the same operations directly from server code (e.g. inside a server action, a job, or a CLI). The handler is built on top of `corsair.manage.*`, available without going through the handler:
 
-```ts in-process.ts
+```ts title="in-process.ts"
 await corsair.manage.tenants.list();
 await corsair.manage.tenants.create({ id: "acme" });
 await corsair.manage.plugins.get("github");

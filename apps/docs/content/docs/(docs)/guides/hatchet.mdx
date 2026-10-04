@@ -25,7 +25,7 @@ npm install @hatchet-dev/typescript-sdk
 
 When a message arrives in Slack's #support channel, push a Hatchet event. The workflow creates a Linear issue to track the request and replies in-thread to confirm it was received.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { hatchet } from '@/hatchet/client';
 
 slack({
@@ -56,13 +56,13 @@ slack({
 })
 ```
 
-```ts hatchet/client.ts
+```ts title="hatchet/client.ts"
 import Hatchet from '@hatchet-dev/typescript-sdk';
 
 export const hatchet = await Hatchet.init();
 ```
 
-```ts hatchet/workflows.ts
+```ts title="hatchet/workflows.ts"
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -106,7 +106,7 @@ supportWorkflow.task('create-linear-issue', async (ctx) => {
 
 When commits are pushed to the main branch, run a multi-step Hatchet workflow: notify the team in Discord, update the Linear project status to reflect the deployment, then log the release in a tracking channel.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { hatchet } from '@/hatchet/client';
 
 github({
@@ -129,7 +129,7 @@ github({
 })
 ```
 
-```ts hatchet/workflows.ts
+```ts title="hatchet/workflows.ts"
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -191,7 +191,7 @@ deployWorkflow.task('log-release', async (ctx) => {
 
 Every Monday at 9 AM, run a Hatchet cron workflow that pulls the current sprint's Linear issues from Corsair's database and posts a structured report to Slack.
 
-```ts hatchet/workflows.ts
+```ts title="hatchet/workflows.ts"
 import { hatchet } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -237,7 +237,7 @@ sprintReportWorkflow.task('post-sprint-report', async () => {
 });
 ```
 
-```ts hatchet/worker.ts
+```ts title="hatchet/worker.ts"
 import { hatchet } from './client';
 import { supportWorkflow, deployWorkflow, sprintReportWorkflow } from './workflows';
 

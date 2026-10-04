@@ -17,7 +17,7 @@ This is the most common shape, and the one to reach for whenever the ask sounds 
 
 Query the plugin's entity types directly. Nothing here makes a network call:
 
-```ts src/server/feed.ts
+```ts title="src/server/feed.ts"
 import { corsair } from './corsair';
 
 const tenant = corsair.withTenant('acme');
@@ -55,7 +55,7 @@ issues[0]?.data.user?.login;
 
 Mutations and refreshes use `.api`. Corsair upserts the response into your database as part of the call, so the next `.db` read already reflects it:
 
-```ts src/server/actions.ts
+```ts title="src/server/actions.ts"
 export async function closeIssue(issueNumber: number) {
     await tenant.github.api.issues.update({
         owner: 'acme',
@@ -73,7 +73,7 @@ export async function closeIssue(issueNumber: number) {
 
 A refresh is just a list call against `.api`. Because every response is upserted, you don't wire up any sync logic. You call the endpoint and re-read:
 
-```ts src/server/refresh.ts
+```ts title="src/server/refresh.ts"
 export async function refresh() {
     await Promise.all([
         tenant.github.api.issues.list({

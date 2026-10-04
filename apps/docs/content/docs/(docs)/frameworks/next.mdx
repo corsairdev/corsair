@@ -40,7 +40,7 @@ server/corsair.ts                    # createCorsair instance
 
 The management API, OAuth callbacks, and Hub's connect delivery all arrive on the same path, so a single catch-all route handler serves them. Mount it once and you never edit it again.
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from 'corsair';
 import { corsair } from '@/server/corsair';
 
@@ -66,7 +66,7 @@ const tenant = corsair.withTenant(await getTenantId());
 
 A Server Component reads from `.db` with no network, so the page renders as fast as any database query. Because it's already on the server, you call the tenant directly instead of round-tripping through the route.
 
-```tsx app/issues/page.tsx
+```tsx title="app/issues/page.tsx"
 import { corsair } from '@/server/corsair';
 import { getTenantId } from '@/server/tenant';
 import { closeIssue } from './actions';
@@ -95,7 +95,7 @@ export default async function IssuesPage() {
 
 The Server Action writes through `.api`:
 
-```ts app/issues/actions.ts
+```ts title="app/issues/actions.ts"
 'use server';
 import { revalidatePath } from 'next/cache';
 import { corsair } from '@/server/corsair';

@@ -13,7 +13,7 @@ Corsair has two surfaces:
 
 If you self-host Corsair and want your own dashboard, the management API is what you mount. The shape mirrors [better-auth](https://better-auth.com):
 
-```ts mental-model.ts
+```ts title="mental-model.ts"
 managementHandler(corsair)              // server instance → fetch handler
 toNextJsHandler(corsair)                // framework adapter
 createCorsairClient({ baseURL })        // typed vanilla client
@@ -48,7 +48,7 @@ If you only run agents server-side, you don't need this. Keep using `corsair.sla
 
 ## End-to-end flow
 
-```ts server.ts
+```ts title="server.ts"
 // 1. Your existing Corsair instance
 import { createCorsair } from "corsair";
 import { github } from "@corsair-dev/github";
@@ -61,7 +61,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 // 2. Mount the management API on your framework
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server";
@@ -71,7 +71,7 @@ export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
 });
 ```
 
-```tsx app/dashboard/page.tsx
+```tsx title="app/dashboard/page.tsx"
 // 3. Use the typed React hooks in your dashboard
 "use client";
 import { createCorsairReactClient } from "corsair/client/react";

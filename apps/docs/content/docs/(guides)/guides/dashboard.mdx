@@ -192,7 +192,7 @@ bun add --dev @types/better-sqlite3
 <Accordions>
 <Accordion title="View migration SQL">
 
-```sql migration.sql
+```sql title="migration.sql"
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -265,7 +265,7 @@ Get-Content migration.sql | sqlite3 corsair.db
 
 ## Create src/server/corsair.ts
 
-```ts src/server/corsair.ts
+```ts title="src/server/corsair.ts"
 import 'dotenv/config';
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
@@ -353,7 +353,7 @@ bunx corsair setup --plugin=googlecalendar client_id=YOUR_CLIENT_ID client_secre
 
 If `pnpm corsair` isn't found, add this to your `package.json` so pnpm builds the native dependency correctly:
 
-```json package.json
+```json title="package.json"
 {
   "pnpm": {
     "onlyBuiltDependencies": [

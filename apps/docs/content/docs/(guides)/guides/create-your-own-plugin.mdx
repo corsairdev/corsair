@@ -138,7 +138,7 @@ pnpm build
 
 Fix any type errors, then register the plugin in your app the same way as any other Corsair plugin:
 
-```ts src/server/corsair.ts
+```ts title="src/server/corsair.ts"
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
@@ -158,7 +158,7 @@ The repo includes a ready-made testing sandbox at `demo/testing/`. Add your plug
 
 **1. Add your plugin as a workspace dependency in `demo/testing/package.json`:**
 
-```json demo/testing/package.json
+```json title="demo/testing/package.json"
 {
   "dependencies": {
     "@corsair-dev/stripe": "workspace:*"
@@ -170,7 +170,7 @@ Then run `pnpm install` from the repo root to link it.
 
 **2. Register your plugin in the test corsair instance:**
 
-```ts demo/testing/src/server/corsair.ts
+```ts title="demo/testing/src/server/corsair.ts"
 import { stripe } from '@corsair-dev/stripe';
 
 export const corsair = createCorsair({
@@ -185,7 +185,7 @@ export const corsair = createCorsair({
 
 **3. Write your test in `demo/testing/src/scripts/test-script.ts`:**
 
-```ts demo/testing/src/scripts/test-script.ts
+```ts title="demo/testing/src/scripts/test-script.ts"
 import { corsair } from '@/server/corsair';
 import 'dotenv/config';
 

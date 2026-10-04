@@ -8,7 +8,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 `createCorsairReactClient({ baseURL })` returns a set of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app, then use the returned hooks anywhere in your component tree.
 
-```tsx corsair-client.ts
+```tsx title="corsair-client.ts"
 "use client";
 import { createCorsairReactClient } from "corsair/client/react";
 
@@ -33,7 +33,7 @@ Wrap your app once. When a Corsair call fails because the tenant hasn't connecte
 
 Wrap the app at the root and point `onConnected` at a refresh so server reads that failed re-run against the now-connected account:
 
-```tsx app/providers.tsx
+```tsx title="app/providers.tsx"
 "use client";
 import { CorsairProvider } from "corsair/client/react";
 import { useRouter } from "next/navigation";
@@ -54,7 +54,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 With just the provider in place, a client-triggered call that fails opens the dialog automatically:
 
-```tsx count.tsx
+```tsx title="count.tsx"
 "use client";
 async function onClick() {
   await countIssues(); // a server action; throws if Linear isn't connected
@@ -71,7 +71,7 @@ In development, Next's error overlay catches the same rejection and shows on top
 
 Wrap a mutation in `call` so the dialog opens **and** the action re-runs after connect — no second click. It resolves `null` if the user dismisses the dialog, and rethrows a genuine (non-connect) error:
 
-```tsx send.tsx
+```tsx title="send.tsx"
 "use client";
 import { useConnections } from "corsair/client/react";
 
@@ -85,7 +85,7 @@ function SendButton() {
 
 A Server Component that reads Corsair data throws when the tenant isn't connected. Next routes that render error to the segment's `error.tsx` — the only boundary that catches a Server Component throw (a nested client boundary never sees it). Re-export `CorsairErrorBoundary` there; it opens the dialog and retries the segment once connected:
 
-```tsx app/inbox/error.tsx
+```tsx title="app/inbox/error.tsx"
 "use client";
 export { CorsairErrorBoundary as default } from "corsair/client/react";
 ```
@@ -94,7 +94,7 @@ export { CorsairErrorBoundary as default } from "corsair/client/react";
 
 For a plain "Connect X" button, before anything has failed, `connect(plugin)` mints a fresh link and opens the same dialog; it resolves `true` once connected. The same hook reports this user's live connection status, so the button reflects reality and doesn't re-prompt an already-connected plugin — status refreshes itself after a successful connect, no manual refetch:
 
-```tsx connect-slack.tsx
+```tsx title="connect-slack.tsx"
 "use client";
 import { useConnections } from "corsair/client/react";
 
@@ -119,7 +119,7 @@ Corsair Connect is React-only — the provider, boundary, and dialog are client 
 
 Read hooks follow the same shape:
 
-```tsx tenants-list.tsx
+```tsx title="tenants-list.tsx"
 const { data, loading, error, refetch } = useTenants();
 ```
 
@@ -136,7 +136,7 @@ const { data, loading, error, refetch } = useTenants();
 
 Read hooks re-fetch automatically when their argument changes:
 
-```tsx tenant-detail.tsx
+```tsx title="tenant-detail.tsx"
 function TenantDetail({ id }: { id: string }) {
   const { data, loading } = useTenant(id);
   // changing `id` triggers a fresh fetch automatically
@@ -151,7 +151,7 @@ Available read hooks: `useTenants`, `useTenant(id)`, `usePlugins`, `usePlugin(id
 
 Mutations stay idle until you call `mutate(input)`:
 
-```tsx create-tenant.tsx
+```tsx title="create-tenant.tsx"
 function CreateTenant() {
   const { mutate, loading, error, data } = useCreateTenant();
 
@@ -176,7 +176,7 @@ Available mutation hooks: `useCreateTenant`, `useCreateConnectLink`, `useOAuthCa
 
 `useConnectionStatus` is the hook your dashboard probably opens with. The response is a `Record<string, 'connected' | 'missing_credentials' | 'not_connected'>` keyed by plugin id:
 
-```tsx connections.tsx
+```tsx title="connections.tsx"
 function Connections({ tenantId }: { tenantId: string }) {
   const { data } = useConnectionStatus({ tenantId });
   if (!data) return null;
@@ -198,7 +198,7 @@ For wiring the actual connect-and-authorize flow, see the [Connect page](/manage
 
 If a hook doesn't fit (e.g. you need imperative access inside an event handler), reach for `client`:
 
-```tsx escape.tsx
+```tsx title="escape.tsx"
 const handleClick = async () => {
   const tenant = await client.tenants.create({ id: "acme" });
   console.log(tenant);

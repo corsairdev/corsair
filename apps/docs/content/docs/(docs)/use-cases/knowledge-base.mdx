@@ -42,7 +42,7 @@ const messages = await tenant.slack.db.messages.search({
 
 The typed clients are scoped to one entity type at a time. To sweep the whole corpus, fan out and merge:
 
-```ts src/server/search.ts
+```ts title="src/server/search.ts"
 export async function searchEverything(query: string) {
     const tenant = corsair.withTenant('acme');
 

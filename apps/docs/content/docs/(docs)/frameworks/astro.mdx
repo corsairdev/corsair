@@ -30,7 +30,7 @@ Build the instance once. The handler and your read/write code both import it.
 
 ## Mount the handler
 
-```ts src/pages/api/corsair/[...path].ts
+```ts title="src/pages/api/corsair/[...path].ts"
 import { toAstroHandler } from 'corsair';
 import { corsair } from '../../../server/corsair';
 
@@ -58,7 +58,7 @@ const tenant = corsair.withTenant(tenantId);
 
 The `.db` namespace reads your own database, so a server-rendered page can query it in the frontmatter fence and the results land in the initial HTML. Because the page ran on the server, no token or query ever reaches the browser.
 
-```astro src/pages/issues.astro
+```astro title="src/pages/issues.astro"
 ---
 export const prerender = false;
 import { corsair } from '../server/corsair';

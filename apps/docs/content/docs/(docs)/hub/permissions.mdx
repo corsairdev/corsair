@@ -37,7 +37,7 @@ The authoritative approval record lives in **your** `corsair_permissions` table.
 
 With `hub` configured, blocked calls include a hosted approval URL with no extra setup:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     plugins: [
         github({

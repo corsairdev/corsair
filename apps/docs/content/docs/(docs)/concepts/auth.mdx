@@ -10,7 +10,7 @@ Corsair supports several authentication modes across its plugins. You choose an 
 
 Check each plugin's [overview page](/plugins/slack/overview) to see which auth types it supports and follow its setup steps.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from "corsair";
 import { slack } from "@corsair-dev/slack";
 import { linear } from "@corsair-dev/linear";
@@ -91,7 +91,7 @@ Corsair uses envelope encryption to protect credentials:
 3. All credentials are encrypted with the connection's DEK
 4. The DEK is encrypted with your KEK
 
-```bash .env
+```bash title=".env"
 CORSAIR_KEK=your-key-encryption-key
 ```
 
@@ -105,7 +105,7 @@ This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for
 
 With multi-tenancy, each tenant has their own credentials stored securely.
 
-```ts example.ts
+```ts title="example.ts"
 // Tenant A's Slack token
 const tenantA = corsair.withTenant("tenant_a");
 await tenantA.slack.api.messages.post({ ... });

@@ -25,7 +25,7 @@ npm install inngest
 
 Fire an Inngest function whenever a Linear issue is created. Use `before` to skip issues without an assignee, and `after` to dispatch the event. The Inngest function then sends a Slack DM to whoever was assigned.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { inngest } from '@/inngest/client';
 
 linear({
@@ -57,7 +57,7 @@ linear({
 })
 ```
 
-```ts inngest/functions.ts
+```ts title="inngest/functions.ts"
 import { inngest } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -89,7 +89,7 @@ export const notifyAssignee = inngest.createFunction(
 
 When a GitHub PR is opened, kick off a multi-step Inngest workflow that generates an AI code review, posts it as a comment, then notifies Slack. Each step is retried independently on failure.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { inngest } from '@/inngest/client';
 
 github({
@@ -121,7 +121,7 @@ github({
 })
 ```
 
-```ts inngest/functions.ts
+```ts title="inngest/functions.ts"
 import { inngest } from './client';
 import { corsair } from '@/server/corsair';
 
@@ -169,7 +169,7 @@ export const reviewPR = inngest.createFunction(
 
 Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed. This runs on a schedule.
 
-```ts inngest/functions.ts
+```ts title="inngest/functions.ts"
 import { inngest } from './client';
 import { corsair } from '@/server/corsair';
 

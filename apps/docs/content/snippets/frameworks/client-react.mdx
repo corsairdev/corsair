@@ -6,7 +6,7 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 
 ## Create the client
 
-```tsx app/corsair-client.ts
+```tsx title="app/corsair-client.ts"
 "use client";
 import { createCorsairReactClient } from "corsair/client/react";
 
@@ -24,7 +24,7 @@ One factory call per app. Every hook is typed against your handler, so `useTenan
 
 ## Read what's connected
 
-```tsx connections.tsx
+```tsx title="connections.tsx"
 "use client";
 import { useConnectionStatus } from "./corsair-client";
 
@@ -49,7 +49,7 @@ export function Connections({ tenantId }: { tenantId: string }) {
 
 ## Mint a connect link
 
-```tsx connect-github.tsx
+```tsx title="connect-github.tsx"
 "use client";
 import { useConnectionStatus, useCreateConnectLink } from "./corsair-client";
 

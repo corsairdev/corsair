@@ -21,7 +21,7 @@ You run it inside your own app. Credentials stay encrypted in your database. [Hu
 
 Install `@corsair-dev/<plugin>` packages and pass your database connection:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
 import { slack } from '@corsair-dev/slack';
@@ -45,7 +45,7 @@ export const corsair = createCorsair({
 
 Every plugin shares the same shape: `corsair.[plugin].api.[resource].[action]()`.
 
-```ts route.ts
+```ts title="route.ts"
 await corsair.github.api.issues.create({
   owner: 'acme',
   repo: 'app',
@@ -66,7 +66,7 @@ await corsair.slack.api.messages.post({
 
 API calls and webhooks keep `corsair_entities` current. Scope to a tenant and query your database instead of fanning out to GitHub on every page load:
 
-```ts route.ts
+```ts title="route.ts"
 const tenant = corsair.withTenant('user_abc123');
 
 const issues = await tenant.github.db.issues.search({

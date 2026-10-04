@@ -23,7 +23,7 @@ npm install @openai/agents
 
 ## Usage
 
-```ts agent.ts
+```ts title="agent.ts"
 import { OpenAIAgentsProvider } from '@corsair-dev/mcp';
 import { Agent, run, tool } from '@openai/agents';
 import { corsair } from './corsair';
@@ -61,7 +61,7 @@ npm install openai
 
 Expose Corsair as an MCP HTTP endpoint using `createBaseMcpServer` and `createMcpRouter`.
 
-```ts server.ts
+```ts title="server.ts"
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -76,7 +76,7 @@ app.listen(3000, () => console.log('MCP server running on :3000'));
 
 ## Client
 
-```ts agent.ts
+```ts title="agent.ts"
 import OpenAI from 'openai';
 import { getOpenAIMcpConfig } from '@corsair-dev/mcp';
 

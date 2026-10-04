@@ -2,7 +2,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Raw `node:http` has no dedicated adapter, so most Node apps use [Express](/frameworks/express) or [Hono](/frameworks/hono) (both run on Node). If you need bare `http`, bridge the Web-standard handler:
 
-```ts server.ts
+```ts title="server.ts"
 import { createServer } from 'node:http';
 import { managementHandler } from 'corsair';
 import { corsair } from './corsair';

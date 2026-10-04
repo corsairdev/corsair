@@ -8,7 +8,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 
 Corsair consolidates all incoming webhooks to a single URL. It identifies which integration and service each webhook belongs to, then processes and updates your data automatically.
 
-```ts webhook-handler.ts
+```ts title="webhook-handler.ts"
 import { processWebhook } from "corsair";
 import { corsair } from "./corsair";
 
@@ -81,7 +81,7 @@ Corsair automatically verifies webhook signatures using your stored webhook cred
 
 Hooks let you add custom logic that runs every time a webhook is processed. This guarantees your code executes, even when Corsair handles the database update automatically.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -115,7 +115,7 @@ Before hooks run before the webhook is processed. Use them to:
 
 Return **`{ ctx, args }`**, where `args` is what the handler receives (usually the same request body, optionally changed).
 
-```ts corsair.ts
+```ts title="corsair.ts"
 webhookHooks: {
     messages: {
         message: {
@@ -143,7 +143,7 @@ After hooks run after the webhook is processed and the database is updated. Use 
 - Send data to external services
 - Log processed webhooks
 
-```ts corsair.ts
+```ts title="corsair.ts"
 webhookHooks: {
     channels: {
         created: {
@@ -180,7 +180,7 @@ This is useful when you need to carry a value you only know at before-time, such
 The **after** hook only runs when the webhook handler succeeds. If processing fails, **after** is skipped and `passToAfter` is never used.
 </Callout>
 
-```ts corsair.ts
+```ts title="corsair.ts"
 googleCalendar({
     webhookHooks: {
         onEventChanged: {
@@ -206,7 +206,7 @@ googleCalendar({
 
 The key benefit of webhook hooks is they **always run** when that webhook type is processed. Unlike manually handling webhooks where you might forget to add logging or notifications, hooks ensure your logic is centralized and guaranteed to execute.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 webhookHooks: {
     issues: {
         update: {

@@ -34,7 +34,7 @@ Free ngrok accounts get a random URL on every restart, so you'd have to re-regis
 
 Add one route to your server. All plugins share this single URL:
 
-```ts app/api/webhook/route.ts
+```ts title="app/api/webhook/route.ts"
 import { processWebhook } from 'corsair';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
 Pass the secret to the plugin in `createCorsair`. Corsair uses it to verify incoming webhook signatures.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
 })
@@ -91,7 +91,7 @@ github({
 
 **React to events:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     webhookHooks: {
         starCreated: {
@@ -131,7 +131,7 @@ github({
 
 Pass the signing secret to the plugin in `createCorsair`. Corsair uses it to verify incoming webhook signatures.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     signingSecret: process.env.SLACK_SIGNING_SECRET,
 })
@@ -139,7 +139,7 @@ slack({
 
 **React to events:**
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     webhookHooks: {
         messages: {

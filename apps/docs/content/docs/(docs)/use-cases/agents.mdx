@@ -40,7 +40,7 @@ Two different things get called "an agent". They share the tool layer but the wi
 
 A chat box inside your product, hitting your own model calls. Expose Corsair as an MCP endpoint, then connect to it from the AI framework you already use:
 
-```ts server.ts
+```ts title="server.ts"
 import express from 'express';
 import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -53,7 +53,7 @@ app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
 app.listen(3000);
 ```
 
-```ts agent.ts
+```ts title="agent.ts"
 import { generateText, stepCountIs } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { createVercelAiMcpClient } from '@corsair-dev/mcp';
@@ -90,7 +90,7 @@ If the user asked for "a chatbot in my app", they want the first tab. Don't hand
 
 An agent picks its own operations, so the permission layer is the real control surface, not your prompt. Set a mode per plugin:
 
-```ts corsair.ts
+```ts title="corsair.ts"
 github({
     permissions: {
         mode: 'cautious',

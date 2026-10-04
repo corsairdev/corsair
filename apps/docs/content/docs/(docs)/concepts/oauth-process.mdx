@@ -48,7 +48,7 @@ Corsair handles CSRF protection via HMAC-signed state, token encryption, and aut
 
 Add OAuth plugins, `database`, `kek`, and **manual** connect config. Mount the [management handler](/management/handler) so `createLink` is available over HTTP.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from 'corsair';
 import { gmail } from '@corsair-dev/gmail';
 
@@ -63,7 +63,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from 'corsair';
 import { corsair } from '@/server/corsair';
 
@@ -98,7 +98,7 @@ When a user clicks "Connect", call `createLink` on your **authenticated** backen
 
 <Tab value="Next.js (server action)">
 
-```ts app/actions/connect.ts
+```ts title="app/actions/connect.ts"
 'use server';
 
 import { corsair } from '@/server/corsair';
@@ -112,7 +112,7 @@ export async function createConnectLink(plugin: string) {
 }
 ```
 
-```tsx connect-button.tsx
+```tsx title="connect-button.tsx"
 'use client';
 
 import { createConnectLink } from '@/app/actions/connect';
@@ -135,7 +135,7 @@ export function ConnectGmail() {
 
 <Tab value="Next.js (API route)">
 
-```ts app/api/corsair/connect/links/route.ts
+```ts title="app/api/corsair/connect/links/route.ts"
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 import { getSessionTenantId } from '@/server/auth';
@@ -162,7 +162,7 @@ Or proxy the full management handler at `/api/corsair/[...path]` and POST to `/a
 
 <Tab value="Express">
 
-```ts routes/connect-link.ts
+```ts title="routes/connect-link.ts"
 import type { Request, Response } from 'express';
 import { corsair } from '../corsair';
 
@@ -202,7 +202,7 @@ export async function createConnectLinkHandler(req: Request, res: Response) {
 
 <Tab value="Next.js">
 
-```ts app/connect/page.tsx
+```ts title="app/connect/page.tsx"
 import { redirect } from 'next/navigation';
 import { corsair } from '@/server/corsair';
 
@@ -225,7 +225,7 @@ export default async function ConnectPage({
 
 <Tab value="Express">
 
-```ts routes/connect-page.ts
+```ts title="routes/connect-page.ts"
 import type { Request, Response } from 'express';
 import { corsair } from '../corsair';
 
@@ -266,7 +266,7 @@ Corsair re-verifies the HMAC-signed `state` inside `oauthCallback`. The `tenantI
 
 <Tab value="Next.js">
 
-```ts app/api/oauth/callback/route.ts
+```ts title="app/api/oauth/callback/route.ts"
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
@@ -317,7 +317,7 @@ export async function GET(request: NextRequest) {
 
 <Tab value="Express">
 
-```ts routes/oauth-callback.ts
+```ts title="routes/oauth-callback.ts"
 import type { Request, Response } from 'express';
 import { corsair } from '../corsair';
 

@@ -25,7 +25,7 @@ npm install @trigger.dev/sdk
 
 When a PagerDuty incident is created, use `before` to skip low-severity alerts, and `after` to trigger a background task that creates a GitHub issue and pages the on-call team in Slack.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { notifyOnCall } from '@/trigger/functions';
 
 pagerduty({
@@ -55,7 +55,7 @@ pagerduty({
 })
 ```
 
-```ts trigger/functions.ts
+```ts title="trigger/functions.ts"
 import { task } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 
@@ -93,7 +93,7 @@ export const notifyOnCall = task({
 
 When a new HubSpot contact is created, run a multi-step task that enriches the contact, sends a personalized welcome email, and notifies the sales team in Slack.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { onboardNewContact } from '@/trigger/functions';
 
 hubspot({
@@ -122,7 +122,7 @@ hubspot({
 })
 ```
 
-```ts trigger/functions.ts
+```ts title="trigger/functions.ts"
 import { task, wait } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 
@@ -172,7 +172,7 @@ export const onboardNewContact = task({
 
 Every Friday at 5 PM, pull unresolved Sentry issues from Corsair's database and post a weekly error report to Slack so the team can triage before the weekend.
 
-```ts trigger/functions.ts
+```ts title="trigger/functions.ts"
 import { schedules } from '@trigger.dev/sdk/v3';
 import { corsair } from '@/server/corsair';
 

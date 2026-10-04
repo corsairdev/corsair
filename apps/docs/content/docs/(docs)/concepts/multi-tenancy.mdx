@@ -12,7 +12,7 @@ Enable it with one flag. Then scope every operation to a user with `withTenant()
 
 ## Enable it
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     multiTenancy: true,   // ← this is all it takes
     plugins: [github(), slack()],
@@ -57,7 +57,7 @@ No middleware, no manual filtering. Corsair handles it inside the database adapt
 
 Each user connects their own accounts. Store credentials when they authenticate:
 
-```ts auth-callback.ts
+```ts title="auth-callback.ts"
 // Called after GitHub OAuth or when user pastes their token
 export async function saveUserCredentials(userId: string, githubToken: string) {
     const tenant = corsair.withTenant(userId);

@@ -16,7 +16,7 @@ import MountHandlerNextjs from '../../snippets/mount-handler-nextjs.mdx';
 
 Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are encrypted and stored in your own database. Hub stores none.
 
-```bash Set up with your agent
+```bash title="Set up with your agent"
 npx skills add https://github.com/corsairdev/corsair --skill corsair
 ```
 
@@ -68,7 +68,7 @@ Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and c
 
 <GenerateKEK />
 
-```bash .env
+```bash title=".env"
 CORSAIR_KEK=your-generated-kek
 CORSAIR_API_KEY=ck_dev_...
 CORSAIR_SIGNING_SECRET=...
@@ -117,7 +117,7 @@ bun add better-sqlite3
 <Accordions type="single" collapsible>
 <Accordion title="View migration SQL">
 
-```sql migration.sql
+```sql title="migration.sql"
 CREATE TABLE IF NOT EXISTS corsair_integrations (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
@@ -208,7 +208,7 @@ Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) f
 
 Wire your database, KEK, and Hub keys together in `src/server/corsair.ts`:
 
-```ts src/server/corsair.ts
+```ts title="src/server/corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { github } from '@corsair-dev/github';
@@ -245,7 +245,7 @@ Add more plugins later, like `slack()`, `linear()`, or `gmail()`, by appending t
 
 Mint a connect link and send the user to it. Hub hosts the connect page and delivers the result back to your app, with no connect page or OAuth callback to build:
 
-```ts connect.ts
+```ts title="connect.ts"
 const { connectUrl } = await corsair.manage.connect.createLink({
     plugin: 'github',
     tenantId: 'acme',
@@ -255,7 +255,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 Once connected, call any endpoint. Responses are also cached in your database for instant reads:
 
-```ts usage.ts
+```ts title="usage.ts"
 const repos = await corsair.github.api.repositories.list({});
 ```
 

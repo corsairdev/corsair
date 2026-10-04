@@ -6,7 +6,7 @@ description: Hook into API calls and webhooks to customize behavior.
 
 Hooks let you "hook into" the lifecycle of API calls and webhook processing. Use them to add custom logic like logging, validation, and transformations without modifying your core application code.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -36,7 +36,7 @@ slack({
 
 Transform the arguments before the API call is made.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     hooks: {
         channels: {
@@ -61,7 +61,7 @@ slack({
 
 Check conditions before proceeding.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     hooks: {
         messages: {
@@ -82,7 +82,7 @@ slack({
 
 Track every API call for debugging or auditing.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     hooks: {
         channels: {
@@ -110,7 +110,7 @@ slack({
 
 Notify your team when something happens.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     hooks: {
         channels: {
@@ -131,7 +131,7 @@ slack({
 
 Track successful operations.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     hooks: {
         messages: {
@@ -149,7 +149,7 @@ slack({
 
 API hooks are defined under `hooks` in your plugin configuration. They follow the structure: `hooks.[resource].[action].before/after`.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -189,7 +189,7 @@ slack({
 
 Webhook hooks are defined under `webhookHooks`. They guarantee your logic runs every time a webhook is processed, even if Corsair handles the database update automatically.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 slack({
     authType: "api_key",
     credentials: { botToken: "xoxb-..." },
@@ -230,7 +230,7 @@ Both before and after hooks receive a `ctx` object with useful properties:
 - **`ctx.db`**: database service clients for this plugin
 - **`ctx.endpoints`**: bound API endpoints (call other APIs within hooks)
 
-```ts example.ts
+```ts title="example.ts"
 before: (ctx, args) => {
     // Access plugin options
     console.log(ctx.options.credentials);

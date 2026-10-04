@@ -10,7 +10,7 @@ API key authentication is the simplest auth type in Corsair. You provide a stati
 
 Corsair stores your key using [envelope encryption](https://docs.cloud.google.com/kms/docs/envelope-encryption). Your KEK encrypts a per-connection DEK, which encrypts the key itself. The key is never stored in plaintext.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from "corsair";
 import { linear } from "@corsair-dev/linear";
 
@@ -32,7 +32,7 @@ Every `corsair.linear.api.*` call will use the stored key automatically.
 
 Solo mode means one API key shared across your entire application. This is the default, no extra configuration needed.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     plugins: [
         linear({ authType: "api_key" }),
@@ -49,7 +49,7 @@ pnpm corsair setup --plugin=linear api_key=lin_api_your-key-here
 
 All API calls use this key:
 
-```ts usage.ts
+```ts title="usage.ts"
 const issues = await corsair.linear.api.issues.list({ teamId: "team-id" });
 ```
 
@@ -57,7 +57,7 @@ const issues = await corsair.linear.api.issues.list({ teamId: "team-id" });
 
 In multi-tenant mode, each user supplies their own API key. Keys are stored and encrypted separately per tenant.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     multiTenancy: true,
     plugins: [linear()],
@@ -67,7 +67,7 @@ export const corsair = createCorsair({
 
 Store each tenant's key, for example after collecting it during onboarding:
 
-```ts onboarding.ts
+```ts title="onboarding.ts"
 await corsair
     .withTenant("user_abc123")
     .linear.keys.set_api_key("lin_api_their-key");
@@ -81,7 +81,7 @@ pnpm corsair setup --plugin=linear api_key=lin_api_tenant_key --tenant=user_abc1
 
 Use `withTenant` to scope all API calls to a specific user:
 
-```ts usage.ts
+```ts title="usage.ts"
 const tenant = corsair.withTenant("user_abc123");
 
 // Uses user_abc123's stored key — not your app's key

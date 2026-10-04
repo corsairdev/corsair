@@ -4,7 +4,7 @@ import { Callout } from 'fumadocs-ui/components/callout';
 <Tabs items={["Next.js", "Express", "Hono", "Web-standard"]}>
   <Tab value="Next.js">
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from 'corsair';
 import { corsair } from '@/server/corsair';
 
@@ -18,7 +18,7 @@ export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
   </Tab>
   <Tab value="Express">
 
-```ts server.ts
+```ts title="server.ts"
 import express from 'express';
 import { toExpressHandler } from 'corsair';
 import { corsair } from './corsair';
@@ -38,7 +38,7 @@ app.listen(3000);
   </Tab>
   <Tab value="Hono">
 
-```ts index.ts
+```ts title="index.ts"
 import { Hono } from 'hono';
 import { toHonoHandler } from 'corsair';
 import { corsair } from './corsair';

@@ -21,7 +21,7 @@ npm install @corsair-dev/mcp
 
 ## Create the server script
 
-```ts mcp-server.ts
+```ts title="mcp-server.ts"
 import 'dotenv/config';
 import { runStdioMcpServer } from '@corsair-dev/mcp';
 import { corsair } from './corsair';
@@ -36,7 +36,7 @@ runStdioMcpServer({ corsair }).catch((err) => {
 
 Add a local MCP server to your `opencode.json`. OpenCode reads it when you open the project.
 
-```json opencode.json
+```json title="opencode.json"
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
@@ -51,7 +51,7 @@ Add a local MCP server to your `opencode.json`. OpenCode reads it when you open 
 
 If your credentials aren't loaded from a `.env` file, pass them under `environment`:
 
-```json opencode.json
+```json title="opencode.json"
 {
   "mcp": {
     "corsair": {

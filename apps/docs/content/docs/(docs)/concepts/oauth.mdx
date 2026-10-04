@@ -16,7 +16,7 @@ OAuth 2.0 lets users authorize your application to act on their behalf. Corsair 
 
 Hub hosts the connect UI and OAuth callback. Call `client.connect.createLink()` and redirect the user to the returned URL. See [Connect / OAuth](/management/connect) for the full reference.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 import { createCorsair } from "corsair";
 import { gmail } from "@corsair-dev/gmail";
 
@@ -31,7 +31,7 @@ export const corsair = createCorsair({
 
 Solo mode connects a single account to your application. Use this for scripts, internal tools, or apps that only ever connect one account.
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     plugins: [gmail({ authType: "oauth_2" })],
     kek: process.env.CORSAIR_KEK!,
@@ -50,7 +50,7 @@ The CLI prints an authorization URL. Open it in a browser, approve, and tokens a
 
 After that, all API calls use your connected account:
 
-```ts usage.ts
+```ts title="usage.ts"
 const messages = await corsair.gmail.api.messages.list({ maxResults: 10 });
 ```
 
@@ -60,7 +60,7 @@ Tokens are refreshed automatically when they expire, no intervention needed.
 
 In multi-tenant mode, each user connects their own account. Configure Hub and mount the [management handler](/management/handler).
 
-```ts corsair.ts
+```ts title="corsair.ts"
 export const corsair = createCorsair({
     multiTenancy: true,
     plugins: [gmail({ authType: "oauth_2" })],
@@ -73,7 +73,7 @@ export const corsair = createCorsair({
 });
 ```
 
-```ts app/api/corsair/[[...path]]/route.ts
+```ts title="app/api/corsair/[[...path]]/route.ts"
 import { toNextJsHandler } from "corsair";
 import { corsair } from "@/server/corsair";
 
@@ -94,7 +94,7 @@ pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-cl
 
 When a user wants to connect, mint a link from your authenticated backend and redirect them:
 
-```ts app/actions/connect.ts
+```ts title="app/actions/connect.ts"
 "use server";
 
 import { corsair } from "@/server/corsair";
@@ -115,7 +115,7 @@ export async function startOAuthConnect(plugin: string) {
 
 Or from the client via the [management client](/adapters/client):
 
-```tsx connect-button.tsx
+```tsx title="connect-button.tsx"
 "use client";
 
 import { createCorsairReactClient } from "corsair/client/react";
@@ -145,7 +145,7 @@ The signed `state` is embedded in `connectUrl`. Hub hosts the connect page and O
 
 ### 3. Make API calls per tenant
 
-```ts usage.ts
+```ts title="usage.ts"
 const tenant = corsair.withTenant("user_abc123");
 
 // Uses user_abc123's connected account

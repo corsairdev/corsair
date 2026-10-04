@@ -40,7 +40,7 @@ src/
 
 An endpoint receives a `Request` and returns a `Response`, which is exactly the adapter's shape. Add a rest-parameter route and export the pair.
 
-```ts src/routes/api/corsair/[...rest]/+server.ts
+```ts title="src/routes/api/corsair/[...rest]/+server.ts"
 import { toSvelteKitHandler } from 'corsair';
 import { corsair } from '$lib/server/corsair';
 
@@ -64,7 +64,7 @@ const tenant = corsair.withTenant(await getTenantId(locals));
 
 `load` reads `.db` and hands the data to the page, with no network on navigation. A form action writes through `.api`; because Corsair upserts the response into your database as part of the call, the next `load` sees the row already current.
 
-```ts src/routes/issues/+page.server.ts
+```ts title="src/routes/issues/+page.server.ts"
 import { corsair } from '$lib/server/corsair';
 
 export async function load({ locals }) {
@@ -89,7 +89,7 @@ export const actions = {
 
 The page renders `data.issues` and posts to the action. Entity fields live on `.data` in camelCase:
 
-```svelte src/routes/issues/+page.svelte
+```svelte title="src/routes/issues/+page.svelte"
 <script lang="ts">
     export let data;
 </script>
