@@ -1,9 +1,4 @@
 {
   "title": "Twilio",
-  "pages": [
-    "overview",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "api", "database", "webhooks"]
 }

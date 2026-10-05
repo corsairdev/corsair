@@ -1,8 +1,4 @@
 {
   "title": "Docker Hub",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

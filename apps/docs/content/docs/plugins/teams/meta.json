@@ -1,9 +1,4 @@
 {
   "title": "Microsoft Teams",
-  "pages": [
-    "overview",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "api", "database", "webhooks"]
 }

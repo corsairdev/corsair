@@ -1,9 +1,4 @@
 {
   "title": "ZoomInfo",
-  "pages": [
-    "overview",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "api", "database", "webhooks"]
 }

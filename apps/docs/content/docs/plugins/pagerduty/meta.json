@@ -1,10 +1,4 @@
 {
   "title": "PagerDuty",
-  "pages": [
-    "overview",
-    "get-credentials",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "get-credentials", "api", "database", "webhooks"]
 }

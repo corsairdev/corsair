@@ -1,8 +1,4 @@
 {
   "title": "remove.bg",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

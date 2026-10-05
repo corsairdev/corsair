@@ -1,8 +1,4 @@
 {
   "title": "OCR.space",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

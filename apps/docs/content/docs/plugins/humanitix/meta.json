@@ -1,8 +1,4 @@
 {
   "title": "Humanitix",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

@@ -1,8 +1,4 @@
 {
   "title": "Loyverse",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

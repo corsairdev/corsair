@@ -1,8 +1,4 @@
 {
   "title": "Kaggle",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

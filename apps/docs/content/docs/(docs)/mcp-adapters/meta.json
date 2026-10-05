@@ -1,19 +1,19 @@
 {
-	"title": "MCP adapters",
-	"pages": [
-		"---AI SDKs---",
-		"anthropic-sdk",
-		"claude-sdk",
-		"vercel-ai",
-		"mastra",
-		"langchain",
-		"llamaindex",
-		"openai",
-		"---Harnesses---",
-		"claude-code",
-		"cursor",
-		"codex",
-		"opencode",
-		"hermes"
-	]
+  "title": "MCP adapters",
+  "pages": [
+    "---AI SDKs---",
+    "anthropic-sdk",
+    "claude-sdk",
+    "vercel-ai",
+    "mastra",
+    "langchain",
+    "llamaindex",
+    "openai",
+    "---Harnesses---",
+    "claude-code",
+    "cursor",
+    "codex",
+    "opencode",
+    "hermes"
+  ]
 }

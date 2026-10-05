@@ -1,9 +1,4 @@
 {
   "title": "YouTube",
-  "pages": [
-    "overview",
-    "get-credentials",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "get-credentials", "api", "database"]
 }

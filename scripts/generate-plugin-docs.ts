@@ -1897,7 +1897,27 @@ function displayTitlesOf(
 
 /** 2-space JSON with a trailing newline, matching the rest of the repo. */
 function writeJson(path: string, value: unknown): void {
-	writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+	writeFileSync(path, `${formatJson(value)}\n`, 'utf8');
+}
+
+/**
+ * 2-space JSON with short arrays on one line, which is what biome's formatter
+ * produces — `pnpm lint` fails on these files otherwise, and a plugin PR would
+ * have to remember to run `lint:fix` after `generate:docs`.
+ */
+function formatJson(value: unknown): string {
+	const LINE_WIDTH = 80;
+	return JSON.stringify(value, null, 2).replace(
+		/^(\s*)("[^"]*": )?\[\n([\s\S]*?)\n\s*\](,?)$/gm,
+		(whole, indent: string, key = '', body: string, comma: string) => {
+			const items = body
+				.split('\n')
+				.map((l) => l.trim().replace(/,$/, ''))
+				.join(', ');
+			const line = `${indent}${key}[${items}]${comma}`;
+			return line.length <= LINE_WIDTH && !items.includes('{') ? line : whole;
+		},
+	);
 }
 
 type GeneratePluginDocsOpts = {

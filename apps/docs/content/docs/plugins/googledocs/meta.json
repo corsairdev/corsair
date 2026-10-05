@@ -1,9 +1,4 @@
 {
   "title": "Google Docs",
-  "pages": [
-    "overview",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "api", "database", "webhooks"]
 }

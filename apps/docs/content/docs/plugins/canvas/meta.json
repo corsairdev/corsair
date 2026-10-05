@@ -1,9 +1,4 @@
 {
   "title": "Canvas LMS",
-  "pages": [
-    "overview",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "api", "database", "webhooks"]
 }

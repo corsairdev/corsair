@@ -1,8 +1,4 @@
 {
   "title": "Databricks",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

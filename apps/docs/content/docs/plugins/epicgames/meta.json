@@ -1,8 +1,4 @@
 {
   "title": "Epic Games",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

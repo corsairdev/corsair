@@ -1,8 +1,4 @@
 {
   "title": "1Password",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

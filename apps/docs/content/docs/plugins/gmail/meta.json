@@ -1,10 +1,4 @@
 {
   "title": "Gmail",
-  "pages": [
-    "overview",
-    "get-credentials",
-    "api",
-    "database",
-    "webhooks"
-  ]
+  "pages": ["overview", "get-credentials", "api", "database", "webhooks"]
 }

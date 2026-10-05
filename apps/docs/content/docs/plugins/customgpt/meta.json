@@ -1,8 +1,4 @@
 {
   "title": "CustomGPT",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

@@ -1,8 +1,4 @@
 {
   "title": "Bolt IoT",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

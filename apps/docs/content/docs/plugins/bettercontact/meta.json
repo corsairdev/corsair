@@ -1,8 +1,4 @@
 {
   "title": "BetterContact",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

@@ -1,8 +1,4 @@
 {
   "title": "Capsule CRM",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

@@ -1,8 +1,4 @@
 {
   "title": "College Football Data",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

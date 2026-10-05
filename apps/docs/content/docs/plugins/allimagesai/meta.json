@@ -1,8 +1,4 @@
 {
   "title": "All Images AI",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }

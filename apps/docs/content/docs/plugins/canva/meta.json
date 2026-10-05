@@ -1,8 +1,4 @@
 {
   "title": "Canva",
-  "pages": [
-    "overview",
-    "api",
-    "database"
-  ]
+  "pages": ["overview", "api", "database"]
 }
