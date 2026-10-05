@@ -1,20 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncListItems } from './sync';
+import { syncEntity } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getOrg']
 	>(`org/${input.org_handle}`, ctx.key, { method: 'GET' });
-	if (response && response.id && ctx.db?.org) {
-		try {
-			await ctx.db?.org.upsertByEntityId(response.id, { ...response });
-		} catch (error) {
-			console.warn('Failed to save org to database:', error);
-		}
-	}
+	// Fire-and-forget: responses must not wait on local sync.
+	syncEntity(ctx.db?.org, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get',
@@ -46,7 +41,6 @@ export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaces']
 		>(`org/${org_handle}/workspace`, ctx.key, { method: 'GET', query });
-		await syncListItems(ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_workspaces',
@@ -96,7 +90,6 @@ export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgProcesses']
 		>(`org/${org_handle}/process`, ctx.key, { method: 'GET', query });
-		await syncListItems(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_processes',

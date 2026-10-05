@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncListItems } from './sync';
+import { syncEntity } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserWorkspaceDatatank: TurbotPipesEndpoints['createUserWorkspaceDatatank'] =
@@ -31,13 +31,8 @@ export const getUserWorkspaceDatatank: TurbotPipesEndpoints['getUserWorkspaceDat
 			ctx.key,
 			{ method: 'GET' },
 		);
-		if (response && response.id && ctx.db?.datatank) {
-			try {
-				await ctx.db.datatank.upsertByEntityId(response.id, { ...response });
-			} catch (error) {
-				console.warn('Failed to save datatank to database:', error);
-			}
-		}
+		// Fire-and-forget: responses must not wait on local sync.
+		syncEntity(ctx.db?.datatank, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_user_workspace',
@@ -56,7 +51,6 @@ export const listUserWorkspaceDatatanks: TurbotPipesEndpoints['listUserWorkspace
 			ctx.key,
 			{ method: 'GET' },
 		);
-		await syncListItems(ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_user_workspace',
@@ -75,7 +69,6 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 			ctx.key,
 			{ method: 'GET' },
 		);
-		await syncListItems(ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_org_workspace',

@@ -28,20 +28,20 @@ jest.mock('corsair/http', () => ({
 const mockRequest = request as jest.MockedFunction<typeof request>;
 
 // any: stub plugin context for unit tests. Real contexts are built by the
-// Corsair runtime (keys, db, account); tests only need key + authType.
-const createMockContext = () =>
-	({
-		key: 'tpt_test_token_12345',
-		authType: 'api_key',
-		schema: {},
-		options: {},
-		$getAccountId: jest.fn().mockResolvedValue('acc_1'),
-		keys: {
-			get_api_key: jest.fn().mockResolvedValue('tpt_test_token_12345'),
-			get_access_token: jest.fn(),
-			get_webhook_signature: jest.fn(),
-		},
-	}) as any;
+// Corsair runtime (keys, db, account); tests only need key + authType, so the
+// factory itself is untyped and call sites pass ctx directly without casts.
+const createMockContext = (): any => ({
+	key: 'tpt_test_token_12345',
+	authType: 'api_key',
+	schema: {},
+	options: {},
+	$getAccountId: jest.fn().mockResolvedValue('acc_1'),
+	keys: {
+		get_api_key: jest.fn().mockResolvedValue('tpt_test_token_12345'),
+		get_access_token: jest.fn(),
+		get_webhook_signature: jest.fn(),
+	},
+});
 
 // A Proxy that answers every property read with a placeholder string, so each
 // handler can destructure the identifiers it needs without a per-endpoint
@@ -78,14 +78,17 @@ const allNamespaces = {
 	WorkspacesEndpoints,
 } as const;
 
-type Handler = (ctx: any, input: any) => Promise<unknown>;
+// unknown: endpoint handlers take fully typed contexts and inputs, but this
+// coverage test invokes every handler generically. The double cast documents
+// that narrow-to-wide call, mirroring the stub-context pattern above.
+type Handler = (ctx: unknown, input: unknown) => Promise<unknown>;
 
 const collectHandlers = (): Array<[string, Handler]> => {
 	const out: Array<[string, Handler]> = [];
 	for (const [ns, mod] of Object.entries(allNamespaces)) {
 		for (const [name, fn] of Object.entries(mod)) {
 			if (typeof fn === 'function' && name !== '__esModule') {
-				out.push([`${ns}.${name}`, fn as Handler]);
+				out.push([`${ns}.${name}`, fn as unknown as Handler]);
 			}
 		}
 	}
@@ -99,7 +102,7 @@ describe('TurbotPipes endpoint coverage', () => {
 		jest.spyOn(globalThis, 'fetch').mockResolvedValue({
 			status: 307,
 			headers: { get: () => 'https://pipes.turbot.com/images/test.png' },
-		} as any);
+		} as unknown as Response);
 	});
 
 	afterEach(() => {

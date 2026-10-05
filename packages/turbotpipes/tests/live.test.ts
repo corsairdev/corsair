@@ -6,12 +6,13 @@ const API_KEY = process.env.TURBOT_PIPES_API_KEY;
 
 describe('TurbotPipes Live API Tests', () => {
 	// any: stub plugin context for live tests; the Corsair runtime builds real
-	// contexts, tests only need key + authType.
-	const createMockContext = (key: string) => ({
+	// contexts, tests only need key + authType, so the factory itself is
+	// untyped and call sites pass ctx directly without further casts.
+	const createMockContext = (key: string): any => ({
 		key,
 		authType: 'api_key' as const,
-		schema: {} as any,
-		options: { key } as any,
+		schema: {},
+		options: { key },
 		$getAccountId: jest.fn().mockResolvedValue('acc_1'),
 		keys: {
 			get_api_key: jest.fn().mockResolvedValue(key),
@@ -23,7 +24,7 @@ describe('TurbotPipes Live API Tests', () => {
 	if (API_KEY) {
 		it('fetches authenticated actor details live', async () => {
 			const ctx = createMockContext(API_KEY);
-			const res = await ActorEndpoints.getActor(ctx as any, {});
+			const res = await ActorEndpoints.getActor(ctx, {});
 			expect(res).toBeDefined();
 			expect(res.handle).toBeDefined();
 			expect(typeof res.handle).toBe('string');
@@ -32,9 +33,9 @@ describe('TurbotPipes Live API Tests', () => {
 
 		it('fetches user details live', async () => {
 			const ctx = createMockContext(API_KEY);
-			const actor = await ActorEndpoints.getActor(ctx as any, {});
+			const actor = await ActorEndpoints.getActor(ctx, {});
 			if (actor.type === 'user') {
-				const res = await UsersEndpoints.getUser(ctx as any, {
+				const res = await UsersEndpoints.getUser(ctx, {
 					user_handle: actor.handle,
 				});
 				expect(res).toBeDefined();
@@ -46,14 +47,14 @@ describe('TurbotPipes Live API Tests', () => {
 
 		it('fetches actor workspaces live', async () => {
 			const ctx = createMockContext(API_KEY);
-			const res = await ActorEndpoints.listActorWorkspaces(ctx as any, {});
+			const res = await ActorEndpoints.listActorWorkspaces(ctx, {});
 			expect(res).toBeDefined();
 			expect(Array.isArray(res.items)).toBe(true);
 		});
 
 		it('fetches actor organizations live', async () => {
 			const ctx = createMockContext(API_KEY);
-			const res = await ActorEndpoints.listActorOrgs(ctx as any, {});
+			const res = await ActorEndpoints.listActorOrgs(ctx, {});
 			expect(res).toBeDefined();
 			expect(Array.isArray(res.items)).toBe(true);
 		});
@@ -61,12 +62,12 @@ describe('TurbotPipes Live API Tests', () => {
 		it('handles tenant endpoints live (enterprise-gated)', async () => {
 			const ctx = createMockContext(API_KEY);
 			try {
-				const res = await TenantsEndpoints.listTenants(ctx as any, {});
+				const res = await TenantsEndpoints.listTenants(ctx, {});
 				expect(res).toBeDefined();
 				if (res && 'items' in res) {
 					expect(Array.isArray(res.items)).toBe(true);
 				}
-			} catch (error: any) {
+			} catch (error) {
 				// Tenant APIs are enterprise-scoped and return 404/403 on standard cloud domains
 				expect(error).toBeDefined();
 			}

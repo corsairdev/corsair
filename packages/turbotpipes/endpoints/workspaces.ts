@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncListItems } from './sync';
+import { syncEntity } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWorkspaceConnection'] =
@@ -49,7 +49,6 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 			ctx.key,
 			{ method: 'GET' },
 		);
-		await syncListItems(ctx.db?.connection, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connections',
@@ -358,7 +357,6 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 			ctx.key,
 			{ method: 'GET' },
 		);
-		await syncListItems(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_processes',
@@ -377,13 +375,8 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 			ctx.key,
 			{ method: 'GET' },
 		);
-		if (response && response.id && ctx.db?.process) {
-			try {
-				await ctx.db.process.upsertByEntityId(response.id, { ...response });
-			} catch (error) {
-				console.warn('Failed to save process to database:', error);
-			}
-		}
+		// Fire-and-forget: responses must not wait on local sync.
+		syncEntity(ctx.db?.process, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process',
@@ -421,7 +414,6 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 			ctx.key,
 			{ method: 'GET' },
 		);
-		await syncListItems(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_org_processes',

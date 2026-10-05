@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
+import { syncEntity } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserConnection: TurbotPipesEndpoints['createUserConnection'] =
@@ -33,13 +34,8 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 			ctx.key,
 			{ method: 'GET' },
 		);
-		if (response && response.id && ctx.db?.connection) {
-			try {
-				await ctx.db?.connection.upsertByEntityId(response.id, { ...response });
-			} catch (error) {
-				console.warn('Failed to save connection to database:', error);
-			}
-		}
+		// Fire-and-forget: responses must not wait on local sync.
+		syncEntity(ctx.db?.connection, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_user',

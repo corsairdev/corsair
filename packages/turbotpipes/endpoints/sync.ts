@@ -1,32 +1,29 @@
-// Best-effort sync of list responses into local entity tables so the
+// Best-effort sync of fetched records into local entity tables so the
 // documented `<entity>.search()` accessors return fetched data.
+//
+// Sync is fire-and-forget on purpose: endpoint responses must never wait on
+// local writes, and list responses are intentionally not synced — list items
+// are sparse summaries that would overwrite detailed stored records.
 
 type EntityTable = {
 	upsertByEntityId(id: string, record: never): Promise<unknown>;
 };
 
-// unknown: list items are provider-defined records without a fixed shape; only
-// string ids are used for syncing, and the record is passed through as never
-// because each entity table validates its own columns.
-export async function syncListItems(
+// unknown: synced records are provider-defined objects without a fixed shape;
+// each entity table validates its own columns on write.
+export function syncEntity(
 	table: EntityTable | null | undefined,
-	items: unknown,
-): Promise<void> {
-	if (!table || !Array.isArray(items)) {
+	id: string,
+	record: unknown,
+): void {
+	if (!table) {
 		return;
 	}
-	for (const item of items) {
-		if (typeof item !== 'object' || item === null) {
-			continue;
-		}
-		const id = (item as Record<string, unknown>).id;
-		if (typeof id !== 'string') {
-			continue;
-		}
+	void (async () => {
 		try {
-			await table.upsertByEntityId(id, item as never);
+			await table.upsertByEntityId(id, record as never);
 		} catch (error) {
-			console.warn('Failed to sync item to database:', error);
+			console.warn('Failed to sync entity to database:', error);
 		}
-	}
+	})();
 }
