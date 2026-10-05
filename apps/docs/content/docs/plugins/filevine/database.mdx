@@ -3,7 +3,6 @@ title: Database
 description: "Filevine local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-
 import { Callout } from 'fumadocs-ui/components/callout';
 
 The Filevine plugin syncs data locally. Use `corsair.filevine.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -38,7 +37,6 @@ const rows = await corsair.filevine.db.contacts.search({
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `modifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -67,7 +65,6 @@ const rows = await corsair.filevine.db.deadlines.search({
 | `dueDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `assigneeId` | `number` | equals, gt, gte, lt, lte, in |
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
-
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -103,7 +100,6 @@ const rows = await corsair.filevine.db.documents.search({
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `modifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -133,7 +129,6 @@ const rows = await corsair.filevine.db.notes.search({
 | `authorId` | `number` | equals, gt, gte, lt, lte, in |
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `modifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
-
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -168,7 +163,6 @@ const rows = await corsair.filevine.db.projects.search({
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
 | `modifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -197,7 +191,6 @@ const rows = await corsair.filevine.db.subscriptions.search({
 | `endpoint` | `string` | equals, contains, startsWith, endsWith, in |
 | `signingKey` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdDate` | `string` | equals, contains, startsWith, endsWith, in |
-
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -229,9 +222,7 @@ const rows = await corsair.filevine.db.tasks.search({
 | `assigneeId` | `number` | equals, gt, gte, lt, lte, in |
 | `completedDate` | `string` | equals, contains, startsWith, endsWith, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
-
 

@@ -3,7 +3,6 @@ title: Overview
 description: "Legal case management platform for projects, contacts, documents, tasks, and deadlines."
 ---
 
-
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Card, Cards } from 'fumadocs-ui/components/card';
 import { Step, Steps } from 'fumadocs-ui/components/steps';
@@ -22,33 +21,27 @@ Use **Filevine** through Corsair: one client, typed API calls, local DB sync.
 <Step>
 
 ## Install
-
 <Tabs items={["npm", "yarn", "pnpm", "bun"]}>
-
 <Tab value="npm">
 ```bash
 npm install corsair @corsair-dev/filevine
 ```
 </Tab>
-
 <Tab value="yarn">
 ```bash
 yarn add corsair @corsair-dev/filevine
 ```
 </Tab>
-
 <Tab value="pnpm">
 ```bash
 pnpm install corsair @corsair-dev/filevine
 ```
 </Tab>
-
 <Tab value="bun">
 ```bash
 bun add corsair @corsair-dev/filevine
 ```
 </Tab>
-
 </Tabs>
 
 </Step>
@@ -56,7 +49,6 @@ bun add corsair @corsair-dev/filevine
 <Step>
 
 ## Add the plugin
-
 ```ts title="corsair.ts"
 import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
@@ -82,7 +74,6 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 <Step>
 
 ## Choose authentication
-
 <Tabs items={["API Key (Recommended)", "OAuth 2.0"]}>
 <Tab value="API Key (Recommended)">
 
@@ -115,7 +106,6 @@ More: [OAuth 2.0](/concepts/oauth)
 <Step>
 
 ## Connect a tenant
-
 Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
 ```ts
@@ -172,4 +162,3 @@ See [Database](/plugins/filevine/database) for filters and operators.
     Expose this plugin's operations as MCP tools.
   </Card>
 </Cards>
-

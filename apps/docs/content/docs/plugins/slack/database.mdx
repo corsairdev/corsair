@@ -3,7 +3,6 @@ title: Database
 description: "Slack local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-
 import { Callout } from 'fumadocs-ui/components/callout';
 
 The Slack plugin syncs data locally. Use `corsair.slack.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -45,7 +44,6 @@ const rows = await corsair.slack.db.channels.search({
 | `is_member` | `boolean` | equals |
 | `num_members` | `number` | equals, gt, gte, lt, lte, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -81,7 +79,6 @@ const rows = await corsair.slack.db.files.search({
 | `permalink_public` | `string` | equals, contains, startsWith, endsWith, in |
 | `created` | `number` | equals, gt, gte, lt, lte, in |
 | `timestamp` | `number` | equals, gt, gte, lt, lte, in |
-
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -122,7 +119,6 @@ const rows = await corsair.slack.db.messages.search({
 | `is_locked` | `boolean` | equals |
 | `subscribed` | `boolean` | equals |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -155,7 +151,6 @@ const rows = await corsair.slack.db.userGroups.search({
 | `user_count` | `number` | equals, gt, gte, lt, lte, in |
 | `channel_count` | `number` | equals, gt, gte, lt, lte, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -186,9 +181,7 @@ const rows = await corsair.slack.db.users.search({
 | `is_admin` | `boolean` | equals |
 | `deleted` | `boolean` | equals |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
-
 

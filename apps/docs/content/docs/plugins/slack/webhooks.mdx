@@ -3,9 +3,8 @@ title: Webhooks
 description: "Slack incoming webhooks: event paths, payloads, and response data."
 ---
 
-
-import { Callout } from 'fumadocs-ui/components/callout';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+import { Callout } from 'fumadocs-ui/components/callout';
 
 The Slack plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/slack/overview) for setup context and the exact URL shape).
 
@@ -64,7 +63,6 @@ Slack URL verification challenge — respond to confirm the webhook endpoint
 
 
 
-
 <Accordions>
 <Accordion title="Response data full type">
 
@@ -118,7 +116,6 @@ A new channel was created in the workspace
 | `event_context` | `string` | No | — |
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
-
 
 <Accordions>
 <Accordion title="authorizations full type">
@@ -241,7 +238,6 @@ A file was uploaded or created
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
 
-
 <Accordions>
 <Accordion title="authorizations full type">
 
@@ -331,7 +327,6 @@ A file was made publicly accessible
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
 
-
 <Accordions>
 <Accordion title="authorizations full type">
 
@@ -420,7 +415,6 @@ A file was shared into a channel
 | `event_context` | `string` | No | — |
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
-
 
 <Accordions>
 <Accordion title="authorizations full type">
@@ -514,7 +508,6 @@ A message was posted or updated in a channel
 | `event_context` | `string` | No | — |
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
-
 
 <Accordions>
 <Accordion title="authorizations full type">
@@ -1583,7 +1576,6 @@ A reaction emoji was added to a message
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
 
-
 <Accordions>
 <Accordion title="authorizations full type">
 
@@ -1680,7 +1672,6 @@ A new user joined the workspace
 | `event_context` | `string` | No | — |
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
-
 
 <Accordions>
 <Accordion title="authorizations full type">
@@ -1909,7 +1900,6 @@ A user's profile or account settings were updated
 | `authorizations` | `object[]` | No | — |
 | `event` | `object` | Yes | — |
 
-
 <Accordions>
 <Accordion title="authorizations full type">
 
@@ -2116,5 +2106,4 @@ slack({
 ```
 
 ---
-
 

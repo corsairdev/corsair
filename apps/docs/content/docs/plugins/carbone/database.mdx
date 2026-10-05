@@ -3,7 +3,6 @@ title: Database
 description: "Carbone local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-
 import { Callout } from 'fumadocs-ui/components/callout';
 
 The Carbone plugin syncs data locally. Use `corsair.carbone.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
@@ -31,7 +30,6 @@ const rows = await corsair.carbone.db.categories.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
@@ -54,7 +52,6 @@ const rows = await corsair.carbone.db.tags.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
-
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -89,9 +86,7 @@ const rows = await corsair.carbone.db.templates.search({
 | `expireAt` | `number` | equals, gt, gte, lt, lte, in |
 | `origin` | `number` | equals, gt, gte, lt, lte, in |
 
-
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
-
 

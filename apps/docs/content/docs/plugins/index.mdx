@@ -4,22 +4,17 @@ description: Reference docs for all 345 Corsair integrations.
 ---
 
 import { Card, Cards } from 'fumadocs-ui/components/card';
+import { PluginIndex } from '@/components/plugin-index';
 
 Every integration ships as `@corsair-dev/<plugin>` and documents the same five
-pages. Pick a provider from the sidebar, or start with the install walkthrough.
+pages: overview, API, database, webhooks, and credentials.
+
+<PluginIndex />
+
+## Start here
 
 <Cards>
-  <Card title="Install a plugin" href="/guides/plugins" description="Add the package, register it on your Corsair instance, and configure credentials." />
-  <Card title="Slack" href="/plugins/slack/overview" description="A worked example: 45 operations, 5 synced entities, 9 webhook events." />
-  <Card title="Write your own" href="/guides/create-your-own-plugin" description="Scaffold a plugin package against a provider Corsair does not cover yet." />
+  <Card title="Install a plugin" href="/guides/plugins" description="Add the package, register it on your Corsair instance, configure credentials." />
+  <Card title="Slack, end to end" href="/plugins/slack/overview" description="A worked example: 45 operations, 5 synced entities, 9 webhook events." />
+  <Card title="Write your own" href="/guides/create-your-own-plugin" description="Scaffold a plugin against a provider Corsair does not cover yet." />
 </Cards>
-
-## What each plugin documents
-
-| Page | Contents |
-| --- | --- |
-| Overview | What the integration covers, install snippet, operation and entity counts |
-| API | Every typed operation, its arguments, and its return shape |
-| Database | The entities Corsair syncs into your database and their columns |
-| Webhooks | Incoming event types and their payloads |
-| Get credentials | Where to create the OAuth app or API key on the provider's side |

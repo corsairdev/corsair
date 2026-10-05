@@ -30,6 +30,14 @@ import type {
 } from '../packages/corsair/core/inspect/index.ts';
 import { introspectPluginForDocs } from '../packages/corsair/core/inspect/index.ts';
 import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
+// Shared with the plugin API route, which renders the same Zod→TS strings from
+// the catalog. Two copies would drift.
+import {
+	isObjectLikeType,
+	prettifyTypeBlock,
+	resourceTitle,
+	tableTypeDisplay,
+} from '../apps/docs/lib/plugin-type-format.ts';
 
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
@@ -1348,94 +1356,8 @@ function escapeCell(s: string | undefined): string {
 		.replace(/\r?\n/g, '<br />');
 }
 
-/** Inline Zod→TS strings use `{ ... }` for objects; used to simplify table cells. */
-function isObjectLikeType(type: string): boolean {
-	return type.includes('{');
-}
-
-/** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
-function tableTypeDisplay(type: string): string {
-	const t = type.trim();
-	if (!isObjectLikeType(t)) return type;
-	if (/\[\]\s*$/.test(t)) return 'object[]';
-	return 'object';
-}
-
 function escapeAttr(s: string): string {
 	return s.replace(/"/g, '&quot;');
-}
-
-function prettifyTypeBlock(type: string): string {
-	const unit = '  ';
-	let out = '';
-	let depth = 0;
-	let i = 0;
-	const n = type.length;
-
-	const appendIndent = () => {
-		out += unit.repeat(depth);
-	};
-
-	while (i < n) {
-		const ch = type[i]!;
-
-		// Array suffix `[]` (e.g. `{ a: string }[]`) — keep on one line, not `}[\n]`
-		if (ch === '[' && type[i + 1] === ']') {
-			out += '[]';
-			i += 2;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '{' || ch === '[' || ch === '(') {
-			out += ch;
-			depth += 1;
-			out += '\n';
-			appendIndent();
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '}' || ch === ']' || ch === ')') {
-			depth = Math.max(0, depth - 1);
-			out = out.replace(/[ \t]+$/g, '');
-			if (!out.endsWith('\n')) out += '\n';
-			appendIndent();
-			out += ch;
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === ',') {
-			out += ',';
-			out += '\n';
-			appendIndent();
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (ch === '|') {
-			out = out.replace(/[ \t]+$/g, '');
-			out += ' | ';
-			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
-			continue;
-		}
-
-		if (/\s/.test(ch)) {
-			if (!out.endsWith(' ') && !out.endsWith('\n')) out += ' ';
-			i += 1;
-			continue;
-		}
-
-		out += ch;
-		i += 1;
-	}
-
-	return out.trim();
 }
 
 function renderTypeAccordionItem(label: string, fullType: string): string {
@@ -1445,20 +1367,6 @@ function renderTypeAccordionItem(label: string, fullType: string): string {
 ${prettifyTypeBlock(fullType)}
 \`\`\`
 </Accordion>`;
-}
-
-function titleCaseSegment(s: string): string {
-	if (s.length === 0) return s;
-	return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-function resourceTitle(resource: string): string {
-	return resource
-		.replace(/([a-z])([A-Z])/g, '$1 $2')
-		.split(/[\s._]+/)
-		.filter(Boolean)
-		.map(titleCaseSegment)
-		.join(' ');
 }
 
 function formatSchemaShape(
@@ -1506,80 +1414,6 @@ ${detailBlocks.join('\n\n')}
 ${rows}
 
 ${detailsSection}
-`;
-}
-
-function groupKey(shortPath: string): string {
-	const i = shortPath.indexOf('.');
-	return i === -1 ? shortPath : shortPath.slice(0, i);
-}
-
-function methodKey(shortPath: string): string {
-	const i = shortPath.indexOf('.');
-	return i === -1 ? shortPath : shortPath.slice(i + 1);
-}
-
-function buildApiMdx(
-	pluginId: string,
-	title: string,
-	data: PluginDocsIntrospection,
-	apiExamples: PluginDocsFile['apiExamples'],
-): string {
-	const byGroup = new Map<string, typeof data.api>();
-	for (const ep of data.api) {
-		const g = groupKey(ep.shortPath);
-		if (!byGroup.has(g)) byGroup.set(g, []);
-		byGroup.get(g)!.push(ep);
-	}
-	const groupNames = [...byGroup.keys()].sort((a, b) => a.localeCompare(b));
-
-	const sections: string[] = [];
-	for (const g of groupNames) {
-		const endpoints = byGroup.get(g)!;
-		endpoints.sort((a, b) => a.shortPath.localeCompare(b.shortPath));
-		sections.push(`## ${resourceTitle(g)}`);
-		sections.push('');
-		for (const ep of endpoints) {
-			const method = methodKey(ep.shortPath);
-			const risk =
-				ep.riskLevel !== undefined
-					? `\n\n**Risk:** \`${ep.riskLevel}\`${ep.irreversible ? ' · **Irreversible**' : ''}`
-					: '';
-			const desc = ep.description ? `\n\n${ep.description}` : '';
-			sections.push(`### ${method}`);
-			sections.push('');
-			sections.push(`\`${ep.shortPath}\`${desc}${risk}`);
-			sections.push('');
-			const [, ...pathParts] = ep.path.split('.');
-			const callExpr = `corsair.${pluginId}.${pathParts.join('.')}`;
-			const callArgs = formatApiEndpointCallArgs(apiExamples?.[ep.shortPath]);
-			sections.push('```ts');
-			sections.push(`await ${callExpr}(${callArgs});`);
-			sections.push('```');
-			sections.push('');
-			sections.push(formatSchemaShape(ep.input, 'Input'));
-			sections.push(formatSchemaShape(ep.output, 'Output'));
-			sections.push('---');
-			sections.push('');
-		}
-	}
-
-	const apiDescription = `API reference for ${title}: every \`${pluginId}.api.*\` operation with input and output types.`;
-	return `---
-title: API
-description: ${yamlDoubleQuotedScalar(apiDescription)}
----
-
-import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
-import { Callout } from 'fumadocs-ui/components/callout';
-
-Every \`${pluginId}.api.*\` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
-
-<Callout type="info">
-**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
-</Callout>
-
-${sections.join('\n')}
 `;
 }
 
@@ -1780,7 +1614,7 @@ function pluginMdxExists(pluginDir: string, basename: string): boolean {
 
 /**
  * Sidebar order for one plugin, matching the on-disk names (including legacy
- * `main` / `api-endpoints` until regenerated).
+ * `main` until regenerated). `api` has no file; a route renders it.
  */
 function orderedPluginPageBasenames(pluginDir: string): string[] {
 	const out: string[] = [];
@@ -1793,8 +1627,8 @@ function orderedPluginPageBasenames(pluginDir: string): string[] {
 
 	push('get-credentials');
 
-	if (pluginMdxExists(pluginDir, 'api')) push('api');
-	else if (pluginMdxExists(pluginDir, 'api-endpoints')) push('api-endpoints');
+	// No file: `/plugins/<id>/api` is rendered from the catalog by a route.
+	out.push('api');
 
 	push('database');
 	push('webhooks');
@@ -1898,6 +1732,33 @@ function displayTitlesOf(
 /** 2-space JSON with a trailing newline, matching the rest of the repo. */
 function writeJson(path: string, value: unknown): void {
 	writeFileSync(path, `${formatJson(value)}\n`, 'utf8');
+}
+
+/**
+ * Curated call arguments for the API reference, which is a route reading the
+ * explorer catalog — and the catalog carries schemas, not hand-written examples.
+ * One file so `--plugin=<id>` can merge into it without a full `--all` run.
+ */
+function syncApiExamples(
+	repoRoot: string,
+	pluginId: string,
+	apiExamples: PluginDocsFile['apiExamples'],
+): void {
+	const path = join(repoRoot, 'apps/docs/lib/plugin-api-examples.json');
+	const all: Record<string, Record<string, string>> = existsSync(path)
+		? JSON.parse(readFileSync(path, 'utf8'))
+		: {};
+
+	const rendered: Record<string, string> = {};
+	for (const [shortPath, raw] of Object.entries(apiExamples ?? {})) {
+		const args = formatApiEndpointCallArgs(raw);
+		if (args) rendered[shortPath] = args;
+	}
+
+	if (Object.keys(rendered).length > 0) all[pluginId] = rendered;
+	else delete all[pluginId];
+
+	writeJson(path, Object.fromEntries(Object.entries(all).sort()));
 }
 
 /**
@@ -2051,11 +1912,10 @@ async function generatePluginDocsForEntry(
 		);
 	}
 
-	writeFileSync(
-		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData, docsConfig.apiExamples),
-		'utf8',
-	);
+	const legacyApiPage = join(outDir, 'api.mdx');
+	if (existsSync(legacyApiPage)) {
+		unlinkSync(legacyApiPage);
+	}
 	writeFileSync(
 		join(outDir, 'database.mdx'),
 		buildDbMdx(pluginId, title, docData),
@@ -2074,6 +1934,7 @@ async function generatePluginDocsForEntry(
 	}
 
 	syncPluginMeta(root, pluginId, title);
+	syncApiExamples(root, pluginId, docsConfig.apiExamples);
 
 	const logBits = [
 		`${outDir}`,

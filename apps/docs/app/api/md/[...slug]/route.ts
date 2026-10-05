@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { renderApiMarkdown } from '@/lib/plugin-api-markdown';
+import { getPlugin } from '@/lib/plugin-catalog';
 import { source } from '@/lib/source';
 
 /**
@@ -14,6 +16,16 @@ export async function GET(
 	{ params }: { params: Promise<{ slug: string[] }> },
 ) {
 	const { slug } = await params;
+
+	// `/plugins/<id>/api` is a route over the catalog, so there is no file.
+	if (slug.length === 3 && slug[0] === 'plugins' && slug[2] === 'api') {
+		const entry = getPlugin(slug[1] as string);
+		if (!entry) return new Response('Not found', { status: 404 });
+		return new Response(renderApiMarkdown(entry), {
+			headers: { 'content-type': 'text/markdown; charset=utf-8' },
+		});
+	}
+
 	const page = source.getPage(slug);
 	if (!page) return new Response('Not found', { status: 404 });
 

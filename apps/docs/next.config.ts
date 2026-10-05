@@ -14,7 +14,15 @@ const config: NextConfig = {
 	redirects: getAllRedirects,
 	// The .md route reads MDX off disk at request time, which tracing can't infer.
 	outputFileTracingIncludes: {
-		'/api/md/[...slug]': ['./content/docs/**/*.mdx'],
+		'/api/md/[...slug]': [
+			'./content/docs/**/*.mdx',
+			'../../explorer/data/plugins/*.json',
+		],
+		// Three routes read the catalog at request time: the plugin API pages,
+		// the search index, and the /plugins list inside the MDX catch-all.
+		'/plugins/[plugin]/api': ['../../explorer/data/plugins/*.json'],
+		'/api/search': ['../../explorer/data/plugins/*.json'],
+		'/[[...slug]]': ['../../explorer/data/plugins/*.json'],
 	},
 	rewrites: async () => [
 		{ source: '/:slug(.*).md', destination: '/api/md/:slug' },
