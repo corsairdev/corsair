@@ -17,6 +17,7 @@ import {
 	assertCloudUrlSecure,
 	cloudManagementUrlFromBase,
 	cloudManagementUrlFromKey,
+	cloudSlugFromKey,
 	cloudUrlFromKey,
 } from './url';
 
@@ -24,6 +25,32 @@ const CLOUD_SINGLE_TENANT_ID = 'default';
 
 function deferredCloudError(name: string): never {
 	throw new Error(`"${name}" is not available in cloud mode (deferred)`);
+}
+
+// Stands in for the v1 client when no management URL could be resolved. A
+// proxy rather than a literal of every method: the hand-written version drifted
+// behind the real surface, and a missing key there reads as `undefined is not a
+// function` instead of saying why management is unreachable.
+function unresolvedManagement(): ReturnType<typeof buildCloudV1Management> {
+	const node = (path: string[]): unknown => {
+		const name = ['manage', ...path].join('.');
+		return new Proxy(() => unresolvedManagementError(name), {
+			get: (_t, key) => {
+				// `then` must stay undefined: resolving it to a node makes this a
+				// thenable, so `await corsair.manage` would reject with
+				// "manage.then is not available" instead of handing back the object.
+				if (typeof key !== 'string' || key === 'then') return undefined;
+				return node([...path, key]);
+			},
+		});
+	};
+	return node([]) as ReturnType<typeof buildCloudV1Management>;
+}
+
+function unresolvedManagementError(name: string): never {
+	throw new Error(
+		`"${name}" needs a management URL, which could not be resolved from this apiKey — pass a ck_cloud_<slug>.<secret> key, or set \`managementUrl\` explicitly.`,
+	);
 }
 
 function resolveCloudBaseUrl(hub: HubConfigInput | undefined): string {
@@ -215,21 +242,13 @@ async function fetchInstanceMap(
 	return map;
 }
 
-// Project-scoped management: tenant is a project concept (one identity per
-// project), so it stays at the project level. Credential-touching management
-// (connect/status/disconnect) is per-instance — it lives on the instance handle.
-// project/instances/grants/connections/keys wrap the hub v1 REST API (see
-// management.ts) — a separate contract from tenants/permissions above, which
-// stay VM-local. Hub v1 also exposes /tenants; reconciling that with
-// manage.tenants is a deferred, separate decision — not built here.
-export type CorsairCloudManage = Pick<
-	CorsairManageNamespace,
-	'tenants' | 'permissions'
-> &
-	Pick<
-		ReturnType<typeof buildCloudV1Management>,
-		'project' | 'instances' | 'grants' | 'connections' | 'keys'
-	>;
+// Project-scoped management, served by the hub v1 REST API (management.ts).
+// Credential-touching management (connect/status/disconnect) acts on one
+// instance's own credential store, so it lives on the instance handle instead.
+// `permissions` stays VM-local: it resolves a link token, which only the
+// runtime holds.
+export type CorsairCloudManage = Pick<CorsairManageNamespace, 'permissions'> &
+	ReturnType<typeof buildCloudV1Management>;
 
 // One instance, chosen by name. Per-op calls go through withTenant; the
 // credential-touching management ops act on this instance's own credential
@@ -280,12 +299,18 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 	// reach the project (e.g. a bare dev key with a custom `url`) should still
 	// build a working client — it just can't resolve v1, so those calls fail
 	// only when actually made.
-	// Honor a data-plane `url` override for management too (same host + /v1), so
-	// a local/proxied `url` never leaves management calls silently pointed at prod.
+	// Honor a data-plane `url` override for management too, so a local/proxied
+	// `url` never leaves management calls silently pointed at prod.
+	// The slug always comes from the key, never the overridden url — a custom
+	// base moves the host, not which project the key answers for.
+	const slug = cloudSlugFromKey(trimmedKey);
+	const overriddenUrl = config.url?.trim();
 	const managementUrl =
 		config.managementUrl?.trim() ||
-		(config.url?.trim()
-			? cloudManagementUrlFromBase(config.url.trim())
+		(overriddenUrl
+			? slug
+				? cloudManagementUrlFromBase(overriddenUrl, slug)
+				: null
 			: cloudManagementUrlFromKey(trimmedKey));
 	const v1 = managementUrl
 		? (() => {
@@ -296,24 +321,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 					fetch: config.fetch,
 				});
 			})()
-		: ({
-				project: { get: () => deferredCloudError('manage.project.get') },
-				keys: { get: () => deferredCloudError('manage.keys.get') },
-				instances: {
-					list: () => deferredCloudError('manage.instances.list'),
-					get: () => deferredCloudError('manage.instances.get'),
-				},
-				connections: {
-					list: () => deferredCloudError('manage.connections.list'),
-				},
-				grants: {
-					list: () => deferredCloudError('manage.grants.list'),
-					get: () => deferredCloudError('manage.grants.get'),
-					mint: () => deferredCloudError('manage.grants.mint'),
-					update: () => deferredCloudError('manage.grants.update'),
-					revoke: () => deferredCloudError('manage.grants.revoke'),
-				},
-			} as unknown as ReturnType<typeof buildCloudV1Management>);
+		: unresolvedManagement();
 
 	// One resolve call per corsairCloud() instance, shared across every
 	// withInstance() and cached for its lifetime — concurrent callers await the
@@ -329,19 +337,24 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		return instancesPromise;
 	}
 
-	// Project-level management (tenants + permission lookups) over the project
-	// base. Credential-touching ops are omitted here and exposed per-instance.
+	// Project-level management over the project base. Credential-touching ops
+	// are omitted here and exposed per-instance.
 	const projectManage = buildCloudManagement(transport);
 
 	return {
+		// The control plane, served by the hub. `permissions` is the exception:
+		// it resolves a link token, which only the runtime holds.
 		manage: {
-			tenants: projectManage.tenants,
 			permissions: projectManage.permissions,
 			project: v1.project,
-			instances: v1.instances,
-			grants: v1.grants,
-			connections: v1.connections,
 			keys: v1.keys,
+			instances: v1.instances,
+			integrations: v1.integrations,
+			tenants: v1.tenants,
+			connections: v1.connections,
+			connect: v1.connect,
+			access: v1.access,
+			mcp: v1.mcp,
 		} as unknown as CorsairCloudManage,
 		withInstance: (name: string): CorsairCloudInstanceHandle<Registry> => {
 			const getTransport = async (): Promise<CloudTransport> => {

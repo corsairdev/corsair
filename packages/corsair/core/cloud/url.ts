@@ -6,6 +6,10 @@
 // project slug (ck_cloud_<slug>.<secret>), so the caller builds its own base URL.
 export const CLOUD_API_HOST = 'api.corsair.cloud';
 
+// The two planes are two machines: calls execute on the project's runtime box
+// behind CLOUD_API_HOST, while /v1 is served by the hub.
+export const CLOUD_CONTROL_HOST = 'auth.corsair.dev';
+
 export const LOOPBACK_HOSTS = new Set([
 	'localhost',
 	'127.0.0.1',
@@ -18,31 +22,46 @@ export const LOOPBACK_HOSTS = new Set([
 // why the delimiter is unambiguous. Returns null when the key isn't in that
 // shape (e.g. an older flat key with no '.'), so the caller can fall back to an
 // explicit url or error clearly.
-export function cloudUrlFromKey(apiKey: string): string | null {
+export function cloudSlugFromKey(apiKey: string): string | null {
 	if (!apiKey.startsWith('ck_cloud_')) return null;
 	const rest = apiKey.slice('ck_cloud_'.length);
 	const sep = rest.indexOf('.');
 	if (sep <= 0) return null;
 	const slug = rest.slice(0, sep);
-	if (!/^[a-z0-9]+$/.test(slug)) return null;
-	return `https://${CLOUD_API_HOST}/${slug}/api/corsair`;
+	return /^[a-z0-9]+$/.test(slug) ? slug : null;
 }
 
-// The hub v1 management API lives on the same host as the project base (no slug
-// segment) — so a data-plane `url` override and the management base always share
-// a host. A dev who points `url` at a local proxy gets management there too,
-// never silently back at prod.
-export function cloudManagementUrlFromBase(baseUrl: string): string {
-	const { protocol, host } = new URL(baseUrl);
-	return `${protocol}//${host}/v1`;
+export function cloudUrlFromKey(apiKey: string): string | null {
+	const slug = cloudSlugFromKey(apiKey);
+	return slug ? `https://${CLOUD_API_HOST}/${slug}/api/corsair` : null;
 }
 
-// Derive it from cloudUrlFromKey's host rather than CLOUD_API_HOST directly, so
-// a custom-host key still resolves consistently.
+// Every v1 route is under /projects/<slug>, so the slug lives in the base and
+// callers keep using relative paths. A custom base (local proxy, self-host)
+// keeps management on it rather than silently back at prod — the default pair
+// is the only case where the two planes are different machines, and only there
+// is the host swapped.
+export function cloudManagementUrlFromBase(
+	baseUrl: string,
+	slug: string,
+): string {
+	const url = new URL(baseUrl);
+	if (url.host === CLOUD_API_HOST) {
+		return `${url.protocol}//${CLOUD_CONTROL_HOST}/v1/projects/${slug}`;
+	}
+	// A proxy can be mounted under a prefix, so keep the base's own path: only
+	// the project-shaped `/<slug>/api/corsair` tail belongs to the data plane.
+	const mount = url.pathname
+		.replace(/\/+$/, '')
+		.replace(/\/[^/]+\/api\/corsair$/, '');
+	return `${url.origin}${mount}/v1/projects/${slug}`;
+}
+
 export function cloudManagementUrlFromKey(apiKey: string): string | null {
+	const slug = cloudSlugFromKey(apiKey);
 	const projectUrl = cloudUrlFromKey(apiKey);
-	if (!projectUrl) return null;
-	return cloudManagementUrlFromBase(projectUrl);
+	if (!slug || !projectUrl) return null;
+	return cloudManagementUrlFromBase(projectUrl, slug);
 }
 
 // The project key rides as a bearer token, so http:// would leak it in

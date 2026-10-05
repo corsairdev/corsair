@@ -460,18 +460,83 @@ describe('corsairCloud', () => {
 		expect(url).toBe('https://vm/users/connection-status?tenantId=acme');
 	});
 
-	it('exposes project-scoped tenants on manage', async () => {
+	// manage.* is the control plane: the hub, on its own host. Only the data
+	// plane lives on the project's runtime box.
+	it('routes manage.tenants to the hub, not the instance URL', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')
 			.mockResolvedValue(
-				new Response(JSON.stringify([{ id: 'acme' }]), { status: 200 }),
+				new Response(
+					JSON.stringify({ object: 'list', data: [], has_more: false }),
+					{ status: 200 },
+				),
 			);
+		const corsair = corsairCloud({ apiKey: 'ck_cloud_acme.secret' });
+		await corsair.manage.tenants.list();
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe('https://auth.corsair.dev/v1/projects/acme/tenants');
+	});
+
+	it('follows a url override to that host for management too', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(
+					JSON.stringify({ object: 'list', data: [], has_more: false }),
+					{ status: 200 },
+				),
+			);
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_acme.secret',
+			url: 'http://localhost:3000/acme/api/corsair',
+		});
+		await corsair.manage.tenants.list();
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe('http://localhost:3000/v1/projects/acme/tenants');
+	});
+
+	// A proxy can be mounted under a prefix. Taking only the host off the
+	// override dropped that prefix and sent management to the proxy's root.
+	it('keeps a mount prefix on the override when deriving management', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(
+					JSON.stringify({ object: 'list', data: [], has_more: false }),
+					{ status: 200 },
+				),
+			);
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_acme.secret',
+			url: 'https://proxy.internal/corsair/acme/api/corsair',
+		});
+		await corsair.manage.tenants.list();
+		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
+		expect(url).toBe('https://proxy.internal/corsair/v1/projects/acme/tenants');
+	});
+
+	// A key with no slug can't name a project, so management has no base. The
+	// error has to say that rather than surface as "undefined is not a function".
+	it('reports which management call was unreachable for a slug-less key', async () => {
 		const corsair = corsairCloud({
 			apiKey: 'ck_cloud_x',
 			url: 'https://vm/p/api/corsair',
 		});
-		await corsair.manage.tenants.list();
-		const [url] = (globalThis.fetch as jest.Mock).mock.calls[0];
-		expect(url).toBe('https://vm/p/api/corsair/tenants');
+		expect(() => corsair.manage.mcp.links.mint({ instances: [] })).toThrow(
+			/"manage\.mcp\.links\.mint" needs a management URL.*set `managementUrl`/s,
+		);
+	});
+
+	// Resolving `then` to a node would make the stand-in a thenable, so awaiting
+	// it would reject instead of handing back the object.
+	it('is awaitable even when management is unreachable', async () => {
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		await expect(Promise.resolve(corsair.manage)).resolves.toBeDefined();
+		expect(
+			(corsair.manage as unknown as { then?: unknown }).then,
+		).toBeUndefined();
 	});
 });
