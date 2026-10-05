@@ -129,6 +129,64 @@ describe('TurbotPipes endpoint coverage', () => {
 		},
 	);
 
+	describe('local sync semantics', () => {
+		const memoryStore = () => {
+			const rows = new Map<string, Record<string, unknown>>();
+			const table = {
+				upsertByEntityId: jest.fn(
+					async (id: string, record: Record<string, unknown>) => {
+						rows.set(id, { ...record });
+					},
+				),
+				findManyByEntityIds: jest.fn(async (ids: string[]) =>
+					ids.filter((id) => rows.has(id)).map((id) => ({ entity_id: id })),
+				),
+			};
+			return { rows, table };
+		};
+
+		it('a completed detail fetch guarantees its record is searchable', async () => {
+			const { rows, table } = memoryStore();
+			const ctx = { ...createMockContext(), db: { user: table } };
+			mockRequest.mockResolvedValueOnce({
+				id: 'u_1',
+				handle: 'bob',
+				display_name: 'Bob',
+			});
+			await UsersEndpoints.getUser(ctx, { user_handle: 'bob' });
+			expect(table.upsertByEntityId).toHaveBeenCalledWith(
+				'u_1',
+				expect.objectContaining({ handle: 'bob' }),
+			);
+			expect(rows.get('u_1')).toMatchObject({ handle: 'bob' });
+		});
+
+		it('list discovery adds missing records without erasing stored details', async () => {
+			const { rows, table } = memoryStore();
+			rows.set('w_1', {
+				id: 'w_1',
+				handle: 'main',
+				title: 'Detailed Title',
+				instance_type: 'db1.shared',
+			});
+			const ctx = { ...createMockContext(), db: { workspace: table } };
+			mockRequest.mockResolvedValueOnce({
+				items: [
+					{ id: 'w_1', handle: 'main' },
+					{ id: 'w_2', handle: 'dev' },
+				],
+			});
+			await UsersEndpoints.listUserWorkspaces(ctx, { user_handle: 'bob' });
+			// Flush background discovery writes.
+			await new Promise((resolve) => setTimeout(resolve, 0));
+			expect(rows.get('w_1')).toMatchObject({
+				title: 'Detailed Title',
+				instance_type: 'db1.shared',
+			});
+			expect(rows.get('w_2')).toMatchObject({ handle: 'dev' });
+		});
+	});
+
 	it('resolves avatar endpoints to usable image URLs', async () => {
 		const ctx = createMockContext();
 		const tenant = await TenantsEndpoints.getTenantAvatar(ctx, {

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntity } from './sync';
+import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserWorkspaceDatatank: TurbotPipesEndpoints['createUserWorkspaceDatatank'] =
@@ -31,8 +31,8 @@ export const getUserWorkspaceDatatank: TurbotPipesEndpoints['getUserWorkspaceDat
 			ctx.key,
 			{ method: 'GET' },
 		);
-		// Fire-and-forget: responses must not wait on local sync.
-		syncEntity(ctx.db?.datatank, response.id, response);
+		// Awaited: a completed fetch guarantees its record is searchable locally.
+		await syncEntityDetail(ctx.db?.datatank, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.get_user_workspace',
@@ -51,6 +51,9 @@ export const listUserWorkspaceDatatanks: TurbotPipesEndpoints['listUserWorkspace
 			ctx.key,
 			{ method: 'GET' },
 		);
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_user_workspace',
@@ -69,6 +72,9 @@ export const listOrgWorkspaceDatatanks: TurbotPipesEndpoints['listOrgWorkspaceDa
 			ctx.key,
 			{ method: 'GET' },
 		);
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.datatank, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.datatanks.list_org_workspace',

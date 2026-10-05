@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntity } from './sync';
+import { syncEntityDetail } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserConnection: TurbotPipesEndpoints['createUserConnection'] =
@@ -34,8 +34,8 @@ export const getUserConnection: TurbotPipesEndpoints['getUserConnection'] =
 			ctx.key,
 			{ method: 'GET' },
 		);
-		// Fire-and-forget: responses must not wait on local sync.
-		syncEntity(ctx.db?.connection, response.id, response);
+		// Awaited: a completed fetch guarantees its record is searchable locally.
+		await syncEntityDetail(ctx.db?.connection, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.connections.get_user',

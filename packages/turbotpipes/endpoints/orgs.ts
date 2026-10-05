@@ -1,15 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntity } from './sync';
+import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getOrg: TurbotPipesEndpoints['getOrg'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getOrg']
 	>(`org/${input.org_handle}`, ctx.key, { method: 'GET' });
-	// Fire-and-forget: responses must not wait on local sync.
-	syncEntity(ctx.db?.org, response.id, response);
+	// Awaited: a completed fetch guarantees its record is searchable locally.
+	await syncEntityDetail(ctx.db?.org, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.orgs.get',
@@ -41,6 +41,9 @@ export const listOrgWorkspaces: TurbotPipesEndpoints['listOrgWorkspaces'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgWorkspaces']
 		>(`org/${org_handle}/workspace`, ctx.key, { method: 'GET', query });
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_workspaces',
@@ -90,6 +93,9 @@ export const listOrgProcesses: TurbotPipesEndpoints['listOrgProcesses'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listOrgProcesses']
 		>(`org/${org_handle}/process`, ctx.key, { method: 'GET', query });
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.orgs.list_processes',

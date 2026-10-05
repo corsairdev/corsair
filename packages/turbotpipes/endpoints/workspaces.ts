@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntity } from './sync';
+import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const createUserWorkspaceConnection: TurbotPipesEndpoints['createUserWorkspaceConnection'] =
@@ -49,6 +49,9 @@ export const listUserWorkspaceConnections: TurbotPipesEndpoints['listUserWorkspa
 			ctx.key,
 			{ method: 'GET' },
 		);
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.connection, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_connections',
@@ -357,6 +360,9 @@ export const listUserWorkspaceProcesses: TurbotPipesEndpoints['listUserWorkspace
 			ctx.key,
 			{ method: 'GET' },
 		);
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_user_processes',
@@ -375,8 +381,8 @@ export const getUserWorkspaceProcess: TurbotPipesEndpoints['getUserWorkspaceProc
 			ctx.key,
 			{ method: 'GET' },
 		);
-		// Fire-and-forget: responses must not wait on local sync.
-		syncEntity(ctx.db?.process, response.id, response);
+		// Awaited: a completed fetch guarantees its record is searchable locally.
+		await syncEntityDetail(ctx.db?.process, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.get_user_process',
@@ -414,6 +420,9 @@ export const listOrgWorkspaceProcesses: TurbotPipesEndpoints['listOrgWorkspacePr
 			ctx.key,
 			{ method: 'GET' },
 		);
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.workspaces.list_org_processes',

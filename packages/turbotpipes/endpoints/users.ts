@@ -1,15 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTurbotPipesRequest } from '../client';
 import type { TurbotPipesEndpoints } from '../index';
-import { syncEntity } from './sync';
+import { syncEntityDetail, syncListDiscovery } from './sync';
 import type { TurbotPipesEndpointOutputs } from './types';
 
 export const getUser: TurbotPipesEndpoints['getUser'] = async (ctx, input) => {
 	const response = await makeTurbotPipesRequest<
 		TurbotPipesEndpointOutputs['getUser']
 	>(`user/${input.user_handle}`, ctx.key, { method: 'GET' });
-	// Fire-and-forget: responses must not wait on local sync.
-	syncEntity(ctx.db?.user, response.id, response);
+	// Awaited: a completed fetch guarantees its record is searchable locally.
+	await syncEntityDetail(ctx.db?.user, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get',
@@ -42,6 +42,9 @@ export const listUserWorkspaces: TurbotPipesEndpoints['listUserWorkspaces'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserWorkspaces']
 		>(`user/${user_handle}/workspace`, ctx.key, { method: 'GET', query });
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.workspace, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_workspaces',
@@ -60,8 +63,8 @@ export const getUserWorkspace: TurbotPipesEndpoints['getUserWorkspace'] =
 			ctx.key,
 			{ method: 'GET' },
 		);
-		// Fire-and-forget: responses must not wait on local sync.
-		syncEntity(ctx.db?.workspace, response.id, response);
+		// Awaited: a completed fetch guarantees its record is searchable locally.
+		await syncEntityDetail(ctx.db?.workspace, response.id, response);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.get_workspace',
@@ -113,6 +116,9 @@ export const listUserProcesses: TurbotPipesEndpoints['listUserProcesses'] =
 		const response = await makeTurbotPipesRequest<
 			TurbotPipesEndpointOutputs['listUserProcesses']
 		>(`user/${user_handle}/process`, ctx.key, { method: 'GET', query });
+		// Background insert-only discovery: populates search without
+		// erasing stored details and without delaying the response.
+		syncListDiscovery(ctx.db?.process, response?.items);
 		await logEventFromContext(
 			ctx,
 			'turbotpipes.users.list_processes',
@@ -131,8 +137,8 @@ export const getUserProcess: TurbotPipesEndpoints['getUserProcess'] = async (
 	>(`user/${input.user_handle}/process/${input.process_id}`, ctx.key, {
 		method: 'GET',
 	});
-	// Fire-and-forget: responses must not wait on local sync.
-	syncEntity(ctx.db?.process, response.id, response);
+	// Awaited: a completed fetch guarantees its record is searchable locally.
+	await syncEntityDetail(ctx.db?.process, response.id, response);
 	await logEventFromContext(
 		ctx,
 		'turbotpipes.users.get_process',
