@@ -175,8 +175,8 @@ export default async function Page(props: PageProps) {
 	return (
 		<DocsPage
 			toc={toc}
-			breadcrumb={{ enabled: false }}
-			tableOfContent={{ style: 'block' }}
+			breadcrumb={{ enabled: true, includeRoot: { url: '/plugins' } }}
+			tableOfContent={{ style: 'clerk' }}
 			tableOfContentPopover={{ style: 'block' }}
 		>
 			<DocsTitle>API</DocsTitle>

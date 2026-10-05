@@ -54,7 +54,7 @@ export default async function Page(props: PageProps) {
 			toc={toc}
 			full={page.data.full}
 			breadcrumb={{ enabled: false }}
-			tableOfContent={{ style: 'block' }}
+			tableOfContent={{ style: 'clerk' }}
 			tableOfContentPopover={{ style: 'block' }}
 		>
 			<DocsTitle>{page.data.title}</DocsTitle>

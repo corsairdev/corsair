@@ -17,46 +17,22 @@
 
 :root {
 	--fd-layout-width: 88rem;
-	--fd-nav-height: 3.5rem;
-	--fd-border-sidebar: transparent;
-	--spacing-fd-container: 88rem;
+	--fd-header-height: 3.5rem;
 	--content-gap: 2rem;
 	--corsair-ink: #141414;
 	--text-primary: var(--color-fd-foreground);
-	--text-secondary: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 72%,
-		transparent
-	);
 	--text-muted: var(--color-fd-muted-foreground);
-	--scrollbar-thumb: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 18%,
-		transparent
-	);
-	--scrollbar-thumb-hover: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 32%,
-		transparent
-	);
+	--scrollbar-thumb: var(--color-fd-border);
+	--scrollbar-thumb-hover: var(--color-fd-ring);
 	--scrollbar-track: transparent;
 }
 
 :root:not(.dark) {
-	--color-fd-background: hsl(0, 0%, 98.5%);
 	--gradient-a: color-mix(in oklch, hsl(220 14% 88%) 28%, transparent);
 	--gradient-b: color-mix(in oklch, hsl(0 0% 92%) 50%, transparent);
 }
 
 .dark {
-	--color-fd-background: hsl(0, 0%, 5.5%);
-	--color-fd-card: hsl(0, 0%, 8.5%);
-	--color-fd-muted: hsl(0, 0%, 11%);
-	--text-secondary: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 78%,
-		transparent
-	);
 	--gradient-a: color-mix(in oklch, hsl(220 12% 14%) 22%, transparent);
 	--gradient-b: color-mix(in oklch, hsl(0 0% 10%) 40%, transparent);
 }
@@ -83,8 +59,9 @@
 
 	html {
 		scroll-behavior: smooth;
-		scroll-padding-top: calc(var(--fd-nav-height, 3.5rem) + 1.5rem);
+		scroll-padding-top: calc(var(--fd-header-height, 3.5rem) + 1.5rem);
 		text-rendering: optimizeLegibility;
+		font-synthesis: none;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 	}
@@ -153,11 +130,11 @@ aside#nd-sidebar {
 	#nd-docs-layout::before {
 		content: "";
 		position: fixed;
-		top: var(--fd-nav-height);
+		top: var(--fd-header-height);
 		bottom: 0;
 		left: calc(
 			var(--fd-sidebar-width) +
-			max(1rem, (100vw - var(--spacing-fd-container)) / 2) -
+			max(1rem, (100vw - var(--fd-layout-width)) / 2) -
 			1rem
 		);
 		width: 1px;
@@ -187,8 +164,19 @@ img[src*="/icons/"] {
 /* Page title — crisp, tight, sans (Better Auth pattern) */
 #nd-page > header h1,
 [data-docs-title] {
-	@apply font-sans text-[1.75rem] font-semibold tracking-[-0.03em] text-fd-foreground md:text-[2rem];
+	@apply font-sans text-fd-foreground;
+	font-size: 1.75rem;
+	font-weight: 450;
 	letter-spacing: -0.03em;
+	line-height: 1.15;
+	margin-bottom: 0.5rem;
+}
+
+@media (min-width: 768px) {
+	#nd-page > header h1,
+	[data-docs-title] {
+		font-size: 2rem;
+	}
 }
 
 #nd-page > header p {
@@ -196,7 +184,8 @@ img[src*="/icons/"] {
 	max-width: 42rem;
 }
 
-/* Prose — Sim-like hierarchy: calm body, crisp headings */
+/* Heading ramp is 1.6 : 1.33 : 1 against the 15px body. Geist has no optical-size
+   axis, so the negative tracking that grows with size is the compensation. */
 .prose {
 	--tw-prose-body: var(--text-secondary);
 	--tw-prose-headings: var(--text-primary);
@@ -208,11 +197,33 @@ img[src*="/icons/"] {
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply mt-10 mb-4 font-sans text-xl font-medium tracking-[-0.02em] text-fd-foreground;
+	@apply font-sans text-fd-foreground;
+	font-size: 1.5rem;
+	font-weight: 450;
+	letter-spacing: -0.025em;
+	line-height: 1.333;
+	margin-top: 4rem;
+	margin-bottom: 1rem;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply mt-8 mb-3 font-sans text-base font-medium tracking-[-0.01em] text-fd-foreground;
+	@apply font-sans text-fd-foreground;
+	font-size: 1.25rem;
+	font-weight: 500;
+	letter-spacing: -0.02em;
+	line-height: 1.4;
+	margin-top: 2.5rem;
+	margin-bottom: 0.75rem;
+}
+
+/* <Steps> nests h2/h3 inside a step; the 24px/56px treatment breaks that layout. */
+.fd-steps .fd-step :where(h2, h3) {
+	font-size: 1rem;
+	font-weight: 550;
+	letter-spacing: -0.015em;
+	line-height: 1.5;
+	margin-top: 0;
+	margin-bottom: 0.5rem;
 }
 
 .prose
@@ -223,7 +234,13 @@ img[src*="/icons/"] {
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply mt-6 mb-2 font-sans text-sm font-semibold;
+	@apply font-sans text-fd-foreground;
+	font-size: 1rem;
+	font-weight: 550;
+	letter-spacing: -0.015em;
+	line-height: 1.5;
+	margin-top: 1.75rem;
+	margin-bottom: 0.5rem;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -231,14 +248,23 @@ img[src*="/icons/"] {
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply font-medium text-fd-primary underline-offset-4 hover:underline;
+	@apply font-medium text-fd-foreground;
+	text-decoration: underline;
+	text-decoration-color: var(--color-fd-border);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 4px;
+}
+
+.prose
+	:where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+	text-decoration-color: var(--color-fd-foreground);
 }
 
 .prose
 	:where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):not(
 		pre code
 	) {
-	@apply rounded-sm border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[0.8125rem] font-normal;
+	@apply rounded-sm bg-fd-muted px-1.5 py-0.5 font-mono text-[0.8125rem] font-normal;
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -246,11 +272,39 @@ img[src*="/icons/"] {
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply text-sm;
+	font-size: 0.8125rem;
+	line-height: 1.45;
+	background: transparent;
+	border-collapse: collapse;
+	border-radius: 0;
 }
 
 .prose :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-	@apply font-medium;
+	font-weight: 500;
+	background: transparent;
+	border-bottom: 1px solid var(--color-fd-border);
+}
+
+.prose :where(td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+	font-variant-numeric: tabular-nums;
+	border-bottom: 1px solid var(--color-fd-border);
+	padding-block: 0.625rem;
+}
+
+.prose
+	:where(tr:last-child td):not(
+		:where([class~="not-prose"], [class~="not-prose"] *)
+	) {
+	border-bottom: none;
+}
+
+/* A long union in Type must not squeeze the name into two lines. */
+.prose :where(td:first-child):not(:where([class~="not-prose"] *)) {
+	white-space: nowrap;
+}
+
+.prose :where(td):not(:where([class~="not-prose"] *)) code {
+	overflow-wrap: anywhere;
 }
 
 .prose code:not(pre code),
@@ -270,12 +324,12 @@ figure.shiki,
 .dark .shiki,
 .dark figure:has(pre),
 .dark figure.shiki {
-	background-color: #050505 !important;
-	border-color: rgb(255 255 255 / 0.06);
+	background-color: var(--code-surface) !important;
+	border-color: var(--color-fd-border);
 }
 
 .dark [role="tabpanel"]:has(.shiki) {
-	background-color: #050505 !important;
+	background-color: var(--code-surface) !important;
 }
 
 /* Sidebar + nav polish */

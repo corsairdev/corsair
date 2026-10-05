@@ -1,20 +1,37 @@
-/* Neutral ink palette — no teal accents */
+/* Neutral ink palette — no accent hue. Colour is reserved for HTTP methods,
+   callout semantics, diff lines and syntax highlighting; nothing else. */
 @theme {
 	--color-fd-primary: var(--color-fd-foreground);
 	--color-fd-primary-foreground: var(--color-fd-background);
-	--color-fd-ring: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 22%,
-		transparent
-	);
+}
+
+:root:not(.dark) {
+	--color-fd-background: #ffffff;
+	--color-fd-foreground: #141414;
+	--color-fd-card: #fafafa;
+	--color-fd-muted: #f4f4f5;
+	--color-fd-muted-foreground: #6b6b6b;
+	/* One hairline value, used everywhere. A ramp reads as noise at this density. */
+	--color-fd-border: rgb(0 0 0 / 0.1);
+	--color-fd-accent: rgb(0 0 0 / 0.04);
+	--color-fd-accent-foreground: #141414;
+	--color-fd-ring: rgb(0 0 0 / 0.2);
+	--code-surface: #fafafa;
+	--text-secondary: #42434d;
 }
 
 .dark {
-	--color-fd-primary: var(--color-fd-foreground);
-	--color-fd-primary-foreground: var(--color-fd-background);
-	--color-fd-ring: color-mix(
-		in oklch,
-		var(--color-fd-foreground) 28%,
-		transparent
-	);
+	--color-fd-background: #0a0a0a;
+	--color-fd-foreground: #ededed;
+	--color-fd-card: #0f0f0f;
+	--color-fd-muted: #151515;
+	--color-fd-muted-foreground: #8a8a8a;
+	--color-fd-border: rgb(255 255 255 / 0.12);
+	--color-fd-accent: rgb(255 255 255 / 0.06);
+	--color-fd-accent-foreground: #ededed;
+	--color-fd-ring: rgb(255 255 255 / 0.22);
+	/* Lighter than the page. Darkening a panel to mean "code" only works on a
+	   light background, and the sites that ship dark all go the other way. */
+	--code-surface: #101010;
+	--text-secondary: #c9cbcf;
 }

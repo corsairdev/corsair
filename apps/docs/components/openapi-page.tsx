@@ -10,7 +10,7 @@ import { createOpenAPIPage } from 'fumadocs-openapi/ui';
 // `registerDefault` also adds java, csharp and rust. We ship no client in any
 // of them, and seven tabs crowd the example panel.
 const codeUsages = createCodeUsageGeneratorRegistry();
-codeUsages.add('js', javascript);
+codeUsages.add('ts', { ...javascript, label: 'TypeScript' });
 codeUsages.add('python', python);
 codeUsages.add('go', go);
 codeUsages.add('curl', curl);
