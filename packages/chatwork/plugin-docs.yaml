@@ -1,0 +1,25 @@
+displayName: Chatwork
+description: Business chat and communication tool for team messaging, room management, and collaboration.
+recommendedAuth: oauth_2
+examples:
+  read:
+    path: rooms.list
+    title: List rooms
+  write:
+    path: messages.send
+    title: Send a message to a room
+    args:
+      room_id: 123456
+      body: Hello from Corsair!
+dbExample:
+  entity: rooms
+  note: Search synced rooms without hitting the Chatwork API.
+  data:
+    type: group
+  limit: 20
+exampleWebhook:
+  path: messages.created
+  note: React when someone posts a new message in a room.
+  after: |
+    const body = result.data?.webhook_event?.body;
+    console.log('New message received:', body);
