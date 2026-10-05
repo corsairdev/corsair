@@ -7,7 +7,7 @@
     "generate:openapi": "rm -rf 'content/docs/(api)/v1' && bun scripts/generate-openapi.ts",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
     "dev:openapi": "pnpm generate:openapi && pnpm dev",
-    "build": "pnpm generate:openapi && NODE_OPTIONS='--max-old-space-size=6144' next build --webpack",
+    "build": "pnpm generate:openapi && NODE_OPTIONS='--max-old-space-size=8192' next build --webpack",
     "start": "next start",
     "typecheck": "tsc --noEmit"
   },
