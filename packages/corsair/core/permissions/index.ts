@@ -7,8 +7,10 @@ import type {
 	EndpointMetaEntry,
 	EndpointRiskLevel,
 	PermissionMode,
+	PermissionOverride,
 	PermissionPolicy,
 } from '../plugins';
+import { resolveOverridePolicy } from './constraints';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Readonly Enforcement Scope
@@ -89,13 +91,22 @@ const PERMISSION_MATRIX: Record<
 	readonly: { read: 'allow', write: 'deny', destructive: 'deny' },
 };
 
-/** Resolves the effective permission policy for an endpoint. The override (from permissions.overrides) takes precedence. */
+/**
+ * Resolves the effective permission policy for an endpoint. The override (from
+ * permissions.overrides) takes precedence over the mode matrix.
+ *
+ * A constrained override only takes precedence when the call's `args` satisfy its
+ * constraints; otherwise it contributes its `otherwise` policy, or nothing at all,
+ * in which case the mode matrix decides as usual.
+ */
 export function evaluatePermission(
 	riskLevel: EndpointRiskLevel,
 	mode: PermissionMode,
-	override?: PermissionPolicy,
+	override?: PermissionOverride,
+	args?: unknown,
 ): PermissionPolicy {
-	if (override !== undefined) return override;
+	const resolved = resolveOverridePolicy(override, args);
+	if (resolved !== undefined) return resolved;
 	return PERMISSION_MATRIX[mode][riskLevel];
 }
 
@@ -217,7 +228,7 @@ export type EnforcePermissionOptions = {
 	/** unknown: caller-supplied args vary per endpoint — not statically knowable here */
 	args: unknown;
 	mode: PermissionMode;
-	override?: PermissionPolicy;
+	override?: PermissionOverride;
 	riskLevel: EndpointRiskLevel;
 	meta?: EndpointMetaEntry;
 	/** Required to create an approval record. Without a DB, 'require_approval' falls back to deny. */
@@ -321,7 +332,12 @@ async function pollUntilResolved(
 export async function enforcePermission(
 	opts: EnforcePermissionOptions,
 ): Promise<EnforcePermissionResult> {
-	const policy = evaluatePermission(opts.riskLevel, opts.mode, opts.override);
+	const policy = evaluatePermission(
+		opts.riskLevel,
+		opts.mode,
+		opts.override,
+		opts.args,
+	);
 	if (policy === 'allow') return { result: 'allow' };
 
 	const irreversibleNote = opts.meta?.irreversible ? ' (irreversible)' : '';
@@ -467,4 +483,10 @@ export {
 	resolveAsyncApprovalMessage,
 	usesManualApprovalConfig,
 } from './approval-message';
+export {
+	constraintsSatisfied,
+	matchesConstraint,
+	resolveArgPath,
+	resolveOverridePolicy,
+} from './constraints';
 export { PermissionRequiredError } from './errors/permission-required';
