@@ -3,8 +3,6 @@ import type { ApiRequestOptions } from '../async-core/ApiRequestOptions';
 import type { OpenAPIConfig } from '../async-core/OpenAPI';
 import { request } from '../async-core/request';
 
-const originalFetch = global.fetch;
-
 const config: OpenAPIConfig = {
 	BASE: 'https://api.example.com',
 	VERSION: '1',
@@ -17,18 +15,44 @@ const options: ApiRequestOptions = {
 	url: '/things',
 };
 
+function mockFetch(response: Response) {
+	jest.spyOn(globalThis, 'fetch').mockResolvedValue(response);
+}
+
 function respondWith(body: string, contentType: string, status = 200) {
-	global.fetch = jest.fn(
-		async () =>
-			new Response(body, {
-				status,
-				headers: { 'content-type': contentType },
-			}),
-	) as typeof fetch;
+	mockFetch(
+		new Response(body, {
+			status,
+			headers: { 'content-type': contentType },
+		}),
+	);
+}
+
+// Plugin tests often mock fetch with a partial object (json() only, no text(),
+// sometimes no headers). Start from a real Response and redefine those members
+// on the instance so the shape matches without a type assertion.
+function partialResponse(
+	init: ResponseInit,
+	overrides: PropertyDescriptorMap,
+): Response {
+	const response = new Response(null, init);
+	Object.defineProperties(response, overrides);
+	return response;
+}
+
+async function apiErrorFrom(promise: Promise<unknown>): Promise<ApiError> {
+	const error = await promise.then(
+		() => undefined,
+		(e: unknown) => e,
+	);
+	if (!(error instanceof ApiError)) {
+		throw new Error('expected request() to reject with an ApiError');
+	}
+	return error;
 }
 
 afterEach(() => {
-	global.fetch = originalFetch;
+	jest.restoreAllMocks();
 });
 
 describe('request() response body parsing', () => {
@@ -62,10 +86,9 @@ describe('request() response body parsing', () => {
 			404,
 		);
 
-		const error = await request(config, options).catch((e: unknown) => e);
+		const error = await apiErrorFrom(request(config, options));
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).body).toEqual({
+		expect(error.body).toEqual({
 			errors: [{ title: 'Not found' }],
 		});
 	});
@@ -73,19 +96,17 @@ describe('request() response body parsing', () => {
 	it('keeps the raw error text when a +json body is not valid JSON', async () => {
 		respondWith('upstream timed out', 'application/vnd.api+json', 502);
 
-		const error = await request(config, options).catch((e: unknown) => e);
+		const error = await apiErrorFrom(request(config, options));
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).body).toBe('upstream timed out');
+		expect(error.body).toBe('upstream timed out');
 	});
 
 	it('keeps an empty +json error body as text', async () => {
 		respondWith('', 'application/vnd.api+json', 500);
 
-		const error = await request(config, options).catch((e: unknown) => e);
+		const error = await apiErrorFrom(request(config, options));
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).body).toBe('');
+		expect(error.body).toBe('');
 	});
 
 	it('keeps non-JSON responses as text', async () => {
@@ -99,16 +120,16 @@ describe('request() response body parsing', () => {
 		const json = jest.fn(async () => payload);
 		const text = jest.fn(async () => '');
 		const clone = jest.fn();
-		global.fetch = jest.fn(async () => ({
-			ok: true,
-			status: 200,
-			statusText: 'OK',
-			url: 'https://api.example.com/things',
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json,
-			text,
-			clone,
-		})) as unknown as typeof fetch;
+		mockFetch(
+			partialResponse(
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+				{
+					json: { value: json },
+					text: { value: text },
+					clone: { value: clone },
+				},
+			),
+		);
 
 		await expect(request(config, options)).resolves.toBe(payload);
 		expect(json).toHaveBeenCalledTimes(1);
@@ -117,35 +138,40 @@ describe('request() response body parsing', () => {
 	});
 
 	it('reads an error body from a stub that only implements json()', async () => {
-		global.fetch = jest.fn(async () => ({
-			ok: false,
-			status: 400,
-			statusText: 'Bad Request',
-			url: 'https://api.example.com/things',
-			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => ({ message: 'bad input' }),
-		})) as unknown as typeof fetch;
+		mockFetch(
+			partialResponse(
+				{
+					status: 400,
+					statusText: 'Bad Request',
+					headers: { 'Content-Type': 'application/json' },
+				},
+				{
+					json: { value: async () => ({ message: 'bad input' }) },
+					text: { value: undefined },
+				},
+			),
+		);
 
-		const error = await request(config, options).catch((e: unknown) => e);
+		const error = await apiErrorFrom(request(config, options));
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).body).toEqual({ message: 'bad input' });
+		expect(error.body).toEqual({ message: 'bad input' });
 	});
 
 	it('returns no body for a stub without headers', async () => {
 		const consoleError = jest
 			.spyOn(console, 'error')
 			.mockImplementation(() => undefined);
-		global.fetch = jest.fn(async () => ({
-			ok: true,
-			status: 200,
-			statusText: 'OK',
-			url: 'https://api.example.com/things',
-			json: async () => ({ id: 1 }),
-		})) as unknown as typeof fetch;
+		mockFetch(
+			partialResponse(
+				{ status: 200 },
+				{
+					headers: { value: undefined },
+					json: { value: async () => ({ id: 1 }) },
+				},
+			),
+		);
 
 		await expect(request(config, options)).resolves.toBeUndefined();
 		expect(consoleError).not.toHaveBeenCalled();
-		consoleError.mockRestore();
 	});
 });
