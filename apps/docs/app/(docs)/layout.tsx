@@ -10,6 +10,7 @@ const getPageTree = cache(() => source.getPageTree());
 export default function Layout({ children }: { children: ReactNode }) {
 	return (
 		<RootProvider
+			theme={{ defaultTheme: 'light' }}
 			search={{
 				links: [
 					['Introduction', '/introduction'],

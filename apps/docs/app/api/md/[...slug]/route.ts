@@ -4,7 +4,7 @@ import { source } from '@/lib/source';
 
 /**
  * Raw markdown twin of every doc page, reached as `/<slug>.md` via the rewrite
- * in next.config.ts. Mintlify served these and llms.txt still links them.
+ * in next.config.ts. llms.txt links them.
  */
 export const revalidate = 3600;
 export const dynamicParams = true;

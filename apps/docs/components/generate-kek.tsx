@@ -45,7 +45,11 @@ export function GenerateKEK() {
 		fontSize: '0.75rem',
 		color: 'var(--muted-foreground, rgba(255,255,255,0.4))',
 	};
-	const btnGroupStyle = { display: 'flex', alignItems: 'center', gap: '0.375rem' };
+	const btnGroupStyle = {
+		display: 'flex',
+		alignItems: 'center',
+		gap: '0.375rem',
+	};
 	const btnStyle = {
 		display: 'inline-flex',
 		alignItems: 'center',

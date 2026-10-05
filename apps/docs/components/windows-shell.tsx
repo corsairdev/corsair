@@ -56,9 +56,9 @@ export function WindowsEnvVarsNote() {
 			<div>
 				<div style={titleStyle}>PowerShell syntax</div>
 				<div style={bodyStyle}>
-					Use <span style={codeStyle}>$env:VAR_NAME = &quot;value&quot;</span> to set variables
-					and <span style={codeStyle}>$env:VAR_NAME</span> wherever docs show{' '}
-					<span style={codeStyle}>$VAR</span>.
+					Use <span style={codeStyle}>$env:VAR_NAME = &quot;value&quot;</span>{' '}
+					to set variables and <span style={codeStyle}>$env:VAR_NAME</span>{' '}
+					wherever docs show <span style={codeStyle}>$VAR</span>.
 				</div>
 			</div>
 		</div>
@@ -72,8 +72,9 @@ export function WindowsMigrationNote() {
 			<div>
 				<div style={titleStyle}>PowerShell syntax</div>
 				<div style={bodyStyle}>
-					Bash redirection and <span style={codeStyle}>$VAR</span> env vars do not work in
-					PowerShell. Use the Windows commands shown in this tab instead.
+					Bash redirection and <span style={codeStyle}>$VAR</span> env vars do
+					not work in PowerShell. Use the Windows commands shown in this tab
+					instead.
 				</div>
 			</div>
 		</div>

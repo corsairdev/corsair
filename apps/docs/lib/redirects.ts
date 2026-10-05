@@ -1,7 +1,7 @@
 import type { Redirect } from 'next/dist/lib/load-custom-routes';
 
-/** Ported from docs/docs.json — keeps old Mintlify URLs working after cutover. */
-const mintlifyRedirects: Redirect[] = [
+/** Pages that have moved. Every old URL has to keep resolving. */
+const movedPages: Redirect[] = [
 	{
 		source: '/getting-started/introduction',
 		destination: '/introduction',
@@ -286,6 +286,6 @@ export function getAllRedirects(): Redirect[] {
 			destination: '/guides/:path*',
 			permanent: true,
 		},
-		...mintlifyRedirects,
+		...movedPages,
 	];
 }

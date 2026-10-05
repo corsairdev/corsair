@@ -8,225 +8,254 @@
 @source "../node_modules/fumadocs-openapi/dist/**/*.js";
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --text-small: 0.8125rem;
-  --text-base: 0.9375rem;
-  --text-md: 1rem;
+	--font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+	--font-mono: var(--font-geist-mono), ui-monospace, monospace;
+	--text-small: 0.8125rem;
+	--text-base: 0.9375rem;
+	--text-md: 1rem;
 }
 
 :root {
-  --fd-layout-width: 88rem;
-  --fd-nav-height: 3.5rem;
-  --fd-border-sidebar: transparent;
-  --spacing-fd-container: 88rem;
-  --content-gap: 2rem;
-  --corsair-ink: #141414;
-  --text-primary: var(--color-fd-foreground);
-  --text-secondary: color-mix(in oklch, var(--color-fd-foreground) 72%, transparent);
-  --text-muted: var(--color-fd-muted-foreground);
-  --scrollbar-thumb: color-mix(in oklch, var(--color-fd-foreground) 18%, transparent);
-  --scrollbar-thumb-hover: color-mix(in oklch, var(--color-fd-foreground) 32%, transparent);
-  --scrollbar-track: transparent;
+	--fd-layout-width: 88rem;
+	--fd-nav-height: 3.5rem;
+	--fd-border-sidebar: transparent;
+	--spacing-fd-container: 88rem;
+	--content-gap: 2rem;
+	--corsair-ink: #141414;
+	--text-primary: var(--color-fd-foreground);
+	--text-secondary: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 72%,
+		transparent
+	);
+	--text-muted: var(--color-fd-muted-foreground);
+	--scrollbar-thumb: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 18%,
+		transparent
+	);
+	--scrollbar-thumb-hover: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 32%,
+		transparent
+	);
+	--scrollbar-track: transparent;
 }
 
 :root:not(.dark) {
-  --color-fd-background: hsl(0, 0%, 98.5%);
-  --gradient-a: color-mix(in oklch, hsl(220 14% 88%) 28%, transparent);
-  --gradient-b: color-mix(in oklch, hsl(0 0% 92%) 50%, transparent);
+	--color-fd-background: hsl(0, 0%, 98.5%);
+	--gradient-a: color-mix(in oklch, hsl(220 14% 88%) 28%, transparent);
+	--gradient-b: color-mix(in oklch, hsl(0 0% 92%) 50%, transparent);
 }
 
 .dark {
-  --color-fd-background: hsl(0, 0%, 5.5%);
-  --color-fd-card: hsl(0, 0%, 8.5%);
-  --color-fd-muted: hsl(0, 0%, 11%);
-  --text-secondary: color-mix(in oklch, var(--color-fd-foreground) 78%, transparent);
-  --gradient-a: color-mix(in oklch, hsl(220 12% 14%) 22%, transparent);
-  --gradient-b: color-mix(in oklch, hsl(0 0% 10%) 40%, transparent);
+	--color-fd-background: hsl(0, 0%, 5.5%);
+	--color-fd-card: hsl(0, 0%, 8.5%);
+	--color-fd-muted: hsl(0, 0%, 11%);
+	--text-secondary: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 78%,
+		transparent
+	);
+	--gradient-a: color-mix(in oklch, hsl(220 12% 14%) 22%, transparent);
+	--gradient-b: color-mix(in oklch, hsl(0 0% 10%) 40%, transparent);
 }
 
 .docs-gradient-bg {
-  background-color: var(--color-fd-background);
-  background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, var(--gradient-a), transparent 70%),
-    linear-gradient(180deg, transparent 0%, var(--gradient-b) 100%);
+	background-color: var(--color-fd-background);
+	background-image:
+		radial-gradient(
+			ellipse 80% 50% at 50% -10%,
+			var(--gradient-a),
+			transparent 70%
+		), linear-gradient(180deg, transparent 0%, var(--gradient-b) 100%);
 }
 
 .docs-surface {
-  background-color: transparent;
+	background-color: transparent;
 }
 
 @layer base {
-  html,
-  body {
-    overscroll-behavior: none;
-  }
+	html,
+	body {
+		overscroll-behavior: none;
+	}
 
-  html {
-    scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--fd-nav-height, 3.5rem) + 1.5rem);
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: calc(var(--fd-nav-height, 3.5rem) + 1.5rem);
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
 
-  body {
-    @apply bg-fd-background font-sans text-fd-foreground antialiased;
-    font-feature-settings:
-      "kern" 1,
-      "liga" 1,
-      "calt" 1;
-  }
+	body {
+		@apply bg-fd-background font-sans text-fd-foreground antialiased;
+		font-feature-settings:
+			"kern" 1,
+			"liga" 1,
+			"calt" 1;
+	}
 
-  code,
-  kbd,
-  samp,
-  pre {
-    @apply font-mono;
-  }
+	code,
+	kbd,
+	samp,
+	pre {
+		@apply font-mono;
+	}
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+	scrollbar-width: thin;
+	scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+	width: 10px;
+	height: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb);
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
+	background-color: var(--scrollbar-thumb);
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--scrollbar-thumb-hover);
+	background-color: var(--scrollbar-thumb-hover);
 }
 
 #nd-docs-layout {
-  --fd-sidebar-width: 17.75rem;
-  background: transparent !important;
+	--fd-sidebar-width: 17.75rem;
+	background: transparent !important;
 }
 
 #nd-docs-layout > main,
 #nd-page {
-  background: transparent;
+	background: transparent;
 }
 
 /* Sim-style floating sidebar — transparent chrome, content breathes */
 #nd-sidebar,
 [data-sidebar-placeholder],
 aside#nd-sidebar {
-  background: transparent !important;
-  border: none !important;
+	background: transparent !important;
+	border: none !important;
 }
 
 #nd-sidebar [data-radix-scroll-area-viewport] {
-  mask: none !important;
-  -webkit-mask: none !important;
+	mask: none !important;
+	-webkit-mask: none !important;
 }
 
 @media (min-width: 1024px) {
-  #nd-docs-layout::before {
-    content: "";
-    position: fixed;
-    top: var(--fd-nav-height);
-    bottom: 0;
-    left: calc(var(--fd-sidebar-width) + max(1rem, (100vw - var(--spacing-fd-container)) / 2) - 1rem);
-    width: 1px;
-    background: var(--color-fd-border);
-    pointer-events: none;
-    z-index: 1;
-  }
+	#nd-docs-layout::before {
+		content: "";
+		position: fixed;
+		top: var(--fd-nav-height);
+		bottom: 0;
+		left: calc(
+			var(--fd-sidebar-width) +
+			max(1rem, (100vw - var(--spacing-fd-container)) / 2) -
+			1rem
+		);
+		width: 1px;
+		background: var(--color-fd-border);
+		pointer-events: none;
+		z-index: 1;
+	}
 
-  main[data-main] {
-    padding-left: var(--content-gap);
-    padding-right: var(--content-gap);
-    padding-bottom: 4rem;
-  }
+	main[data-main] {
+		padding-left: var(--content-gap);
+		padding-right: var(--content-gap);
+		padding-bottom: 4rem;
+	}
 }
 
-/* Framework icons — monochrome like Mintlify */
+/* Framework icons — monochrome */
 .framework-icon,
 img[src*="/icons/"] {
-  filter: brightness(0);
+	filter: brightness(0);
 }
 
 .dark .framework-icon,
 .dark img[src*="/icons/"] {
-  filter: brightness(0) invert(1);
+	filter: brightness(0) invert(1);
 }
 
 /* Page title — crisp, tight, sans (Better Auth pattern) */
 #nd-page > header h1,
 [data-docs-title] {
-  @apply font-sans text-[1.75rem] font-semibold tracking-[-0.03em] text-fd-foreground md:text-[2rem];
-  letter-spacing: -0.03em;
+	@apply font-sans text-[1.75rem] font-semibold tracking-[-0.03em] text-fd-foreground md:text-[2rem];
+	letter-spacing: -0.03em;
 }
 
 #nd-page > header p {
-  @apply text-[0.9375rem] leading-relaxed text-fd-muted-foreground;
-  max-width: 42rem;
+	@apply text-[0.9375rem] leading-relaxed text-fd-muted-foreground;
+	max-width: 42rem;
 }
 
 /* Prose — Sim-like hierarchy: calm body, crisp headings */
 .prose {
-  --tw-prose-body: var(--text-secondary);
-  --tw-prose-headings: var(--text-primary);
-  --tw-prose-links: var(--color-fd-primary);
-  --tw-prose-code: var(--color-fd-foreground);
-  max-width: none;
-  font-size: var(--text-base);
-  line-height: 1.75;
+	--tw-prose-body: var(--text-secondary);
+	--tw-prose-headings: var(--text-primary);
+	--tw-prose-links: var(--color-fd-primary);
+	--tw-prose-code: var(--color-fd-foreground);
+	max-width: none;
+	font-size: var(--text-base);
+	line-height: 1.75;
 }
 
 .prose :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply mt-10 mb-4 font-sans text-xl font-medium tracking-[-0.02em] text-fd-foreground;
+	@apply mt-10 mb-4 font-sans text-xl font-medium tracking-[-0.02em] text-fd-foreground;
 }
 
 .prose :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply mt-8 mb-3 font-sans text-base font-medium tracking-[-0.01em] text-fd-foreground;
+	@apply mt-8 mb-3 font-sans text-base font-medium tracking-[-0.01em] text-fd-foreground;
 }
 
-.prose :where(li > strong:first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply font-medium text-fd-foreground;
+.prose
+	:where(li > strong:first-child):not(
+		:where([class~="not-prose"], [class~="not-prose"] *)
+	) {
+	@apply font-medium text-fd-foreground;
 }
 
 .prose :where(h4):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply mt-6 mb-2 font-sans text-sm font-semibold;
+	@apply mt-6 mb-2 font-sans text-sm font-semibold;
 }
 
 .prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply text-fd-foreground/90;
+	@apply text-fd-foreground/90;
 }
 
 .prose :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply font-medium text-fd-primary underline-offset-4 hover:underline;
+	@apply font-medium text-fd-primary underline-offset-4 hover:underline;
 }
 
-.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):not(pre code) {
-  @apply rounded-sm border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[0.8125rem] font-normal;
+.prose
+	:where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)):not(
+		pre code
+	) {
+	@apply rounded-sm border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[0.8125rem] font-normal;
 }
 
 .prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply rounded-none border border-fd-border;
+	@apply rounded-none border border-fd-border;
 }
 
 .prose :where(table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply text-sm;
+	@apply text-sm;
 }
 
 .prose :where(th):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply font-medium;
+	@apply font-medium;
 }
 
 .prose code:not(pre code),
 .prose a {
-  overflow-wrap: anywhere;
+	overflow-wrap: anywhere;
 }
 
 /* Code blocks — flat, sharp (Better Auth pattern) */
@@ -234,79 +263,87 @@ figure:has(.shiki),
 figure.shiki,
 [data-slot="tabs"]:has(.shiki),
 .bg-fd-card:has(.shiki) {
-  border-radius: 0 !important;
-  overflow: hidden;
+	border-radius: 0 !important;
+	overflow: hidden;
 }
 
 .dark .shiki,
 .dark figure:has(pre),
 .dark figure.shiki {
-  background-color: #050505 !important;
-  border-color: rgb(255 255 255 / 0.06);
+	background-color: #050505 !important;
+	border-color: rgb(255 255 255 / 0.06);
 }
 
 .dark [role="tabpanel"]:has(.shiki) {
-  background-color: #050505 !important;
+	background-color: #050505 !important;
 }
 
 /* Sidebar + nav polish */
 #nd-sidebar {
-  @apply text-[13px];
+	@apply text-[13px];
 }
 
 #nd-sidebar a {
-  @apply tracking-[-0.01em];
+	@apply tracking-[-0.01em];
 }
 
 #nd-subnav,
 [data-toc] {
-  backdrop-filter: blur(10px);
+	backdrop-filter: blur(10px);
 }
 
 #nd-toc h3,
 #nd-toc [class*="title"] {
-  @apply text-[13px] font-medium text-fd-muted-foreground;
+	@apply text-[13px] font-medium text-fd-muted-foreground;
 }
 
 #nd-toc a {
-  @apply text-[13px] text-fd-muted-foreground transition-colors;
+	@apply text-[13px] text-fd-muted-foreground transition-colors;
 }
 
 #nd-toc a[data-active="true"] {
-  @apply font-medium text-fd-foreground;
+	@apply font-medium text-fd-foreground;
 }
 
 /* Cards — Sim-style flat tiles */
 [data-card] {
-  @apply rounded-none border-fd-border bg-fd-card;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+	@apply rounded-none border-fd-border bg-fd-card;
+	transition:
+		border-color 0.2s ease,
+		background-color 0.2s ease;
 }
 
 [data-card]:hover {
-  border-color: color-mix(in oklch, var(--color-fd-foreground) 18%, var(--color-fd-border));
-  background-color: color-mix(in oklch, var(--color-fd-foreground) 3%, var(--color-fd-card));
+	border-color: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 18%,
+		var(--color-fd-border)
+	);
+	background-color: color-mix(
+		in oklch,
+		var(--color-fd-foreground) 3%,
+		var(--color-fd-card)
+	);
 }
 
 /* Prev/next footer */
 #nd-page article > div.\@container > a {
-  @apply font-mono text-xs;
+	@apply font-mono text-xs;
 }
 
 /* Search dialog polish */
 [data-search-dialog] kbd,
 [cmdk-root] kbd {
-  @apply rounded border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[10px];
+	@apply rounded border border-fd-border bg-fd-muted px-1.5 py-0.5 font-mono text-[10px];
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
 }

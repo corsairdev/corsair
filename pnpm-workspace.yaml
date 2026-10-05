@@ -2,7 +2,6 @@ packages:
   - packages/**
   - adapters/*
   - apps/*
-  - docs
   - demo/*
   - www
   - hub

@@ -21,7 +21,10 @@ export default function Layout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="en" suppressHydrationWarning className={fontVariables}>
 			<body className="flex min-h-screen flex-col">
-				<div className="docs-gradient-bg pointer-events-none fixed inset-0 -z-10" aria-hidden />
+				<div
+					className="docs-gradient-bg pointer-events-none fixed inset-0 -z-10"
+					aria-hidden
+				/>
 				{children}
 			</body>
 		</html>

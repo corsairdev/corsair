@@ -8,7 +8,8 @@ Corsair is an open-source integration layer for agents (~70 plugin packages).
   except `corsair`, `cli`, `mcp`, `studio`, `ui`, `app` is a plugin.
 - `packages/corsair/` — core; plugins register in `core/constants.ts`.
 - `www/` — corsair.dev site incl. the OSS contributor dashboard (`src/app/oss/`).
-- `scripts/pr-review/` — automated PR review loop (see `docs/pr-review-bot.md`).
+- `apps/docs/` — docs.corsair.dev. Plugin pages are generated; see its `CLAUDE.md`.
+- `scripts/pr-review/` — automated PR review loop (see its `README.md`).
 
 ## Commands
 
