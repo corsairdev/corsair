@@ -16,7 +16,6 @@ import {
 	QueryEndpoints,
 	TenantsEndpoints,
 	UsersEndpoints,
-	WorkspacesEndpoints,
 } from '../endpoints';
 import { errorHandlers } from '../error-handlers';
 import { turbotpipes } from '../index';

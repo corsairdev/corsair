@@ -59,7 +59,7 @@ await corsair.turbotpipes.api.actor.listActivity({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -68,7 +68,7 @@ await corsair.turbotpipes.api.actor.listActivity({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -101,7 +101,7 @@ await corsair.turbotpipes.api.actor.listConnections({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -110,7 +110,7 @@ await corsair.turbotpipes.api.actor.listConnections({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -143,7 +143,7 @@ await corsair.turbotpipes.api.actor.listOrgs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -152,7 +152,7 @@ await corsair.turbotpipes.api.actor.listOrgs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -185,7 +185,7 @@ await corsair.turbotpipes.api.actor.listWorkspaces({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -194,7 +194,7 @@ await corsair.turbotpipes.api.actor.listWorkspaces({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -298,7 +298,7 @@ await corsair.turbotpipes.api.ai.getUserAiKey({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `key_id` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
 
 
 
@@ -379,7 +379,7 @@ await corsair.turbotpipes.api.ai.listUserAiKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -421,7 +421,7 @@ await corsair.turbotpipes.api.ai.listUserWorkspaceConversations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -529,7 +529,7 @@ await corsair.turbotpipes.api.ai.updateUserAiKey({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
-| `key_id` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 
 
@@ -727,7 +727,7 @@ await corsair.turbotpipes.api.auth.getAuthProvider({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `provider_name` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
 
 
 
@@ -1048,7 +1048,7 @@ await corsair.turbotpipes.api.billing.listUserBillingInvoices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1089,7 +1089,7 @@ await corsair.turbotpipes.api.billing.listUserBillingPaymentMethods({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1130,7 +1130,7 @@ await corsair.turbotpipes.api.billing.listUserBillingSubscriptions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1475,7 +1475,7 @@ await corsair.turbotpipes.api.connections.listUserConnections({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -1484,7 +1484,7 @@ await corsair.turbotpipes.api.connections.listUserConnections({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1517,6 +1517,7 @@ await corsair.turbotpipes.api.connections.testUserConnection({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `connection_handle` | `string` | No | — |
 | `plugin` | `string` | Yes | — |
 | `config` | `object` | Yes | — |
 
@@ -1933,7 +1934,7 @@ await corsair.turbotpipes.api.datatanks.listOrgWorkspaceDatatanks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1977,7 +1978,7 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankPartitions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2019,7 +2020,7 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatanks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2062,7 +2063,7 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceDatatankTables({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2104,7 +2105,7 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemas({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2147,7 +2148,7 @@ await corsair.turbotpipes.api.datatanks.listUserWorkspaceSchemaTables({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2255,7 +2256,7 @@ await corsair.turbotpipes.api.identities.listIdentities({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2504,6 +2505,7 @@ await corsair.turbotpipes.api.integrations.installUserSlackIntegration({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
+| `integration_handle` | `string` | Yes | — |
 
 
 
@@ -2547,7 +2549,7 @@ await corsair.turbotpipes.api.integrations.listUserIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2589,7 +2591,7 @@ await corsair.turbotpipes.api.integrations.listUserWorkspaceIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2962,7 +2964,7 @@ await corsair.turbotpipes.api.mods.listOrgWorkspaceMods({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3004,7 +3006,7 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceMods({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3047,7 +3049,7 @@ await corsair.turbotpipes.api.mods.listUserWorkspaceModVariables({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3271,7 +3273,7 @@ await corsair.turbotpipes.api.notifiers.listUserNotifiers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3313,7 +3315,7 @@ await corsair.turbotpipes.api.notifiers.listUserWorkspaceNotifiers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3515,7 +3517,7 @@ await corsair.turbotpipes.api.orgs.listProcesses({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -3524,7 +3526,7 @@ await corsair.turbotpipes.api.orgs.listProcesses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3565,7 +3567,7 @@ await corsair.turbotpipes.api.orgs.listServiceAccounts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3606,7 +3608,7 @@ await corsair.turbotpipes.api.orgs.listUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3640,7 +3642,7 @@ await corsair.turbotpipes.api.orgs.listWorkspaces({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -3649,7 +3651,7 @@ await corsair.turbotpipes.api.orgs.listWorkspaces({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3862,7 +3864,7 @@ await corsair.turbotpipes.api.pipelines.getOrgWorkspaceFlowpipeTrigger({});
 |------|------|----------|-------------|
 | `org_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `trigger_id` | `string` | Yes | — |
+| `trigger_name` | `string` | Yes | — |
 
 
 
@@ -4056,7 +4058,7 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspaceFlowpipeModVariables({})
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4098,7 +4100,7 @@ await corsair.turbotpipes.api.pipelines.listOrgWorkspacePipelines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4140,7 +4142,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeInputs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4183,7 +4185,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeModVariables({}
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4225,7 +4227,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipePipelines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4267,7 +4269,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspaceFlowpipeTriggers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4309,7 +4311,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4352,7 +4354,7 @@ await corsair.turbotpipes.api.pipelines.listUserWorkspacePipelineTriggers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4419,7 +4421,7 @@ await corsair.turbotpipes.api.pipelines.runUserWorkspaceFlowpipeTriggerCommand({
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
-| `trigger_id` | `string` | Yes | — |
+| `trigger_name` | `string` | Yes | — |
 | `command` | `string` | Yes | — |
 
 
@@ -4711,7 +4713,7 @@ await corsair.turbotpipes.api.query.listUserWorkspaceSnapshots({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4889,7 +4891,7 @@ await corsair.turbotpipes.api.tenants.getTenantSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tenant_handle` | `string` | Yes | — |
+| `tenant_handle` | `string` | No | — |
 
 
 
@@ -4928,7 +4930,7 @@ await corsair.turbotpipes.api.tenants.listTenants({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5173,7 +5175,7 @@ await corsair.turbotpipes.api.users.listAuditLogs({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5182,7 +5184,7 @@ await corsair.turbotpipes.api.users.listAuditLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5223,7 +5225,7 @@ await corsair.turbotpipes.api.users.listConstraints({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5257,7 +5259,7 @@ await corsair.turbotpipes.api.users.listProcesses({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5266,7 +5268,7 @@ await corsair.turbotpipes.api.users.listProcesses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5307,7 +5309,7 @@ await corsair.turbotpipes.api.users.listUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5348,7 +5350,7 @@ await corsair.turbotpipes.api.users.listUserEmails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5382,7 +5384,7 @@ await corsair.turbotpipes.api.users.listWorkspaces({});
 |------|------|----------|-------------|
 | `user_handle` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 
 
@@ -5391,7 +5393,7 @@ await corsair.turbotpipes.api.users.listWorkspaces({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -5991,6 +5993,8 @@ await corsair.turbotpipes.api.workspaces.getUserWorkspaceProcessLog({});
 | `user_handle` | `string` | Yes | — |
 | `workspace_handle` | `string` | Yes | — |
 | `process_id` | `string` | Yes | — |
+| `log_file` | `string` | Yes | — |
+| `content_type` | `string` | No | — |
 
 
 
@@ -6035,7 +6039,7 @@ await corsair.turbotpipes.api.workspaces.listOrgWorkspaceProcesses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6078,7 +6082,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregatorConnections(
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6120,7 +6124,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAggregators({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6162,7 +6166,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceAuditLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6204,7 +6208,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionAssociations
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6246,7 +6250,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnectionFolders({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6288,7 +6292,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceConnections({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6366,7 +6370,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceDatabaseLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6408,7 +6412,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceProcesses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6450,7 +6454,7 @@ await corsair.turbotpipes.api.workspaces.listUserWorkspaceUsage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `next_page_token` | `string` | No | — |
+| `next_token` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">

@@ -1,6 +1,5 @@
 jest.unmock('corsair/http');
 
-import { makeTurbotPipesRequest } from '../client';
 import { ActorEndpoints, TenantsEndpoints, UsersEndpoints } from '../endpoints';
 
 const API_KEY = process.env.TURBOT_PIPES_API_KEY;

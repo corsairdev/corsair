@@ -29,9 +29,10 @@ export async function makeTurbotPipesRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
-	const formattedToken = apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
-		? apiKey
-		: `Bearer ${apiKey}`;
+	const formattedToken =
+		apiKey.startsWith('Bearer ') || apiKey.startsWith('api key ')
+			? apiKey
+			: `Bearer ${apiKey}`;
 
 	const config: OpenAPIConfig = {
 		BASE: TURBOTPIPES_API_BASE,

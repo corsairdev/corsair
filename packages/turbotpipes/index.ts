@@ -41,8 +41,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TurbotPipesSchema } from './schema';
-import { resolveTurbotPipesOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchTurbotPipesTenantWebhook } from './webhooks/tenant-matcher';
 
 export type TurbotPipesPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -2406,7 +2404,6 @@ export function turbotpipes<const T extends TurbotPipesPluginOptions>(
 		endpointMeta: turbotpipesEndpointMeta,
 		endpointSchemas: turbotpipesEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchTurbotPipesTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
