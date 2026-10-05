@@ -23,7 +23,6 @@ function freshOAuthKeys() {
 
 describe('gitlab oauth_2 keyBuilder 401 wiring', () => {
 	it('attaches _refreshAuth onto the real ctx', async () => {
-		// biome-ignore lint/suspicious/noExplicitAny: minimal plugin options for the test
 		const plugin = gitlab({ baseUrl: 'https://gitlab.com' } as any);
 		const ctx: Record<string, unknown> = {
 			keys: freshOAuthKeys(),
@@ -37,7 +36,6 @@ describe('gitlab oauth_2 keyBuilder 401 wiring', () => {
 			options: { baseUrl: 'https://gitlab.com' },
 		};
 
-		// biome-ignore lint/suspicious/noExplicitAny: ctx shape is duck-typed for the test
 		const keyBuilder = (plugin as any).keyBuilder as (
 			c: unknown,
 			s: string,
