@@ -133,9 +133,7 @@ export const BaseProviders = [
 	'chmeetings',
 	'cincopa',
 	'circleci',
-	'classmarker',
-	'clickhouse',
-	'clickmeeting',
+	'claidai',
 	'clientary',
 	'clockify',
 	'cloudcart',
@@ -482,9 +480,7 @@ export const ProviderDisplayNames = {
 	chmeetings: 'ChMeetings',
 	cincopa: 'Cincopa',
 	circleci: 'CircleCI',
-	classmarker: 'ClassMarker',
-	clickhouse: 'Clickhouse',
-	clickmeeting: 'ClickMeeting',
+	claidai: 'ClaidAi',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudcart: 'CloudCart',
@@ -838,9 +834,7 @@ export type AllProviders =
 	| 'chmeetings'
 	| 'cincopa'
 	| 'circleci'
-	| 'classmarker'
-	| 'clickhouse'
-	| 'clickmeeting'
+	| 'claidai'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudcart'
