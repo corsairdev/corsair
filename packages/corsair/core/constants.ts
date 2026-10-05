@@ -344,6 +344,7 @@ export const BaseProviders = [
 	'witai',
 	'wix',
 	'wiza',
+	'workable',
 	'workday',
 	'workiom',
 	'worldnewsapi',
@@ -693,6 +694,7 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
+	workable: 'Workable',
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
@@ -1049,6 +1051,7 @@ export type AllProviders =
 	| 'witai'
 	| 'wix'
 	| 'wiza'
+	| 'workable'
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'
