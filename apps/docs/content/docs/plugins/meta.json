@@ -1,6 +1,7 @@
 {
   "title": "Plugins",
   "root": true,
+  "pagesIndex": "index",
   "pages": [
     "---Plugins---",
     "onepassword",

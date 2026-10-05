@@ -1,4 +1,4 @@
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsLayout } from 'fumadocs-ui/layouts/notebook';
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import type { ReactNode } from 'react';
 import { cache } from 'react';
@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 			<DocsLayout
 				tree={getPageTree()}
 				{...baseOptions()}
-				tabMode="top"
+				tabMode="navbar"
 				sidebar={{
 					collapsible: true,
 					defaultOpenLevel: 0,

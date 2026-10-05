@@ -1,5 +1,13 @@
 {
   "title": "API",
   "root": true,
-  "pages": ["v1-guides", "v1"]
+  "pages": [
+    "---Get started---",
+    "v1-guides/overview",
+    "v1-guides/quickstart",
+    "v1-guides/authentication",
+    "v1-guides/errors",
+    "---Reference---",
+    "v1"
+  ]
 }
